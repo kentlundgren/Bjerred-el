@@ -245,6 +245,23 @@
                 padding: 10px 15px;
                 font-size: 14px;
             }
+
+            /* Responsiv nav-bar för mobila enheter */
+            .nav-bar {
+                flex-direction: column;
+                text-align: center;
+                padding: 15px;
+            }
+
+            .nav-links {
+                justify-content: center;
+                width: 100%;
+            }
+
+            .nav-bar a {
+                font-size: 14px;
+                padding: 8px 12px;
+            }
         }
 
         /* Hjälptext */
@@ -265,10 +282,64 @@
             margin-left: 20px;
             color: #856404;
         }
+
+        /* Navigeringsbar högst upp */
+        .nav-bar {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            padding: 15px 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .nav-bar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            background-color: rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-bar a:hover {
+            background-color: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-title {
+            color: white;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Navigeringsbar -->
+        <nav class="nav-bar">
+            <span class="nav-title">📝 Datahantering</span>
+            <div class="nav-links">
+                <a href="index.html">📊 Visa Statistik</a>
+                <a href="https://github.com/kentlundgren/Bjerred-el" target="_blank" rel="noopener noreferrer">💻 GitHub Repo</a>
+                <a href="https://kentlundgren.github.io/Bjerred-el/" target="_blank" rel="noopener noreferrer">🌐 Live Demo</a>
+            </div>
+        </nav>
+
         <h1>📊 Datahantering - Elenergiförbrukning</h1>
         <p class="subtitle">Bjerreds Saltsjöbad - Administrativt verktyg</p>
 
