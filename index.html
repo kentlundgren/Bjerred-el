@@ -88,6 +88,62 @@
             color: #7f8c8d;
         }
 
+        /* UPPDATERING 2026-01: Tooltip för LÅT-jämförelse */
+        .lat-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            z-index: 1000;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            min-width: 280px;
+        }
+
+        .lat-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 8px;
+            border-style: solid;
+            border-color: #2c3e50 transparent transparent transparent;
+        }
+
+        .summary-card.lat-card {
+            position: relative;
+            cursor: help;
+        }
+
+        .summary-card.lat-card:hover .lat-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .lat-change {
+            margin-top: 8px;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .lat-change.positive {
+            color: #e74c3c;
+        }
+
+        .lat-change.negative {
+            color: #27ae60;
+        }
+
         /* Grid-layout för diagram - responsiv för olika skärmstorlekar */
         .charts-grid {
             display: grid;
@@ -605,22 +661,44 @@
         
         <!-- Sammanfattningskort med nyckeltal -->
         <!-- UPPDATERING 2026-01: Ändrat till Löpande Årstal (LÅT) - visar senaste 12 månaderna -->
+        <!-- UPPDATERING 2026-01: Lagt till hover-tooltips för jämförelse med föregående LÅT -->
         <div class="summary-grid">
-            <div class="summary-card">
+            <div class="summary-card lat-card">
                 <h3>Årsförbrukning (LÅT)</h3>
                 <div class="value" id="totalConsumption">-</div>
                 <div class="unit">kWh/år</div>
                 <div style="font-size: 0.8em; color: #7f8c8d; margin-top: 5px;" id="latPeriod">-</div>
+                <!-- Tooltip för föregående LÅT -->
+                <div class="lat-tooltip" id="consumptionTooltip">
+                    <strong>Föregående LÅT:</strong><br>
+                    <span id="prevLatPeriodConsumption">-</span><br>
+                    <span id="prevLatConsumption">-</span> kWh<br>
+                    <div class="lat-change" id="latChangeConsumption">-</div>
+                </div>
             </div>
-            <div class="summary-card">
+            <div class="summary-card lat-card">
                 <h3>Årskostnad (LÅT inkl moms)</h3>
                 <div class="value" id="totalCost">-</div>
                 <div class="unit">kr/år</div>
+                <!-- Tooltip för föregående LÅT -->
+                <div class="lat-tooltip" id="costTooltip">
+                    <strong>Föregående LÅT:</strong><br>
+                    <span id="prevLatPeriodCost">-</span><br>
+                    <span id="prevLatCost">-</span> kr<br>
+                    <div class="lat-change" id="latChangeCost">-</div>
+                </div>
             </div>
-            <div class="summary-card">
+            <div class="summary-card lat-card">
                 <h3>Årskostnad (LÅT exkl moms)</h3>
                 <div class="value" id="totalCostExVAT">-</div>
                 <div class="unit">kr/år</div>
+                <!-- Tooltip för föregående LÅT -->
+                <div class="lat-tooltip" id="costExVATTooltip">
+                    <strong>Föregående LÅT:</strong><br>
+                    <span id="prevLatPeriodCostExVAT">-</span><br>
+                    <span id="prevLatCostExVAT">-</span> kr<br>
+                    <div class="lat-change" id="latChangeCostExVAT">-</div>
+                </div>
             </div>
             <div class="summary-card">
                 <h3>Genomsnittspris (inkl moms)</h3>
@@ -646,6 +724,8 @@
                 <strong>Löpande Årstal (LÅT)</strong> visar alltid förbrukning och kostnad för de senaste 12 månaderna. 
                 Detta ger en mer aktuell bild av årskostnaden jämfört med totalsummor. 
                 När ny data läggs till rullar perioden framåt automatiskt.
+                <br><br>
+                <strong>💡 Tips:</strong> Hovra över LÅT-korten för att se föregående 12-månadersperiod och jämföra hur förbrukning och kostnad förändras över tid!
                 <br><br>
                 <strong>Aktuell LÅT-period:</strong> <span id="latPeriodInfo" style="font-weight: 600;">-</span>
             </p>
@@ -966,31 +1046,45 @@
         // ====================================
         // Beräknar och visar summor för Löpande Årstal (LÅT) - senaste 12 månaderna
         // UPPDATERING 2026-01: Ändrat från total till LÅT för att visa aktuell årskostnad
+        // UPPDATERING 2026-01: Lagt till föregående LÅT för jämförelse vid hover
         function updateSummary() {
             // Beräkna LÅT (Löpande Årstal) - senaste 12 månaderna
             let latData;
             let latPeriodText;
+            let prevLatData = null;
+            let prevLatPeriodText = '';
             
             if (enrichedData.length >= 12) {
-                // Ta de senaste 12 månaderna
+                // Ta de senaste 12 månaderna (nuvarande LÅT)
                 latData = enrichedData.slice(-12);
                 const firstMonth = latData[0].fullMonth;
                 const lastMonth = latData[latData.length - 1].fullMonth;
                 latPeriodText = `${firstMonth} - ${lastMonth}`;
+
+                // Beräkna föregående LÅT om vi har minst 13 månader
+                if (enrichedData.length >= 13) {
+                    // Föregående LÅT: månad 13 från slutet till månad 2 från slutet
+                    const startIndex = Math.max(0, enrichedData.length - 13);
+                    const endIndex = enrichedData.length - 1;
+                    prevLatData = enrichedData.slice(startIndex, endIndex);
+                    const prevFirstMonth = prevLatData[0].fullMonth;
+                    const prevLastMonth = prevLatData[prevLatData.length - 1].fullMonth;
+                    prevLatPeriodText = `${prevFirstMonth} - ${prevLastMonth}`;
+                }
             } else {
                 // Om vi har mindre än 12 månader, använd all tillgänglig data
                 latData = enrichedData;
                 latPeriodText = `${enrichedData.length} månader (< 12)`;
             }
 
-            // Beräkna summor för LÅT-perioden
+            // Beräkna summor för nuvarande LÅT-perioden
             const totalKWh = latData.reduce((sum, d) => sum + d.totalKWh, 0);
             const totalCost = latData.reduce((sum, d) => sum + d.cost, 0);
             const totalCostExVAT = latData.reduce((sum, d) => sum + d.costExVAT, 0);
             const avgPrice = totalCost / totalKWh;
             const avgPriceExVAT = totalCostExVAT / totalKWh;
 
-            // Uppdatera DOM-element med formaterade värden
+            // Uppdatera DOM-element med formaterade värden för nuvarande LÅT
             document.getElementById('totalConsumption').textContent = totalKWh.toLocaleString('sv-SE');
             document.getElementById('totalCost').textContent = totalCost.toLocaleString('sv-SE');
             document.getElementById('totalCostExVAT').textContent = totalCostExVAT.toLocaleString('sv-SE');
@@ -998,6 +1092,48 @@
             document.getElementById('avgPriceExVAT').textContent = avgPriceExVAT.toFixed(2);
             document.getElementById('latPeriod').textContent = latPeriodText;
             document.getElementById('latPeriodInfo').textContent = latPeriodText;
+
+            // Uppdatera tooltips med föregående LÅT om tillgängligt
+            if (prevLatData && prevLatData.length === 12) {
+                const prevTotalKWh = prevLatData.reduce((sum, d) => sum + d.totalKWh, 0);
+                const prevTotalCost = prevLatData.reduce((sum, d) => sum + d.cost, 0);
+                const prevTotalCostExVAT = prevLatData.reduce((sum, d) => sum + d.costExVAT, 0);
+
+                // Beräkna förändringar
+                const changeKWh = totalKWh - prevTotalKWh;
+                const changePercentKWh = ((changeKWh / prevTotalKWh) * 100).toFixed(1);
+                const changeCost = totalCost - prevTotalCost;
+                const changePercentCost = ((changeCost / prevTotalCost) * 100).toFixed(1);
+                const changeCostExVAT = totalCostExVAT - prevTotalCostExVAT;
+                const changePercentCostExVAT = ((changeCostExVAT / prevTotalCostExVAT) * 100).toFixed(1);
+
+                // Uppdatera tooltip för förbrukning
+                document.getElementById('prevLatPeriodConsumption').textContent = prevLatPeriodText;
+                document.getElementById('prevLatConsumption').textContent = prevTotalKWh.toLocaleString('sv-SE');
+                const consumptionChangeEl = document.getElementById('latChangeConsumption');
+                consumptionChangeEl.innerHTML = `<strong>Förändring:</strong> ${changeKWh > 0 ? '+' : ''}${changeKWh.toLocaleString('sv-SE')} kWh (${changePercentKWh > 0 ? '+' : ''}${changePercentKWh}%)`;
+                consumptionChangeEl.className = `lat-change ${changeKWh > 0 ? 'positive' : 'negative'}`;
+
+                // Uppdatera tooltip för kostnad inkl moms
+                document.getElementById('prevLatPeriodCost').textContent = prevLatPeriodText;
+                document.getElementById('prevLatCost').textContent = prevTotalCost.toLocaleString('sv-SE');
+                const costChangeEl = document.getElementById('latChangeCost');
+                costChangeEl.innerHTML = `<strong>Förändring:</strong> ${changeCost > 0 ? '+' : ''}${changeCost.toLocaleString('sv-SE')} kr (${changePercentCost > 0 ? '+' : ''}${changePercentCost}%)`;
+                costChangeEl.className = `lat-change ${changeCost > 0 ? 'positive' : 'negative'}`;
+
+                // Uppdatera tooltip för kostnad exkl moms
+                document.getElementById('prevLatPeriodCostExVAT').textContent = prevLatPeriodText;
+                document.getElementById('prevLatCostExVAT').textContent = prevTotalCostExVAT.toLocaleString('sv-SE');
+                const costExVATChangeEl = document.getElementById('latChangeCostExVAT');
+                costExVATChangeEl.innerHTML = `<strong>Förändring:</strong> ${changeCostExVAT > 0 ? '+' : ''}${changeCostExVAT.toLocaleString('sv-SE')} kr (${changePercentCostExVAT > 0 ? '+' : ''}${changePercentCostExVAT}%)`;
+                costExVATChangeEl.className = `lat-change ${changeCostExVAT > 0 ? 'positive' : 'negative'}`;
+            } else {
+                // Om ingen föregående LÅT finns, dölj tooltips
+                const tooltips = document.querySelectorAll('.lat-tooltip');
+                tooltips.forEach(tooltip => {
+                    tooltip.style.display = 'none';
+                });
+            }
         }
 
         // ====================================
