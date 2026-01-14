@@ -604,21 +604,23 @@
         </div>
         
         <!-- Sammanfattningskort med nyckeltal -->
+        <!-- UPPDATERING 2026-01: Ändrat till Löpande Årstal (LÅT) - visar senaste 12 månaderna -->
         <div class="summary-grid">
             <div class="summary-card">
-                <h3>Total Förbrukning</h3>
+                <h3>Årsförbrukning (LÅT)</h3>
                 <div class="value" id="totalConsumption">-</div>
-                <div class="unit">kWh</div>
+                <div class="unit">kWh/år</div>
+                <div style="font-size: 0.8em; color: #7f8c8d; margin-top: 5px;" id="latPeriod">-</div>
             </div>
             <div class="summary-card">
-                <h3>Total Kostnad (inkl moms)</h3>
+                <h3>Årskostnad (LÅT inkl moms)</h3>
                 <div class="value" id="totalCost">-</div>
-                <div class="unit">kr</div>
+                <div class="unit">kr/år</div>
             </div>
             <div class="summary-card">
-                <h3>Total Kostnad (exkl moms)</h3>
+                <h3>Årskostnad (LÅT exkl moms)</h3>
                 <div class="value" id="totalCostExVAT">-</div>
-                <div class="unit">kr</div>
+                <div class="unit">kr/år</div>
             </div>
             <div class="summary-card">
                 <h3>Genomsnittspris (inkl moms)</h3>
@@ -631,10 +633,22 @@
                 <div class="unit">kr/kWh</div>
             </div>
             <div class="summary-card">
-                <h3>Period</h3>
+                <h3>Totalt data</h3>
                 <div class="value" id="period">17</div>
                 <div class="unit">månader</div>
             </div>
+        </div>
+
+        <!-- UPPDATERING 2026-01: Förklaring av Löpande Årstal (LÅT) -->
+        <div style="background: #fff3cd; border-left: 5px solid #ffc107; padding: 15px; border-radius: 8px; margin-bottom: 30px;">
+            <h3 style="color: #856404; margin-bottom: 10px; font-size: 1.1em;">ℹ️ Om Löpande Årstal (LÅT)</h3>
+            <p style="color: #856404; line-height: 1.6; margin: 0;">
+                <strong>Löpande Årstal (LÅT)</strong> visar alltid förbrukning och kostnad för de senaste 12 månaderna. 
+                Detta ger en mer aktuell bild av årskostnaden jämfört med totalsummor. 
+                När ny data läggs till rullar perioden framåt automatiskt.
+                <br><br>
+                <strong>Aktuell LÅT-period:</strong> <span id="latPeriodInfo" style="font-weight: 600;">-</span>
+            </p>
         </div>
 
         <!-- Grid med diagram -->
@@ -950,12 +964,29 @@
         // ====================================
         // FUNKTION: Uppdatera sammanfattning
         // ====================================
-        // Beräknar och visar totalsummor i sammanfattningskorten
-        // UPPDATERING: Nu inkluderar både priser inklusive och exklusive moms
+        // Beräknar och visar summor för Löpande Årstal (LÅT) - senaste 12 månaderna
+        // UPPDATERING 2026-01: Ändrat från total till LÅT för att visa aktuell årskostnad
         function updateSummary() {
-            const totalKWh = enrichedData.reduce((sum, d) => sum + d.totalKWh, 0);
-            const totalCost = enrichedData.reduce((sum, d) => sum + d.cost, 0);
-            const totalCostExVAT = enrichedData.reduce((sum, d) => sum + d.costExVAT, 0);
+            // Beräkna LÅT (Löpande Årstal) - senaste 12 månaderna
+            let latData;
+            let latPeriodText;
+            
+            if (enrichedData.length >= 12) {
+                // Ta de senaste 12 månaderna
+                latData = enrichedData.slice(-12);
+                const firstMonth = latData[0].fullMonth;
+                const lastMonth = latData[latData.length - 1].fullMonth;
+                latPeriodText = `${firstMonth} - ${lastMonth}`;
+            } else {
+                // Om vi har mindre än 12 månader, använd all tillgänglig data
+                latData = enrichedData;
+                latPeriodText = `${enrichedData.length} månader (< 12)`;
+            }
+
+            // Beräkna summor för LÅT-perioden
+            const totalKWh = latData.reduce((sum, d) => sum + d.totalKWh, 0);
+            const totalCost = latData.reduce((sum, d) => sum + d.cost, 0);
+            const totalCostExVAT = latData.reduce((sum, d) => sum + d.costExVAT, 0);
             const avgPrice = totalCost / totalKWh;
             const avgPriceExVAT = totalCostExVAT / totalKWh;
 
@@ -965,6 +996,8 @@
             document.getElementById('totalCostExVAT').textContent = totalCostExVAT.toLocaleString('sv-SE');
             document.getElementById('avgPrice').textContent = avgPrice.toFixed(2);
             document.getElementById('avgPriceExVAT').textContent = avgPriceExVAT.toFixed(2);
+            document.getElementById('latPeriod').textContent = latPeriodText;
+            document.getElementById('latPeriodInfo').textContent = latPeriodText;
         }
 
         // ====================================

@@ -14,6 +14,7 @@ Detta projekt visualiserar elenergiförbrukning för Bjerreds Saltsjöbad från 
 
 - 📊 **Interaktiva diagram** - Visualiserar förbrukning, kostnad och pris per kWh över tid
 - 💰 **Kostnadsanalys** - Visar både priser inklusive och exklusive moms
+- 📅 **Löpande Årstal (LÅT)** - Visar alltid de senaste 12 månadernas förbrukning och kostnad för aktuell årsbild
 - 🔄 **Jämförelsevärden** - Beräknar förmodade värden baserat på säsongsmönster
 - 🏊‍♂️ **Fördelning** - Separat analys för bad och restaurang
 - 📱 **Responsiv design** - Fungerar på desktop, tablet och mobil
@@ -59,9 +60,23 @@ Bjerred-el/
 
 ## 📊 Dataperiod
 
-**Nuvarande data:** Augusti 2024 - September 2025
+**Nuvarande data:** Augusti 2024 - December 2025 (17 månader)
 
-**Möjligt att lägga till:** Oktober 2025 - December 2026 (och framåt)
+**Möjligt att lägga till:** Januari 2026 - December 2026 (och framåt)
+
+## 📅 Löpande Årstal (LÅT)
+
+Systemet använder **Löpande Årstal (LÅT)** för att visa en aktuell årsbild:
+
+- **Vad är LÅT?** En rullande 12-månadersperiod som alltid visar de senaste 12 månaderna
+- **Varför LÅT?** Ger en mer aktuell bild av årskostnaden jämfört med totalsummor
+- **Automatisk uppdatering:** När ny månad läggs till rullar perioden framåt automatiskt
+
+**Exempel:**
+- Data t.o.m. december 2025 → LÅT visar januari 2025 - december 2025
+- Data t.o.m. januari 2026 → LÅT visar februari 2025 - januari 2026
+
+Detta säkerställer att årsförbrukning och årskostnad alltid reflekterar det senaste året.
 
 ## 🔥 Om Bastusystemet
 
