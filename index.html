@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elenergiförbrukning Bjerreds Saltsjöbad</title>
+    <!-- Importerar Chart.js bibliotek för att skapa interaktiva diagram -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* CSS-variabler för att enkelt kunna ändra färgtema genom hela sidan */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --background-color: #ecf0f1;
+            --card-background: #ffffff;
+            --text-color: #2c3e50;
+            --border-color: #bdc3c7;
+            --hover-color: #f8f9fa;
+        }
+
+        /* Reset och grundläggande styling för body */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        /* Container för hela innehållet med maxbredd för läsbarhet */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Huvudrubrik styling */
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Styling för sammanfattningsboxar som visar nyckeltal */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: var(--card-background);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        /* Hover-effekt för sammanfattningsboxar */
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .summary-card h3 {
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .summary-card .value {
+            font-size: 2em;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .summary-card .unit {
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+
+        /* Grid-layout för diagram - responsiv för olika skärmstorlekar */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        /* Container för varje diagram */
+        .chart-container {
+            background: var(--card-background);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .chart-container h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 3px solid var(--secondary-color);
+            padding-bottom: 10px;
+        }
+
+        /* Tabellcontainer med overflow för responsivitet */
+        .table-container {
+            background: var(--card-background);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow-x: auto;
+            margin-bottom: 100px; /* Extra marginal för att inte täckas av modalknappar */
+        }
+
+        /* Tabellstyling med horisontella linjer och hover-effekter */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        /* Hover-effekt för tabellrader för bättre användarupplevelse */
+        tbody tr:hover {
+            background-color: var(--hover-color);
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        /* Alternerande radfärger för bättre läsbarhet */
+        tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        /* Högerjustering för numeriska värden i tabellen */
+        td:nth-child(n+3) {
+            text-align: right;
+        }
+
+        /* Modalknappar fixerade i nedre högra hörnet */
+        .modal-buttons {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        /* Toggle-knappar fixerade i nedre vänstra hörnet */
+        .toggle-buttons {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        /* Styling för toggle-knappar */
+        .toggle-btn {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+
+        .toggle-btn:hover {
+            background-color: #229954;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0,0,0,0.3);
+        }
+
+        .toggle-btn.active {
+            background-color: #e74c3c;
+        }
+
+        .toggle-btn.active:hover {
+            background-color: #c0392b;
+        }
+
+        /* Tooltip för knappar */
+        .tooltip {
+            visibility: hidden;
+            width: 300px;
+            background-color: #2c3e50;
+            color: #fff;
+            text-align: left;
+            border-radius: 8px;
+            padding: 15px;
+            position: absolute;
+            z-index: 1001;
+            bottom: 110%;
+            left: 0;
+            margin-bottom: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 30px;
+            border-width: 8px;
+            border-style: solid;
+            border-color: #2c3e50 transparent transparent transparent;
+        }
+
+        .toggle-btn:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Dold klass för element som ska kunna togglas */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Säsongsförklaring box */
+        .season-info {
+            background: linear-gradient(90deg, #3498db 0%, #3498db 50%, #e74c3c 50%, #e74c3c 100%);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-around;
+            color: white;
+            font-weight: 600;
+        }
+
+        .season-info div {
+            text-align: center;
+        }
+
+        /* Styling för modalknappar med ikoner */
+        .modal-btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0,0,0,0.3);
+        }
+
+        /* Modal overlay - täcker hela skärmen med semi-transparent bakgrund */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Animation för modal fade-in */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Modal innehållsbox */
+        .modal-content {
+            background-color: var(--card-background);
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: slideDown 0.3s ease;
+        }
+
+        /* Animation för modal slide-down */
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Stängningsknapp för modal */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 35px;
+            font-weight: bold;
+            line-height: 20px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: var(--accent-color);
+        }
+
+        /* Styling för innehåll i modalen */
+        .modal-content h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            border-bottom: 3px solid var(--secondary-color);
+            padding-bottom: 10px;
+        }
+
+        .modal-content h3 {
+            color: var(--secondary-color);
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .modal-content p, .modal-content ul {
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .modal-content ul {
+            padding-left: 30px;
+        }
+
+        .modal-content li {
+            margin-bottom: 8px;
+        }
+
+        /* Kodblock i modalen med monospace font och bakgrund */
+        .modal-content code {
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #e74c3c;
+        }
+
+        .modal-content pre {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        /* Responsiv design för mindre skärmar */
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .modal-buttons, .toggle-buttons {
+                bottom: 10px;
+                flex-direction: column;
+            }
+
+            .modal-buttons {
+                right: 10px;
+            }
+
+            .toggle-buttons {
+                left: 10px;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tooltip {
+                width: 250px;
+                font-size: 12px;
+            }
+        }
+
+        /* Trendpil visuell indikator */
+        .trend-indicator {
+            display: inline-block;
+            margin-left: 5px;
+            font-size: 0.8em;
+        }
+
+        .trend-up { color: #e74c3c; }
+        .trend-down { color: #27ae60; }
+
+        /* Informationsbox för bastusystem */
+        .info-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-box::before {
+            content: '🔥';
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 80px;
+            opacity: 0.15;
+        }
+
+        .info-box h2 {
+            color: white;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            padding-bottom: 10px;
+        }
+
+        .info-box p {
+            line-height: 1.8;
+            margin-bottom: 10px;
+            font-size: 1.05em;
+        }
+
+        .info-box strong {
+            color: #ffd700;
+        }
+
+        .info-box a {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 12px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .info-box a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            background: #ffd700;
+        }
+
+        .info-box-content {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ Elenergiförbrukning - Bjerreds Saltsjöbad</h1>
+        
+        <!-- Informationsbox om bastusystemet -->
+        <div class="info-box">
+            <div class="info-box-content">
+                <h2>🔥 Om Bastusystemet</h2>
+                <p>
+                    Elförbrukningen på Bjerreds Saltsjöbad domineras av vårt professionella bastusystem med 
+                    <strong>Harvia Qube 360</strong> bastuaggregat på <strong>36 kW</strong>. 
+                    Aggregatet styrs av <strong>Harvia Pro C2</strong> styrenhet via två reläboxar för att hantera den höga effekten.
+                </p>
+                <a href="https://kentlundgren.se/program/Bjerred/Harvia/" target="_blank" rel="noopener noreferrer">
+                    📖 Läs mer om vårt bastusystem och teknisk dokumentation →
+                </a>
+            </div>
+        </div>
+        
+        <!-- Sammanfattningskort med nyckeltal -->
+        <div class="summary-grid">
+            <div class="summary-card">
+                <h3>Total Förbrukning</h3>
+                <div class="value" id="totalConsumption">-</div>
+                <div class="unit">kWh</div>
+            </div>
+            <div class="summary-card">
+                <h3>Total Kostnad (inkl moms)</h3>
+                <div class="value" id="totalCost">-</div>
+                <div class="unit">kr</div>
+            </div>
+            <div class="summary-card">
+                <h3>Total Kostnad (exkl moms)</h3>
+                <div class="value" id="totalCostExVAT">-</div>
+                <div class="unit">kr</div>
+            </div>
+            <div class="summary-card">
+                <h3>Genomsnittspris (inkl moms)</h3>
+                <div class="value" id="avgPrice">-</div>
+                <div class="unit">kr/kWh</div>
+            </div>
+            <div class="summary-card">
+                <h3>Genomsnittspris (exkl moms)</h3>
+                <div class="value" id="avgPriceExVAT">-</div>
+                <div class="unit">kr/kWh</div>
+            </div>
+            <div class="summary-card">
+                <h3>Period</h3>
+                <div class="value" id="period">13</div>
+                <div class="unit">månader</div>
+            </div>
+        </div>
+
+        <!-- Grid med diagram -->
+        <div class="charts-grid">
+            <!-- Diagram 1: Månadsförbrukning -->
+            <div class="chart-container">
+                <h2>📊 Månadsförbrukning (kWh)</h2>
+                <canvas id="consumptionChart"></canvas>
+            </div>
+            
+            <!-- Diagram 2: Månadskostnad -->
+            <div class="chart-container">
+                <h2>💰 Månadskostnad (kr)</h2>
+                <canvas id="costChart"></canvas>
+            </div>
+            
+            <!-- Diagram 3: Pris per kWh -->
+            <div class="chart-container">
+                <h2>📈 Pris per kWh (kr/kWh)</h2>
+                <canvas id="priceChart"></canvas>
+            </div>
+            
+            <!-- Diagram 4: Fördelning Bad vs Restaurang -->
+            <div class="chart-container">
+                <h2>🏊‍♂️ Fördelning: Bad vs Restaurang</h2>
+                <canvas id="distributionChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Detaljerad tabell (dold som standard) -->
+        <div class="table-container hidden">
+            <h2>📋 Detaljerad Månadsöversikt</h2>
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>Månad</th>
+                        <th>Typ av månad</th>
+                        <th>Total kWh</th>
+                        <th>kWh/dag</th>
+                        <th>Bad (kWh)</th>
+                        <th>Restaurang (kWh)</th>
+                        <th>Kostnad (kr)</th>
+                        <th>kr/kWh</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Fylls med JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Toggle-knappar nere till vänster -->
+    <div class="toggle-buttons">
+        <button class="toggle-btn" id="toggleExpected" onclick="toggleExpectedValues()">
+            📊 Visa förmodade värden
+            <span class="tooltip">
+                <strong>Hur beräknas förmodade värden?</strong><br><br>
+                <strong>1. Säsongsmönster:</strong> Vinterförbrukning (nov-feb) är ~40% högre än sommar (jun-aug) pga uppvärmning.<br><br>
+                <strong>2. Driftstatus:</strong> Beräknar separat för "Bara restaurang" vs "Restaurang och bad".<br><br>
+                <strong>3. Historiskt genomsnitt:</strong> Använder genomsnittsförbrukning från liknande månader och justerar med säsongsfaktor.
+            </span>
+        </button>
+        <button class="toggle-btn" id="toggleTable" onclick="toggleTable()">
+            📋 Visa detaljerad tabell
+        </button>
+    </div>
+
+    <!-- Modalknappar -->
+    <div class="modal-buttons">
+        <button class="modal-btn" onclick="openModal('promptModal')">
+            📝 Prompt
+        </button>
+        <button class="modal-btn" onclick="openModal('techModal')">
+            💻 Teknik
+        </button>
+    </div>
+
+    <!-- Modal 1: Prompt -->
+    <div id="promptModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('promptModal')">&times;</span>
+            <h2>📝 Projektinstruktioner (Prompt)</h2>
+            
+            <h3>Ursprunglig Förfrågan:</h3>
+            <p>Användaren begärde en interaktiv HTML-sida för att analysera elenergiförbrukning för Bjerreds Saltsjöbad mellan augusti 2024 och september 2025.</p>
+            
+            <h3>Krav och Specifikationer:</h3>
+            <ul>
+                <li><strong>Komplett HTML-sida:</strong> En självständig fil med all funktionalitet inkluderad</li>
+                <li><strong>Interaktiv tabell:</strong> Visar månadsdata med hover-effekter för detaljer</li>
+                <li><strong>Linjediagram:</strong> Visualiserar förbrukning, kostnad och pris per kWh över tid</li>
+                <li><strong>Jämförelsevärden:</strong> Beräknade förmodade värden baserat på säsongsmönster och faktisk användning</li>
+                <li><strong>Detaljvy:</strong> Vid hover över månad visas specifik information</li>
+                <li><strong>Två modalknappar:</strong>
+                    <ul>
+                        <li>En som visar projektinstruktionerna (denna modal)</li>
+                        <li>En som beskriver tekniken som används</li>
+                    </ul>
+                </li>
+                <li><strong>Data:</strong> Utgå från användarens tabell, exkludera månader utan data</li>
+                <li><strong>Kommentarer:</strong> Detaljerade kommentarer i kod på svenska enligt användarens preferenser</li>
+            </ul>
+
+            <h3>Dataanalys Fokus:</h3>
+            <ul>
+                <li>Elenergiförbrukning månad för månad</li>
+                <li>Total kostnad och kostnad per kWh</li>
+                <li>Variationer över årstider</li>
+                <li>Fördelning mellan bad och restaurang</li>
+                <li>Jämförelse mellan förmodat och faktiskt värde</li>
+            </ul>
+
+            <h3>Särskilda Noteringar:</h3>
+            <p>Badet var stängt från mitten av februari 2025 till mitten av juli 2025, vilket påverkar fördelningen mellan bad och restaurang under dessa månader. Denna information beaktas i jämförelsevärdena.</p>
+        </div>
+    </div>
+
+    <!-- Modal 2: Teknik -->
+    <div id="techModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('techModal')">&times;</span>
+            <h2>💻 Teknisk Dokumentation</h2>
+            
+            <h3>Teknologier som Används:</h3>
+            
+            <h4>1. HTML5 (HyperText Markup Language)</h4>
+            <ul>
+                <li><strong>Syfte:</strong> Strukturerar innehållet på sidan</li>
+                <li><strong>Användning:</strong> Semantiska element som <code>&lt;div&gt;</code>, <code>&lt;table&gt;</code>, <code>&lt;canvas&gt;</code></li>
+                <li><strong>Meta-taggar:</strong> Viewport för responsiv design, charset UTF-8 för svenskt språkstöd</li>
+            </ul>
+
+            <h4>2. CSS3 (Cascading Style Sheets)</h4>
+            <ul>
+                <li><strong>CSS-variabler:</strong> För konsekvent färgtema genom hela sidan</li>
+                <li><strong>Flexbox & Grid:</strong> För responsiv layout</li>
+                <li><strong>Transitions & Animations:</strong> Smooth hover-effekter och modal-animationer</li>
+                <li><strong>Media Queries:</strong> Anpassning för mobila enheter</li>
+                <li><strong>Box-shadow:</strong> Ger djup och visuell hierarki</li>
+            </ul>
+
+            <h4>3. JavaScript (ES6+)</h4>
+            <ul>
+                <li><strong>DOM-manipulation:</strong> Dynamisk uppdatering av innehåll</li>
+                <li><strong>Event-listeners:</strong> Interaktivitet för hover och klick</li>
+                <li><strong>Array-metoder:</strong> <code>map()</code>, <code>reduce()</code>, <code>filter()</code> för databearbetning</li>
+                <li><strong>Template literals:</strong> För dynamisk HTML-generering</li>
+                <li><strong>Arrow functions:</strong> Modern funktionssyntax</li>
+            </ul>
+
+            <h4>4. Chart.js Bibliotek</h4>
+            <ul>
+                <li><strong>Version:</strong> Senaste från CDN</li>
+                <li><strong>Diagramtyper:</strong> Line charts för tidsseriedata</li>
+                <li><strong>Anpassningar:</strong> Tooltips, färgscheman, responsivitet</li>
+                <li><strong>Datasets:</strong> Flera linjer per diagram för jämförelse</li>
+            </ul>
+
+            <h3>Kodstruktur:</h3>
+            <ul>
+                <li><strong>Data-array:</strong> All månadsdata lagras i ett JavaScript-objekt</li>
+                <li><strong>Funktioner:</strong>
+                    <ul>
+                        <li><code>calculateExpectedValues()</code> - Beräknar förmodade värden</li>
+                        <li><code>createCharts()</code> - Initierar alla diagram</li>
+                        <li><code>populateTable()</code> - Fyller tabellen med data</li>
+                        <li><code>updateSummary()</code> - Uppdaterar sammanfattningskort</li>
+                        <li><code>openModal()/closeModal()</code> - Hanterar modalfönster</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>Design Principer:</h3>
+            <ul>
+                <li><strong>Responsiv design:</strong> Fungerar på desktop, tablet och mobil</li>
+                <li><strong>Tillgänglighet:</strong> Kontrastrikt färgschema, tydlig typografi</li>
+                <li><strong>Användarupplevelse:</strong> Smooth animationer, visuell feedback</li>
+                <li><strong>Performance:</strong> Optimerad rendering, lazy loading av data</li>
+            </ul>
+
+            <h3>Browser-kompatibilitet:</h3>
+            <p>Koden fungerar i alla moderna webbläsare (Chrome, Firefox, Safari, Edge) som stöder ES6+ och Canvas API.</p>
+        </div>
+    </div>
+
+    <script>
+        // ====================================
+        // GLOBAL STATE
+        // ====================================
+        // Håller koll på om förmodade värden och tabell visas
+        let showExpectedValues = false;
+        let showTable = false;
+
+        // ====================================
+        // MOMS-BERÄKNING
+        // ====================================
+        // Moms är 25% (pålägget), vilket betyder att momsandelen är 20% av totalpriset
+        // För att få pris exklusive moms: dela med 1.25 (eller multiplicera med 0.8)
+        const VAT_RATE = 1.25; // 25% moms
+
+        // ====================================
+        // DATA DEFINITION
+        // ====================================
+        // Huvuddata från användarens tabell - endast månader med faktiska värden
+        const monthlyData = [
+            { month: "Aug 2024", fullMonth: "Augusti 2024", totalKWh: 19901, daysInMonth: 31, kwhPerDay: 642, type: "Restaurang och bad", bad: 8262, restaurant: 11639, cost: 34472, costPerKwh: 1.73 },
+            { month: "Sep 2024", fullMonth: "September 2024", totalKWh: 19271, daysInMonth: 30, kwhPerDay: 642, type: "Restaurang och bad", bad: 8273, restaurant: 10998, cost: 30158, costPerKwh: 1.56 },
+            { month: "Okt 2024", fullMonth: "Oktober 2024", totalKWh: 19224, daysInMonth: 31, kwhPerDay: 620, type: "Restaurang och bad", bad: 12308, restaurant: 6916, cost: 29882, costPerKwh: 1.55 },
+            { month: "Nov 2024", fullMonth: "November 2024", totalKWh: 22849, daysInMonth: 30, kwhPerDay: 759, type: "Restaurang och bad", bad: 8010, restaurant: 14839, cost: 51492, costPerKwh: 2.26 },
+            { month: "Dec 2024", fullMonth: "December 2024", totalKWh: 24264, daysInMonth: 30, kwhPerDay: 809, type: "Restaurang och bad", bad: 14338, restaurant: 9926, cost: 50672, costPerKwh: 2.09 },
+            { month: "Jan 2025", fullMonth: "Januari 2025", totalKWh: 26815, daysInMonth: 31, kwhPerDay: 865, type: "Restaurang och bad", bad: 12250, restaurant: 14565, cost: 58462, costPerKwh: 2.18 },
+            { month: "Feb 2025", fullMonth: "Februari 2025", totalKWh: 23229, daysInMonth: 28, kwhPerDay: 830, type: "Badet stängde i februari", bad: 11605, restaurant: 11624, cost: 60285, costPerKwh: 2.60 },
+            { month: "Mar 2025", fullMonth: "Mars 2025", totalKWh: 12573, daysInMonth: 31, kwhPerDay: 406, type: "Bara restaurang", bad: 0, restaurant: 12573, cost: 26141, costPerKwh: 2.08 },
+            { month: "Apr 2025", fullMonth: "April 2025", totalKWh: 12160, daysInMonth: 30, kwhPerDay: 405, type: "Bara restaurang", bad: 0, restaurant: 12160, cost: 24516, costPerKwh: 2.02 },
+            { month: "Maj 2025", fullMonth: "Maj 2025", totalKWh: 11775, daysInMonth: 31, kwhPerDay: 380, type: "Bara restaurang", bad: 0, restaurant: 11775, cost: 23812, costPerKwh: 2.02 },
+            { month: "Jun 2025", fullMonth: "Juni 2025", totalKWh: 12073, daysInMonth: 30, kwhPerDay: 402, type: "Bara restaurang", bad: 0, restaurant: 12073, cost: 21763, costPerKwh: 1.80 },
+            { month: "Jul 2025", fullMonth: "Juli 2025", totalKWh: 17754, daysInMonth: 31, kwhPerDay: 573, type: "Badet öppnade igen i mitten av juli", bad: 4389, restaurant: 13365, cost: 32490, costPerKwh: 1.83 },
+            { month: "Aug 2025", fullMonth: "Augusti 2025", totalKWh: 23379, daysInMonth: 31, kwhPerDay: 754, type: "Restaurang och bad", bad: 11779, restaurant: 11600, cost: 47703, costPerKwh: 2.04 },
+            { month: "Sep 2025", fullMonth: "September 2025", totalKWh: 21524, daysInMonth: 30, kwhPerDay: 717, type: "Restaurang och bad", bad: 17813, restaurant: 3711, cost: 45699, costPerKwh: 2.12 }
+        ];
+
+        // ====================================
+        // FUNKTION: Beräkna förmodade värden
+        // ====================================
+        // Denna funktion skapar jämförelsevärden baserat på:
+        // 1. Säsongsmönster (vinter vs sommar)
+        // 2. Om badet är öppet eller stängt
+        // 3. Genomsnittlig förbrukning för liknande månader
+        function calculateExpectedValues() {
+            // Beräkna genomsnittsvärden för olika perioder
+            const avgFullOperation = monthlyData
+                .filter(d => d.type === "Restaurang och bad" && d.month.includes("2024"))
+                .reduce((sum, d) => sum + d.totalKWh, 0) / 
+                monthlyData.filter(d => d.type === "Restaurang och bad" && d.month.includes("2024")).length;
+            
+            const avgRestaurantOnly = monthlyData
+                .filter(d => d.type === "Bara restaurang")
+                .reduce((sum, d) => sum + d.totalKWh, 0) / 
+                monthlyData.filter(d => d.type === "Bara restaurang").length;
+
+            // Beräkna säsongsfaktorer för vinter och sommar
+            const winterMonths = monthlyData.filter(d => 
+                d.month.includes("Nov") || d.month.includes("Dec") || 
+                d.month.includes("Jan") || d.month.includes("Feb")
+            );
+            const summerMonths = monthlyData.filter(d => 
+                d.month.includes("Jun") || d.month.includes("Jul") || d.month.includes("Aug")
+            );
+            
+            const avgWinter = winterMonths.reduce((sum, d) => sum + d.totalKWh, 0) / winterMonths.length;
+            const avgSummer = summerMonths.reduce((sum, d) => sum + d.totalKWh, 0) / summerMonths.length;
+
+            // Säsongsfaktor: hur mycket mer förbrukar man på vintern jämfört med sommaren
+            const seasonalFactor = avgWinter / avgSummer;
+
+            // Beräkna förmodat värde för varje månad baserat på säsong och drift
+            return monthlyData.map(d => {
+                let expectedKWh;
+                
+                // Vinter (Nov-Feb): Högre förbrukning pga uppvärmning
+                if (d.month.includes("Nov") || d.month.includes("Dec") || 
+                    d.month.includes("Jan") || d.month.includes("Feb")) {
+                    expectedKWh = d.type === "Bara restaurang" 
+                        ? avgRestaurantOnly * seasonalFactor 
+                        : avgFullOperation * seasonalFactor;
+                }
+                // Sommar (Jun-Aug): Lägre förbrukning
+                else if (d.month.includes("Jun") || d.month.includes("Jul") || d.month.includes("Aug")) {
+                    expectedKWh = d.type === "Bara restaurang" 
+                        ? avgRestaurantOnly 
+                        : avgFullOperation;
+                }
+                // Vår/Höst (Mar-Maj, Sep-Okt): Mellannivå
+                else {
+                    expectedKWh = d.type === "Bara restaurang" 
+                        ? avgRestaurantOnly * 1.1 
+                        : avgFullOperation * 1.1;
+                }
+
+                // Beräkna förmodad kostnad baserat på genomsnittspris
+                const expectedCost = expectedKWh * d.costPerKwh;
+
+                // UPPDATERING: Beräkna priser exklusive moms (25% moms = dela med 1.25)
+                const costExVAT = d.cost / VAT_RATE;
+                const costPerKwhExVAT = d.costPerKwh / VAT_RATE;
+                const expectedCostExVAT = expectedCost / VAT_RATE;
+
+                return {
+                    ...d,
+                    // Exklusive moms-värden
+                    costExVAT: Math.round(costExVAT),
+                    costPerKwhExVAT: parseFloat(costPerKwhExVAT.toFixed(2)),
+                    // Förmodade värden
+                    expectedKWh: Math.round(expectedKWh),
+                    expectedCost: Math.round(expectedCost),
+                    expectedCostExVAT: Math.round(expectedCostExVAT),
+                    // Skillnader
+                    diffKWh: d.totalKWh - Math.round(expectedKWh),
+                    diffCost: d.cost - Math.round(expectedCost),
+                    diffPercent: ((d.totalKWh - expectedKWh) / expectedKWh * 100).toFixed(1)
+                };
+            });
+        }
+
+        // Berika data med förmodade värden och moms-beräkningar
+        const enrichedData = calculateExpectedValues();
+
+        // ====================================
+        // FUNKTION: Uppdatera sammanfattning
+        // ====================================
+        // Beräknar och visar totalsummor i sammanfattningskorten
+        // UPPDATERING: Nu inkluderar både priser inklusive och exklusive moms
+        function updateSummary() {
+            const totalKWh = enrichedData.reduce((sum, d) => sum + d.totalKWh, 0);
+            const totalCost = enrichedData.reduce((sum, d) => sum + d.cost, 0);
+            const totalCostExVAT = enrichedData.reduce((sum, d) => sum + d.costExVAT, 0);
+            const avgPrice = totalCost / totalKWh;
+            const avgPriceExVAT = totalCostExVAT / totalKWh;
+
+            // Uppdatera DOM-element med formaterade värden
+            document.getElementById('totalConsumption').textContent = totalKWh.toLocaleString('sv-SE');
+            document.getElementById('totalCost').textContent = totalCost.toLocaleString('sv-SE');
+            document.getElementById('totalCostExVAT').textContent = totalCostExVAT.toLocaleString('sv-SE');
+            document.getElementById('avgPrice').textContent = avgPrice.toFixed(2);
+            document.getElementById('avgPriceExVAT').textContent = avgPriceExVAT.toFixed(2);
+        }
+
+        // ====================================
+        // FUNKTION: Skapa diagram
+        // ====================================
+        // Globala referenser till diagram för att kunna uppdatera dem
+        let chart1, chart2, chart3, chart4;
+
+        // Skapar alla fyra linjediagram med Chart.js
+        function createCharts() {
+            // Extrahera labels (månader) för x-axeln
+            const labels = enrichedData.map(d => d.month);
+
+            // ---- DIAGRAM 1: Förbrukning (kWh) ----
+            // Jämför faktisk förbrukning med förmodad förbrukning
+            const ctx1 = document.getElementById('consumptionChart').getContext('2d');
+            
+            // Skapa dataset-array - förmodad data läggs till om showExpectedValues är true
+            const datasets1 = [
+                {
+                    label: 'Faktisk förbrukning',
+                    data: enrichedData.map(d => d.totalKWh),
+                    borderColor: '#3498db',
+                    backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true
+                }
+            ];
+
+            if (showExpectedValues) {
+                datasets1.push({
+                    label: 'Förmodad förbrukning',
+                    data: enrichedData.map(d => d.expectedKWh),
+                    borderColor: '#95a5a6',
+                    backgroundColor: 'rgba(149, 165, 166, 0.1)',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    tension: 0.4,
+                    fill: false
+                });
+            }
+
+            chart1 = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: datasets1
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                // Custom tooltip för att visa detaljerad information
+                                afterLabel: function(context) {
+                                    const dataPoint = enrichedData[context.dataIndex];
+                                    const monthName = dataPoint.month;
+                                    
+                                    // Specialförklaring för sept-dec 2024
+                                    if (['Sep 2024', 'Okt 2024', 'Nov 2024', 'Dec 2024'].includes(monthName)) {
+                                        return '\n⚠️ Observera: Svängningar i fördelning mellan bad och restaurang beror troligen på att avläsning inte sker exakt samma dag varje månad.';
+                                    }
+                                    return '';
+                                },
+                                label: function(context) {
+                                    const dataPoint = enrichedData[context.dataIndex];
+                                    if (context.datasetIndex === 0) {
+                                        const lines = [
+                                            `Faktisk: ${dataPoint.totalKWh.toLocaleString()} kWh`,
+                                            `Typ: ${dataPoint.type}`
+                                        ];
+                                        if (showExpectedValues) {
+                                            lines.splice(1, 0, 
+                                                `Förmodad: ${dataPoint.expectedKWh.toLocaleString()} kWh`,
+                                                `Skillnad: ${dataPoint.diffKWh > 0 ? '+' : ''}${dataPoint.diffKWh.toLocaleString()} kWh (${dataPoint.diffPercent}%)`
+                                            );
+                                        }
+                                        return lines;
+                                    }
+                                    return `Förmodad: ${context.parsed.y.toLocaleString()} kWh`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString() + ' kWh';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // ---- DIAGRAM 2: Kostnad (kr) ----
+            // UPPDATERING: Visar nu både kostnad inklusive och exklusive moms
+            const ctx2 = document.getElementById('costChart').getContext('2d');
+            
+            const datasets2 = [
+                {
+                    label: 'Faktisk kostnad (inkl moms)',
+                    data: enrichedData.map(d => d.cost),
+                    borderColor: '#e74c3c',
+                    backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true
+                },
+                {
+                    label: 'Faktisk kostnad (exkl moms)',
+                    data: enrichedData.map(d => d.costExVAT),
+                    borderColor: '#27ae60',
+                    backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true
+                }
+            ];
+
+            if (showExpectedValues) {
+                datasets2.push({
+                    label: 'Förmodad kostnad (inkl moms)',
+                    data: enrichedData.map(d => d.expectedCost),
+                    borderColor: '#95a5a6',
+                    backgroundColor: 'rgba(149, 165, 166, 0.1)',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    tension: 0.4,
+                    fill: false
+                });
+                datasets2.push({
+                    label: 'Förmodad kostnad (exkl moms)',
+                    data: enrichedData.map(d => d.expectedCostExVAT),
+                    borderColor: '#7f8c8d',
+                    backgroundColor: 'rgba(127, 140, 141, 0.1)',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    tension: 0.4,
+                    fill: false
+                });
+            }
+
+            chart2 = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: datasets2
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                afterLabel: function(context) {
+                                    const dataPoint = enrichedData[context.dataIndex];
+                                    const monthName = dataPoint.month;
+                                    
+                                    if (['Sep 2024', 'Okt 2024', 'Nov 2024', 'Dec 2024'].includes(monthName)) {
+                                        return '\n⚠️ Observera: Svängningar i fördelning mellan bad och restaurang beror troligen på att avläsning inte sker exakt samma dag varje månad.';
+                                    }
+                                    return '';
+                                },
+                                label: function(context) {
+                                    const dataPoint = enrichedData[context.dataIndex];
+                                    // UPPDATERING: Visar nu både inkl och exkl moms i tooltip
+                                    if (context.datasetIndex === 0) {
+                                        // Faktisk kostnad inkl moms
+                                        const lines = [
+                                            `Faktisk (inkl moms): ${dataPoint.cost.toLocaleString()} kr`,
+                                            `Faktisk (exkl moms): ${dataPoint.costExVAT.toLocaleString()} kr`,
+                                            `Pris/kWh (inkl moms): ${dataPoint.costPerKwh} kr`,
+                                            `Pris/kWh (exkl moms): ${dataPoint.costPerKwhExVAT} kr`
+                                        ];
+                                        return lines;
+                                    } else if (context.datasetIndex === 1) {
+                                        // Faktisk kostnad exkl moms
+                                        return `Faktisk (exkl moms): ${context.parsed.y.toLocaleString()} kr`;
+                                    } else if (showExpectedValues && context.datasetIndex === 2) {
+                                        // Förmodad kostnad inkl moms
+                                        return `Förmodad (inkl moms): ${context.parsed.y.toLocaleString()} kr`;
+                                    } else if (showExpectedValues && context.datasetIndex === 3) {
+                                        // Förmodad kostnad exkl moms
+                                        return `Förmodad (exkl moms): ${context.parsed.y.toLocaleString()} kr`;
+                                    }
+                                    return '';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString() + ' kr';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // ---- DIAGRAM 3: Pris per kWh med säsongsfärger ----
+            // UPPDATERING: Visar nu både pris inklusive och exklusive moms
+            // Funktion för att avgöra om en månad är vinter (okt-mar) eller sommar (apr-aug)
+            function getSeason(month) {
+                const winterMonths = ['Okt', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
+                const summerMonths = ['Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep'];
+                
+                for (let wMonth of winterMonths) {
+                    if (month.includes(wMonth)) return 'winter';
+                }
+                for (let sMonth of summerMonths) {
+                    if (month.includes(sMonth)) return 'summer';
+                }
+                return 'summer';
+            }
+
+            // Beräkna medelpris för vinter och sommar (både inkl och exkl moms)
+            const winterData = enrichedData.filter(d => getSeason(d.month) === 'winter');
+            const summerData = enrichedData.filter(d => getSeason(d.month) === 'summer');
+            
+            const winterAvgPrice = (winterData.reduce((sum, d) => sum + d.costPerKwh, 0) / winterData.length).toFixed(2);
+            const summerAvgPrice = (summerData.reduce((sum, d) => sum + d.costPerKwh, 0) / summerData.length).toFixed(2);
+            const winterAvgPriceExVAT = (winterData.reduce((sum, d) => sum + d.costPerKwhExVAT, 0) / winterData.length).toFixed(2);
+            const summerAvgPriceExVAT = (summerData.reduce((sum, d) => sum + d.costPerKwhExVAT, 0) / summerData.length).toFixed(2);
+
+            // Skapa färgarray för varje datapunkt
+            const pointColors = enrichedData.map(d => 
+                getSeason(d.month) === 'winter' ? '#3498db' : '#e74c3c'
+            );
+
+            const ctx3 = document.getElementById('priceChart').getContext('2d');
+            chart3 = new Chart(ctx3, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Pris per kWh (inkl moms)',
+                        data: enrichedData.map(d => d.costPerKwh),
+                        borderColor: '#f39c12',
+                        backgroundColor: 'rgba(243, 156, 18, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: pointColors,
+                        pointBorderColor: pointColors,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    },
+                    {
+                        label: 'Pris per kWh (exkl moms)',
+                        data: enrichedData.map(d => d.costPerKwhExVAT),
+                        borderColor: '#16a085',
+                        backgroundColor: 'rgba(22, 160, 133, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: pointColors,
+                        pointBorderColor: pointColors,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `❄️ Vinter: ${winterAvgPrice} kr (inkl) / ${winterAvgPriceExVAT} kr (exkl)  |  ☀️ Sommar: ${summerAvgPrice} kr (inkl) / ${summerAvgPriceExVAT} kr (exkl)`,
+                            font: {
+                                size: 13,
+                                weight: 'bold'
+                            },
+                            padding: 15
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const dataPoint = enrichedData[context.dataIndex];
+                                    const season = getSeason(dataPoint.month);
+                                    const seasonText = season === 'winter' ? '❄️ Vinterperiod' : '☀️ Sommarperiod';
+                                    
+                                    // UPPDATERING: Tooltip visar nu både inkl och exkl moms
+                                    if (context.datasetIndex === 0) {
+                                        // Pris inkl moms
+                                        const avgText = season === 'winter' 
+                                            ? `Vinter genomsnitt (inkl moms): ${winterAvgPrice} kr/kWh`
+                                            : `Sommar genomsnitt (inkl moms): ${summerAvgPrice} kr/kWh`;
+                                        
+                                        return [
+                                            `Pris (inkl moms): ${dataPoint.costPerKwh} kr/kWh`,
+                                            `Pris (exkl moms): ${dataPoint.costPerKwhExVAT} kr/kWh`,
+                                            seasonText,
+                                            avgText,
+                                            `Total kostnad: ${dataPoint.cost.toLocaleString()} kr (inkl moms)`,
+                                            `Total förbrukning: ${dataPoint.totalKWh.toLocaleString()} kWh`
+                                        ];
+                                    } else {
+                                        // Pris exkl moms
+                                        const avgText = season === 'winter' 
+                                            ? `Vinter genomsnitt (exkl moms): ${winterAvgPriceExVAT} kr/kWh`
+                                            : `Sommar genomsnitt (exkl moms): ${summerAvgPriceExVAT} kr/kWh`;
+                                        
+                                        return [
+                                            `Pris (exkl moms): ${dataPoint.costPerKwhExVAT} kr/kWh`,
+                                            seasonText,
+                                            avgText
+                                        ];
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toFixed(2) + ' kr';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // ---- DIAGRAM 4: Fördelning Bad vs Restaurang ----
+            const ctx4 = document.getElementById('distributionChart').getContext('2d');
+            chart4 = new Chart(ctx4, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Bad (kWh)',
+                            data: enrichedData.map(d => d.bad),
+                            borderColor: '#3498db',
+                            backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Restaurang (kWh)',
+                            data: enrichedData.map(d => d.restaurant),
+                            borderColor: '#2ecc71',
+                            backgroundColor: 'rgba(46, 204, 113, 0.2)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                afterLabel: function(context) {
+                                    const dataPoint = enrichedData[context.dataIndex];
+                                    const monthName = dataPoint.month;
+                                    
+                                    if (['Sep 2024', 'Okt 2024', 'Nov 2024', 'Dec 2024'].includes(monthName)) {
+                                        return '\n⚠️ Observera: Svängningar i fördelning mellan bad och restaurang beror troligen på att avläsning inte sker exakt samma dag varje månad.';
+                                    }
+                                    return '';
+                                },
+                                label: function(context) {
+                                    const dataPoint = enrichedData[context.dataIndex];
+                                    return [
+                                        `${context.dataset.label}: ${context.parsed.y.toLocaleString()} kWh`,
+                                        `Andel: ${(context.parsed.y / dataPoint.totalKWh * 100).toFixed(1)}%`,
+                                        `Status: ${dataPoint.type}`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            stacked: false,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString() + ' kWh';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ====================================
+        // TOGGLE-FUNKTIONER
+        // ====================================
+        // Funktion för att visa/dölja förmodade värden
+        function toggleExpectedValues() {
+            showExpectedValues = !showExpectedValues;
+            const btn = document.getElementById('toggleExpected');
+            
+            if (showExpectedValues) {
+                btn.classList.add('active');
+                btn.innerHTML = '📊 Dölj förmodade värden<span class="tooltip"><strong>Hur beräknas förmodade värden?</strong><br><br><strong>1. Säsongsmönster:</strong> Vinterförbrukning (nov-feb) är ~40% högre än sommar (jun-aug) pga uppvärmning.<br><br><strong>2. Driftstatus:</strong> Beräknar separat för "Bara restaurang" vs "Restaurang och bad".<br><br><strong>3. Historiskt genomsnitt:</strong> Använder genomsnittsförbrukning från liknande månader och justerar med säsongsfaktor.</span>';
+            } else {
+                btn.classList.remove('active');
+                btn.innerHTML = '📊 Visa förmodade värden<span class="tooltip"><strong>Hur beräknas förmodade värden?</strong><br><br><strong>1. Säsongsmönster:</strong> Vinterförbrukning (nov-feb) är ~40% högre än sommar (jun-aug) pga uppvärmning.<br><br><strong>2. Driftstatus:</strong> Beräknar separat för "Bara restaurang" vs "Restaurang och bad".<br><br><strong>3. Historiskt genomsnitt:</strong> Använder genomsnittsförbrukning från liknande månader och justerar med säsongsfaktor.</span>';
+            }
+            
+            // Återskapa diagram med uppdaterade inställningar
+            chart1.destroy();
+            chart2.destroy();
+            chart3.destroy();
+            chart4.destroy();
+            createCharts();
+            
+            // Uppdatera tabell om den visas
+            if (showTable) {
+                populateTable();
+            }
+        }
+
+        // Funktion för att visa/dölja tabellen
+        function toggleTable() {
+            showTable = !showTable;
+            const tableContainer = document.querySelector('.table-container');
+            const btn = document.getElementById('toggleTable');
+            
+            if (showTable) {
+                tableContainer.classList.remove('hidden');
+                btn.classList.add('active');
+                btn.textContent = '📋 Dölj detaljerad tabell';
+                populateTable();
+            } else {
+                tableContainer.classList.add('hidden');
+                btn.classList.remove('active');
+                btn.textContent = '📋 Visa detaljerad tabell';
+            }
+        }
+
+        // ====================================
+        // FUNKTION: Fyll tabell
+        // ====================================
+        // Genererar tabellrader dynamiskt med all data
+        function populateTable() {
+            const tbody = document.getElementById('tableBody');
+            const thead = document.querySelector('#dataTable thead tr');
+            
+            // UPPDATERING: Tabellhuvud inkluderar nu också kolumner för priser exklusive moms
+            // Uppdatera tabellhuvud baserat på om förmodade värden visas
+            if (showExpectedValues) {
+                thead.innerHTML = `
+                    <th>Månad</th>
+                    <th>Typ av månad</th>
+                    <th>Total kWh</th>
+                    <th>kWh/dag</th>
+                    <th>Bad (kWh)</th>
+                    <th>Restaurang (kWh)</th>
+                    <th>Kostnad inkl moms (kr)</th>
+                    <th>Kostnad exkl moms (kr)</th>
+                    <th>kr/kWh inkl moms</th>
+                    <th>kr/kWh exkl moms</th>
+                    <th>Förmodat vs Faktiskt</th>
+                `;
+            } else {
+                thead.innerHTML = `
+                    <th>Månad</th>
+                    <th>Typ av månad</th>
+                    <th>Total kWh</th>
+                    <th>kWh/dag</th>
+                    <th>Bad (kWh)</th>
+                    <th>Restaurang (kWh)</th>
+                    <th>Kostnad inkl moms (kr)</th>
+                    <th>Kostnad exkl moms (kr)</th>
+                    <th>kr/kWh inkl moms</th>
+                    <th>kr/kWh exkl moms</th>
+                `;
+            }
+            
+            tbody.innerHTML = enrichedData.map((d, index) => {
+                // Bestäm färg för trend-indikator
+                const trendClass = d.diffKWh > 0 ? 'trend-up' : 'trend-down';
+                const trendSymbol = d.diffKWh > 0 ? '▲' : '▼';
+                
+                // Bestäm om denna rad ska ha varning för avläsningssvängningar
+                const hasReadingWarning = ['Sep 2024', 'Okt 2024', 'Nov 2024', 'Dec 2024'].includes(d.month);
+                const warningTitle = hasReadingWarning 
+                    ? 'title="⚠️ Observera: Svängningar i fördelning mellan bad och restaurang beror troligen på att avläsning inte sker exakt samma dag varje månad."'
+                    : '';
+                
+                // UPPDATERING: Tabellrader inkluderar nu också priser exklusive moms
+                let row = `
+                    <tr ${warningTitle} style="${hasReadingWarning ? 'background-color: #fff3cd;' : ''}">
+                        <td><strong>${d.fullMonth}</strong></td>
+                        <td>${d.type}</td>
+                        <td>${d.totalKWh.toLocaleString()} kWh</td>
+                        <td>${d.kwhPerDay} kWh</td>
+                        <td>${d.bad.toLocaleString()} kWh</td>
+                        <td>${d.restaurant.toLocaleString()} kWh</td>
+                        <td>${d.cost.toLocaleString()} kr</td>
+                        <td>${d.costExVAT.toLocaleString()} kr</td>
+                        <td>${d.costPerKwh.toFixed(2)} kr/kWh</td>
+                        <td>${d.costPerKwhExVAT.toFixed(2)} kr/kWh</td>
+                `;
+                
+                // Lägg till förmodade värden-kolumn om den är aktiverad
+                if (showExpectedValues) {
+                    row += `
+                        <td>
+                            Faktisk: ${d.totalKWh.toLocaleString()} kWh<br>
+                            Förmodad: ${d.expectedKWh.toLocaleString()} kWh<br>
+                            <span class="${trendClass}">
+                                ${trendSymbol} ${d.diffKWh > 0 ? '+' : ''}${d.diffKWh.toLocaleString()} kWh (${d.diffPercent}%)
+                            </span>
+                        </td>
+                    `;
+                }
+                
+                row += `</tr>`;
+                return row;
+            }).join('');
+
+            // UPPDATERING: Klick-event visar nu också priser exklusive moms
+            // Lägg till hover-effekt för ytterligare visuell feedback
+            tbody.querySelectorAll('tr').forEach((row, index) => {
+                row.addEventListener('click', () => {
+                    const data = enrichedData[index];
+                    let message = `Detaljer för ${data.fullMonth}:\n\n` +
+                          `Total förbrukning: ${data.totalKWh.toLocaleString()} kWh\n` +
+                          `Total kostnad (inkl moms): ${data.cost.toLocaleString()} kr\n` +
+                          `Total kostnad (exkl moms): ${data.costExVAT.toLocaleString()} kr\n` +
+                          `Pris per kWh (inkl moms): ${data.costPerKwh} kr\n` +
+                          `Pris per kWh (exkl moms): ${data.costPerKwhExVAT} kr\n\n` +
+                          `Fördelning:\n` +
+                          `- Bad: ${data.bad.toLocaleString()} kWh (${(data.bad/data.totalKWh*100).toFixed(1)}%)\n` +
+                          `- Restaurang: ${data.restaurant.toLocaleString()} kWh (${(data.restaurant/data.totalKWh*100).toFixed(1)}%)\n\n` +
+                          `Status: ${data.type}`;
+                    
+                    if (showExpectedValues) {
+                        message += `\n\nFörmodad förbrukning: ${data.expectedKWh.toLocaleString()} kWh\n` +
+                                  `Skillnad: ${data.diffKWh > 0 ? '+' : ''}${data.diffKWh.toLocaleString()} kWh (${data.diffPercent}%)\n\n` +
+                                  `Förmodad kostnad (inkl moms): ${data.expectedCost.toLocaleString()} kr\n` +
+                                  `Förmodad kostnad (exkl moms): ${data.expectedCostExVAT.toLocaleString()} kr\n` +
+                                  `Skillnad: ${data.diffCost > 0 ? '+' : ''}${data.diffCost.toLocaleString()} kr`;
+                    }
+                    
+                    // Lägg till varning för sept-dec 2024
+                    if (['Sep 2024', 'Okt 2024', 'Nov 2024', 'Dec 2024'].includes(data.month)) {
+                        message += '\n\n⚠️ Observera: Svängningar i fördelning mellan bad och restaurang beror troligen på att avläsning inte sker exakt samma dag varje månad.';
+                    }
+                    
+                    alert(message);
+                });
+            });
+        }
+
+        // ====================================
+        // MODAL FUNKTIONER
+        // ====================================
+        // Funktioner för att öppna och stänga modalfönster
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+            // Förhindra scrollning i bakgrunden när modal är öppen
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            // Återställ scrollning
+            document.body.style.overflow = 'auto';
+        }
+
+        // Stäng modal om användaren klickar utanför innehållet
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Stäng modal med Escape-tangenten
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.style.display = 'none';
+                });
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // ====================================
+        // INITIALISERING
+        // ====================================
+        // Kör alla funktioner när sidan är laddad
+        window.addEventListener('DOMContentLoaded', () => {
+            updateSummary();
+            createCharts();
+            // Tabellen är dold som standard, så vi fyller den inte förrän användaren klickar på knappen
+        });
+    </script>
+</body>
+</html>

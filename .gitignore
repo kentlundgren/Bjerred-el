@@ -1,0 +1,33 @@
+# Windows-specifika filer
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# macOS-specifika filer
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Temporära filer och backup
+*~
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# IDE och editor-specifika filer
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Log-filer
+*.log
+
+# Komprimerade filer (om du skapar backups)
+*.zip
+*.rar
+*.7z
+*.tar.gz
