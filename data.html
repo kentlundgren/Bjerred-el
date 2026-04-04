@@ -358,6 +358,7 @@
                 <li>Klicka "Beräkna och generera kod" när du är klar</li>
                 <li>Kopiera den genererade koden och klistra in i index.html (ersätt den gamla monthlyData-arrayen)</li>
                 <li>"Lägg till ny månad" skapar en tom rad längst ner</li>
+                <li><strong>Elkostnad per månad:</strong> Fakturan brukar komma cirka <strong>10 dagar efter månadsslut</strong> (t.ex. mars kostnad runt 10 april). Sätt <strong>kostnad (kr) = 0</strong> och <strong>kr/kWh = 0</strong> för aktuell månad tills du har beloppet, och uppdatera när fakturan finns.</li>
             </ul>
         </div>
 
@@ -412,11 +413,12 @@
         // ====================================
         // URSPRUNGLIG DATA från index.html
         // ====================================
-        // Här är all befintlig data från augusti 2024 till februari 2026
+        // Här är all befintlig data från augusti 2024 till mars 2026
         // UPPDATERING 2026-01: Lagt till data för oktober-december 2025
         // UPPDATERING 2026-02: Lagt till data för januari 2026 (kostnad uppskattat)
         // UPPDATERING 2026-03: Lagt till data för februari 2026 enligt inmatad tabell (hårdkodat)
         // UPPDATERING 2026-03: Februari 2026 — bad 15660 kWh, restaurang 16342 kWh (bytt plats mot tidigare hårdkodning)
+        // UPPDATERING 2026-03: Mars 2026 — kWh enligt användare; kostnad 0 tills faktura (ca 10:e nästa månad efter månadsskifte)
         const originalData = [
             { month: "Aug", year: 2024, fullMonth: "Augusti 2024", totalKWh: 19901, daysInMonth: 31, kwhPerDay: 642, type: "Restaurang och bad", bad: 8262, restaurant: 11639, cost: 34472, costPerKwh: 1.73 },
             { month: "Sep", year: 2024, fullMonth: "September 2024", totalKWh: 19271, daysInMonth: 30, kwhPerDay: 642, type: "Restaurang och bad", bad: 8273, restaurant: 10998, cost: 30158, costPerKwh: 1.56 },
@@ -436,7 +438,8 @@
             { month: "Nov", year: 2025, fullMonth: "November 2025", totalKWh: 27433, daysInMonth: 30, kwhPerDay: 914, type: "Restaurang och bad", bad: 16608, restaurant: 10825, cost: 64248, costPerKwh: 2.34 },
             { month: "Dec", year: 2025, fullMonth: "December 2025", totalKWh: 30015, daysInMonth: 31, kwhPerDay: 968, type: "Restaurang och bad", bad: 18602, restaurant: 11413, cost: 62760, costPerKwh: 2.09 },
             { month: "Jan", year: 2026, fullMonth: "Januari 2026", totalKWh: 35422, daysInMonth: 31, kwhPerDay: 1143, type: "Restaurang och bad", bad: 18836, restaurant: 16586, cost: 90779, costPerKwh: 2.56 },
-            { month: "Feb", year: 2026, fullMonth: "Februari 2026", totalKWh: 32002, daysInMonth: 28, kwhPerDay: 1143, type: "Restaurang och bad", bad: 15660, restaurant: 16342, cost: 82794, costPerKwh: 2.59 }
+            { month: "Feb", year: 2026, fullMonth: "Februari 2026", totalKWh: 32002, daysInMonth: 28, kwhPerDay: 1143, type: "Restaurang och bad", bad: 15660, restaurant: 16342, cost: 82794, costPerKwh: 2.59 },
+            { month: "Mar", year: 2026, fullMonth: "Mars 2026", totalKWh: 28074, daysInMonth: 31, kwhPerDay: 906, type: "Restaurang och bad", bad: 17772, restaurant: 10302, cost: 0, costPerKwh: 0 }
         ];
 
         // Kopiera ursprungsdata till arbetsdata (currentData används för redigering)
