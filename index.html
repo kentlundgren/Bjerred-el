@@ -801,10 +801,8 @@
         <button class="toggle-btn" id="toggleExpected" onclick="toggleExpectedValues()">
             📊 Visa förmodade värden
             <span class="tooltip">
-                <strong>Hur beräknas förmodade värden?</strong><br><br>
-                <strong>1. Säsongsmönster:</strong> Vinterförbrukning (nov-feb) är ~40% högre än sommar (jun-aug) pga uppvärmning.<br><br>
-                <strong>2. Driftstatus:</strong> Beräknar separat för "Bara restaurang" vs "Restaurang och bad".<br><br>
-                <strong>3. Historiskt genomsnitt:</strong> Använder genomsnittsförbrukning från liknande månader och justerar med säsongsfaktor.
+                <strong>Förmodade värden</strong><br><br>
+                Beräknas enbart från er <strong>monthlyData</strong> här på sidan (ingen SMHI-import). Olika baslinjer före och efter större bastu (från aug 2025), särskilda regler för stängnings- och öppningsmånad, samt säsongs­justering per driftläge. Se <strong>Teknik</strong>-modalen under «Förmodade värden — datakällor».
             </span>
         </button>
         <button class="toggle-btn" id="toggleTable" onclick="toggleTable()">
@@ -858,7 +856,7 @@
             </ul>
 
             <h3>Särskilda Noteringar:</h3>
-            <p>Badet var stängt från mitten av februari 2025 till mitten av juli 2025, vilket påverkar fördelningen mellan bad och restaurang under dessa månader. Denna information beaktas i jämförelsevärdena.</p>
+            <p>Bastun/badet var stängt från mitten av februari 2025 till mitten av juli 2025. Från mitten av juli 2025 har anläggningen större bastu­utrymmen efter ombyggnad. Förmodade värden i diagrammen tar hänsyn till driftläge, övergångsmånader och skilda baslinjer före/efter ombyggnaden; de använder inte importerade temperaturserier (se «Förmodade värden — datakällor» under Teknik).</p>
         </div>
     </div>
 
@@ -915,6 +913,16 @@
                         <li><code>openModal()/closeModal()</code> - Hanterar modalfönster</li>
                     </ul>
                 </li>
+            </ul>
+
+            <h3>Förmodade värden — datakällor</h3>
+            <ul>
+                <li><strong>Primär källa:</strong> Månadsdata i <code>monthlyData</code> i det här dokumentet (faktisk kWh och kostnad).</li>
+                <li><strong>Temperatur / utomhusklimat:</strong> Ingen inläsning från SMHI eller annat väder-API. Sydvästra Skånes (Bjärreds) mildare vinter relativt norra Sverige återspeglas bara <em>indirekt</em> genom er egen historiska förbrukning. För allmän klimat­bakgrund, se SMHI:s beskrivning av Sveriges klimat, t.ex.
+                    <a href="https://www.smhi.se/kunskapsbanken/klimat/sveriges-klimat-de-langa-mätserierna-samt-aktuella-normal" target="_blank" rel="noopener noreferrer">SMHI — långa mätserier och normalperioder</a>.
+                </li>
+                <li><strong>Säsong:</strong> Grova vinter/sommar/vår-höst‑klasser kopplade till uppvärmnings­behov — inte graddagar per dygn.</li>
+                <li><strong>Tolkning:</strong> Linjen «förmodad» är ett internt jämförelse­stöd, inte en prognos eller energi­expertmodell.</li>
             </ul>
 
             <h3>Design Principer:</h3>
@@ -981,82 +989,139 @@
         // ====================================
         // FUNKTION: Beräkna förmodade värden
         // ====================================
-        // Denna funktion skapar jämförelsevärden baserat på:
-        // 1. Säsongsmönster (vinter vs sommar)
-        // 2. Om badet är öppet eller stängt
-        // 3. Genomsnittlig förbrukning för liknande månader
+        // UPPDATERING: Ombyggnad 2025 (större bastu från mitten av juli), stängning feb–juli,
+        // samt tydligare säsongslogik. Primär datakälla: er egen monthlyData (ingen importerad temperaturserie).
+        // Klimat Skåne/Bjärred: ingen SMHI-API — sydvästskånsk profil återspeglas indirekt via era faktiska
+        // "Restaurang och bad"-månader. Referens för allmän beskrivning: SMHI, "Sveriges klimat"
+        // https://www.smhi.se/kunskapsbanken/klimat/sveriges-klimat-de-langa-mätserierna-samt-aktuella-normal
         function calculateExpectedValues() {
-            // Beräkna genomsnittsvärden för olika perioder
-            const avgFullOperation = monthlyData
-                .filter(d => d.type === "Restaurang och bad" && d.month.includes("2024"))
-                .reduce((sum, d) => sum + d.totalKWh, 0) / 
-                monthlyData.filter(d => d.type === "Restaurang och bad" && d.month.includes("2024")).length;
-            
-            const avgRestaurantOnly = monthlyData
-                .filter(d => d.type === "Bara restaurang")
-                .reduce((sum, d) => sum + d.totalKWh, 0) / 
-                monthlyData.filter(d => d.type === "Bara restaurang").length;
+            const MONTH_ABBR = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'];
 
-            // Beräkna säsongsfaktorer för vinter och sommar
-            const winterMonths = monthlyData.filter(d => 
-                d.month.includes("Nov") || d.month.includes("Dec") || 
-                d.month.includes("Jan") || d.month.includes("Feb")
-            );
-            const summerMonths = monthlyData.filter(d => 
-                d.month.includes("Jun") || d.month.includes("Jul") || d.month.includes("Aug")
-            );
-            
-            const avgWinter = winterMonths.reduce((sum, d) => sum + d.totalKWh, 0) / winterMonths.length;
-            const avgSummer = summerMonths.reduce((sum, d) => sum + d.totalKWh, 0) / summerMonths.length;
+            function parseMonthYear(monthLabel) {
+                const [abbr, yStr] = monthLabel.split(' ');
+                return { abbr, year: parseInt(yStr, 10) };
+            }
 
-            // Säsongsfaktor: hur mycket mer förbrukar man på vintern jämfört med sommaren
-            const seasonalFactor = avgWinter / avgSummer;
+            function monthIx(abbr) {
+                return MONTH_ABBR.indexOf(abbr);
+            }
 
-            // Beräkna förmodat värde för varje månad baserat på säsong och drift
-            return monthlyData.map(d => {
+            /** Bjärred/Skåne: grov säsongsindelning kopplad till uppvärmningsbehov (inte graderade dags-temperaturer). */
+            function seasonBucket(abbr) {
+                if (['Nov', 'Dec', 'Jan', 'Feb'].includes(abbr)) return 'winter';
+                if (['Jun', 'Jul', 'Aug'].includes(abbr)) return 'summer';
+                return 'shoulder';
+            }
+
+            function mean(arr) {
+                if (!arr.length) return NaN;
+                return arr.reduce((s, v) => s + v, 0) / arr.length;
+            }
+
+            /**
+             * För varje säsong: förhållande mellan snitt kWh den säsongen och över alla angivna rader.
+             * Används bara på jämförbara driftslägen (restaurang-only vs rest+bad skiljs åt).
+             */
+            function seasonalMultipliers(rows) {
+                const overall = mean(rows.map((r) => r.totalKWh));
+                const bySeason = (se) =>
+                    mean(rows.filter((r) => seasonBucket(parseMonthYear(r.month).abbr) === se).map((r) => r.totalKWh));
+                if (!Number.isFinite(overall) || overall <= 0) {
+                    return { winter: 1.15, summer: 0.92, shoulder: 1.05 };
+                }
+                const w = bySeason('winter');
+                const su = bySeason('summer');
+                const sh = bySeason('shoulder');
+                return {
+                    winter: Number.isFinite(w) && w > 0 ? w / overall : 1.15,
+                    summer: Number.isFinite(su) && su > 0 ? su / overall : 0.92,
+                    shoulder: Number.isFinite(sh) && sh > 0 ? sh / overall : 1.05
+                };
+            }
+
+            const restaurantOnlyRows = monthlyData.filter((d) => d.type === 'Bara restaurang');
+            const avgRestaurantOnly = mean(restaurantOnlyRows.map((d) => d.totalKWh));
+            const multiRestaurantOnly = seasonalMultipliers(restaurantOnlyRows);
+
+            const restBadRows = monthlyData.filter((d) => d.type === 'Restaurang och bad');
+            const multiRestBad = seasonalMultipliers(restBadRows);
+
+            // Före större bastubyggnad: "Restaurang och bad" aug 2024–jan 2025 (feb 2025 = annan typ)
+            const fullOpPre = restBadRows.filter((d) => {
+                const { abbr, year } = parseMonthYear(d.month);
+                if (year < 2025) return true;
+                if (year === 2025 && monthIx(abbr) <= monthIx('Jan')) return true;
+                return false;
+            });
+
+            // Efter ombyggnad: augusti 2025 och framåt (ny volym/aggregat; större bastur)
+            const fullOpPost = restBadRows.filter((d) => {
+                const { abbr, year } = parseMonthYear(d.month);
+                if (year >= 2026) return true;
+                if (year === 2025 && monthIx(abbr) >= monthIx('Aug')) return true;
+                return false;
+            });
+
+            const avgFullPre = mean(fullOpPre.map((d) => d.totalKWh));
+            const avgFullPost = mean(fullOpPost.map((d) => d.totalKWh));
+
+            const jan25 = monthlyData.find((d) => d.month === 'Jan 2025');
+            const mar25 = monthlyData.find((d) => d.month === 'Mar 2025');
+            const jun25 = monthlyData.find((d) => d.month === 'Jun 2025');
+            const aug25 = monthlyData.find((d) => d.month === 'Aug 2025');
+
+            return monthlyData.map((d) => {
+                const { abbr, year } = parseMonthYear(d.month);
+                const se = seasonBucket(abbr);
                 let expectedKWh;
-                
-                // Vinter (Nov-Feb): Högre förbrukning pga uppvärmning
-                if (d.month.includes("Nov") || d.month.includes("Dec") || 
-                    d.month.includes("Jan") || d.month.includes("Feb")) {
-                    expectedKWh = d.type === "Bara restaurang" 
-                        ? avgRestaurantOnly * seasonalFactor 
-                        : avgFullOperation * seasonalFactor;
-                }
-                // Sommar (Jun-Aug): Lägre förbrukning
-                else if (d.month.includes("Jun") || d.month.includes("Jul") || d.month.includes("Aug")) {
-                    expectedKWh = d.type === "Bara restaurang" 
-                        ? avgRestaurantOnly 
-                        : avgFullOperation;
-                }
-                // Vår/Höst (Mar-Maj, Sep-Okt): Mellannivå
-                else {
-                    expectedKWh = d.type === "Bara restaurang" 
-                        ? avgRestaurantOnly * 1.1 
-                        : avgFullOperation * 1.1;
+
+                if (d.type === 'Bara restaurang') {
+                    expectedKWh = avgRestaurantOnly * multiRestaurantOnly[se];
+                } else if (d.type === 'Badet stängde i februari') {
+                    // Bastun stängd från mitten av februari: interpolera jan–mars (restaurangläge mars)
+                    if (jan25 && mar25) {
+                        expectedKWh = (jan25.totalKWh + mar25.totalKWh) / 2;
+                    } else {
+                        expectedKWh = avgRestaurantOnly * multiRestaurantOnly[se];
+                    }
+                } else if (d.type.startsWith('Badet öppnade igen')) {
+                    // Mitten av juli: blandning sista veckorna sommar-restaurant vs ny heldrift — snitt jun+aug
+                    if (jun25 && aug25) {
+                        expectedKWh = (jun25.totalKWh + aug25.totalKWh) / 2;
+                    } else {
+                        expectedKWh = (Number.isFinite(avgFullPost) ? avgFullPost : avgFullPre) * multiRestBad['summer'];
+                    }
+                } else if (d.type === 'Restaurang och bad') {
+                    const postRenovEra =
+                        year >= 2026 || (year === 2025 && monthIx(abbr) >= monthIx('Aug'));
+                    const baseFull = postRenovEra
+                        ? (Number.isFinite(avgFullPost) ? avgFullPost : avgFullPre)
+                        : avgFullPre;
+                    expectedKWh = baseFull * multiRestBad[se];
+                } else {
+                    expectedKWh = avgRestaurantOnly * multiRestaurantOnly[se];
                 }
 
-                // Beräkna förmodad kostnad baserat på genomsnittspris
+                const expRounded = Math.round(expectedKWh);
                 const expectedCost = expectedKWh * d.costPerKwh;
-
-                // UPPDATERING: Beräkna priser exklusive moms (25% moms = dela med 1.25)
                 const costExVAT = d.cost / VAT_RATE;
                 const costPerKwhExVAT = d.costPerKwh / VAT_RATE;
                 const expectedCostExVAT = expectedCost / VAT_RATE;
+                const diffPercent =
+                    expRounded > 0
+                        ? (((d.totalKWh - expRounded) / expRounded) * 100).toFixed(1)
+                        : '—';
 
                 return {
                     ...d,
-                    // Exklusive moms-värden
                     costExVAT: Math.round(costExVAT),
                     costPerKwhExVAT: parseFloat(costPerKwhExVAT.toFixed(2)),
-                    // Förmodade värden
-                    expectedKWh: Math.round(expectedKWh),
+                    expectedKWh: expRounded,
                     expectedCost: Math.round(expectedCost),
                     expectedCostExVAT: Math.round(expectedCostExVAT),
-                    // Skillnader
-                    diffKWh: d.totalKWh - Math.round(expectedKWh),
+                    diffKWh: d.totalKWh - expRounded,
                     diffCost: d.cost - Math.round(expectedCost),
-                    diffPercent: ((d.totalKWh - expectedKWh) / expectedKWh * 100).toFixed(1)
+                    diffPercent
                 };
             });
         }
@@ -1569,10 +1634,10 @@
             
             if (showExpectedValues) {
                 btn.classList.add('active');
-                btn.innerHTML = '📊 Dölj förmodade värden<span class="tooltip"><strong>Hur beräknas förmodade värden?</strong><br><br><strong>1. Säsongsmönster:</strong> Vinterförbrukning (nov-feb) är ~40% högre än sommar (jun-aug) pga uppvärmning.<br><br><strong>2. Driftstatus:</strong> Beräknar separat för "Bara restaurang" vs "Restaurang och bad".<br><br><strong>3. Historiskt genomsnitt:</strong> Använder genomsnittsförbrukning från liknande månader och justerar med säsongsfaktor.</span>';
+                btn.innerHTML = '📊 Dölj förmodade värden<span class="tooltip"><strong>Förmodade värden</strong><br><br>Beräknas från er <strong>monthlyData</strong> (ingen SMHI-import). Baslinjer före/efter större bastu (från aug 2025), särskilda regler för feb–jul 2025, säsongsfaktor per driftläge. Detaljer under <strong>Teknik</strong> → «Förmodade värden — datakällor».</span>';
             } else {
                 btn.classList.remove('active');
-                btn.innerHTML = '📊 Visa förmodade värden<span class="tooltip"><strong>Hur beräknas förmodade värden?</strong><br><br><strong>1. Säsongsmönster:</strong> Vinterförbrukning (nov-feb) är ~40% högre än sommar (jun-aug) pga uppvärmning.<br><br><strong>2. Driftstatus:</strong> Beräknar separat för "Bara restaurang" vs "Restaurang och bad".<br><br><strong>3. Historiskt genomsnitt:</strong> Använder genomsnittsförbrukning från liknande månader och justerar med säsongsfaktor.</span>';
+                btn.innerHTML = '📊 Visa förmodade värden<span class="tooltip"><strong>Förmodade värden</strong><br><br>Beräknas från er <strong>monthlyData</strong> (ingen SMHI-import). Baslinjer före/efter större bastu (från aug 2025), särskilda regler för feb–jul 2025, säsongsfaktor per driftläge. Detaljer under <strong>Teknik</strong> → «Förmodade värden — datakällor».</span>';
             }
             
             // Återskapa diagram med uppdaterade inställningar
