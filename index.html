@@ -921,7 +921,7 @@
                 <li><strong>Temperatur / utomhusklimat:</strong> Ingen inläsning från SMHI eller annat väder-API. Sydvästra Skånes (Bjärreds) mildare vinter relativt norra Sverige återspeglas bara <em>indirekt</em> genom er egen historiska förbrukning. För allmän klimat­bakgrund, se SMHI:s beskrivning av Sveriges klimat, t.ex.
                     <a href="https://www.smhi.se/kunskapsbanken/klimat/sveriges-klimat-de-langa-mätserierna-samt-aktuella-normal" target="_blank" rel="noopener noreferrer">SMHI — långa mätserier och normalperioder</a>.
                 </li>
-                <li><strong>Säsong:</strong> Grova vinter/sommar/vår-höst‑klasser kopplade till uppvärmnings­behov — inte graddagar per dygn.</li>
+                <li><strong>Säsong och kalendermånad:</strong> Grova vinter/sommar/vår-höst‑klasser används som reserv. För «Restaurang och bad» och «Bara restaurang» räknas också en <strong>månadsprofil</strong> (t.ex. snitt för alla januari månader i serie jämfört med helårssnitt) så januari kan bli en tydligare topp i den streckade linjen.</li>
                 <li><strong>Tolkning:</strong> Linjen «förmodad» är ett internt jämförelse­stöd, inte en prognos eller energi­expertmodell.</li>
             </ul>
 
@@ -1019,32 +1019,30 @@
             }
 
             /**
-             * För varje säsong: förhållande mellan snitt kWh den säsongen och över alla angivna rader.
-             * Används bara på jämförbara driftslägen (restaurang-only vs rest+bad skiljs åt).
+             * Kalender­månadsprofil: snitt kWh för den månadens bokstav / snitt över alla rader i samma driftläge.
+             * Gör att t.ex. januari (ofta kallast) kan få högre förmodat än nov/dec inom samma vinter — tidigare var
+             * hela vintern en platt multiplikator.
              */
-            function seasonalMultipliers(rows) {
+            function monthShapeFactors(rows) {
                 const overall = mean(rows.map((r) => r.totalKWh));
-                const bySeason = (se) =>
-                    mean(rows.filter((r) => seasonBucket(parseMonthYear(r.month).abbr) === se).map((r) => r.totalKWh));
-                if (!Number.isFinite(overall) || overall <= 0) {
-                    return { winter: 1.15, summer: 0.92, shoulder: 1.05 };
-                }
-                const w = bySeason('winter');
-                const su = bySeason('summer');
-                const sh = bySeason('shoulder');
-                return {
-                    winter: Number.isFinite(w) && w > 0 ? w / overall : 1.15,
-                    summer: Number.isFinite(su) && su > 0 ? su / overall : 0.92,
-                    shoulder: Number.isFinite(sh) && sh > 0 ? sh / overall : 1.05
-                };
+                const shape = {};
+                MONTH_ABBR.forEach((ab) => {
+                    const monthRows = rows.filter((r) => parseMonthYear(r.month).abbr === ab);
+                    const m = mean(monthRows.map((r) => r.totalKWh));
+                    shape[ab] =
+                        Number.isFinite(m) && m > 0 && Number.isFinite(overall) && overall > 0 ? m / overall : NaN;
+                });
+                return shape;
             }
 
             const restaurantOnlyRows = monthlyData.filter((d) => d.type === 'Bara restaurang');
             const avgRestaurantOnly = mean(restaurantOnlyRows.map((d) => d.totalKWh));
             const multiRestaurantOnly = seasonalMultipliers(restaurantOnlyRows);
+            const monthShapeRestaurant = monthShapeFactors(restaurantOnlyRows);
 
             const restBadRows = monthlyData.filter((d) => d.type === 'Restaurang och bad');
             const multiRestBad = seasonalMultipliers(restBadRows);
+            const monthShapeRestBad = monthShapeFactors(restBadRows);
 
             // Före större bastubyggnad: "Restaurang och bad" aug 2024–jan 2025 (feb 2025 = annan typ)
             const fullOpPre = restBadRows.filter((d) => {
@@ -1076,7 +1074,10 @@
                 let expectedKWh;
 
                 if (d.type === 'Bara restaurang') {
-                    expectedKWh = avgRestaurantOnly * multiRestaurantOnly[se];
+                    const shapeMo = monthShapeRestaurant[abbr];
+                    const shape =
+                        Number.isFinite(shapeMo) && shapeMo > 0 ? shapeMo : multiRestaurantOnly[se];
+                    expectedKWh = avgRestaurantOnly * shape;
                 } else if (d.type === 'Badet stängde i februari') {
                     // Bastun stängd från mitten av februari: interpolera jan–mars (restaurangläge mars)
                     if (jan25 && mar25) {
@@ -1097,9 +1098,15 @@
                     const baseFull = postRenovEra
                         ? (Number.isFinite(avgFullPost) ? avgFullPost : avgFullPre)
                         : avgFullPre;
-                    expectedKWh = baseFull * multiRestBad[se];
+                    const shapeMo = monthShapeRestBad[abbr];
+                    const shape =
+                        Number.isFinite(shapeMo) && shapeMo > 0 ? shapeMo : multiRestBad[se];
+                    expectedKWh = baseFull * shape;
                 } else {
-                    expectedKWh = avgRestaurantOnly * multiRestaurantOnly[se];
+                    const shapeMo = monthShapeRestaurant[abbr];
+                    const shape =
+                        Number.isFinite(shapeMo) && shapeMo > 0 ? shapeMo : multiRestaurantOnly[se];
+                    expectedKWh = avgRestaurantOnly * shape;
                 }
 
                 const expRounded = Math.round(expectedKWh);
