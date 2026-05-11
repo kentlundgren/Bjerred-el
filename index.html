@@ -1019,6 +1019,27 @@
             }
 
             /**
+             * För varje säsong: förhållande mellan snitt kWh den säsongen och över alla angivna rader.
+             * Används som reserv när en kalendermånad saknar data i serien.
+             */
+            function seasonalMultipliers(rows) {
+                const overall = mean(rows.map((r) => r.totalKWh));
+                const bySeason = (se) =>
+                    mean(rows.filter((r) => seasonBucket(parseMonthYear(r.month).abbr) === se).map((r) => r.totalKWh));
+                if (!Number.isFinite(overall) || overall <= 0) {
+                    return { winter: 1.15, summer: 0.92, shoulder: 1.05 };
+                }
+                const w = bySeason('winter');
+                const su = bySeason('summer');
+                const sh = bySeason('shoulder');
+                return {
+                    winter: Number.isFinite(w) && w > 0 ? w / overall : 1.15,
+                    summer: Number.isFinite(su) && su > 0 ? su / overall : 0.92,
+                    shoulder: Number.isFinite(sh) && sh > 0 ? sh / overall : 1.05
+                };
+            }
+
+            /**
              * Kalender­månadsprofil: snitt kWh för den månadens bokstav / snitt över alla rader i samma driftläge.
              * Gör att t.ex. januari (ofta kallast) kan få högre förmodat än nov/dec inom samma vinter — tidigare var
              * hela vintern en platt multiplikator.
