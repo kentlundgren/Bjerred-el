@@ -235,6 +235,31 @@
             border: 2px solid #f5c6cb;
         }
 
+        .message.warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffc107;
+        }
+
+        /* UPPDATERING: Varningspanel när bad + restaurang ≠ total kWh */
+        .kwh-validation {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 2px solid #ffc107;
+            background-color: #fff3cd;
+            color: #856404;
+            text-align: left;
+        }
+
+        .kwh-validation ul {
+            margin: 10px 0 0 1.25rem;
+        }
+
+        .kwh-validation li {
+            margin: 6px 0;
+        }
+
         /* Responsiv design */
         @media (max-width: 768px) {
             h1 {
@@ -359,11 +384,14 @@
                 <li>Kopiera den genererade koden och klistra in i index.html (ersätt den gamla monthlyData-arrayen)</li>
                 <li>"Lägg till ny månad" skapar en tom rad längst ner</li>
                 <li><strong>Elkostnad per månad:</strong> Fakturan brukar komma cirka <strong>10 dagar efter månadsslut</strong> (t.ex. mars kostnad runt 10 april). Sätt <strong>kostnad (kr) = 0</strong> och <strong>kr/kWh = 0</strong> för aktuell månad tills du har beloppet, och uppdatera när fakturan finns.</li>
+                <li><strong>kWh-kontroll:</strong> Om summan <strong>Bad + Restaurang</strong> inte är lika med <strong>Total kWh</strong> visas en varning ovanför tabellen (uppdateras när du ändrar data).</li>
             </ul>
         </div>
 
         <!-- Meddelande -->
         <div id="message" class="message"></div>
+        <!-- Varning om bad + restaurang stämmer inte mot total kWh -->
+        <div id="kwhValidationPanel" class="kwh-validation" style="display: none;" aria-live="polite"></div>
 
         <!-- Knappar -->
         <div class="button-container">
@@ -440,11 +468,51 @@
             { month: "Jan", year: 2026, fullMonth: "Januari 2026", totalKWh: 35422, daysInMonth: 31, kwhPerDay: 1143, type: "Restaurang och bad", bad: 18836, restaurant: 16586, cost: 90779, costPerKwh: 2.56 },
             { month: "Feb", year: 2026, fullMonth: "Februari 2026", totalKWh: 32002, daysInMonth: 28, kwhPerDay: 1143, type: "Restaurang och bad", bad: 15660, restaurant: 16342, cost: 82794, costPerKwh: 2.59 },
             { month: "Mar", year: 2026, fullMonth: "Mars 2026", totalKWh: 28074, daysInMonth: 31, kwhPerDay: 906, type: "Restaurang och bad", bad: 17772, restaurant: 10302, cost: 63389, costPerKwh: 2.26 },
-            { month: "Apr", year: 2026, fullMonth: "April 2026", totalKWh: 26671, daysInMonth: 31, kwhPerDay: 860, type: "Restaurang och bad", bad: 11582, restaurant: 15089, cost: 52186, costPerKwh: 1.96 }
+            { month: "Apr", year: 2026, fullMonth: "April 2026", totalKWh: 26671, daysInMonth: 31, kwhPerDay: 860, type: "Restaurang och bad", bad: 15089, restaurant: 11582, cost: 52186, costPerKwh: 1.96 }
         ];
 
         // Kopiera ursprungsdata till arbetsdata (currentData används för redigering)
         let currentData = JSON.parse(JSON.stringify(originalData));
+
+        // ====================================
+        // FUNKTION: Validera att Bad + Restaurang = Total kWh
+        // ====================================
+        // UPPDATERING: Varnar om fördelningen inte stämmer med totalen (vanlig förväxling i rutorna).
+        function validateKwhSplit() {
+            const panel = document.getElementById('kwhValidationPanel');
+            const mismatches = [];
+            currentData.forEach((d) => {
+                const bad = Math.trunc(Number(d.bad)) || 0;
+                const restaurant = Math.trunc(Number(d.restaurant)) || 0;
+                const total = Math.trunc(Number(d.totalKWh)) || 0;
+                const sum = bad + restaurant;
+                if (sum !== total) {
+                    const label = d.fullMonth || `${d.month} ${d.year}`;
+                    mismatches.push({
+                        label,
+                        total,
+                        sum,
+                        bad,
+                        restaurant,
+                        diff: total - sum
+                    });
+                }
+            });
+            if (mismatches.length === 0) {
+                panel.style.display = 'none';
+                panel.innerHTML = '';
+                return true;
+            }
+            panel.style.display = 'block';
+            const items = mismatches
+                .map((m) => {
+                    const diffStr = m.diff > 0 ? `+${m.diff}` : String(m.diff);
+                    return `<li><strong>${m.label}</strong>: Total kWh är <strong>${m.total.toLocaleString('sv-SE')}</strong>, men bad (${m.bad.toLocaleString('sv-SE')}) + restaurang (${m.restaurant.toLocaleString('sv-SE')}) = <strong>${m.sum.toLocaleString('sv-SE')}</strong> kWh (skillnad <strong>${diffStr}</strong> kWh).</li>`;
+                })
+                .join('');
+            panel.innerHTML = `<strong>⚠️ Varning:</strong> För en eller flera månader stämmer inte summan av Bad och Restaurang med Total kWh.<ul>${items}</ul><p style="margin-top:10px;font-size:0.95em;">Rätta värdena i tabellen &mdash; varningen försvinner när summan stämmer.</p>`;
+            return false;
+        }
 
         // ====================================
         // FUNKTION: Initiera tabell
@@ -460,6 +528,7 @@
             });
 
             showMessage('Tabell laddad!', 'success');
+            validateKwhSplit();
         }
 
         // ====================================
@@ -644,7 +713,12 @@
 
             // Visa i output
             document.getElementById('output').textContent = code;
-            showMessage('Kod genererad! Kopiera koden och klistra in i index.html.', 'success');
+            const kwhOk = validateKwhSplit();
+            if (kwhOk) {
+                showMessage('Kod genererad! Kopiera koden och klistra in i index.html.', 'success');
+            } else {
+                showMessage('Kod genererad, men se varningen ovan: Bad + Restaurang stämmer inte med Total kWh för en eller flera rader.', 'warning');
+            }
         }
 
         // ====================================
