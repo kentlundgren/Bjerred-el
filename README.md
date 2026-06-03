@@ -1,145 +1,108 @@
-# ⚡ Elenergiförbrukning - Bjerreds Saltsjöbad
+# Elenergiförbrukning - Bjerreds Saltsjöbad
 
 Ett interaktivt webbaserat analysverktyg för att visualisera och analysera elenergiförbrukning för Bjerreds Saltsjöbad.
 
-## 🌐 Live Demo
+## Live-versioner
 
-**👉 [Visa live-versionen här](https://kentlundgren.github.io/Bjerred-el/)**
+| Sida | Länk |
+|------|------|
+| Huvudsida – Bjerreds Saltsjöbad | [kentlundgren.github.io/foreningar/BjerredsSaltsjobad/](https://kentlundgren.github.io/foreningar/BjerredsSaltsjobad/) |
+| Elöversikt (index) | [kentlundgren.github.io/Bjerred-el/](https://kentlundgren.github.io/Bjerred-el/) |
+| Elanalys: Före & efter ombyggnad | [kentlundgren.github.io/Bjerred-el/fore_och_efter_ombyggnad.html](https://kentlundgren.github.io/Bjerred-el/fore_och_efter_ombyggnad.html) |
+| GitHub-repository | [github.com/kentlundgren/Bjerred-el](https://github.com/kentlundgren/Bjerred-el) |
 
-## 📖 Om Projektet
+## Om projektet
 
-Detta projekt visualiserar elenergiförbrukning för Bjerreds Saltsjöbad från augusti 2024 och framåt. Elförbrukningen domineras av ett professionellt bastusystem med **Harvia Qube 360** bastuaggregat på 36 kW.
+Projektet visualiserar elenergiförbrukning för Bjerreds Saltsjöbad från augusti 2024 och framåt. Elförbrukningen domineras av ett professionellt bastusystem med **Harvia Qube 360** (36 kW). Anläggningen byggdes om under 2025: bastun var stängd från mitten av februari till mitten av juli 2025, och öppnade sedan med utökad kapacitet (18 → 27 platser per bastu).
 
-### Funktioner
+## Funktioner
 
-- 📊 **Interaktiva diagram** - Visualiserar förbrukning, kostnad och pris per kWh över tid
-- 💰 **Kostnadsanalys** - Visar både priser inklusive och exklusive moms
-- 📅 **Löpande Årstal (LÅT)** - Visar alltid de senaste 12 månadernas förbrukning och kostnad för aktuell årsbild
-- 🔄 **Jämförelsevärden** - Beräknar förmodade värden baserat på säsongsmönster
-- 🏊‍♂️ **Fördelning** - Separat analys för bad och restaurang
-- 📱 **Responsiv design** - Fungerar på desktop, tablet och mobil
-- 🎨 **Modern UI** - Vacker och användarvänlig design
+- **Interaktiva diagram** – förbrukning, kostnad och pris per kWh över tid
+- **Löpande Årstal (LÅT)** – alltid de senaste 12 månadernas förbrukning och kostnad
+- **Jämförelsevärden** – beräknade förmodade värden baserade på säsongsmönster
+- **Fördelning bad/restaurang** – separat analys för respektive del
+- **Responsiv design** – fungerar på desktop, tablet och mobil
+- **Elanalys före & efter ombyggnad** – djupanalys med inpasseringsdata från Firebase
 
-## 🛠️ Teknologi
-
-- **HTML5** - Strukturerar innehållet
-- **CSS3** - Styling med CSS-variabler, Grid och Flexbox
-- **JavaScript (ES6+)** - Interaktivitet och databearbetning
-- **Chart.js** - Interaktiva diagram och visualiseringar
-
-## 📁 Projektstruktur
+## Projektstruktur
 
 ```
 Bjerred-el/
-├── index.html              # Huvudfil med visualiseringar och diagram
-├── data.html               # Administrativt verktyg för datahantering
-├── data.md                 # Dataöversikt
-├── .gitignore              # Git-konfiguration
-├── manadsforbrukning_el.jpg                    # Referensbild
-├── Pris_per_kWh_Bjerreds_Saltsjöbad.jpg       # Referensbild
-└── README.md               # Denna fil
+├── index.html                        # Elöversikt – alla diagram och tabeller
+├── data.html                         # Administrativt verktyg för datahantering
+├── fore_och_efter_ombyggnad.html     # Analyssida: före vs efter ombyggnad 2025
+├── fore_och_efter_ombyggnad.css      # Styling för analyssidan
+├── fore_och_efter_ombyggnad.js       # Logik, diagram och Firebase-hämtning
+├── data.md                           # (tom – reserverad för datadokumentation)
+├── .gitignore                        # Git-konfiguration
+├── CLAUDE.md                         # Instruktioner för AI-assistenter
+└── README.md                         # Denna fil
 ```
 
-## 🔧 Användning
+## Dataperiod
 
-### Visa Statistik och Diagram
+**Nuvarande data:** Augusti 2024 – Maj 2026
 
-1. Öppna [https://kentlundgren.github.io/Bjerred-el/](https://kentlundgren.github.io/Bjerred-el/) i din webbläsare
-2. Utforska de olika diagrammen och sammanfattningskorten
-3. Klicka på "Visa förmodade värden" för att se jämförelser
-4. Klicka på "Visa detaljerad tabell" för detaljerad månadsöversikt
+**Inpasseringsdata:** Hämtas live från Firebase (`skylt-e0c45-default-rtdb.europe-west1.firebasedatabase.app`), med BASE_DATA som fallback.
 
-### Hantera och Lägga Till Data
+## Analyssida – Före & efter ombyggnad 2025
 
-1. Öppna `data.html` i din webbläsare
-2. Redigera befintliga månader eller lägg till nya månader
-3. Klicka på "Beräkna och generera kod"
-4. Kopiera den genererade JavaScript-koden
-5. Klistra in koden i `index.html` (ersätt den gamla `const monthlyData = [...]`)
-6. Spara och ladda om sidan
+Sidan [fore_och_efter_ombyggnad.html](https://kentlundgren.github.io/Bjerred-el/fore_och_efter_ombyggnad.html) jämför elförbrukning och kostnad för bastuns bad-sektion före ombyggnaden (aug 2024–jan 2025) med efter ombyggnaden (aug 2025–). Analyssidan innehåller:
 
-## 📊 Dataperiod
+- Diagram: bad-kWh, kWh/badare, kr/badare, inpasseringar, beläggningsgrad
+- Toggle: växla mellan "faktiska badare" (inpasseringar från Firebase) och "full kapacitet" (max 36/54)
+- Beläggningsgradens formel: `(inpasseringar/2) × vistelsetid / (18 tim × dagar × max/bastu)`
+- Jämförelsetabell med alla 6 jämförbara månadspar
+- Extraanalyser: besöksökning, merkostnad, säsongsvariation
+- Formulär för att lägga in framtida el-data (sparas i localStorage)
+- Automatic Firebase-hämtning av inpasseringsdata vid sidladdning
 
-**Nuvarande data:** Augusti 2024 - December 2025 (17 månader)
+**Nyckelresultat:**
+- Kapacitetsökning: +50 % (36 → 54 platser)
+- Fler besökare: +11 % per månad i snitt
+- Mer el per badare: +26 % (snitt ~2,3 → ~2,9 kWh/besök)
+- Lägre beläggningsgrad: −26 % (bastun är statistiskt "tommare" trots fler besökare)
+- Merkostnad för badet: ca +13 500 kr/mån i el
 
-**Möjligt att lägga till:** Januari 2026 - December 2026 (och framåt)
-
-## 📅 Löpande Årstal (LÅT)
-
-Systemet använder **Löpande Årstal (LÅT)** för att visa en aktuell årsbild:
-
-- **Vad är LÅT?** En rullande 12-månadersperiod som alltid visar de senaste 12 månaderna
-- **Varför LÅT?** Ger en mer aktuell bild av årskostnaden jämfört med totalsummor
-- **Automatisk uppdatering:** När ny månad läggs till rullar perioden framåt automatiskt
-
-**Exempel:**
-- Data t.o.m. december 2025 → LÅT visar januari 2025 - december 2025
-- Data t.o.m. januari 2026 → LÅT visar februari 2025 - januari 2026
-
-Detta säkerställer att årsförbrukning och årskostnad alltid reflekterar det senaste året.
-
-## 🔥 Om Bastusystemet
-
-Elförbrukningen domineras av ett professionellt bastusystem:
+## Om bastusystemet
 
 - **Bastuaggregat:** Harvia Qube 360 (36 kW)
 - **Styrenhet:** Harvia Pro C2
-- **Reläboxar:** Två enheter för att hantera hög effekt
+- **Kapacitet före ombyggnad:** 18 badare/bastu × 2 bastuer = 36 totalt
+- **Kapacitet efter ombyggnad:** 27 badare/bastu × 2 bastuer = 54 totalt
 
-Mer information om bastusystemet finns på: [kentlundgren.se/program/Bjerred/Harvia/](https://kentlundgren.se/program/Bjerred/Harvia/)
+Mer info: [kentlundgren.se/program/Bjerred/Harvia/](https://kentlundgren.se/program/Bjerred/Harvia/)
 
-## 📈 Säsongsmönster
+## Teknologi
 
-Projektet tar hänsyn till säsongsvariationer:
+- **HTML5 / CSS3 / JavaScript (ES6+)**
+- **Chart.js** – interaktiva diagram
+- **Firebase Realtime Database** – live inpasseringsdata
 
-- **Vinter (nov-feb):** ~40% högre förbrukning pga uppvärmning
-- **Sommar (jun-aug):** Lägre förbrukning
-- **Vår/Höst (mar-maj, sep-okt):** Mellannivå
+## Löpande Årstal (LÅT)
 
-## 🏗️ Installation och Utveckling
+Systemet använder LÅT för att alltid visa de senaste 12 månadernas förbrukning och kostnad. När en ny månad läggs till rullar perioden automatiskt framåt.
 
-### Kör Lokalt
-
-1. Klona repositoryt:
-```bash
-git clone https://github.com/kentlundgren/Bjerred-el.git
-```
-
-2. Navigera till katalogen:
-```bash
-cd Bjerred-el
-```
-
-3. Öppna `index.html` i din webbläsare
-
-### Uppdatera Data
+## Uppdatera månadsdata
 
 1. Öppna `data.html` i webbläsare
 2. Lägg till eller ändra månadsdata
 3. Generera ny JavaScript-kod
-4. Uppdatera `index.html`
-5. Commit och push till GitHub
+4. Uppdatera `monthlyData`-arrayen i `index.html`
+5. Uppdatera även `foreData`/`efterData` i `fore_och_efter_ombyggnad.js` vid behov
+6. Commit och push till GitHub
 
-## 🤝 Bidrag
+## Uppdateringshistorik
 
-Detta är ett privat projekt för Bjerreds Saltsjöbad. För frågor eller förslag, kontakta projektägaren.
+- **2026-06-03** – Analyssida `fore_och_efter_ombyggnad.html` skapad med diagram, beläggningsgrad, Firebase-integration och extraanalyser
+- **2026-06-02** – Maj 2026-data inlagd (bad: 11 511 kWh, restaurang: 12 426 kWh)
+- **2026-01** – Skapat administrativt verktyg för datahantering (`data.html`)
+- **2026-01** – Initial version med data från augusti 2024 till september 2025
 
-## 📝 Licens
+## Författare
 
-Privat projekt - Alla rättigheter förbehållna
-
-## 👤 Författare
-
-**Kent Lundgren**
-- Website: [kentlundgren.se](https://kentlundgren.se)
-- GitHub: [@kentlundgren](https://github.com/kentlundgren)
-
-## 📅 Uppdateringshistorik
-
-- **2026-01** - Skapat administrativt verktyg för datahantering (data.html)
-- **2026-01** - Initial version med data från augusti 2024 till september 2025
-- **2026-01** - Publicerat på GitHub Pages
+**Kent Lundgren** – [kentlundgren.se](https://kentlundgren.se) · [@kentlundgren](https://github.com/kentlundgren)
 
 ---
 
-**🔗 [Öppna Live-versionen](https://kentlundgren.github.io/Bjerred-el/)** | **📊 [Se GitHub Repository](https://github.com/kentlundgren/Bjerred-el)**
+[Elöversikt](https://kentlundgren.github.io/Bjerred-el/) | [Före & efter ombyggnad](https://kentlundgren.github.io/Bjerred-el/fore_och_efter_ombyggnad.html) | [Bjerreds Saltsjöbad](https://kentlundgren.github.io/foreningar/BjerredsSaltsjobad/)
