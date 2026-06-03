@@ -688,15 +688,15 @@ function byggAnalysKwhPerBadare() {
 
         <div class="analys-grid">
             <div class="analys-punkt">
-                <strong>Lägst kWh/${enhet}: ${foreMin.manad} (före ombyggnad)</strong>
+                <strong>Lägst kWh/${enhet}: ${foreMin.manad} – ${fmt(foreMin.foreKwh)} kWh/${enhet} (före ombyggnad)</strong>
                 ${sepForeForklaring}
             </div>
             <div class="analys-punkt">
-                <strong>Lägst kWh/${enhet}: ${efterMin.manad} (efter ombyggnad)</strong>
+                <strong>Lägst kWh/${enhet}: ${efterMin.manad} – ${fmt(efterMin.efterKwh)} kWh/${enhet} (efter ombyggnad)</strong>
                 ${sepEfterForklaring}
             </div>
             <div class="analys-punkt" style="grid-column: 1 / -1;">
-                <strong>Högst kWh/${enhet}: ${efterMax.manad} (efter ombyggnad)</strong>
+                <strong>Högst kWh/${enhet}: ${efterMax.manad} – ${fmt(efterMax.efterKwh)} kWh/${enhet} (efter ombyggnad)</strong>
                 ${janEfterForklaring}
             </div>
         </div>
