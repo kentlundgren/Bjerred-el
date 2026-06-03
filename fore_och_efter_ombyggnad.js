@@ -472,16 +472,28 @@ function initChart4() {
     });
 }
 
-/* Uppdatera diagram 2 och 3 när viewMode ändras */
+/* Uppdatera diagram 2 och 3 när viewMode ändras.
+   UPPDATERING 2026-06-03: etiketter ändras till "per badplats" i max-vy */
 function uppdateraChart2och3() {
-    const mode = viewMode;
+    const mode    = viewMode;
+    const enhet   = mode === 'faktisk' ? 'badare' : 'badplats';
+    const yLblKwh = mode === 'faktisk' ? 'kWh' : 'kWh';
+    const yLblKr  = mode === 'faktisk' ? 'kr'  : 'kr';
 
-    charts.kwhPerPerson.data.datasets[0].data = jamforPar.map(p => kwhPerBadare(p.fore, mode));
-    charts.kwhPerPerson.data.datasets[1].data = jamforPar.map(p => kwhPerBadare(p.efter, mode));
+    charts.kwhPerPerson.data.datasets[0].label = `Före ombyggnad (kWh/${enhet})`;
+    charts.kwhPerPerson.data.datasets[1].label = `Efter ombyggnad (kWh/${enhet})`;
+    charts.kwhPerPerson.data.datasets[0].data  = jamforPar.map(p => kwhPerBadare(p.fore, mode));
+    charts.kwhPerPerson.data.datasets[1].data  = jamforPar.map(p => kwhPerBadare(p.efter, mode));
+    charts.kwhPerPerson.options.plugins.tooltip.callbacks.label =
+        ctx => ` ${ctx.dataset.label}: ${fmt(ctx.parsed.y)} ${yLblKwh}/${enhet}`;
     charts.kwhPerPerson.update();
 
-    charts.krPerPerson.data.datasets[0].data = jamforPar.map(p => krPerBadare(p.fore, mode));
-    charts.krPerPerson.data.datasets[1].data = jamforPar.map(p => krPerBadare(p.efter, mode));
+    charts.krPerPerson.data.datasets[0].label = `Före ombyggnad (${yLblKr}/${enhet})`;
+    charts.krPerPerson.data.datasets[1].label = `Efter ombyggnad (${yLblKr}/${enhet})`;
+    charts.krPerPerson.data.datasets[0].data  = jamforPar.map(p => krPerBadare(p.fore, mode));
+    charts.krPerPerson.data.datasets[1].data  = jamforPar.map(p => krPerBadare(p.efter, mode));
+    charts.krPerPerson.options.plugins.tooltip.callbacks.label =
+        ctx => ` ${ctx.dataset.label}: ${fmt(ctx.parsed.y, 0)} ${yLblKr}/${enhet}`;
     charts.krPerPerson.update();
 }
 
@@ -680,14 +692,22 @@ function byttVy(nyVy) {
     document.getElementById('chart4-section').style.display =
         nyVy === 'faktisk' ? '' : 'none';
 
-    /* Uppdatera beskrivningstexter */
+    /* UPPDATERING 2026-06-03: Rubrik och beskrivning ändras med vyn –
+       "per badare" (faktiska inpasseringar) vs "per badplats" (maxkapacitet) */
+    const perEnhet = nyVy === 'faktisk' ? 'per badare' : 'per badplats';
+
+    document.getElementById('h2-chart2').textContent =
+        `kWh ${perEnhet} – jämförbara månader`;
+    document.getElementById('h2-chart3').textContent =
+        `Elkostnad ${perEnhet} (kr) – jämförbara månader`;
+
     const base = nyVy === 'faktisk'
         ? 'Baserat på faktiska inpasseringar.'
-        : `Baserat på antagen full kapacitet: ${KAPACITET_FORE} (före) och ${KAPACITET_EFTER} (efter) badare.`;
+        : `Baserat på antagen full kapacitet: ${KAPACITET_FORE} platser (före) och ${KAPACITET_EFTER} platser (efter).`;
     document.getElementById('desc-chart2').textContent =
-        'Hur mycket el används per besökare? ' + base;
+        `Hur mycket el används per ${nyVy === 'faktisk' ? 'besökare' : 'badplats'}? ` + base;
     document.getElementById('desc-chart3').textContent =
-        'Proportionell badkostnad per besökare. ' + base;
+        `Proportionell badkostnad per ${nyVy === 'faktisk' ? 'besökare' : 'badplats'}. ` + base;
 
     uppdateraChart2och3();
     byggJamforTabell();
