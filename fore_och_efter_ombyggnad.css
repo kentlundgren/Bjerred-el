@@ -508,6 +508,79 @@ td.neg { color: var(--negative); font-weight: 600; }
 }
 
 /* ----------------------------------------------------------------
+   ANALYSBOX – dynamisk text under kWh-per-badare-diagrammet
+   ---------------------------------------------------------------- */
+.analys-box {
+    margin-top: 20px;
+    padding: 16px 20px;
+    background: #f0f7ff;
+    border-left: 4px solid var(--secondary);
+    border-radius: 0 8px 8px 0;
+    font-size: 0.88em;
+    color: var(--text);
+    line-height: 1.7;
+}
+
+.analys-box h3 {
+    font-size: 1em;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.analys-box .analys-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.analys-box .analys-punkt {
+    background: #fff;
+    border-radius: 6px;
+    padding: 12px 14px;
+    border: 1px solid #d4e6f1;
+}
+
+.analys-box .analys-punkt strong {
+    display: block;
+    color: var(--secondary);
+    font-size: 1.05em;
+    margin-bottom: 4px;
+}
+
+.analys-box .analys-snitt {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.analys-box .snitt-kort {
+    flex: 1;
+    min-width: 200px;
+    background: #fff;
+    border-radius: 6px;
+    padding: 10px 14px;
+    border: 1px solid #d4e6f1;
+    text-align: center;
+}
+
+.analys-box .snitt-kort .snitt-varde {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: var(--primary);
+    display: block;
+}
+
+.analys-box .snitt-kort .snitt-label {
+    font-size: 0.82em;
+    color: #7f8c8d;
+}
+
+.analys-box .snitt-kort.fore  .snitt-varde { color: var(--fore-color); }
+.analys-box .snitt-kort.efter .snitt-varde { color: var(--efter-color); }
+
+/* ----------------------------------------------------------------
    SIDFOT
    ---------------------------------------------------------------- */
 .page-footer {

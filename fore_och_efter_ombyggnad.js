@@ -597,6 +597,128 @@ function byggEfterTabell() {
 
 
 /* ================================================================
+   7b. ANALYSTEXT UNDER kWh-PER-BADARE-DIAGRAMMET
+   Beräknar och förklarar dynamiskt:
+   - Varför september har lägst kWh/badare (hög besöksfrekvens + lägre uppvärmningsbehov)
+   - Varför januari har högst kWh/badare efter ombyggnad (kall + stor bastu)
+   - Genomsnittligt kWh/badare före respektive efter ombyggnad
+   ================================================================ */
+function byggAnalysKwhPerBadare() {
+    const el = document.getElementById('analys-kwh-per-badare');
+    if (!el) return;
+
+    const mode = viewMode;
+
+    /* Beräkna kWh/badare för alla jämförbara par */
+    const varden = jamforPar.map(p => ({
+        manad:      p.manad,
+        manIdx:     p.fore.manIdx,
+        foreKwh:    kwhPerBadare(p.fore, mode),
+        efterKwh:   kwhPerBadare(p.efter, mode),
+        foreInpass: getInpass(p.fore.ar, p.fore.manIdx),
+        efterInpass: getInpass(p.efter.ar, p.efter.manIdx),
+        foreBadKwh: p.fore.badKwh,
+        efterBadKwh: p.efter.badKwh,
+    }));
+
+    /* Hitta lägst och högst */
+    const foreMin  = varden.reduce((a, b) => (a.foreKwh  <= b.foreKwh  ? a : b));
+    const efterMin = varden.reduce((a, b) => (a.efterKwh <= b.efterKwh ? a : b));
+    const efterMax = varden.reduce((a, b) => (a.efterKwh >= b.efterKwh ? a : b));
+
+    /* Genomsnitt */
+    const snittFore  = snitt(varden.map(v => v.foreKwh));
+    const snittEfter = snitt(varden.map(v => v.efterKwh));
+    const snittPct   = pctDiff(snittFore, snittEfter);
+
+    /* Förklaring till septembervärdet */
+    const enhet = mode === 'faktisk' ? 'badare' : 'badplats';
+
+    /* --- September-analys (beror på faktiska siffror) --- */
+    let sepForeForklaring = '';
+    let sepEfterForklaring = '';
+
+    if (mode === 'faktisk') {
+        /* September 2024: flest inpasseringar i föreperioden */
+        const foreInpassMax = Math.max(...varden.map(v => v.foreInpass ?? 0));
+        const foreKwhMin    = Math.min(...varden.map(v => v.foreBadKwh));
+        const sepFore = varden.find(v => v.manIdx === 8); /* September = index 8 */
+
+        if (sepFore) {
+            const arFlest  = sepFore.foreInpass === foreInpassMax;
+            const arLagElk = sepFore.foreBadKwh === foreKwhMin;
+            sepForeForklaring = `September 2024 hade ` +
+                `${sepFore.foreInpass?.toLocaleString('sv-SE') ?? '—'} inpasseringar – ` +
+                (arFlest ? 'flest av alla jämförbara månader' : 'högt besökstal') +
+                ` – samtidigt som bad-kWh var ${sepFore.foreBadKwh.toLocaleString('sv-SE')} kWh ` +
+                (arLagElk ? '(lägst i perioden)' : '(relativt lågt)') +
+                `. Septemberväder i Skåne är ännu relativt varmt, vilket minskar uppvärmningsbehovet.`;
+
+            const sepEfter = varden.find(v => v.manIdx === 8);
+            if (sepEfter) {
+                sepEfterForklaring = `September 2025 upprepar mönstret med ` +
+                    `${sepEfter.efterInpass?.toLocaleString('sv-SE') ?? '—'} inpasseringar ` +
+                    `(flest i efterperioden) och relativt låg bad-kWh (${sepEfter.efterBadKwh.toLocaleString('sv-SE')} kWh). ` +
+                    `Slutsats: lågt kWh per ${enhet} i september beror på kombinationen av ` +
+                    `<em>hög besöksfrekvens</em> och <em>lägre uppvärmningsbehov</em> – inte på onormalt låg elkonsumtion.`;
+            }
+        }
+    } else {
+        /* Max-kapacitets-vy: fokus bara på el, inte på besökare */
+        sepForeForklaring = `I "full kapacitets"-vyn reflekterar de låga septembervärdena ` +
+            `att bad-kWh var relativt låg den månaden – inte att det var fler badare.`;
+        sepEfterForklaring = `September 2025 hade också lägre bad-kWh jämfört med vintermånaderna, ` +
+            `tack vare lägre uppvärmningsbehov i september.`;
+    }
+
+    /* --- Januarianalys --- */
+    const janEfterForklaring = `Januari 2026 hade den högsta förbrukningen per ${enhet} ` +
+        `efter ombyggnaden (${fmt(efterMax.efterKwh)} kWh/${enhet}). ` +
+        (mode === 'faktisk'
+            ? `Inpasseringarna var ${efterMax.efterInpass?.toLocaleString('sv-SE') ?? '—'} – ` +
+              `inte rekordlåga – men bad-kWh var ${efterMax.efterBadKwh.toLocaleString('sv-SE')} kWh, ` +
+              `det näst högsta i efterperioden. `
+            : `Bad-kWh var ${efterMax.efterBadKwh.toLocaleString('sv-SE')} kWh. `) +
+        `Kall januariluft kräver mer el för att värma den nu större bastun ` +
+        `(större volym = mer värmeförlust vid kyla).`;
+
+    /* --- Bygg HTML --- */
+    el.innerHTML = `
+        <h3>Analys: vad styr förbrukningen per ${enhet}?</h3>
+
+        <div class="analys-grid">
+            <div class="analys-punkt">
+                <strong>Lägst kWh/${enhet}: ${foreMin.manad} (före ombyggnad)</strong>
+                ${sepForeForklaring}
+            </div>
+            <div class="analys-punkt">
+                <strong>Lägst kWh/${enhet}: ${efterMin.manad} (efter ombyggnad)</strong>
+                ${sepEfterForklaring}
+            </div>
+            <div class="analys-punkt" style="grid-column: 1 / -1;">
+                <strong>Högst kWh/${enhet}: ${efterMax.manad} (efter ombyggnad)</strong>
+                ${janEfterForklaring}
+            </div>
+        </div>
+
+        <div class="analys-snitt">
+            <div class="snitt-kort fore">
+                <span class="snitt-varde">${fmt(snittFore)} kWh</span>
+                <span class="snitt-label">Typisk förbrukning per ${enhet}<br><em>före ombyggnad</em> (snitt ${jamforPar.length} månader)</span>
+            </div>
+            <div class="snitt-kort efter">
+                <span class="snitt-varde">${fmt(snittEfter)} kWh</span>
+                <span class="snitt-label">Typisk förbrukning per ${enhet}<br><em>efter ombyggnad</em> (snitt ${jamforPar.length} månader)</span>
+            </div>
+            <div class="snitt-kort">
+                <span class="snitt-varde">${fmtPct(snittPct)}</span>
+                <span class="snitt-label">Genomsnittlig förändring per ${enhet}<br>efter ombyggnaden</span>
+            </div>
+        </div>
+    `;
+}
+
+/* ================================================================
    8. EXTRAANALYSER
    Beräknar och visar tre extraanalyser:
    - Merkostnad per extra kapacitetsplats (18 nya platser)
@@ -713,6 +835,7 @@ function byttVy(nyVy) {
     byggJamforTabell();
     byggEfterTabell();
     uppdateraSummaryCards();
+    byggAnalysKwhPerBadare();
 }
 
 
@@ -792,6 +915,7 @@ function uppdateraAllt() {
     byggJamforTabell();
     byggEfterTabell();
     byggExtraAnalyser();
+    byggAnalysKwhPerBadare();
 }
 
 
@@ -809,10 +933,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     initChart3();
     initChart4();
 
-    /* Bygg tabeller och extraanalyser */
+    /* Bygg tabeller, extraanalyser och analystext */
     byggJamforTabell();
     byggEfterTabell();
     byggExtraAnalyser();
+    byggAnalysKwhPerBadare();
 
     /* Beräkna nyckeltal */
     uppdateraSummaryCards();
