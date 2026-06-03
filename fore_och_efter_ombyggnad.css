@@ -508,6 +508,49 @@ td.neg { color: var(--negative); font-weight: 600; }
 }
 
 /* ----------------------------------------------------------------
+   VISTELSETID-RAD (inmatning för beläggningsgradens antagande)
+   ---------------------------------------------------------------- */
+.vistelse-rad {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0 18px;
+    font-size: 0.9em;
+}
+
+.vistelse-rad label {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.vistelse-rad input[type="number"] {
+    background-color: var(--input-bg);   /* gul bakgrund */
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 1em;
+    width: 70px;
+    text-align: center;
+    color: var(--text);
+}
+.vistelse-rad input[type="number"]:focus {
+    outline: none;
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 3px rgba(52,152,219,0.2);
+}
+
+.vistelse-enhet {
+    color: #7f8c8d;
+}
+
+.vistelse-info {
+    font-size: 0.82em;
+    color: #7f8c8d;
+    font-style: italic;
+}
+
+/* ----------------------------------------------------------------
    ANALYSBOX – dynamisk text under kWh-per-badare-diagrammet
    ---------------------------------------------------------------- */
 .analys-box {

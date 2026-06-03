@@ -153,6 +153,37 @@
     </section>
 
     <!-- ============================================================
+         DIAGRAM 5: BELÄGGNINGSGRAD (alltid faktiska inpasseringar)
+    ============================================================ -->
+    <section class="chart-card">
+        <h2>Beläggningsgrad – hur full är bastun?</h2>
+        <p class="chart-desc">
+            Genomsnittlig andel av maxkapaciteten som faktiskt utnyttjas.
+            Baserat på faktiska inpasseringar, antagandet att hälften är herrar/damer,
+            och att bastun är i drift <strong>18 timmar per dag</strong> (öppen 06–22, städning 2 tim).
+        </p>
+
+        <!-- Inmatning: antagen vistelsetid (gul bakgrund = inmatningsfält) -->
+        <div class="vistelse-rad">
+            <label for="vistelse-timmar">
+                Antagen vistelsetid per besök:
+            </label>
+            <input type="number" id="vistelse-timmar" value="1" min="0.5" max="4" step="0.5">
+            <span class="vistelse-enhet">timmar</span>
+            <span class="vistelse-info">
+                (Beläggningsgraden är proportionell mot vistelsetiden –
+                dubbel vistelsetid = dubbel beläggning)
+            </span>
+        </div>
+
+        <div class="chart-wrap">
+            <canvas id="chart-belagg" aria-label="Stapeldiagram beläggningsgrad"></canvas>
+        </div>
+        <!-- Dynamisk analystext genereras av JavaScript -->
+        <div id="analys-belagg" class="analys-box"></div>
+    </section>
+
+    <!-- ============================================================
          EXTRAANALYSER
     ============================================================ -->
     <section class="extra-card">

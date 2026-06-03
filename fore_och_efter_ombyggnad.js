@@ -27,6 +27,9 @@
 const KAPACITET_FORE  = 36;   // 18 badare per bastu × 2 bastuer (gammal)
 const KAPACITET_EFTER = 54;   // 27 badare per bastu × 2 bastuer (ny efter ombyggnad)
 
+/* Beläggningsgrad: bastun är i drift 18 timmar/dag (öppen 06-22, minus 2 tim städning) */
+const TIMMAR_PER_DAG  = 18;
+
 /* Firebase REST API – öppen läsbehörighet, ingen auth krävs */
 const FIREBASE_URL =
     'https://skylt-e0c45-default-rtdb.europe-west1.firebasedatabase.app' +
@@ -497,13 +500,19 @@ function uppdateraChart2och3() {
     charts.krPerPerson.update();
 }
 
-/* Återskapa diagram 4 (nödvändigt när inpassData förändrats) */
+/* Återskapa diagram 4 och 5 (nödvändigt när inpassData förändrats) */
 function ombyggChart4() {
     if (charts.inpass) {
         charts.inpass.destroy();
         delete charts.inpass;
     }
     initChart4();
+
+    if (charts.belagg) {
+        charts.belagg.destroy();
+        delete charts.belagg;
+    }
+    initChartBelagg();
 }
 
 
@@ -799,6 +808,221 @@ function byggExtraAnalyser() {
 
 
 /* ================================================================
+   8b. BELÄGGNINGSGRAD – diagram och analys
+   Beräkning:
+     herrar = totalInpasseringar / 2  (50/50-antagande)
+     timmar = TIMMAR_PER_DAG × dagar
+     herrar_per_timme = herrar / timmar
+     belaggning (%) = herrar_per_timme / (maxKapPerSauna) × 100
+   maxKapPerSauna = KAPACITET / 2  (36/2=18 före, 54/2=27 efter)
+   ================================================================ */
+
+/* Hämta aktuell antagen vistelsetid från inmatningsfältet (default 1 timme) */
+function getVistelseTim() {
+    const el = document.getElementById('vistelse-timmar');
+    if (!el) return 1;
+    const v = parseFloat(el.value);
+    return (!isNaN(v) && v > 0) ? v : 1;
+}
+
+/* Beräkna beläggningsgrad i procent.
+   Formel: (herrar/timme × vistelsetid) / maxKapPerSauna × 100
+   Antagande: varje besökare stannar 'vistelsetid' timmar.
+   Om vistelsetiden fördubblas → beläggningsgraden fördubblas. */
+function belaggningsgrad(inpasseringar, maxKapPerSauna, dagar, vistelseTim) {
+    if (!inpasseringar || !maxKapPerSauna || !dagar) return null;
+    const herrar       = inpasseringar / 2;
+    const timmar       = TIMMAR_PER_DAG * dagar;
+    const herrarPerTim = herrar / timmar;
+    return (herrarPerTim * vistelseTim / maxKapPerSauna) * 100;
+}
+
+/* Diagram 5: Beläggningsgrad för jämförbara månadspar */
+function initChartBelagg() {
+    const ctx = document.getElementById('chart-belagg').getContext('2d');
+
+    const maxFore    = KAPACITET_FORE  / 2;   /* 18 */
+    const maxEfter   = KAPACITET_EFTER / 2;   /* 27 */
+    const vistelse   = getVistelseTim();
+
+    charts.belagg = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: jamforPar.map(p => p.manad),
+            datasets: [
+                {
+                    label: `Före ombyggnad (max ${maxFore}/bastu)`,
+                    data: jamforPar.map(p => {
+                        const inp = getInpass(p.fore.ar, p.fore.manIdx);
+                        return belaggningsgrad(inp, maxFore, p.fore.dagar, vistelse);
+                    }),
+                    backgroundColor: FORE_BG,
+                    borderColor: FORE_COLOR,
+                    borderWidth: 1,
+                },
+                {
+                    label: `Efter ombyggnad (max ${maxEfter}/bastu)`,
+                    data: jamforPar.map(p => {
+                        const inp = getInpass(p.efter.ar, p.efter.manIdx);
+                        return belaggningsgrad(inp, maxEfter, p.efter.dagar, vistelse);
+                    }),
+                    backgroundColor: EFTER_BG,
+                    borderColor: EFTER_COLOR,
+                    borderWidth: 1,
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'top' },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => {
+                            const v = ctx.parsed.y;
+                            return v != null
+                                ? ` ${ctx.dataset.label}: ${fmt(v, 1)} %`
+                                : null;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { callback: v => fmt(v, 0) + ' %' },
+                    title: { display: true, text: 'Beläggningsgrad (%)' }
+                }
+            }
+        }
+    });
+}
+
+/* Analystext under beläggningsdiagrammet */
+function byggAnalysBelagg() {
+    const el = document.getElementById('analys-belagg');
+    if (!el) return;
+
+    const maxFore    = KAPACITET_FORE  / 2;
+    const maxEfter   = KAPACITET_EFTER / 2;
+    const vistelse   = getVistelseTim();
+
+    /* Beräkna beläggningsgrad för alla jämförbara par */
+    const bVarden = jamforPar.map(p => {
+        const fInp = getInpass(p.fore.ar, p.fore.manIdx);
+        const eInp = getInpass(p.efter.ar, p.efter.manIdx);
+        return {
+            manad:       p.manad,
+            foreBelagg:  belaggningsgrad(fInp, maxFore,  p.fore.dagar,  vistelse),
+            efterBelagg: belaggningsgrad(eInp, maxEfter, p.efter.dagar, vistelse),
+            foreInpass:  fInp,
+            efterInpass: eInp,
+            foreHerrar:  fInp ? Math.round(fInp / 2) : null,
+            efterHerrar: eInp ? Math.round(eInp / 2) : null,
+            foreDagar:   p.fore.dagar,
+            efterDagar:  p.efter.dagar,
+        };
+    });
+
+    const snittFore  = snitt(bVarden.map(v => v.foreBelagg));
+    const snittEfter = snitt(bVarden.map(v => v.efterBelagg));
+    const snittPct   = pctDiff(snittFore, snittEfter);
+
+    const foreMax  = bVarden.reduce((a, b) => ((a.foreBelagg  ?? 0) >= (b.foreBelagg  ?? 0) ? a : b));
+    const efterMax = bVarden.reduce((a, b) => ((a.efterBelagg ?? 0) >= (b.efterBelagg ?? 0) ? a : b));
+
+    /* Pedagogisk exempelberäkning för januari (efter ombyggnad) */
+    const janEfter = bVarden.find(v => v.manad === 'Jan');
+    let exempelText = '';
+    if (janEfter && janEfter.efterHerrar) {
+        const tim          = TIMMAR_PER_DAG * janEfter.efterDagar;
+        const herrarPerTim = janEfter.efterHerrar / tim;
+        exempelText = `
+            <p style="margin-top:10px">
+                <strong>Exempelberäkning – januari (efter ombyggnad):</strong><br>
+                ${janEfter.efterHerrar.toLocaleString('sv-SE')} herrar
+                ÷ (${TIMMAR_PER_DAG} tim/dag × ${janEfter.efterDagar} dagar = ${tim} tim)
+                = <strong>${fmt(herrarPerTim, 2)} herrar/tim</strong>.
+                Med antagen vistelsetid ${fmt(vistelse, 1)} tim är det i snitt
+                <strong>${fmt(herrarPerTim * vistelse, 2)} herrar inne</strong> i bastun per givet ögonblick.
+                Det ger ${fmt(herrarPerTim * vistelse, 2)} ÷ ${maxEfter} platser =
+                <strong>${fmt(janEfter.efterBelagg, 1)} % beläggning</strong>.
+            </p>`;
+    }
+
+    /* Visa vad 1 h vs 2 h ger för januarivärdet (pedagogiskt) */
+    const janEfterInp = janEfter?.efterInpass;
+    let vistelseJamforelse = '';
+    if (janEfterInp) {
+        const v1 = belaggningsgrad(janEfterInp, maxEfter, 31, 1);
+        const v2 = belaggningsgrad(janEfterInp, maxEfter, 31, 2);
+        vistelseJamforelse = `
+            <p style="margin-top:8px; padding:10px 14px; background:#fff3cd; border-radius:6px; border-left:3px solid #f0ad4e">
+                <strong>Vistelsetidens påverkan (januari 2026):</strong>
+                1 tim vistelsetid → <strong>${fmt(v1, 1)} %</strong> beläggning &nbsp;|&nbsp;
+                2 tim vistelsetid → <strong>${fmt(v2, 1)} %</strong> beläggning.
+                Beläggningsgraden är direkt proportionell mot vistelsetiden –
+                dubbel vistelsetid = dubbel beläggning.
+                Prova att ändra fältet ovan!
+            </p>`;
+    }
+
+    el.innerHTML = `
+        <h3>Vad betyder beläggningsgraden?</h3>
+        <p>
+            Beläggningsgraden visar hur stor andel av bastuns maxkapacitet som i genomsnitt
+            är <em>samtidigt</em> ockuperad under en öppen timme.
+            Beräkningen bygger på att räkna ut hur många herrar som anländer per timme
+            och sedan multiplicera med antagen vistelsetid för att få fram hur många som
+            faktiskt är inne vid ett givet ögonblick.
+        </p>
+        ${exempelText}
+        ${vistelseJamforelse}
+
+        <div class="analys-grid" style="margin-top:14px">
+            <div class="analys-punkt">
+                <strong>Högst beläggning – före ombyggnad: ${foreMax.manad} (${fmt(foreMax.foreBelagg, 1)} %)</strong>
+                ${foreMax.foreInpass
+                    ? `${foreMax.foreInpass.toLocaleString('sv-SE')} inpasseringar gav i snitt
+                       ${fmt(foreMax.foreBelagg / 100 * maxFore, 2)} herrar inne av totalt ${maxFore} platser
+                       (vid ${fmt(vistelse, 1)} tim vistelsetid).`
+                    : ''}
+            </div>
+            <div class="analys-punkt">
+                <strong>Högst beläggning – efter ombyggnad: ${efterMax.manad} (${fmt(efterMax.efterBelagg, 1)} %)</strong>
+                ${efterMax.efterInpass
+                    ? `${efterMax.efterInpass.toLocaleString('sv-SE')} inpasseringar gav i snitt
+                       ${fmt(efterMax.efterBelagg / 100 * maxEfter, 2)} herrar inne av totalt ${maxEfter} platser
+                       (vid ${fmt(vistelse, 1)} tim vistelsetid).`
+                    : ''}
+            </div>
+        </div>
+
+        <div class="analys-snitt" style="margin-top:14px">
+            <div class="snitt-kort fore">
+                <span class="snitt-varde">${fmt(snittFore, 1)} %</span>
+                <span class="snitt-label">Genomsnittlig beläggning<br><em>före ombyggnad</em> (max ${maxFore}/bastu)</span>
+            </div>
+            <div class="snitt-kort efter">
+                <span class="snitt-varde">${fmt(snittEfter, 1)} %</span>
+                <span class="snitt-label">Genomsnittlig beläggning<br><em>efter ombyggnad</em> (max ${maxEfter}/bastu)</span>
+            </div>
+            <div class="snitt-kort">
+                <span class="snitt-varde">${fmtPct(snittPct)}</span>
+                <span class="snitt-label">Förändring i beläggningsgrad<br>
+                    <em>Lägre % = fler oanvända platser per timme</em></span>
+            </div>
+        </div>
+        <p style="margin-top:12px; font-style:italic; color:#7f8c8d; font-size:0.85em">
+            Antaganden: bastun i drift ${TIMMAR_PER_DAG} tim/dag (öppen 06–22, städning 2 tim),
+            50 % herrar / 50 % damer. Faktiska dagantal per månad används.
+            Aktuell vistelsetid: <strong>${fmt(vistelse, 1)} timmar</strong>.
+        </p>
+    `;
+}
+
+/* ================================================================
    9. TOGGLE-LOGIK
    ================================================================ */
 function byttVy(nyVy) {
@@ -916,6 +1140,7 @@ function uppdateraAllt() {
     byggEfterTabell();
     byggExtraAnalyser();
     byggAnalysKwhPerBadare();
+    byggAnalysBelagg();
 }
 
 
@@ -932,12 +1157,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     initChart2();
     initChart3();
     initChart4();
+    initChartBelagg();
 
-    /* Bygg tabeller, extraanalyser och analystext */
+    /* Bygg tabeller, extraanalyser och analystexter */
     byggJamforTabell();
     byggEfterTabell();
     byggExtraAnalyser();
     byggAnalysKwhPerBadare();
+    byggAnalysBelagg();
 
     /* Beräkna nyckeltal */
     uppdateraSummaryCards();
@@ -954,6 +1181,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     /* Formulär för framtida el-data */
     initFormular();
+
+    /* Vistelsetid – uppdatera beläggningsdiagram och analys direkt vid ändring */
+    document.getElementById('vistelse-timmar').addEventListener('input', () => {
+        ombyggChart4();        /* återskapar chart-belagg med ny vistelsetid */
+        byggAnalysBelagg();
+    });
 
     /* Hämta live-data från Firebase och uppdatera sidan */
     await hamtaFirebaseInpasseringar();
