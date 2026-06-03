@@ -15,6 +15,7 @@ Alla filer är fristående – öppnas direkt i webbläsaren.
 |-----|----------|
 | `index.html` | Allt-i-en: CSS + JS + data inline. Elöversikt med diagram och tabeller. |
 | `data.html` | Administrativt verktyg för att generera ny `monthlyData`-kod. |
+| `data.md` | **Backup och referens** – Markdown-tabell med all månadsdata (kWh, kostnad). Ska alltid hållas aktuell. |
 | `fore_och_efter_ombyggnad.html` | Analyssida: före vs efter ombyggnad 2025. |
 | `fore_och_efter_ombyggnad.css` | Styling för analyssidan. |
 | `fore_och_efter_ombyggnad.js` | All logik för analyssidan. |
@@ -77,6 +78,21 @@ beläggningsgrad  = herrar_per_timme × vistelsetid / (maxKap / 2) × 100
 ```
 
 Beläggningsgraden är proportionell mot antagen vistelsetid (default 1 timme).
+
+## Uppdatera månadsdata – checklista
+
+Varje gång ny månadsdata läggs till ska **alla tre** dessa filer uppdateras:
+
+1. **`data.md`** – lägg till en ny rad i månadsdata-tabellen och uppdatera "Senast uppdaterad" och "Dataperiod" i filens huvud
+2. **`index.html`** – lägg till nytt objekt i `monthlyData`-arrayen (~rad 970)
+3. **`fore_och_efter_ombyggnad.js`** – uppdatera `efterData`-arrayen om månaden tillhör perioden aug 2025 och framåt
+
+Kontrollräkna alltid:
+- `bad + restaurant = totalKWh`
+- `kwhPerDay ≈ totalKWh / daysInMonth` (avrundat till heltal)
+- `costPerKwh = cost / totalKWh` (avrundat till 2 decimaler)
+
+`data.md` är den lättlästa backup-referensen och ska alltid spegla det aktuella dataläget.
 
 ## Användarregler att följa
 
