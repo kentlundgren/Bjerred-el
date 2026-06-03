@@ -1,0 +1,546 @@
+/* ================================================================
+   fore_och_efter_ombyggnad.css
+   Styling för analyssidan "Före & efter ombyggnad 2025"
+   Matchar färgtemat i index.html
+   ================================================================ */
+
+/* ----------------------------------------------------------------
+   CSS-variabler – samma palett som index.html
+   ---------------------------------------------------------------- */
+:root {
+    --primary:     #2c3e50;
+    --secondary:   #3498db;
+    --accent:      #e74c3c;
+    --bg:          #ecf0f1;
+    --card-bg:     #ffffff;
+    --text:        #2c3e50;
+    --border:      #bdc3c7;
+    --hover-bg:    #f8f9fa;
+
+    /* Färger per period */
+    --fore-color:  #3498db;   /* blå = före ombyggnad */
+    --efter-color: #e74c3c;   /* orange/röd = efter ombyggnad */
+
+    /* Positivt/negativt i jämförelsetabellen */
+    --positive:    #27ae60;
+    --negative:    #e74c3c;
+
+    /* Gul bakgrund för alla inmatningsfält (regel 18) */
+    --input-bg:    #FFF9C4;
+}
+
+/* ----------------------------------------------------------------
+   Reset & grundläggande
+   ---------------------------------------------------------------- */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    padding: 20px;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+/* ----------------------------------------------------------------
+   SIDHUVUD
+   ---------------------------------------------------------------- */
+.page-header {
+    text-align: center;
+    margin-bottom: 28px;
+    position: relative;
+}
+
+.page-header h1 {
+    font-size: 2.2em;
+    color: var(--primary);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    margin: 12px 0 6px;
+}
+
+.page-header .subtitle {
+    color: #7f8c8d;
+    font-size: 1em;
+}
+
+.back-link {
+    display: inline-block;
+    color: var(--secondary);
+    text-decoration: none;
+    font-size: 0.9em;
+    margin-bottom: 6px;
+    transition: color 0.2s;
+}
+.back-link:hover { color: var(--primary); }
+
+/* ----------------------------------------------------------------
+   INFORMATIONSKORT (ombyggnadsfakta)
+   ---------------------------------------------------------------- */
+.info-card {
+    background: var(--card-bg);
+    border-left: 5px solid var(--secondary);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.info-card h2 {
+    color: var(--primary);
+    margin-bottom: 14px;
+    font-size: 1.2em;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-label {
+    font-size: 0.78em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #7f8c8d;
+    margin-bottom: 2px;
+}
+
+.info-value {
+    font-size: 0.95em;
+    color: var(--primary);
+}
+
+.info-note {
+    font-size: 0.85em;
+    color: #7f8c8d;
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+    margin-top: 4px;
+}
+.info-note a { color: var(--secondary); }
+
+/* ----------------------------------------------------------------
+   NYCKELTAL-KORT (4 st summary cards)
+   ---------------------------------------------------------------- */
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.summary-card {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.25s ease;
+    text-align: center;
+}
+.summary-card:hover { transform: translateY(-4px); }
+
+.summary-card h3 {
+    color: var(--secondary);
+    font-size: 0.9em;
+    margin-bottom: 8px;
+}
+
+.summary-card .value {
+    font-size: 2em;
+    font-weight: bold;
+    color: var(--primary);
+    line-height: 1.2;
+}
+
+.summary-card .unit {
+    font-size: 0.78em;
+    color: #7f8c8d;
+    margin-top: 4px;
+}
+
+/* ----------------------------------------------------------------
+   KONTROLLRAD (Firebase-status + toggle + uppdateringsknapp)
+   ---------------------------------------------------------------- */
+.controls-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+    background: var(--card-bg);
+    padding: 14px 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    margin-bottom: 24px;
+}
+
+/* Firebase-statusindikator */
+.firebase-status {
+    font-size: 0.85em;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+.firebase-status.loading {
+    background: #eaf4fb;
+    color: #2980b9;
+    animation: pulse 1.5s infinite;
+}
+.firebase-status.ok {
+    background: #eafaf1;
+    color: #27ae60;
+}
+.firebase-status.warning {
+    background: #fef9e7;
+    color: #f39c12;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.55; }
+}
+
+/* Toggle-knappar */
+.toggle-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.toggle-label {
+    font-size: 0.88em;
+    color: #7f8c8d;
+}
+
+.toggle-btn {
+    padding: 7px 16px;
+    border: 2px solid var(--border);
+    border-radius: 20px;
+    background: var(--card-bg);
+    color: var(--text);
+    font-size: 0.88em;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.toggle-btn:hover { border-color: var(--secondary); color: var(--secondary); }
+.toggle-btn.active {
+    background: var(--secondary);
+    border-color: var(--secondary);
+    color: #fff;
+    font-weight: 600;
+}
+
+/* Uppdateringsknapp */
+.refresh-btn {
+    padding: 7px 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--hover-bg);
+    color: var(--text);
+    font-size: 0.85em;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-left: auto;
+}
+.refresh-btn:hover { background: #dee2e6; }
+
+/* ----------------------------------------------------------------
+   DIAGRAMKORT
+   ---------------------------------------------------------------- */
+.chart-card {
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+}
+
+.chart-card h2 {
+    color: var(--primary);
+    font-size: 1.15em;
+    margin-bottom: 6px;
+    border-bottom: 2px solid var(--secondary);
+    padding-bottom: 8px;
+}
+
+.chart-desc {
+    font-size: 0.87em;
+    color: #7f8c8d;
+    margin-bottom: 16px;
+}
+
+.chart-wrap {
+    position: relative;
+    height: 320px;
+}
+
+.chart-wrap canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* ----------------------------------------------------------------
+   EXTRAANALYSER
+   ---------------------------------------------------------------- */
+.extra-card {
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+}
+
+.extra-card h2 {
+    color: var(--primary);
+    font-size: 1.15em;
+    margin-bottom: 16px;
+    border-bottom: 2px solid var(--secondary);
+    padding-bottom: 8px;
+}
+
+.extra-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.extra-item {
+    background: var(--hover-bg);
+    border-left: 4px solid var(--secondary);
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.extra-item h3 {
+    color: var(--primary);
+    font-size: 0.95em;
+    margin-bottom: 6px;
+}
+
+.extra-item p {
+    font-size: 0.87em;
+    color: #555;
+    margin-bottom: 6px;
+}
+
+.extra-item .extra-value {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--secondary);
+}
+
+.extra-item .extra-unit {
+    font-size: 0.78em;
+    color: #7f8c8d;
+}
+
+/* ----------------------------------------------------------------
+   TABELLKORT
+   ---------------------------------------------------------------- */
+.table-card {
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+    overflow: visible;
+}
+
+.table-card h2 {
+    color: var(--primary);
+    font-size: 1.15em;
+    margin-bottom: 6px;
+    border-bottom: 2px solid var(--secondary);
+    padding-bottom: 8px;
+}
+
+.table-desc {
+    font-size: 0.85em;
+    color: #7f8c8d;
+    margin-bottom: 14px;
+}
+
+.table-scroll {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+}
+
+th, td {
+    padding: 9px 12px;
+    text-align: right;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+
+th {
+    background: var(--primary);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.82em;
+}
+
+.manad-col, td.manad-cell {
+    text-align: left;
+    font-weight: 600;
+}
+
+/* Kolumngruppsfärger i tabellhuvudet */
+.fore-header  { background: var(--fore-color) !important; }
+.efter-header { background: var(--efter-color) !important; }
+.diff-header  { background: #8e44ad !important; }
+
+/* Varannan rad */
+tbody tr:nth-child(even) { background: #f8f9fa; }
+tbody tr:hover { background: #eaf4fb; }
+
+/* Positiv/negativ förändring */
+td.pos { color: var(--positive); font-weight: 600; }
+td.neg { color: var(--negative); font-weight: 600; }
+
+/* ----------------------------------------------------------------
+   FORMULÄRKORT
+   ---------------------------------------------------------------- */
+.form-card {
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+}
+
+.form-card h2 {
+    color: var(--primary);
+    font-size: 1.15em;
+    margin-bottom: 8px;
+    border-bottom: 2px solid var(--secondary);
+    padding-bottom: 8px;
+}
+
+.form-card p {
+    font-size: 0.87em;
+    color: #7f8c8d;
+    margin-bottom: 18px;
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 160px;
+    flex: 1;
+}
+
+.form-group label {
+    font-size: 0.85em;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 4px;
+}
+
+/* Gul bakgrund för alla inmatningsfält */
+.form-group input,
+.form-group select {
+    background-color: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 0.92em;
+    color: var(--text);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 3px rgba(52,152,219,0.2);
+}
+
+.form-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 4px;
+}
+
+.submit-btn {
+    background: var(--secondary);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 22px;
+    font-size: 0.95em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.submit-btn:hover { background: #2980b9; }
+
+.form-confirm {
+    font-size: 0.9em;
+    color: var(--positive);
+    font-weight: 600;
+}
+
+/* ----------------------------------------------------------------
+   SIDFOT
+   ---------------------------------------------------------------- */
+.page-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 16px 0;
+    border-top: 1px solid var(--border);
+    font-size: 0.82em;
+    color: #7f8c8d;
+}
+.page-footer a { color: var(--secondary); text-decoration: none; }
+.page-footer a:hover { color: var(--primary); }
+
+/* ----------------------------------------------------------------
+   RESPONSIV ANPASSNING
+   ---------------------------------------------------------------- */
+@media (max-width: 768px) {
+    body { padding: 12px; }
+
+    .page-header h1 { font-size: 1.5em; }
+
+    .controls-bar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .refresh-btn { margin-left: 0; }
+
+    .chart-wrap { height: 260px; }
+
+    .form-row { flex-direction: column; }
+
+    .page-footer { flex-direction: column; text-align: center; }
+}

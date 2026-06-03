@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elanalys: Före & efter ombyggnad 2025 – Bjerreds Saltsjöbad</title>
+    <!-- Chart.js för interaktiva diagram -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="fore_och_efter_ombyggnad.css">
+</head>
+<body>
+<div class="container">
+
+    <!-- ============================================================
+         SIDHUVUD
+    ============================================================ -->
+    <header class="page-header">
+        <a href="index.html" class="back-link">← Elöversikt</a>
+        <h1>Elanalys: Före &amp; efter ombyggnad 2025</h1>
+        <p class="subtitle">Bjerreds Saltsjöbad – jämförelse av el&shy;förbrukning och kostnad för bastu och bad</p>
+    </header>
+
+    <!-- ============================================================
+         FAKTARUTA OM OMBYGGNADEN
+    ============================================================ -->
+    <section class="info-card" aria-label="Information om ombyggnaden">
+        <h2>Ombyggnaden 2025</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <span class="info-label">Stängt</span>
+                <span class="info-value">Mitten av februari – mitten av juli 2025</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Gammal kapacitet</span>
+                <span class="info-value">18 badare/bastu × 2 bastuer = <strong>36 totalt</strong></span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Ny kapacitet</span>
+                <span class="info-value">27 badare/bastu × 2 bastuer = <strong>54 totalt</strong> (+50 %)</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Jämförelsebas</span>
+                <span class="info-value">Samma kalendermånad: aug 2024–jan 2025 vs aug 2025–jan 2026</span>
+            </div>
+        </div>
+        <p class="info-note">
+            Inpasseringsdata hämtas automatiskt från
+            <a href="https://kentlundgren.github.io/foreningar/BjerredsSaltsjobad/inpasseringar/"
+               target="_blank" rel="noopener">inpasseringssidan (Firebase)</a>.
+            Antagande: 50 % män / 50 % kvinnor. Alla inpasseringar = badare.
+        </p>
+    </section>
+
+    <!-- ============================================================
+         NYCKELTAL (4 KORT)
+    ============================================================ -->
+    <section class="summary-grid" aria-label="Nyckeltal">
+        <div class="summary-card">
+            <h3>Kapacitetsökning</h3>
+            <div class="value" id="card-kapacitet">+50 %</div>
+            <div class="unit">36 → 54 max badare</div>
+        </div>
+        <div class="summary-card">
+            <h3>Ø förändring bad-kWh/mån</h3>
+            <div class="value" id="card-kwh-diff">—</div>
+            <div class="unit">jämförbara månader</div>
+        </div>
+        <div class="summary-card">
+            <h3>Ø förändring kWh/badare</h3>
+            <div class="value" id="card-kwh-per-badare-diff">—</div>
+            <div class="unit" id="card-kwh-per-badare-unit">faktiska inpasseringar</div>
+        </div>
+        <div class="summary-card">
+            <h3>Ø förändring kr/badare</h3>
+            <div class="value" id="card-kr-per-badare-diff">—</div>
+            <div class="unit" id="card-kr-per-badare-unit">faktiska inpasseringar</div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         FIREBASE-STATUS + TOGGLE
+    ============================================================ -->
+    <div class="controls-bar">
+        <div id="firebase-status" class="firebase-status loading" role="status">Laddar inpasseringsdata…</div>
+        <div class="toggle-group" role="group" aria-label="Välj analysvy">
+            <span class="toggle-label">Visa per badare baserat på:</span>
+            <button id="btn-faktisk" class="toggle-btn active" aria-pressed="true">
+                Faktiska badare
+            </button>
+            <button id="btn-max" class="toggle-btn" aria-pressed="false">
+                Full kapacitet
+            </button>
+        </div>
+        <button id="btn-uppdatera-firebase" class="refresh-btn" title="Hämta ny inpasseringsdata från Firebase">
+            ↺ Uppdatera inpasseringar
+        </button>
+    </div>
+
+    <!-- ============================================================
+         DIAGRAM 1: BAD-kWh (jämförbara månader)
+    ============================================================ -->
+    <section class="chart-card">
+        <h2>Bad-kWh per månad – jämförbara månader</h2>
+        <p class="chart-desc">
+            Direkt jämförelse av samma kalendermånad: blå = före ombyggnad (2024/2025),
+            orange = efter ombyggnad (2025/2026). Obs: elpriset har förändrats mellan åren.
+        </p>
+        <div class="chart-wrap">
+            <canvas id="chart-kwh" aria-label="Stapeldiagram bad-kWh"></canvas>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         DIAGRAM 2: kWh PER BADARE (växlar med toggle)
+    ============================================================ -->
+    <section class="chart-card">
+        <h2>kWh per badare – jämförbara månader</h2>
+        <p class="chart-desc" id="desc-chart2">
+            Hur mycket el används per besökare? Baserat på faktiska inpasseringar.
+        </p>
+        <div class="chart-wrap">
+            <canvas id="chart-kwh-per-person" aria-label="Linjediagram kWh per badare"></canvas>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         DIAGRAM 3: KR PER BADARE (växlar med toggle)
+    ============================================================ -->
+    <section class="chart-card">
+        <h2>Elkostnad per badare (kr) – jämförbara månader</h2>
+        <p class="chart-desc" id="desc-chart3">
+            Proportionell badkostnad (bad-kWh:s andel av total elkostnad) per besökare.
+        </p>
+        <div class="chart-wrap">
+            <canvas id="chart-kr-per-person" aria-label="Linjediagram kr per badare"></canvas>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         DIAGRAM 4: FAKTISKA INPASSERINGAR (visas bara i faktisk-vy)
+    ============================================================ -->
+    <section class="chart-card" id="chart4-section">
+        <h2>Faktiska inpasseringar per månad</h2>
+        <p class="chart-desc">
+            Antal besökare per månad – före ombyggnad (blå) och efter ombyggnad (orange).
+            Fler besökare efter ombyggnad? Här syns trenden.
+        </p>
+        <div class="chart-wrap">
+            <canvas id="chart-inpass" aria-label="Linjediagram inpasseringar"></canvas>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         EXTRAANALYSER
+    ============================================================ -->
+    <section class="extra-card">
+        <h2>Extraanalyser</h2>
+        <div id="extra-analyser" class="extra-grid"></div>
+    </section>
+
+    <!-- ============================================================
+         JÄMFÖRELSETABELL (6 jämförbara månadspar)
+    ============================================================ -->
+    <section class="table-card">
+        <h2>Detaljerad jämförelsetabell – jämförbara månader</h2>
+        <p class="table-desc">
+            Samma kalendermånad jämförs sida vid sida.
+            <em>Badare* = faktiska inpasseringar eller maxkapacitet beroende på vald vy ovan.</em>
+        </p>
+        <div class="table-scroll">
+            <table id="jamfor-tabell">
+                <thead>
+                    <tr>
+                        <th rowspan="2" class="manad-col">Månad</th>
+                        <th colspan="5" class="fore-header">Före ombyggnad</th>
+                        <th colspan="5" class="efter-header">Efter ombyggnad</th>
+                        <th colspan="2" class="diff-header">Förändring</th>
+                    </tr>
+                    <tr>
+                        <th>År</th><th>Bad-kWh</th><th>Badare*</th>
+                        <th>kWh/badare</th><th>kr/badare</th>
+                        <th>År</th><th>Bad-kWh</th><th>Badare*</th>
+                        <th>kWh/badare</th><th>kr/badare</th>
+                        <th>Δ kWh/b.</th><th>Δ kr/b.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Fylls i av JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         ÖVRIGA MÅNADER EFTER OMBYGGNAD (utan jämförbart par)
+    ============================================================ -->
+    <section class="table-card">
+        <h2>Övriga månader efter ombyggnad</h2>
+        <p class="table-desc">
+            Månader utan direkt "före"-par (badet var stängt dessa månader år 2025).
+        </p>
+        <div class="table-scroll">
+            <table id="efter-tabell">
+                <thead>
+                    <tr>
+                        <th>Månad</th>
+                        <th>Bad-kWh</th>
+                        <th>Badare*</th>
+                        <th>kWh/badare</th>
+                        <th>kr/badare</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Fylls i av JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         FORMULÄR: LÄGG TILL FRAMTIDA EL-DATA
+    ============================================================ -->
+    <section class="form-card">
+        <h2>Lägg till framtida el-data</h2>
+        <p>
+            Fyll i el-data för kommande månader. Inpasseringsdata hämtas automatiskt från Firebase –
+            du behöver bara ange el-siffrorna nedan.
+        </p>
+        <form id="el-form" novalidate>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="form-ar">År</label>
+                    <select id="form-ar">
+                        <option value="2026">2026</option>
+                        <option value="2027">2027</option>
+                        <option value="2028">2028</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="form-manad">Månad</label>
+                    <select id="form-manad">
+                        <option value="0">Januari</option>
+                        <option value="1">Februari</option>
+                        <option value="2">Mars</option>
+                        <option value="3">April</option>
+                        <option value="4">Maj</option>
+                        <option value="5">Juni</option>
+                        <option value="6">Juli</option>
+                        <option value="7">Augusti</option>
+                        <option value="8">September</option>
+                        <option value="9">Oktober</option>
+                        <option value="10">November</option>
+                        <option value="11">December</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="form-bad-kwh">Bad-kWh</label>
+                    <!-- Gul bakgrund = inmatningsfält -->
+                    <input type="number" id="form-bad-kwh" placeholder="t.ex. 12 500" min="0" step="1">
+                </div>
+                <div class="form-group">
+                    <label for="form-restaurang-kwh">Restaurang-kWh</label>
+                    <input type="number" id="form-restaurang-kwh" placeholder="t.ex. 11 000" min="0" step="1">
+                </div>
+                <div class="form-group">
+                    <label for="form-kostnad">Total elkostnad (kr)</label>
+                    <input type="number" id="form-kostnad" placeholder="t.ex. 55 000" min="0" step="1">
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="submit-btn">Spara el-data</button>
+                <span id="form-bekraftelse" class="form-confirm" role="status"></span>
+            </div>
+        </form>
+    </section>
+
+    <!-- ============================================================
+         SIDFOT
+    ============================================================ -->
+    <footer class="page-footer">
+        <a href="index.html">← Tillbaka till elöversikten</a>
+        <span>Data: Bjerreds Saltsjöbad · Inpasseringar: Firebase (skylt-e0c45)</span>
+    </footer>
+
+</div><!-- /container -->
+
+<script src="fore_och_efter_ombyggnad.js"></script>
+</body>
+</html>
