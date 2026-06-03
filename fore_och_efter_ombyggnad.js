@@ -729,78 +729,136 @@ function byggAnalysKwhPerBadare() {
 
 /* ================================================================
    8. EXTRAANALYSER
-   Beräknar och visar tre extraanalyser:
-   - Merkostnad per extra kapacitetsplats (18 nya platser)
-   - Säsongsanalys: sommar (Aug–Sep) vs vinter (Nov–Jan)
-   - Beläggningsgrad: faktiska badare i % av teoretisk max per dag
+   UPPDATERING 2026-06-03: Ersatte tidigare oklara mått med tre
+   tydliga och korrekta nyckeltal:
+   1. Besöksökning – fler badare per månad efter ombyggnad
+   2. Merkostnad för badet – kr/mån mer i el för ny vs gammal bastu
+   3. Säsongsanalys – bad-kWh-förändring sommar vs vinter
    ================================================================ */
 function byggExtraAnalyser() {
     const container = document.getElementById('extra-analyser');
     container.innerHTML = '';
 
-    /* --- Extraanalys 1: Merkostnad per ny kapacitetsplats --- */
-    const merkostnader = jamforPar.map(p => {
-        const foreCost  = badKostnadKr(p.fore);
-        const efterCost = badKostnadKr(p.efter);
-        if (!foreCost || !efterCost) return null;
-        return (efterCost - foreCost) / (KAPACITET_EFTER - KAPACITET_FORE); /* 18 nya platser */
+    /* --- Extraanalys 1: Besöksökning ---
+       Genomsnittlig skillnad i faktiska inpasseringar per jämförbar månad */
+    const inpassDiff = jamforPar.map(p => {
+        const fInp = getInpass(p.fore.ar, p.fore.manIdx);
+        const eInp = getInpass(p.efter.ar, p.efter.manIdx);
+        return (fInp != null && eInp != null) ? eInp - fInp : null;
     }).filter(v => v != null);
 
-    const snittMerKostnad = snitt(merkostnader);
+    const snittForeInpass  = snitt(jamforPar.map(p => getInpass(p.fore.ar, p.fore.manIdx)));
+    const snittEfterInpass = snitt(jamforPar.map(p => getInpass(p.efter.ar, p.efter.manIdx)));
+    const snittInpassDiff  = snitt(inpassDiff);
+    const inpassPct        = pctDiff(snittForeInpass, snittEfterInpass);
 
-    /* --- Extraanalys 2: Säsongsanalys sommar vs vinter --- */
-    const sommarPar  = jamforPar.filter(p => [7, 8].includes(p.fore.manIdx));      /* Aug, Sep */
-    const vinterPar  = jamforPar.filter(p => [10, 11, 0].includes(p.fore.manIdx)); /* Nov, Dec, Jan */
+    /* --- Extraanalys 2: Merkostnad i el för badet per månad ---
+       Genomsnittlig skillnad i proportionell bad-kostnad (efter minus före) */
+    const badKostDiff = jamforPar.map(p => {
+        const fc = badKostnadKr(p.fore);
+        const ec = badKostnadKr(p.efter);
+        return (fc != null && ec != null) ? ec - fc : null;
+    }).filter(v => v != null);
+
+    const snittForeBadKost  = snitt(jamforPar.map(p => badKostnadKr(p.fore)));
+    const snittEfterBadKost = snitt(jamforPar.map(p => badKostnadKr(p.efter)));
+    const snittBadKostDiff  = snitt(badKostDiff);
+    const badKostPct        = pctDiff(snittForeBadKost, snittEfterBadKost);
+
+    /* --- Extraanalys 3: Säsongsanalys – bad-kWh-förändring sommar vs vinter --- */
+    const sommarPar = jamforPar.filter(p => [7, 8].includes(p.fore.manIdx));      /* Aug, Sep */
+    const vinterPar = jamforPar.filter(p => [10, 11, 0].includes(p.fore.manIdx)); /* Nov, Dec, Jan */
 
     const snittSommar = snitt(sommarPar.map(p => pctDiff(p.fore.badKwh, p.efter.badKwh)));
     const snittVinter = snitt(vinterPar.map(p => pctDiff(p.fore.badKwh, p.efter.badKwh)));
 
-    /* --- Extraanalys 3: Beläggningsgrad (faktisk vy) --- */
-    /* kWh/badare (faktisk) / kWh/badare (max) × 100 ger ett mått på hur
-       "full" bastun är relativt sin kapacitet, baserat på energianvändning */
-    const belaggPar = jamforPar.map(p => {
-        const faktE = kwhPerBadare(p.efter, 'faktisk');
-        const maxE  = kwhPerBadare(p.efter, 'max');
-        if (!faktE || !maxE) return null;
-        /* Kvoten maxE/faktE visar hur kapacitetsutnyttjandet ser ut:
-           om kWh/faktisk_badare > kWh/per_max_kapacitet = fler faktiska än max → ej möjligt
-           Egentligen: faktiska inpasseringar / max_kapacitet × 100 */
-        const faktInpass = getInpass(p.efter.ar, p.efter.manIdx);
-        return faktInpass ? (faktInpass / KAPACITET_EFTER) * 100 : null;
-    }).filter(v => v != null);
+    /* --- Beläggningsgradsförändring för tooltiptext ---
+       Beräknas med 1 tims antagen vistelsetid som referens */
+    const maxFore  = KAPACITET_FORE  / 2;
+    const maxEfter = KAPACITET_EFTER / 2;
+    const snittBelaggFore  = snitt(jamforPar.map(p => {
+        const inp = getInpass(p.fore.ar, p.fore.manIdx);
+        return belaggningsgrad(inp, maxFore, p.fore.dagar, 1);
+    }));
+    const snittBelaggEfter = snitt(jamforPar.map(p => {
+        const inp = getInpass(p.efter.ar, p.efter.manIdx);
+        return belaggningsgrad(inp, maxEfter, p.efter.dagar, 1);
+    }));
+    const belaggPct = pctDiff(snittBelaggFore, snittBelaggEfter);
 
-    const snittBelagg = snitt(belaggPar);
+    /* Paradox-tooltip: fler besökare men lägre beläggning */
+    const paradoxTooltip = `
+        <div class="paradox-tooltip" role="tooltip">
+            <strong>Paradoxen: fler besökare – men tommare bastu!</strong>
+            <div class="paradox-rad">
+                <span>Besöksökning</span>
+                <span>${fmtPct(inpassPct)} fler badare/mån</span>
+            </div>
+            <div class="paradox-rad">
+                <span>Kapacitetsökning</span>
+                <span>+50 % (18 → 27 platser/bastu)</span>
+            </div>
+            <div class="paradox-rad">
+                <span>Beläggningsgrad (snitt, 1 tim vistelse)</span>
+                <span>${fmt(snittBelaggFore, 1)} % → ${fmt(snittBelaggEfter, 1)} % (${fmtPct(belaggPct)})</span>
+            </div>
+            <div class="paradox-rad">
+                Slutsats: kapaciteten ökade med 50 % men besöken ökade bara med ${fmtPct(inpassPct)}.
+                Varje plats används statistiskt sett ${fmtPct(belaggPct)} mindre än förut –
+                trots att det är fler personer i bastun totalt sett.
+            </div>
+        </div>`;
 
-    /* --- Bygg HTML för extraanalyserna --- */
+    /* --- Bygg HTML --- */
     const items = [
         {
-            titel: 'Merkostnad per ny kapacitetsplats',
-            varde: snittMerKostnad != null ? fmt(snittMerKostnad, 0) : '—',
-            enhet: 'kr/plats/månad (snitt)',
-            beskrivning: `Ombyggnaden lade till ${KAPACITET_EFTER - KAPACITET_FORE} platser (${KAPACITET_FORE} → ${KAPACITET_EFTER}). Genomsnittlig merkostnad i el per ny plats och månad för de jämförbara månaderna.`
+            titel: 'Fler besökare efter ombyggnad',
+            varde: snittInpassDiff != null
+                ? (snittInpassDiff >= 0 ? '+' : '') + fmt(snittInpassDiff, 0)
+                : '—',
+            enhet: `badare/månad mer i snitt (${fmtPct(inpassPct)})`,
+            beskrivning: `Genomsnittligt antal fler inpasseringar per månad efter ombyggnaden
+                jämfört med samma kalendermånad året innan (${jamforPar.length} månader jämförs).
+                Snitt före: ${fmt(snittForeInpass, 0)} besökare/mån →
+                snitt efter: ${fmt(snittEfterInpass, 0)} besökare/mån.`,
+            extraKlass: 'has-paradox',
+            extra: `<p class="paradox-hint">&#9432; Hovra för en överraskande jämförelse med beläggningsgraden</p>${paradoxTooltip}`
+        },
+        {
+            titel: 'Merkostnad för badet i el per månad',
+            varde: snittBadKostDiff != null
+                ? (snittBadKostDiff >= 0 ? '+' : '') + fmt(snittBadKostDiff, 0)
+                : '—',
+            enhet: `kr/månad mer i snitt (${fmtPct(badKostPct)})`,
+            beskrivning: `Hur mycket mer kostar badets el per månad efter ombyggnaden?
+                Beräknas som badets proportionella andel av total elkostnad (bad-kWh ÷ total-kWh × kostnad).
+                Snitt före: ${fmt(snittForeBadKost, 0)} kr/mån →
+                snitt efter: ${fmt(snittEfterBadKost, 0)} kr/mån.`,
+            extraKlass: '',
+            extra: ''
         },
         {
             titel: 'Bad-kWh-förändring: sommar vs vinter',
             varde: `${fmtPct(snittSommar)} / ${fmtPct(snittVinter)}`,
             enhet: 'sommar (Aug–Sep) / vinter (Nov–Jan)',
-            beskrivning: 'Den nya, större bastun kräver mer energi för uppvärmning. Skillnaden är störst på vintern då en större volym ska värmas, och minst på sommaren då grundtemperaturen är högre.'
-        },
-        {
-            titel: 'Faktiska badare vs maxkapacitet (efter)',
-            varde: snittBelagg != null ? fmt(snittBelagg, 0) + ' %' : '—',
-            enhet: 'snitt beläggningsgrad (faktisk/max)',
-            beskrivning: `Faktiska inpasseringar i förhållande till max ${KAPACITET_EFTER} badare per dag. Obs: kapaciteten är per samtidiga badare, inte per dag – faktisk daglig genomströmning kan vara flerfaldigt högre.`
+            beskrivning: `Den nya, större bastun kräver mer energi för uppvärmning av en större volym.
+                Skillnaden mot den gamla bastun är störst på vintern
+                (${fmtPct(snittVinter)} mer bad-kWh) och minst på sommaren
+                (${fmtPct(snittSommar)} mer bad-kWh), då grundtemperaturen redan är högre.`,
+            extraKlass: '',
+            extra: ''
         }
     ];
 
     items.forEach(item => {
         const div = document.createElement('div');
-        div.className = 'extra-item';
+        div.className = `extra-item ${item.extraKlass}`;
         div.innerHTML = `
             <h3>${item.titel}</h3>
             <p>${item.beskrivning}</p>
             <div class="extra-value">${item.varde}</div>
             <div class="extra-unit">${item.enhet}</div>
+            ${item.extra}
         `;
         container.appendChild(div);
     });

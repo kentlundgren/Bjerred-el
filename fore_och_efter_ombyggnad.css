@@ -551,6 +551,81 @@ td.neg { color: var(--negative); font-weight: 600; }
 }
 
 /* ----------------------------------------------------------------
+   PARADOX-TOOLTIP på "Fler besökare"-kortet
+   ---------------------------------------------------------------- */
+.extra-item.has-paradox {
+    cursor: help;
+    position: relative;
+}
+
+.extra-item.has-paradox:hover {
+    border-left-color: var(--accent);
+    background: #fff8f8;
+}
+
+/* Tooltipboxen – dold som standard, visas vid hover */
+.paradox-tooltip {
+    display: none;
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: #2c3e50;
+    color: #fff;
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 0.87em;
+    line-height: 1.6;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+
+.extra-item.has-paradox:hover .paradox-tooltip {
+    display: block;
+}
+
+/* Liten pil uppåt */
+.paradox-tooltip::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 24px;
+    border-width: 0 8px 8px;
+    border-style: solid;
+    border-color: transparent transparent #2c3e50;
+}
+
+.paradox-tooltip strong {
+    color: #f39c12;
+    display: block;
+    font-size: 1em;
+    margin-bottom: 6px;
+}
+
+.paradox-tooltip .paradox-rad {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    padding: 4px 0;
+}
+
+.paradox-tooltip .paradox-rad:last-child {
+    border-bottom: none;
+    padding-top: 8px;
+    font-style: italic;
+    color: #bdc3c7;
+    font-size: 0.92em;
+    display: block;
+}
+
+.paradox-hint {
+    font-size: 0.78em;
+    color: var(--accent);
+    margin-top: 6px;
+    font-style: italic;
+}
+
+/* ----------------------------------------------------------------
    ANALYSBOX – dynamisk text under kWh-per-badare-diagrammet
    ---------------------------------------------------------------- */
 .analys-box {
