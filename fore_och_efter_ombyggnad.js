@@ -27,8 +27,17 @@
 const KAPACITET_FORE  = 36;   // 18 badare per bastu × 2 bastuer (gammal)
 const KAPACITET_EFTER = 54;   // 27 badare per bastu × 2 bastuer (ny efter ombyggnad)
 
-/* Beläggningsgrad: bastun är i drift 18 timmar/dag (öppen 06-22, minus 2 tim städning) */
-const TIMMAR_PER_DAG  = 18;
+/* UPPDATERING 2026-06-05: Korrigerat från 18 till 14 timmar/dag.
+   Bastun öppnar 06:00, stänger 22:00 → 16 öppettimmar minus 2 tim städning = 14 tim/dag. */
+const TIMMAR_PER_DAG  = 14;   /* fallback-default om DOM-elementet saknas */
+
+/* Hämta aktuellt antal drifttimmar per dag från dropdown-väljaren (default 14 timmar) */
+function getTimmarPerDag() {
+    const el = document.getElementById('timmar-per-dag');
+    if (!el) return TIMMAR_PER_DAG;
+    const v = parseFloat(el.value);
+    return (!isNaN(v) && v > 0) ? v : TIMMAR_PER_DAG;
+}
 
 /* Firebase REST API – öppen läsbehörighet, ingen auth krävs */
 const FIREBASE_URL =
@@ -890,7 +899,7 @@ function getVistelseTim() {
 function belaggningsgrad(inpasseringar, maxKapPerSauna, dagar, vistelseTim) {
     if (!inpasseringar || !maxKapPerSauna || !dagar) return null;
     const herrar       = inpasseringar / 2;
-    const timmar       = TIMMAR_PER_DAG * dagar;
+    const timmar       = getTimmarPerDag() * dagar;
     const herrarPerTim = herrar / timmar;
     return (herrarPerTim * vistelseTim / maxKapPerSauna) * 100;
 }
@@ -994,13 +1003,14 @@ function byggAnalysBelagg() {
     const janEfter = bVarden.find(v => v.manad === 'Jan');
     let exempelText = '';
     if (janEfter && janEfter.efterHerrar) {
-        const tim          = TIMMAR_PER_DAG * janEfter.efterDagar;
+        const timDag       = getTimmarPerDag();
+        const tim          = timDag * janEfter.efterDagar;
         const herrarPerTim = janEfter.efterHerrar / tim;
         exempelText = `
             <p style="margin-top:10px">
                 <strong>Exempelberäkning – januari (efter ombyggnad):</strong><br>
                 ${janEfter.efterHerrar.toLocaleString('sv-SE')} herrar
-                ÷ (${TIMMAR_PER_DAG} tim/dag × ${janEfter.efterDagar} dagar = ${tim} tim)
+                ÷ (${timDag} tim/dag × ${janEfter.efterDagar} dagar = ${tim} tim)
                 = <strong>${fmt(herrarPerTim, 2)} herrar/tim</strong>.
                 Med antagen vistelsetid ${fmt(vistelse, 1)} tim är det i snitt
                 <strong>${fmt(herrarPerTim * vistelse, 2)} herrar inne</strong> i bastun per givet ögonblick.
@@ -1073,7 +1083,7 @@ function byggAnalysBelagg() {
             </div>
         </div>
         <p style="margin-top:12px; font-style:italic; color:#7f8c8d; font-size:0.85em">
-            Antaganden: bastun i drift ${TIMMAR_PER_DAG} tim/dag (öppen 06–22, städning 2 tim),
+            Antaganden: bastun i drift ${getTimmarPerDag()} tim/dag (öppen 06–22, städning 2 tim),
             50 % herrar / 50 % damer. Faktiska dagantal per månad används.
             Aktuell vistelsetid: <strong>${fmt(vistelse, 1)} timmar</strong>.
         </p>
@@ -1243,6 +1253,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     /* Vistelsetid – uppdatera beläggningsdiagram och analys direkt vid ändring */
     document.getElementById('vistelse-timmar').addEventListener('input', () => {
         ombyggChart4();        /* återskapar chart-belagg med ny vistelsetid */
+        byggAnalysBelagg();
+    });
+
+    /* UPPDATERING 2026-06-05: Drifttimmar per dag – uppdatera beläggningsdiagram och analys */
+    document.getElementById('timmar-per-dag').addEventListener('change', () => {
+        ombyggChart4();        /* återskapar chart-belagg med nytt timmar-värde */
         byggAnalysBelagg();
     });
 

@@ -40,7 +40,7 @@ Huvuddatan finns i `monthlyData`-arrayen i `index.html` (~rad 965):
 ```javascript
 KAPACITET_FORE  = 36   // 18 badare/bastu × 2 bastuer (gammal)
 KAPACITET_EFTER = 54   // 27 badare/bastu × 2 bastuer (ny, efter ombyggnad 2025)
-TIMMAR_PER_DAG  = 18   // 20 öppettimmar − 2 städtimmar
+TIMMAR_PER_DAG  = 14   // 16 öppettimmar (öppen 06–22) − 2 städtimmar
 ```
 
 ## Analyssidan – inpasseringsdata

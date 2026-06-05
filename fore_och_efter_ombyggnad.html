@@ -162,8 +162,22 @@
         <p class="chart-desc">
             Genomsnittlig andel av maxkapaciteten som faktiskt utnyttjas.
             Baserat på faktiska inpasseringar, antagandet att hälften är herrar/damer,
-            och att bastun är i drift <strong>18 timmar per dag</strong> (öppen 06–22, städning 2 tim).
+            och att bastun är i drift <strong>14 timmar per dag</strong> (öppen 06–22 = 16 tim, minus 2 tim städning).
         </p>
+
+        <!-- UPPDATERING 2026-06-05: Dropdown för drifttimmar per dag (gul bakgrund = inmatningsfält) -->
+        <div class="vistelse-rad">
+            <label for="timmar-per-dag">
+                Drifttimmar per dag:
+            </label>
+            <select id="timmar-per-dag" style="background-color:#FFF9C4; border:1px solid #ccc; padding:4px 8px; border-radius:4px; font-size:1em;">
+                <option value="13">13 timmar</option>
+                <option value="13.5">13,5 timmar</option>
+                <option value="14" selected>14 timmar (standard: öppen 06–22 minus 2 tim städning)</option>
+                <option value="14.5">14,5 timmar</option>
+                <option value="15">15 timmar</option>
+            </select>
+        </div>
 
         <!-- Inmatning: antagen vistelsetid (gul bakgrund = inmatningsfält) -->
         <div class="vistelse-rad">
