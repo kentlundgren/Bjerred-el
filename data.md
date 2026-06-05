@@ -56,7 +56,7 @@ Dataperiod: **Augusti 2024 – Maj 2026** (22 månader)
 | Före ombyggnad (–feb 2025) | 18 | 2 | 36 |
 | Efter ombyggnad (aug 2025–) | 27 | 2 | 54 |
 
-Öppettider: 06:00–22:00 (20 tim). Städning ca 2 tim/dag → **18 drifttimmar/dag**.
+Öppettider: 06:00–22:00 (16 tim). Städning ca 2 tim/dag → **14 drifttimmar/dag**.
 
 ---
 
