@@ -25,9 +25,9 @@ Alla filer är fristående – öppnas direkt i webbläsaren.
 Huvuddatan finns i `monthlyData`-arrayen i `index.html` (~rad 965):
 
 ```javascript
-{ month: "Maj 2026", fullMonth: "Maj 2026", totalKWh: 23937,
+{ month: "Maj 2026", fullMonth: "Maj 2026", totalKWh: 23941,
   daysInMonth: 31, kwhPerDay: 772, type: "Restaurang och bad",
-  bad: 11511, restaurant: 12426, cost: 60000, costPerKwh: 2.51 }
+  bad: 11511, restaurant: 12430, cost: 56338, costPerKwh: 2.35 }
 ```
 
 - `bad + restaurant` ska alltid summera till `totalKWh`
@@ -81,11 +81,12 @@ Beläggningsgraden är proportionell mot antagen vistelsetid (default 1 timme).
 
 ## Uppdatera månadsdata – checklista
 
-Varje gång ny månadsdata läggs till ska **alla tre** dessa filer uppdateras:
+Varje gång ny månadsdata läggs till ska **alla fyra** dessa filer uppdateras:
 
 1. **`data.md`** – lägg till en ny rad i månadsdata-tabellen och uppdatera "Senast uppdaterad" och "Dataperiod" i filens huvud
 2. **`index.html`** – lägg till nytt objekt i `monthlyData`-arrayen (~rad 970)
 3. **`fore_och_efter_ombyggnad.js`** – uppdatera `efterData`-arrayen om månaden tillhör perioden aug 2025 och framåt
+4. **`data.html`** – lägg till samma objekt i `originalData`-arrayen (~rad 450) så att det administrativa verktyget visar aktuell data. OBS: `data.html` har en **egen hårdkodad kopia** av all månadsdata – den synkas inte automatiskt med `index.html`.
 
 Kontrollräkna alltid:
 - `bad + restaurant = totalKWh`
