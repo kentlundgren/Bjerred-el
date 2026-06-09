@@ -94,37 +94,38 @@
             color: #7f8c8d;
         }
 
-        /* UPPDATERING 2026-01: Tooltip för LÅT-jämförelse */
+        /* UPPDATERING 2026-06-09: Förenklad tooltip – position:absolute, ingen JS-positionering */
         .lat-tooltip {
-            position: fixed; /* UPPDATERING: Ändrat från absolute till fixed för bättre synlighet */
+            position: absolute;
+            top: calc(100% + 8px);   /* alltid nedanför kortet */
+            left: 50%;
+            transform: translateX(-50%);
             background-color: #2c3e50;
             color: white;
             padding: 18px 20px;
             border-radius: 10px;
             font-size: 0.9em;
-            white-space: normal; /* UPPDATERING: Tillåt radbrytning */
+            white-space: normal;
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s, visibility 0.3s;
-            z-index: 9999; /* UPPDATERING: Mycket högre z-index för att vara ovanför allt */
+            z-index: 9999;
             box-shadow: 0 8px 24px rgba(0,0,0,0.4);
             min-width: 300px;
             max-width: 350px;
-            pointer-events: none; /* UPPDATERING: Låt inte tooltip blockera hover */
+            pointer-events: none;
             line-height: 1.6;
         }
 
         .summary-card.lat-card {
             position: relative;
             cursor: help;
-            /* UPPDATERING: Tillåt overflow så tooltip kan synas */
             overflow: visible !important;
         }
 
         .summary-card.lat-card:hover .lat-tooltip {
             opacity: 1;
             visibility: visible;
-            pointer-events: auto;
         }
 
         .lat-change {
@@ -933,6 +934,32 @@
                 </li>
                 <li><strong>Säsong och kalendermånad:</strong> Grova vinter/sommar/vår-höst‑klasser används som reserv. För «Restaurang och bad» och «Bara restaurang» räknas också en <strong>månadsprofil</strong> (t.ex. snitt för alla januari månader i serie jämfört med helårssnitt) så januari kan bli en tydligare topp i den streckade linjen.</li>
                 <li><strong>Tolkning:</strong> Linjen «förmodad» är ett internt jämförelse­stöd, inte en prognos eller energi­expertmodell.</li>
+            </ul>
+
+            <!-- UPPDATERING 2026-06-09: Avsnitt om hover-tooltipteknik tillagt -->
+            <h3>Hover-tooltips på nyckeltalskorten</h3>
+            <p>
+                De fyra LÅT-korten (Årsförbrukning, Kostnad inkl/exkl moms, Genomsnittspris) visar
+                en mörk informationsruta när man håller muspekaren över kortet.
+            </p>
+            <ul>
+                <li><strong>Teknik:</strong> Ren CSS – <code>position: absolute</code> på tooltip-elementet
+                    kombinerat med <code>opacity: 0 / visibility: hidden</code> som standard, och
+                    <code>opacity: 1 / visibility: visible</code> via <code>:hover</code>-pseudoklassen
+                    på föräldrakortet. Ingen JavaScript krävs för att visa eller dölja rutan.</li>
+                <li><strong>Placering:</strong> Tooltiparna placeras alltid direkt <em>nedanför</em> kortet
+                    (<code>top: calc(100% + 8px); left: 50%; transform: translateX(-50%)</code>),
+                    centrerade horisontellt. Alla förälderelement har <code>overflow: visible</code>
+                    så rutan klipps aldrig.</li>
+                <li><strong>Innehåll:</strong> De tre LÅT-korten visar jämförelse med föregående
+                    12-månadersperiod (fylls i av <code>updateSummary()</code>).
+                    Genomsnittspris-kortet visar beräkningsformeln
+                    (total kostnad&nbsp;÷&nbsp;total kWh) samt en förklaring till varför det
+                    viktade genomsnittspriset kan ligga nära vintermånadernas genomsnitt.</li>
+                <li><strong>Historik:</strong> Tidigare användes <code>position: fixed</code> med
+                    JavaScript-positionering via <code>mouseenter</code>. Den lösningen var
+                    opålitlig (inline-stilar överskuggade CSS-hoverns <code>opacity</code>).
+                    Ersattes 2026-06-09 med den nuvarande, enklare CSS-only-lösningen.</li>
             </ul>
 
             <h3>Design Principer:</h3>
@@ -1876,46 +1903,8 @@
         // FUNKTION: Positionera LÅT-tooltips
         // ====================================
         // UPPDATERING 2026-01: Dynamisk positionering av tooltips för bättre synlighet
-        /* UPPDATERING 2026-06-09: Omskriven – positionerar tooltip nedanför kortet om
-           kortet sitter i övre halvan av viewporten, annars ovanför.
-           Klamrar horisontellt inom viewportens kanter.
-           OBS: Inga inline opacity/visibility-ändringar – CSS-hovern hanterar synligheten. */
-        function positionLatTooltips() {
-            const MARGIN  = 10;    /* minsta avstånd till viewportkant (px) */
-            const TIP_W   = 330;   /* matchar max-width i CSS (300–350 px) */
-            const TIP_H   = 160;   /* uppskattad höjd – används bara för valet ovan/nedan */
-
-            const latCards = document.querySelectorAll('.summary-card.lat-card');
-
-            latCards.forEach(card => {
-                const tooltip = card.querySelector('.lat-tooltip');
-                if (!tooltip) return;
-
-                card.addEventListener('mouseenter', function() {
-                    const rect = card.getBoundingClientRect();
-                    const vw   = window.innerWidth;
-                    const vh   = window.innerHeight;
-
-                    /* Horisontell position: centrera, klamma mot kanter */
-                    let left = rect.left + rect.width / 2 - TIP_W / 2;
-                    left = Math.max(MARGIN, Math.min(left, vw - TIP_W - MARGIN));
-
-                    /* Vertikal position: nedanför om kortet är i övre halvan av viewporten */
-                    let top, transform;
-                    if (rect.top < vh / 2) {
-                        top       = rect.bottom + MARGIN;  /* nedanför */
-                        transform = 'none';
-                    } else {
-                        top       = rect.top - MARGIN;     /* ovanför */
-                        transform = 'translateY(-100%)';
-                    }
-
-                    tooltip.style.left      = left + 'px';
-                    tooltip.style.top       = top  + 'px';
-                    tooltip.style.transform = transform;
-                });
-            });
-        }
+        /* Tooltip-positionering hanteras numera helt av CSS (position:absolute, top:calc(100%+8px)).
+           Ingen JavaScript behövs – UPPDATERING 2026-06-09. */
 
         // ====================================
         // INITIALISERING
@@ -1924,7 +1913,6 @@
         window.addEventListener('DOMContentLoaded', () => {
             updateSummary();
             createCharts();
-            positionLatTooltips(); // UPPDATERING 2026-01: Initiera tooltip-positionering
             // Tabellen är dold som standard, så vi fyller den inte förrän användaren klickar på knappen
         });
     </script>
