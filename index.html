@@ -712,10 +712,17 @@
                     <div class="lat-change" id="latChangeCostExVAT">-</div>
                 </div>
             </div>
-            <div class="summary-card">
+            <!-- UPPDATERING 2026-06-09: Tooltip tillagd för att förklara hur genomsnittspriset beräknas -->
+            <div class="summary-card lat-card">
                 <h3>Genomsnittspris (inkl moms)</h3>
                 <div class="value" id="avgPrice">-</div>
                 <div class="unit">kr/kWh</div>
+                <div class="lat-tooltip" id="avgPriceTooltip">
+                    <strong>Hur beräknas detta pris?</strong><br>
+                    Viktat genomsnitt för LÅT-perioden:<br>
+                    <span id="avgPriceFormula">total kostnad ÷ total kWh</span><br>
+                    <div class="lat-change" id="avgPriceNote"></div>
+                </div>
             </div>
             <div class="summary-card">
                 <h3>Genomsnittspris (exkl moms)</h3>
@@ -1212,6 +1219,16 @@
             document.getElementById('totalCostExVAT').textContent = totalCostExVAT.toLocaleString('sv-SE');
             document.getElementById('avgPrice').textContent = avgPrice.toFixed(2);
             document.getElementById('avgPriceExVAT').textContent = avgPriceExVAT.toFixed(2);
+
+            // UPPDATERING 2026-06-09: Fyll tooltip för genomsnittspris med beräkning och förklaring
+            document.getElementById('avgPriceFormula').innerHTML =
+                `${totalCost.toLocaleString('sv-SE')} kr &divide; ${totalKWh.toLocaleString('sv-SE')} kWh`
+                + ` = <strong>${avgPrice.toFixed(2)} kr/kWh</strong>`;
+            document.getElementById('avgPriceNote').innerHTML =
+                `<strong>OBS:</strong> Detta viktat genomsnitt kan råka ligga nära `
+                + `vintermånadernas genomsnitt (Okt–Mar), trots att sommarmånaderna `
+                + `är billigare. Orsaken är att vintermånaderna förbrukar `
+                + `betydligt mer kWh och därför väger tyngre i beräkningen.`;
             document.getElementById('latPeriod').textContent = latPeriodText;
             document.getElementById('latPeriodInfo').textContent = latPeriodText;
 
@@ -1859,23 +1876,43 @@
         // FUNKTION: Positionera LÅT-tooltips
         // ====================================
         // UPPDATERING 2026-01: Dynamisk positionering av tooltips för bättre synlighet
+        /* UPPDATERING 2026-06-09: Omskriven – positionerar tooltip nedanför kortet om
+           kortet sitter i övre halvan av viewporten, annars ovanför.
+           Klamrar horisontellt inom viewportens kanter.
+           OBS: Inga inline opacity/visibility-ändringar – CSS-hovern hanterar synligheten. */
         function positionLatTooltips() {
+            const MARGIN  = 10;    /* minsta avstånd till viewportkant (px) */
+            const TIP_W   = 330;   /* matchar max-width i CSS (300–350 px) */
+            const TIP_H   = 160;   /* uppskattad höjd – används bara för valet ovan/nedan */
+
             const latCards = document.querySelectorAll('.summary-card.lat-card');
-            
+
             latCards.forEach(card => {
                 const tooltip = card.querySelector('.lat-tooltip');
                 if (!tooltip) return;
 
-                card.addEventListener('mouseenter', function(e) {
+                card.addEventListener('mouseenter', function() {
                     const rect = card.getBoundingClientRect();
-                    
-                    // Positionera tooltip ovanför kortet
-                    const tooltipLeft = rect.left + (rect.width / 2);
-                    const tooltipTop = rect.top - 10;
-                    
-                    tooltip.style.left = tooltipLeft + 'px';
-                    tooltip.style.top = tooltipTop + 'px';
-                    tooltip.style.transform = 'translate(-50%, -100%)';
+                    const vw   = window.innerWidth;
+                    const vh   = window.innerHeight;
+
+                    /* Horisontell position: centrera, klamma mot kanter */
+                    let left = rect.left + rect.width / 2 - TIP_W / 2;
+                    left = Math.max(MARGIN, Math.min(left, vw - TIP_W - MARGIN));
+
+                    /* Vertikal position: nedanför om kortet är i övre halvan av viewporten */
+                    let top, transform;
+                    if (rect.top < vh / 2) {
+                        top       = rect.bottom + MARGIN;  /* nedanför */
+                        transform = 'none';
+                    } else {
+                        top       = rect.top - MARGIN;     /* ovanför */
+                        transform = 'translateY(-100%)';
+                    }
+
+                    tooltip.style.left      = left + 'px';
+                    tooltip.style.top       = top  + 'px';
+                    tooltip.style.transform = transform;
                 });
             });
         }
