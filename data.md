@@ -33,7 +33,7 @@ Dataperiod: **Augusti 2024 – Maj 2026** (22 månader)
 | Feb 2026 | Bad + restaurang | 15 660 | 16 342 | 32 002 | 1 143 | 82 794 | 2,59 |
 | Mar 2026 | Bad + restaurang | 17 772 | 10 302 | 28 074 | 906 | 63 389 | 2,26 |
 | Apr 2026 | Bad + restaurang | 15 089 | 11 582 | 26 671 | 860 | 52 186 | 1,96 |
-| Maj 2026 | Bad + restaurang | 11 511 | 12 426 | 23 937 | 772 | 56 338 | 2,35 |
+| Maj 2026 | Bad + restaurang | 11 511 | 12 430 | 23 941 | 772 | 56 338 | 2,35 |
 
 ---
 

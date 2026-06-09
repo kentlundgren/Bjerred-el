@@ -77,7 +77,7 @@ const efterData = [
     { manad:'Feb', manIdx:1,  ar:2026, badKwh:15660, totalKwh:32002, kostnad:82794, dagar:28 },
     { manad:'Mar', manIdx:2,  ar:2026, badKwh:17772, totalKwh:28074, kostnad:63389, dagar:31 },
     { manad:'Apr', manIdx:3,  ar:2026, badKwh:15089, totalKwh:26671, kostnad:52186, dagar:30 },
-    { manad:'Maj', manIdx:4,  ar:2026, badKwh:11511, totalKwh:23937, kostnad:56338, dagar:31 }, // UPPDATERING 2026-06-09: kostnad korrigerad 60000→56338 kr
+    { manad:'Maj', manIdx:4,  ar:2026, badKwh:11511, totalKwh:23941, kostnad:56338, dagar:31 }, // UPPDATERING 2026-06-09: kostnad 60000→56338 kr; totalKwh 23937→23941
     /* Platshållare – fylls i via formuläret eller uppdateras automatiskt */
     { manad:'Jun', manIdx:5,  ar:2026, badKwh:null, totalKwh:null, kostnad:null, dagar:30 },
     { manad:'Jul', manIdx:6,  ar:2026, badKwh:null, totalKwh:null, kostnad:null, dagar:31 },
