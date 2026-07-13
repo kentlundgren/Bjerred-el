@@ -79,19 +79,16 @@ beläggningsgrad  = herrar_per_timme × vistelsetid / (maxKap / 2) × 100
 
 Beläggningsgraden är proportionell mot antagen vistelsetid (default 1 timme).
 
-## Uppdatera månadsdata – checklista
+## Uppdatera månadsdata
 
-Varje gång ny månadsdata läggs till ska **alla fyra** dessa filer uppdateras:
+Varje gång ny månadsdata läggs till ska **alla fyra** filerna uppdateras
+(`data.md`, `index.html`, `fore_och_efter_ombyggnad.js`, `data.html`) och värdena
+kontrollräknas.
 
-1. **`data.md`** – lägg till en ny rad i månadsdata-tabellen och uppdatera "Senast uppdaterad" och "Dataperiod" i filens huvud
-2. **`index.html`** – lägg till nytt objekt i `monthlyData`-arrayen (~rad 970)
-3. **`fore_och_efter_ombyggnad.js`** – uppdatera `efterData`-arrayen om månaden tillhör perioden aug 2025 och framåt
-4. **`data.html`** – lägg till samma objekt i `originalData`-arrayen (~rad 450) så att det administrativa verktyget visar aktuell data. OBS: `data.html` har en **egen hårdkodad kopia** av all månadsdata – den synkas inte automatiskt med `index.html`.
-
-Kontrollräkna alltid:
-- `bad + restaurant = totalKWh`
-- `kwhPerDay ≈ totalKWh / daysInMonth` (avrundat till heltal)
-- `costPerKwh = cost / totalKWh` (avrundat till 2 decimaler)
+Den fullständiga steg-för-steg-proceduren – inklusive avläsning av skärmdump,
+kontrollformler, exakta filpositioner och kommentarsmönster – finns i skillen
+**`bjerred-manadsdata`** (`.cursor/skills/bjerred-manadsdata/SKILL.md`). Den triggas
+automatiskt när du säger t.ex. "lägg in data för [månad]".
 
 `data.md` är den lättlästa backup-referensen och ska alltid spegla det aktuella dataläget.
 
