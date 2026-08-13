@@ -3,7 +3,7 @@
 Denna fil är en **backup och referens** för all månadsdata kring elförbrukning och elkostnad.
 Filen ska uppdateras varje gång ny månadsdata läggs till i `index.html`.
 
-Senast uppdaterad: **2026-08-02**  
+Senast uppdaterad: **2026-08-13**  
 Dataperiod: **Augusti 2024 – Juli 2026** (24 månader)
 
 ---
@@ -35,7 +35,7 @@ Dataperiod: **Augusti 2024 – Juli 2026** (24 månader)
 | Apr 2026 | Bad + restaurang | 15 089 | 11 582 | 26 671 | 860 | 52 186 | 1,96 |
 | Maj 2026 | Bad + restaurang | 11 511 | 12 430 | 23 941 | 772 | 56 338 | 2,35 |
 | Jun 2026 | Bad + restaurang | 8 853 | 11 756 | 20 609 | 687 | 53 134 | 2,58 |
-| Jul 2026 | Bad + restaurang | 10 424 | 11 161 | 21 585 | 696 | 0 | 0,00 |
+| Jul 2026 | Bad + restaurang | 10 424 | 11 161 | 21 585 | 696 | 48 277 | 2,24 |
 
 ---
 

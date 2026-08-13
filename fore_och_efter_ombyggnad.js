@@ -81,7 +81,8 @@ const efterData = [
     // UPPDATERING 2026-07-13: Juni 2026 tillagd (badKwh 8853, totalKwh 20609, kostnad 53134 kr)
     { manad:'Jun', manIdx:5,  ar:2026, badKwh:8853,  totalKwh:20609, kostnad:53134, dagar:30 },
     // UPPDATERING 2026-08-02: Juli 2026 tillagd (badKwh 10424, totalKwh 21585, kostnad okänd – uppdateras ca 10 aug)
-    { manad:'Jul', manIdx:6,  ar:2026, badKwh:10424, totalKwh:21585, kostnad:null, dagar:31 },
+    // UPPDATERING 2026-08-13: Juli 2026 kostnad tillagd (48277 kr)
+    { manad:'Jul', manIdx:6,  ar:2026, badKwh:10424, totalKwh:21585, kostnad:48277, dagar:31 },
     { manad:'Aug', manIdx:7,  ar:2026, badKwh:null, totalKwh:null, kostnad:null, dagar:31 },
     { manad:'Sep', manIdx:8,  ar:2026, badKwh:null, totalKwh:null, kostnad:null, dagar:30 },
     { manad:'Okt', manIdx:9,  ar:2026, badKwh:null, totalKwh:null, kostnad:null, dagar:31 },
