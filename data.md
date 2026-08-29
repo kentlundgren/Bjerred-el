@@ -42,9 +42,11 @@ Preliminär prognos finns för augusti 2026 – se egen sektion nedan och `progn
 
 ## Preliminära prognoser (ännu utan facit)
 
-Kents egna prognoser, gjorda före månadsskiftet. **Ingår inte** i tabellen ovan eller i
-`monthlyData` i `index.html` – de förs in som faktisk data först när utfallet stämts av.
-Full uppföljning i `prognoser.md` och `prognoser.html`.
+Kents egna prognoser, gjorda före månadsskiftet. **Ingår inte** i tabellen ovan.
+De ligger i `monthlyData` i `index.html` med `preliminär: true` (markeras där i
+diagram och tabell, hålls utanför LÅT och förmodad-modellen) och ersätts av
+faktiska värden när utfallet stämts av. Full uppföljning i `prognoser.md` och
+`prognoser.html`.
 
 | Månad | Prognosdatum | Underlag | Bad kWh | Rest. kWh | Totalt kWh | kWh/dag | Kostnad |
 |-------|--------------|----------|--------:|----------:|-----------:|--------:|--------:|

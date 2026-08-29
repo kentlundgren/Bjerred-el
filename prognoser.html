@@ -40,10 +40,10 @@
                 lutar de systematiskt åt att gissa för högt eller för lågt?</li>
         </ul>
         <p>
-            Prognoserna förs medvetet <strong>inte</strong> in i diagrammen på elöversikten
-            förrän utfallet stämts av – annars skulle preliminära siffror påverka
-            <code>förmodad förbrukning</code>-modellen och LÅT-summorna där.
-            Fullständig logg: <code>prognoser.md</code>.
+            En preliminär prognos syns även på <a href="index.html">elöversikten</a>, märkt
+            <em>(preliminär)</em> – med lila punkt och streckad linje i kWh-diagrammen. Den
+            hålls utanför <code>förmodad förbrukning</code>-modellen och LÅT-summorna där, och
+            ersätts av faktiska värden vid facit. Fullständig logg: <code>prognoser.md</code>.
         </p>
     </section>
 
@@ -193,9 +193,9 @@
             </div>
             <div class="tech-card">
                 <h3>Frikopplad från modellen</h3>
-                <p>Preliminära prognoser hålls utanför <code>monthlyData</code> i
-                   <code>index.html</code> så att de inte påverkar sidans
-                   "förmodad förbrukning" eller LÅT-summor.</p>
+                <p>Preliminära rader i <code>monthlyData</code> bär <code>preliminär: true</code>.
+                   Guard-kod i <code>index.html</code> håller dem utanför "förmodad
+                   förbrukning"-baslinjerna och LÅT-summorna.</p>
             </div>
             <div class="tech-card">
                 <h3>Gul bakgrund på inmatning</h3>

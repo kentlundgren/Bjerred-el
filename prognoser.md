@@ -50,9 +50,10 @@ Senast uppdaterad: **2026-08-29**
 
 - **Augusti 2026:** Första registrerade prognosen. Kostnaden var inte känd vid
   prognostillfället och lämnades utanför (elfakturan kommer ca mitten av september).
-- Prognoserna läggs medvetet **inte** in i `monthlyData` i `index.html` förrän facit
-  finns – annars skulle preliminära siffror påverka sidans "förmodad förbrukning"-modell
-  och LÅT-summorna (löpande årstal). Se skillen `bjerred-elprognos`.
+- Preliminära prognoser läggs in i `monthlyData` i `index.html` med `preliminär: true`
+  (beslut 2026-08-29). Flaggan gör att raden markeras i diagram och tabell men hålls
+  utanför "förmodad förbrukning"-modellen och LÅT-summorna (löpande årstal).
+  Se skillen `bjerred-elprognos`.
 
 ---
 

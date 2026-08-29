@@ -19,7 +19,7 @@ och en avstämning efter.
 
 | Läge | Utlöses av | Vad som händer |
 |------|-----------|----------------|
-| **1. Registrera prognos** | "lägg in prognos för sept", skärmdump kallad prognos/preliminär | Prognosen loggas i `prognoser.md` + `prognoser.js`. De fyra ordinarie datafilerna rörs **inte**. |
+| **1. Registrera prognos** | "lägg in prognos för sept", skärmdump kallad prognos/preliminär | Prognosen loggas i `prognoser.md` + `prognoser.js` + `data.md`, och läggs in i `monthlyData` i `index.html` med `preliminär: true`. `fore_och_efter_ombyggnad.js` och `data.html` rörs **inte**. |
 | **2. Facit-avstämning** | "facit för augusti", "stäm av prognosen", slutlig mätarställning + faktura finns | Avvikelsen räknas ut, prognosraden flyttas till *Avräknade*, träffsäkerheten uppdateras, och månaden läggs in som **faktisk** data via `bjerred-manadsdata`. |
 
 ---
@@ -45,7 +45,7 @@ och en avstämning efter.
   att den inte prognostiserades. Prognostisera bara kostnad om Kent uttryckligen
   ger ett värde.
 
-### Filer att uppdatera (bara dessa två)
+### Filer att uppdatera
 
 **1. `prognoser.md` – tabellen "Öppna prognoser"**
 - Lägg till en rad: `| [Månad] [År] | [prognosdatum] | [underlag] | [bad] | [rest.] | [totalt] | [kWh/dag] | [kostnad el. "–"] |`
@@ -72,18 +72,31 @@ och en avstämning efter.
 - Lägg till en rad i den tabellen (inte i huvudtabellen "Månadsdata" – den är
   bara faktisk data). Uppdatera `Senast uppdaterad`.
 
+**4. `index.html` – `monthlyData`-arrayen**
+- Lägg till objektet sist (kommatecken efter föregående rad). Kommentar:
+  `// PROGNOS ÅÅÅÅ-MM-DD: [Månad] [År] – PRELIMINÄR prognos ...`.
+- Struktur: `{ month: "Sep 2026", fullMonth: "September 2026", totalKWh: 0, daysInMonth: 30, kwhPerDay: 0, type: "Restaurang och bad", bad: 0, restaurant: 0, cost: null, costPerKwh: null, preliminär: true }`
+- `cost` och `costPerKwh` ska vara `null` (inte 0) – guard-koden i `index.html`
+  förlitar sig på `!= null`.
+- `preliminär: true` gör att raden: (a) filtreras bort ur baslinjerna i
+  `calculateExpectedValues` (`&& !d.preliminär`), (b) filtreras bort ur LÅT via
+  `latSource` i `updateSummary`, (c) markeras i diagram (lila punkt + streckad linje,
+  via `prelimPointColor` / `prelimSegmentDash` i `createCharts`) och i tabellen
+  (`(preliminär)`, `–` i kostnadskolumnerna).
+- **Rör inte** guard-koden i sig – lägg bara till dataraden. Om guard-mönstret
+  saknas (t.ex. efter en refaktor) – stanna och säg till Kent.
+
 ### Rör INTE i läge 1
-`index.html` (`monthlyData`), `fore_och_efter_ombyggnad.js` (`efterData`),
-`data.html` (`originalData`). Beslut 2026-08-29: preliminära siffror ska inte in i
-"förmodad förbrukning"-modellen eller LÅT-summorna på elöversikten.
+`fore_och_efter_ombyggnad.js` (`efterData` – har egna `null`-platshållare, fylls
+först vid facit) och `data.html` (`originalData`).
 
 ### Efter läge 1
 1. Verifiera `prognoser.html` i webbläsaren (lokal server – filsökvägen har å/ä så
    `file://` renderas som statisk snapshot utan JS; kör `python -m http.server` i
    projektmappen istället).
 2. Kontrollera i konsolen att inga fel kastas.
-3. Sammanfatta för Kent: prognosen som lagts in, kontrollräkningen, och att
-   elöversikten är orörd tills facit finns.
+3. Sammanfatta för Kent: prognosen som lagts in, kontrollräkningen, och att den syns
+   som preliminär på elöversikten (markerad, utanför LÅT och förmodad-modellen).
 4. Fråga om Kent vill att du committar/pushar – gör det aldrig utan att bli ombedd.
 
 ---
@@ -118,13 +131,17 @@ värdena. Kommentar: `// FACIT ÅÅÅÅ-MM-DD: [Månad] utfall [totalt] kWh, avv
   - `Största missen` = raden med störst `|avvikelse_%|`
 - Uppdatera `Senast uppdaterad`.
 
-**4. Uppdatera `data.md`:** ta bort månadens rad ur "Preliminära prognoser"-sektionen
-(den blir nu en vanlig rad i huvudtabellen via nästa steg).
+**4. Uppdatera `data.md`:** ta bort månadens rad ur "Preliminära prognoser"-sektionen.
 
 **5. Lägg in månaden som faktisk data** – följ skillen `bjerred-manadsdata` punkt
-för punkt: `data.md` (huvudtabellen), `index.html` (`monthlyData`),
-`fore_och_efter_ombyggnad.js` (ersätt `null`-platshållaren), `data.html`
-(`originalData`). Kontrollräkna enligt den skillen.
+för punkt:
+- `data.md` (huvudtabellen)
+- `index.html` (`monthlyData`) – **ersätt** den preliminära raden: byt `cost`/`costPerKwh`
+  från `null` till de faktiska värdena och **ta bort** `preliminär: true`. Byt
+  `// PROGNOS`-kommentaren mot `// FACIT ÅÅÅÅ-MM-DD: ...`.
+- `fore_och_efter_ombyggnad.js` (ersätt `null`-platshållaren)
+- `data.html` (`originalData`)
+Kontrollräkna enligt `bjerred-manadsdata` (`bad + restaurant = totalKWh` osv.).
 
 **6. Rapportera till Kent:**
 - Prognos vs utfall för månaden (totalt, bad, restaurang, ev. kostnad)

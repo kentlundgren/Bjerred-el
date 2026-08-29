@@ -756,6 +756,13 @@
                 (till exempel mars kostnad runt <strong>10 april</strong>). Därför kan <strong>kostnad (kr)</strong> och
                 <strong>kr/kWh</strong> för den senaste månaden vara <strong>0</strong> i datan tills beloppet är känt;
                 förbrukning i kWh kan däremot fyllas i direkt när mätarvärden finns.
+                <br><br>
+                <!-- UPPDATERING 2026-08-29: notis om preliminära prognosmånader -->
+                <strong>🎯 Preliminära månader:</strong> En månad som är märkt <em>(preliminär)</em> är Kents egen
+                prognos (mätaren avläst före månadsskiftet, framskriven till hela månaden). Den visas i
+                kWh-diagrammen med <strong>lila punkt och streckad linje</strong>, håller sig utanför
+                LÅT-summorna och «förmodad förbrukning»-modellen, och saknar kostnad tills fakturan kommit.
+                Uppföljning: <a href="prognoser.html" style="color:#856404;font-weight:600;">Träffar prognoserna?</a>
             </p>
         </div>
 
@@ -1030,7 +1037,12 @@
             { month: "Jun 2026", fullMonth: "Juni 2026", totalKWh: 20609, daysInMonth: 30, kwhPerDay: 687, type: "Restaurang och bad", bad: 8853, restaurant: 11756, cost: 53134, costPerKwh: 2.58 },
             // UPPDATERING 2026-08-02: Juli 2026 tillagd (bad: 10424 kWh, restaurang: 11161 kWh, totalt: 21585 kWh, kostnad: okänd – uppdateras ca 10 aug)
             // UPPDATERING 2026-08-13: Juli 2026 kostnad tillagd (48277 kr, 2,24 kr/kWh)
-            { month: "Jul 2026", fullMonth: "Juli 2026", totalKWh: 21585, daysInMonth: 31, kwhPerDay: 696, type: "Restaurang och bad", bad: 10424, restaurant: 11161, cost: 48277, costPerKwh: 2.24 }
+            { month: "Jul 2026", fullMonth: "Juli 2026", totalKWh: 21585, daysInMonth: 31, kwhPerDay: 696, type: "Restaurang och bad", bad: 10424, restaurant: 11161, cost: 48277, costPerKwh: 2.24 },
+            // PROGNOS 2026-08-29: Augusti 2026 – PRELIMINÄR prognos (Kents egen, avläst 28 aug, linjär framskrivning till 31 dygn).
+            //   Bilden visade bad 10769; texten sa 10768 → 10768 valt (10768 + 11027 = 21795). Kostnad ej prognostiserad → null.
+            //   preliminär:true → raden hålls utanför förmodad-modellens baslinjer och LÅT-summorna. Byts mot facit ~mitten av sep.
+            //   Fullständig uppföljning: prognoser.html / prognoser.md (skill: bjerred-elprognos).
+            { month: "Aug 2026", fullMonth: "Augusti 2026", totalKWh: 21795, daysInMonth: 31, kwhPerDay: 703, type: "Restaurang och bad", bad: 10768, restaurant: 11027, cost: null, costPerKwh: null, preliminär: true }
         ];
 
         // ====================================
@@ -1103,12 +1115,15 @@
                 return shape;
             }
 
-            const restaurantOnlyRows = monthlyData.filter((d) => d.type === 'Bara restaurang');
+            // PRELIMINÄR-FILTER (UPPDATERING 2026-08-29): preliminära prognosrader (preliminär:true)
+            // ska INTE påverka baslinjerna för "förmodad förbrukning". En förmodad-siffra räknas
+            // ändå ut för dem, men bara utifrån fastställd (icke-preliminär) historik.
+            const restaurantOnlyRows = monthlyData.filter((d) => d.type === 'Bara restaurang' && !d.preliminär);
             const avgRestaurantOnly = mean(restaurantOnlyRows.map((d) => d.totalKWh));
             const multiRestaurantOnly = seasonalMultipliers(restaurantOnlyRows);
             const monthShapeRestaurant = monthShapeFactors(restaurantOnlyRows);
 
-            const restBadRows = monthlyData.filter((d) => d.type === 'Restaurang och bad');
+            const restBadRows = monthlyData.filter((d) => d.type === 'Restaurang och bad' && !d.preliminär);
             const multiRestBad = seasonalMultipliers(restBadRows);
             const monthShapeRestBad = monthShapeFactors(restBadRows);
 
@@ -1178,10 +1193,14 @@
                 }
 
                 const expRounded = Math.round(expectedKWh);
-                const expectedCost = expectedKWh * d.costPerKwh;
-                const costExVAT = d.cost / VAT_RATE;
-                const costPerKwhExVAT = d.costPerKwh / VAT_RATE;
-                const expectedCostExVAT = expectedCost / VAT_RATE;
+                // UPPDATERING 2026-08-29: kostnadsfält kan vara null för preliminära prognosrader
+                // (kostnaden är inte känd förrän fakturan kommer). Alla kostnadsberäkningar
+                // blir då null → diagram och tabell hoppar över/markerar månaden.
+                const hasCost = d.cost != null && d.costPerKwh != null;
+                const expectedCost = hasCost ? expectedKWh * d.costPerKwh : null;
+                const costExVAT = hasCost ? d.cost / VAT_RATE : null;
+                const costPerKwhExVAT = hasCost ? d.costPerKwh / VAT_RATE : null;
+                const expectedCostExVAT = hasCost ? expectedCost / VAT_RATE : null;
                 const diffPercent =
                     expRounded > 0
                         ? (((d.totalKWh - expRounded) / expRounded) * 100).toFixed(1)
@@ -1189,13 +1208,13 @@
 
                 return {
                     ...d,
-                    costExVAT: Math.round(costExVAT),
-                    costPerKwhExVAT: parseFloat(costPerKwhExVAT.toFixed(2)),
+                    costExVAT: hasCost ? Math.round(costExVAT) : null,
+                    costPerKwhExVAT: hasCost ? parseFloat(costPerKwhExVAT.toFixed(2)) : null,
                     expectedKWh: expRounded,
-                    expectedCost: Math.round(expectedCost),
-                    expectedCostExVAT: Math.round(expectedCostExVAT),
+                    expectedCost: hasCost ? Math.round(expectedCost) : null,
+                    expectedCostExVAT: hasCost ? Math.round(expectedCostExVAT) : null,
                     diffKWh: d.totalKWh - expRounded,
-                    diffCost: d.cost - Math.round(expectedCost),
+                    diffCost: hasCost ? d.cost - Math.round(expectedCost) : null,
                     diffPercent
                 };
             });
@@ -1216,28 +1235,32 @@
             let latPeriodText;
             let prevLatData = null;
             let prevLatPeriodText = '';
-            
-            if (enrichedData.length >= 12) {
+
+            // UPPDATERING 2026-08-29: LÅT baseras bara på FASTSTÄLLD data. Preliminära
+            // prognosrader (preliminär:true) räknas inte med – de saknar bl.a. känd kostnad.
+            const latSource = enrichedData.filter((d) => !d.preliminär);
+
+            if (latSource.length >= 12) {
                 // Ta de senaste 12 månaderna (nuvarande LÅT)
-                latData = enrichedData.slice(-12);
+                latData = latSource.slice(-12);
                 const firstMonth = latData[0].fullMonth;
                 const lastMonth = latData[latData.length - 1].fullMonth;
                 latPeriodText = `${firstMonth} - ${lastMonth}`;
 
                 // Beräkna föregående LÅT om vi har minst 13 månader
-                if (enrichedData.length >= 13) {
+                if (latSource.length >= 13) {
                     // Föregående LÅT: månad 13 från slutet till månad 2 från slutet
-                    const startIndex = Math.max(0, enrichedData.length - 13);
-                    const endIndex = enrichedData.length - 1;
-                    prevLatData = enrichedData.slice(startIndex, endIndex);
+                    const startIndex = Math.max(0, latSource.length - 13);
+                    const endIndex = latSource.length - 1;
+                    prevLatData = latSource.slice(startIndex, endIndex);
                     const prevFirstMonth = prevLatData[0].fullMonth;
                     const prevLastMonth = prevLatData[prevLatData.length - 1].fullMonth;
                     prevLatPeriodText = `${prevFirstMonth} - ${prevLastMonth}`;
                 }
             } else {
-                // Om vi har mindre än 12 månader, använd all tillgänglig data
-                latData = enrichedData;
-                latPeriodText = `${enrichedData.length} månader (< 12)`;
+                // Om vi har mindre än 12 månader, använd all tillgänglig fastställd data
+                latData = latSource;
+                latPeriodText = `${latSource.length} månader (< 12)`;
             }
 
             // Beräkna summor för nuvarande LÅT-perioden
@@ -1320,6 +1343,13 @@
             // Extrahera labels (månader) för x-axeln
             const labels = enrichedData.map(d => d.month);
 
+            // UPPDATERING 2026-08-29: preliminära prognosmånader markeras i diagrammen –
+            // lila, större punkt, och streckat linjesegment fram till punkten.
+            const prelimPointColor = enrichedData.map(d => d.preliminär ? '#9b59b6' : undefined);
+            const prelimPointRadius = enrichedData.map(d => d.preliminär ? 6 : 3);
+            const prelimSegmentDash = (ctx) =>
+                (enrichedData[ctx.p1DataIndex] && enrichedData[ctx.p1DataIndex].preliminär) ? [6, 6] : undefined;
+
             // ---- DIAGRAM 1: Förbrukning (kWh) ----
             // Jämför faktisk förbrukning med förmodad förbrukning
             const ctx1 = document.getElementById('consumptionChart').getContext('2d');
@@ -1333,7 +1363,10 @@
                     backgroundColor: 'rgba(52, 152, 219, 0.1)',
                     borderWidth: 3,
                     tension: 0.4,
-                    fill: true
+                    fill: true,
+                    pointBackgroundColor: prelimPointColor,
+                    pointRadius: prelimPointRadius,
+                    segment: { borderDash: prelimSegmentDash }
                 }
             ];
 
@@ -1377,9 +1410,12 @@
                                     const dataPoint = enrichedData[context.dataIndex];
                                     if (context.datasetIndex === 0) {
                                         const lines = [
-                                            `Faktisk: ${dataPoint.totalKWh.toLocaleString()} kWh`,
+                                            `${dataPoint.preliminär ? 'Preliminär prognos' : 'Faktisk'}: ${dataPoint.totalKWh.toLocaleString()} kWh`,
                                             `Typ: ${dataPoint.type}`
                                         ];
+                                        if (dataPoint.preliminär) {
+                                            lines.push('⚠️ Preliminär – ej fastställd (kostnad okänd ännu)');
+                                        }
                                         if (showExpectedValues) {
                                             lines.splice(1, 0, 
                                                 `Förmodad: ${dataPoint.expectedKWh.toLocaleString()} kWh`,
@@ -1480,6 +1516,9 @@
                                     // UPPDATERING: Visar nu både inkl och exkl moms i tooltip
                                     if (context.datasetIndex === 0) {
                                         // Faktisk kostnad inkl moms
+                                        if (dataPoint.cost == null) {
+                                            return ['Kostnad ej känd ännu (preliminär månad)'];
+                                        }
                                         const lines = [
                                             `Faktisk (inkl moms): ${dataPoint.cost.toLocaleString()} kr`,
                                             `Faktisk (exkl moms): ${dataPoint.costExVAT.toLocaleString()} kr`,
@@ -1532,8 +1571,9 @@
             }
 
             // Beräkna medelpris för vinter och sommar (både inkl och exkl moms)
-            const winterData = enrichedData.filter(d => getSeason(d.month) === 'winter');
-            const summerData = enrichedData.filter(d => getSeason(d.month) === 'summer');
+            // UPPDATERING 2026-08-29: preliminära månader (costPerKwh == null) exkluderas ur medelpriset
+            const winterData = enrichedData.filter(d => getSeason(d.month) === 'winter' && d.costPerKwh != null);
+            const summerData = enrichedData.filter(d => getSeason(d.month) === 'summer' && d.costPerKwh != null);
             
             const winterAvgPrice = (winterData.reduce((sum, d) => sum + d.costPerKwh, 0) / winterData.length).toFixed(2);
             const summerAvgPrice = (summerData.reduce((sum, d) => sum + d.costPerKwh, 0) / summerData.length).toFixed(2);
@@ -1600,10 +1640,13 @@
                                     // UPPDATERING: Tooltip visar nu både inkl och exkl moms
                                     if (context.datasetIndex === 0) {
                                         // Pris inkl moms
-                                        const avgText = season === 'winter' 
+                                        if (dataPoint.costPerKwh == null) {
+                                            return ['Pris ej känt ännu (preliminär månad)'];
+                                        }
+                                        const avgText = season === 'winter'
                                             ? `Vinter genomsnitt (inkl moms): ${winterAvgPrice} kr/kWh`
                                             : `Sommar genomsnitt (inkl moms): ${summerAvgPrice} kr/kWh`;
-                                        
+
                                         return [
                                             `Pris (inkl moms): ${dataPoint.costPerKwh} kr/kWh`,
                                             `Pris (exkl moms): ${dataPoint.costPerKwhExVAT} kr/kWh`,
@@ -1655,7 +1698,10 @@
                             backgroundColor: 'rgba(52, 152, 219, 0.2)',
                             borderWidth: 2,
                             tension: 0.4,
-                            fill: true
+                            fill: true,
+                            pointBackgroundColor: prelimPointColor,
+                            pointRadius: prelimPointRadius,
+                            segment: { borderDash: prelimSegmentDash }
                         },
                         {
                             label: 'Restaurang (kWh)',
@@ -1664,7 +1710,10 @@
                             backgroundColor: 'rgba(46, 204, 113, 0.2)',
                             borderWidth: 2,
                             tension: 0.4,
-                            fill: true
+                            fill: true,
+                            pointBackgroundColor: prelimPointColor,
+                            pointRadius: prelimPointRadius,
+                            segment: { borderDash: prelimSegmentDash }
                         }
                     ]
                 },
@@ -1802,30 +1851,43 @@
                 
                 // Bestäm om denna rad ska ha varning för avläsningssvängningar
                 const hasReadingWarning = ['Sep 2024', 'Okt 2024', 'Nov 2024', 'Dec 2024'].includes(d.month);
-                const warningTitle = hasReadingWarning 
+                const warningTitle = hasReadingWarning
                     ? 'title="⚠️ Observera: Svängningar i fördelning mellan bad och restaurang beror troligen på att avläsning inte sker exakt samma dag varje månad."'
                     : '';
-                
+
+                // UPPDATERING 2026-08-29: preliminära prognosrader – markera visuellt och visa "–" där kostnad saknas
+                const kr = (v) => v == null ? '–' : `${v.toLocaleString()} kr`;
+                const krPerKwh = (v) => v == null ? '–' : `${v.toFixed(2)} kr/kWh`;
+                const rowStyle = d.preliminär
+                    ? 'background-color: #f4ecfa;'
+                    : (hasReadingWarning ? 'background-color: #fff3cd;' : '');
+                const rowTitleAttr = d.preliminär
+                    ? 'title="Preliminär prognos (Kents egen framskrivning). Kostnad ej känd ännu – byts mot faktiska värden när fakturan kommit."'
+                    : warningTitle;
+                const manadCell = d.preliminär
+                    ? `<strong>${d.fullMonth}</strong> <span style="color:#9b59b6;font-weight:600;">(preliminär)</span>`
+                    : `<strong>${d.fullMonth}</strong>`;
+
                 // UPPDATERING: Tabellrader inkluderar nu också priser exklusive moms
                 let row = `
-                    <tr ${warningTitle} style="${hasReadingWarning ? 'background-color: #fff3cd;' : ''}">
-                        <td><strong>${d.fullMonth}</strong></td>
+                    <tr ${rowTitleAttr} style="${rowStyle}">
+                        <td>${manadCell}</td>
                         <td>${d.type}</td>
                         <td>${d.totalKWh.toLocaleString()} kWh</td>
                         <td>${d.kwhPerDay} kWh</td>
                         <td>${d.bad.toLocaleString()} kWh</td>
                         <td>${d.restaurant.toLocaleString()} kWh</td>
-                        <td>${d.cost.toLocaleString()} kr</td>
-                        <td>${d.costExVAT.toLocaleString()} kr</td>
-                        <td>${d.costPerKwh.toFixed(2)} kr/kWh</td>
-                        <td>${d.costPerKwhExVAT.toFixed(2)} kr/kWh</td>
+                        <td>${kr(d.cost)}</td>
+                        <td>${kr(d.costExVAT)}</td>
+                        <td>${krPerKwh(d.costPerKwh)}</td>
+                        <td>${krPerKwh(d.costPerKwhExVAT)}</td>
                 `;
                 
                 // Lägg till förmodade värden-kolumn om den är aktiverad
                 if (showExpectedValues) {
                     row += `
                         <td>
-                            Faktisk: ${d.totalKWh.toLocaleString()} kWh<br>
+                            ${d.preliminär ? 'Preliminär' : 'Faktisk'}: ${d.totalKWh.toLocaleString()} kWh<br>
                             Förmodad: ${d.expectedKWh.toLocaleString()} kWh<br>
                             <span class="${trendClass}">
                                 ${trendSymbol} ${d.diffKWh > 0 ? '+' : ''}${d.diffKWh.toLocaleString()} kWh (${d.diffPercent}%)
@@ -1843,12 +1905,15 @@
             tbody.querySelectorAll('tr').forEach((row, index) => {
                 row.addEventListener('click', () => {
                     const data = enrichedData[index];
-                    let message = `Detaljer för ${data.fullMonth}:\n\n` +
-                          `Total förbrukning: ${data.totalKWh.toLocaleString()} kWh\n` +
-                          `Total kostnad (inkl moms): ${data.cost.toLocaleString()} kr\n` +
+                    const kostnadRader = (data.cost == null)
+                        ? `Total kostnad: ej känd ännu (preliminär prognos)\n`
+                        : `Total kostnad (inkl moms): ${data.cost.toLocaleString()} kr\n` +
                           `Total kostnad (exkl moms): ${data.costExVAT.toLocaleString()} kr\n` +
                           `Pris per kWh (inkl moms): ${data.costPerKwh} kr\n` +
-                          `Pris per kWh (exkl moms): ${data.costPerKwhExVAT} kr\n\n` +
+                          `Pris per kWh (exkl moms): ${data.costPerKwhExVAT} kr\n`;
+                    let message = `Detaljer för ${data.fullMonth}${data.preliminär ? ' (PRELIMINÄR PROGNOS)' : ''}:\n\n` +
+                          `Total förbrukning: ${data.totalKWh.toLocaleString()} kWh\n` +
+                          kostnadRader + `\n` +
                           `Fördelning:\n` +
                           `- Bad: ${data.bad.toLocaleString()} kWh (${(data.bad/data.totalKWh*100).toFixed(1)}%)\n` +
                           `- Restaurang: ${data.restaurant.toLocaleString()} kWh (${(data.restaurant/data.totalKWh*100).toFixed(1)}%)\n\n` +
@@ -1856,10 +1921,12 @@
                     
                     if (showExpectedValues) {
                         message += `\n\nFörmodad förbrukning: ${data.expectedKWh.toLocaleString()} kWh\n` +
-                                  `Skillnad: ${data.diffKWh > 0 ? '+' : ''}${data.diffKWh.toLocaleString()} kWh (${data.diffPercent}%)\n\n` +
-                                  `Förmodad kostnad (inkl moms): ${data.expectedCost.toLocaleString()} kr\n` +
+                                  `Skillnad: ${data.diffKWh > 0 ? '+' : ''}${data.diffKWh.toLocaleString()} kWh (${data.diffPercent}%)`;
+                        if (data.expectedCost != null && data.diffCost != null) {
+                            message += `\n\nFörmodad kostnad (inkl moms): ${data.expectedCost.toLocaleString()} kr\n` +
                                   `Förmodad kostnad (exkl moms): ${data.expectedCostExVAT.toLocaleString()} kr\n` +
                                   `Skillnad: ${data.diffCost > 0 ? '+' : ''}${data.diffCost.toLocaleString()} kr`;
+                        }
                     }
                     
                     // Lägg till varning för sept-dec 2024

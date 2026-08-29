@@ -31,11 +31,17 @@ månadsskiftet (läser av mätaren, skriver fram till hela månaden). Prognoser 
 deras träffsäkerhet hanteras separat från den faktiska månadsdatan:
 
 - Prognoser loggas i `prognoser.md` + `prognosData` i `prognoser.js`.
-- De läggs **inte** in i `monthlyData` (`index.html`) förrän utfallet stämts av –
-  annars skulle preliminära siffror påverka "förmodad förbrukning"-modellen och
-  LÅT-summorna. (Beslut 2026-08-29.)
-- Vid facit räknas avvikelsen ut, och månaden förs in som faktisk data via den
-  vanliga fyrfilsproceduren.
+- En preliminär prognos läggs in i `monthlyData` (`index.html`) med
+  `cost: null, costPerKwh: null, preliminär: true` (beslut 2026-08-29, ändrat
+  samma dag från "läggs inte in alls"). Flaggan `preliminär: true` gör att raden:
+  - hålls utanför baslinjerna i "förmodad förbrukning"-modellen
+    (`calculateExpectedValues`)
+  - hålls utanför LÅT-summorna (`updateSummary`, via `latSource`)
+  - markeras i diagrammen (lila punkt, streckad linje) och i tabellen ("(preliminär)",
+    "–" i kostnadskolumnerna)
+- `data.md` har en egen sektion "Preliminära prognoser (ännu utan facit)".
+- Vid facit räknas avvikelsen ut, `preliminär`-raden ersätts av faktiska värden,
+  och månaden förs in fullt ut via den vanliga fyrfilsproceduren.
 
 Hela flödet – registrera prognos och stämma av mot facit – sköts av skillen
 **`bjerred-elprognos`** (`.cursor/skills/bjerred-elprognos/SKILL.md`), som triggas
