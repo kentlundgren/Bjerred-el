@@ -19,6 +19,27 @@ Alla filer är fristående – öppnas direkt i webbläsaren.
 | `fore_och_efter_ombyggnad.html` | Analyssida: före vs efter ombyggnad 2025. |
 | `fore_och_efter_ombyggnad.css` | Styling för analyssidan. |
 | `fore_och_efter_ombyggnad.js` | All logik för analyssidan. |
+| `prognoser.html` | Sida: träffsäkerhet för Kents egna elprognoser (prognos vs utfall). |
+| `prognoser.css` | Styling för prognossidan. |
+| `prognoser.js` | Logik + inline `prognosData` för prognossidan. |
+| `prognoser.md` | **Backup och referens** – logg över prognoser, utfall och avvikelser. |
+
+## Prognosuppföljning
+
+Kent gör en egen prognos för varje månads elförbrukning några dagar före
+månadsskiftet (läser av mätaren, skriver fram till hela månaden). Prognoser och
+deras träffsäkerhet hanteras separat från den faktiska månadsdatan:
+
+- Prognoser loggas i `prognoser.md` + `prognosData` i `prognoser.js`.
+- De läggs **inte** in i `monthlyData` (`index.html`) förrän utfallet stämts av –
+  annars skulle preliminära siffror påverka "förmodad förbrukning"-modellen och
+  LÅT-summorna. (Beslut 2026-08-29.)
+- Vid facit räknas avvikelsen ut, och månaden förs in som faktisk data via den
+  vanliga fyrfilsproceduren.
+
+Hela flödet – registrera prognos och stämma av mot facit – sköts av skillen
+**`bjerred-elprognos`** (`.cursor/skills/bjerred-elprognos/SKILL.md`), som triggas
+av t.ex. "lägg in prognos för september" eller "facit för augusti".
 
 ## Månadsdata – format
 

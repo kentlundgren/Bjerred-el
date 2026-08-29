@@ -11,6 +11,12 @@ description: Lägg in ny månadsdata för elförbrukning i projektet "Elenergif�
 Projektfakta (dataformat, konstanter, länkar) finns i `CLAUDE.md`. Den här skillen
 beskriver *hur* själva uppdateringen görs.
 
+**Om månaden hade en preliminär prognos:** om Kent tidigare lagt in en prognos för
+månaden (finns i `prognoser.md` / `data.md`-sektionen "Preliminära prognoser") ska
+den här uppdateringen ske via skillen `bjerred-elprognos` läge 2 (facit-avstämning),
+som räknar ut prognosavvikelsen, flyttar prognosraden, och sedan anropar den här
+proceduren. Kolla `prognoser.md` innan du börjar.
+
 ## Indata – vad Kent lämnar
 
 Kent lämnar oftast antingen ett färdigt objekt eller en **skärmdump** från `data.html`.

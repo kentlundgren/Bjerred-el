@@ -3,8 +3,9 @@
 Denna fil är en **backup och referens** för all månadsdata kring elförbrukning och elkostnad.
 Filen ska uppdateras varje gång ny månadsdata läggs till i `index.html`.
 
-Senast uppdaterad: **2026-08-13**  
-Dataperiod: **Augusti 2024 – Juli 2026** (24 månader)
+Senast uppdaterad: **2026-08-29**  
+Dataperiod: **Augusti 2024 – Juli 2026** (24 månader faktisk data)  
+Preliminär prognos finns för augusti 2026 – se egen sektion nedan och `prognoser.md`.
 
 ---
 
@@ -36,6 +37,18 @@ Dataperiod: **Augusti 2024 – Juli 2026** (24 månader)
 | Maj 2026 | Bad + restaurang | 11 511 | 12 430 | 23 941 | 772 | 56 338 | 2,35 |
 | Jun 2026 | Bad + restaurang | 8 853 | 11 756 | 20 609 | 687 | 53 134 | 2,58 |
 | Jul 2026 | Bad + restaurang | 10 424 | 11 161 | 21 585 | 696 | 48 277 | 2,24 |
+
+---
+
+## Preliminära prognoser (ännu utan facit)
+
+Kents egna prognoser, gjorda före månadsskiftet. **Ingår inte** i tabellen ovan eller i
+`monthlyData` i `index.html` – de förs in som faktisk data först när utfallet stämts av.
+Full uppföljning i `prognoser.md` och `prognoser.html`.
+
+| Månad | Prognosdatum | Underlag | Bad kWh | Rest. kWh | Totalt kWh | kWh/dag | Kostnad |
+|-------|--------------|----------|--------:|----------:|-----------:|--------:|--------:|
+| Aug 2026 | 2026-08-28 | Linjär framskrivning (avläst t.o.m. 28 aug, uppräknat till 31 dygn) | 10 768 | 11 027 | 21 795 | 703 | ej prognostiserad |
 
 ---
 
