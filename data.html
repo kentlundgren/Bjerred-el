@@ -383,7 +383,7 @@
                 <li>Klicka "Beräkna och generera kod" när du är klar</li>
                 <li>Kopiera den genererade koden och klistra in i index.html (ersätt den gamla monthlyData-arrayen)</li>
                 <li>"Lägg till ny månad" skapar en tom rad längst ner</li>
-                <li><strong>Elkostnad per månad:</strong> Fakturan brukar komma cirka <strong>10 dagar efter månadsslut</strong> (t.ex. mars kostnad runt 10 april). Sätt <strong>kostnad (kr) = 0</strong> och <strong>kr/kWh = 0</strong> för aktuell månad tills du har beloppet, och uppdatera när fakturan finns.</li>
+                <li><strong>Elkostnad per månad:</strong> Elfakturan kommer kring den <strong>10:e i månaden efter</strong> (t.ex. augusti-kostnad runt 10 september). kWh kan fyllas i direkt när mätarställningen är klar. I det här formuläret kan kostnad stå som <strong>0</strong> tills fakturan finns; i <code>index.html</code> ska <code>cost</code> vara <strong>null</strong> (inte 0), så att LÅT inte räknar månaden som noll kronor.</li>
                 <li><strong>kWh-kontroll:</strong> Om summan <strong>Bad + Restaurang</strong> inte är lika med <strong>Total kWh</strong> visas en varning ovanför tabellen (uppdateras när du ändrar data).</li>
             </ul>
         </div>
@@ -475,7 +475,9 @@
             { month: "Jun", year: 2026, fullMonth: "Juni 2026", totalKWh: 20609, daysInMonth: 30, kwhPerDay: 687, type: "Restaurang och bad", bad: 8853, restaurant: 11756, cost: 53134, costPerKwh: 2.58 },
             // UPPDATERING 2026-08-02: Juli 2026 tillagd (totalKWh 21585, bad 10424, restaurang 11161, kostnad okänd – uppdateras ca 10 aug)
             // UPPDATERING 2026-08-13: Juli 2026 kostnad tillagd (48277 kr, 2,24 kr/kWh)
-            { month: "Jul", year: 2026, fullMonth: "Juli 2026", totalKWh: 21585, daysInMonth: 31, kwhPerDay: 696, type: "Restaurang och bad", bad: 10424, restaurant: 11161, cost: 48277, costPerKwh: 2.24 }
+            { month: "Jul", year: 2026, fullMonth: "Juli 2026", totalKWh: 21585, daysInMonth: 31, kwhPerDay: 696, type: "Restaurang och bad", bad: 10424, restaurant: 11161, cost: 48277, costPerKwh: 2.24 },
+            // FACIT 2026-09-01: Augusti 2026 kWh (bad 10526, restaurang 11310, totalt 21836). Kostnad kommer ~10 sep → null.
+            { month: "Aug", year: 2026, fullMonth: "Augusti 2026", totalKWh: 21836, daysInMonth: 31, kwhPerDay: 704, type: "Restaurang och bad", bad: 10526, restaurant: 11310, cost: null, costPerKwh: null }
         ];
 
         // Kopiera ursprungsdata till arbetsdata (currentData används för redigering)
@@ -587,10 +589,10 @@
                     <input type="number" class="small-input" value="${data.restaurant}" data-index="${index}" data-field="restaurant" onchange="updateData(this)">
                 </td>
                 <td>
-                    <input type="number" class="small-input" value="${data.cost}" data-index="${index}" data-field="cost" onchange="updateData(this)">
+                    <input type="number" class="small-input" value="${data.cost != null ? data.cost : 0}" data-index="${index}" data-field="cost" onchange="updateData(this)">
                 </td>
                 <td>
-                    <input type="number" step="0.01" class="small-input" value="${data.costPerKwh}" data-index="${index}" data-field="costPerKwh" onchange="updateData(this)" readonly style="background-color: #e0e0e0;">
+                    <input type="number" step="0.01" class="small-input" value="${data.costPerKwh != null ? data.costPerKwh : 0}" data-index="${index}" data-field="costPerKwh" onchange="updateData(this)" readonly style="background-color: #e0e0e0;">
                 </td>
                 <td>
                     <button onclick="deleteRow(${index})" class="danger" style="padding: 8px 12px; font-size: 14px;">🗑️ Ta bort</button>

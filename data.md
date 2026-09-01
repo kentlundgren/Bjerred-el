@@ -3,9 +3,8 @@
 Denna fil är en **backup och referens** för all månadsdata kring elförbrukning och elkostnad.
 Filen ska uppdateras varje gång ny månadsdata läggs till i `index.html`.
 
-Senast uppdaterad: **2026-08-29**  
-Dataperiod: **Augusti 2024 – Juli 2026** (24 månader faktisk data)  
-Preliminär prognos finns för augusti 2026 – se egen sektion nedan och `prognoser.md`.
+Senast uppdaterad: **2026-09-01**  
+Dataperiod: **Augusti 2024 – Augusti 2026** (25 månader kWh; augusti 2026 saknar ännu kostnad)
 
 ---
 
@@ -37,6 +36,7 @@ Preliminär prognos finns för augusti 2026 – se egen sektion nedan och `progn
 | Maj 2026 | Bad + restaurang | 11 511 | 12 430 | 23 941 | 772 | 56 338 | 2,35 |
 | Jun 2026 | Bad + restaurang | 8 853 | 11 756 | 20 609 | 687 | 53 134 | 2,58 |
 | Jul 2026 | Bad + restaurang | 10 424 | 11 161 | 21 585 | 696 | 48 277 | 2,24 |
+| Aug 2026 | Bad + restaurang | 10 526 | 11 310 | 21 836 | 704 | – (faktura ~10 sep) | – |
 
 ---
 
@@ -45,12 +45,12 @@ Preliminär prognos finns för augusti 2026 – se egen sektion nedan och `progn
 Kents egna prognoser, gjorda före månadsskiftet. **Ingår inte** i tabellen ovan.
 De ligger i `monthlyData` i `index.html` med `preliminär: true` (markeras där i
 diagram och tabell, hålls utanför LÅT och förmodad-modellen) och ersätts av
-faktiska värden när utfallet stämts av. Full uppföljning i `prognoser.md` och
+faktiska kWh-värden när mätarställningen är klar. Full uppföljning i `prognoser.md` och
 `prognoser.html`.
 
 | Månad | Prognosdatum | Underlag | Bad kWh | Rest. kWh | Totalt kWh | kWh/dag | Kostnad |
 |-------|--------------|----------|--------:|----------:|-----------:|--------:|--------:|
-| Aug 2026 | 2026-08-28 | Linjär framskrivning (avläst t.o.m. 28 aug, uppräknat till 31 dygn) | 10 768 | 11 027 | 21 795 | 703 | ej prognostiserad |
+| _(inga öppna prognoser)_ | | | | | | | |
 
 ---
 
@@ -59,7 +59,8 @@ faktiska värden när utfallet stämts av. Full uppföljning i `prognoser.md` oc
 - **Feb–Jul 2025:** Badet stängt för ombyggnad (mitten av feb till mitten av jul 2025).
 - **Jul 2025:** Badet öppnade igen i mitten av månaden – halvmånadsdata för badet.
 - **Jan 2026:** Ovanligt hög total (35 422 kWh) och hög kostnad (90 779 kr) – troligen orsakat av kall vinter och hög elprisstopp.
-- **Kostnad (kr):** Avser total fakturerad elkostnad för månaden (bad + restaurang gemensamt).
+- **Kostnad (kr):** Avser total fakturerad elkostnad för månaden (bad + restaurang gemensamt). Elfakturan kommer kring den **10:e i månaden efter** (t.ex. augusti ~10 september). kWh kan läggas in tidigare; tills fakturan finns skrivs kostnaden som `null` i koden (visas som –), inte som 0.
+- **Aug 2026:** kWh-facit 2026-09-01. Kostnad fylls i när fakturan kommer (~10 sep). Prognosavvikelse: se `prognoser.md`.
 - **Bad kWh:** Elförbrukning för bastudelen (uppvärmning, ventilation m.m.).
 - **Rest. kWh:** Elförbrukning för restaurangdelen.
 - **Bad + Rest. = Totalt** för månader med bad öppet. Under stängningstiden = enbart restaurang.

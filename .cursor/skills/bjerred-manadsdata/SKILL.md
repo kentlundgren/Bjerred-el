@@ -13,9 +13,15 @@ beskriver *hur* själva uppdateringen görs.
 
 **Om månaden hade en preliminär prognos:** om Kent tidigare lagt in en prognos för
 månaden (finns i `prognoser.md` / `data.md`-sektionen "Preliminära prognoser") ska
-den här uppdateringen ske via skillen `bjerred-elprognos` läge 2 (facit-avstämning),
-som räknar ut prognosavvikelsen, flyttar prognosraden, och sedan anropar den här
-proceduren. Kolla `prognoser.md` innan du börjar.
+den här uppdateringen ske via skillen `bjerred-elprognos` läge 2a (kWh-facit) eller
+2b (kostnadsfacit), som räknar ut prognosavvikelsen, flyttar prognosraden, och sedan
+anropar den här proceduren. Kolla `prognoser.md` innan du börjar.
+
+**Tvåstegs-inläggning:** kWh och kostnad kommer sällan samma dag. kWh kan läggas in
+vid månadsskiftet; elfakturan kommer kring den **10:e i månaden efter** (t.ex.
+augusti ~10 september). Tills fakturan finns: `cost: null, costPerKwh: null` (inte 0)
+i `index.html`. Hoppa då över kontrollen `costPerKwh = cost / totalKWh`. LÅT
+exkluderar månader med `cost == null`.
 
 ## Indata – vad Kent lämnar
 
@@ -45,6 +51,7 @@ Räkna och bekräfta för Kent innan filerna uppdateras:
 - `bad + restaurant = totalKWh`  → 8853 + 11756 = 20609 ✓
 - `kwhPerDay ≈ totalKWh / daysInMonth` (avrundat till heltal) → 20609/30 = 687 ✓
 - `costPerKwh = cost / totalKWh` (avrundat till 2 decimaler) → 53134/20609 = 2,58 ✓
+  (hoppa över om kostnaden ännu saknas – fakturan kommer kring den 10:e i månaden efter)
 
 Om något inte stämmer: stanna och fråga Kent.
 

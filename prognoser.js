@@ -24,13 +24,15 @@
 const prognosData = [
     // PROGNOS 2026-08-28: Augusti 2026. Bild visade bad 10769; text sa 10768 →
     // 10768 valt (10768 + 11027 = 21795). Kostnad ej prognostiserad.
+    // FACIT 2026-09-01: utfall 21836 kWh (bad 10526, rest. 11310), avvikelse −0,2 %.
+    //   Kostnad kommer kring 10 sep – utfall.kostnad lämnas null tills fakturan finns.
     {
         manad: 'Aug', ar: 2026, fullMonth: 'Augusti 2026',
         prognosDatum: '2026-08-28',
         underlag: 'Linjär framskrivning (avläst t.o.m. 28 aug, uppräknat till 31 dygn)',
         dagar: 31,
         prognos: { bad: 10768, restaurang: 11027, totalt: 21795, kostnad: null },
-        utfall:  { bad: null,  restaurang: null,  totalt: null,  kostnad: null }
+        utfall:  { bad: 10526, restaurang: 11310, totalt: 21836, kostnad: null }
     }
 ];
 
@@ -282,7 +284,7 @@ function renderSammanfattning() {
         el.innerHTML =
             `Ingen prognos har stämts av mot facit ännu. `
             + `Öppen prognos: <strong>${namn || 'ingen'}</strong>. `
-            + `Så snart den slutliga mätarställningen och elfakturan finns räknas `
+            + `Så snart den slutliga mätarställningen finns räknas `
             + `avvikelsen ut här, och nyckeltalen ovan börjar fyllas.`;
         return;
     }

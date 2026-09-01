@@ -1,6 +1,6 @@
 ---
 name: bjerred-elprognos
-description: Registrera Kents elförbruknings­prognoser för Bjerreds Saltsjöbad och stäm av dem mot faktiskt utfall. Använd när Kent säger "lägg in prognos för [månad]", "prognos för [månad]", "preliminära värden för [månad]", "stäm av prognosen för [månad]", "facit för [månad]", "träffar mina prognoser rätt", eller när han bifogar en skärmdump från data.html och kallar värdena prognos / preliminära / uppskattade. Uppdaterar prognoser.md och prognoser.js, och vid facit även de fyra ordinarie datafilerna via skillen bjerred-manadsdata.
+description: Registrera Kents elförbruknings­prognoser för Bjerreds Saltsjöbad och stäm av dem mot faktiskt utfall. Använd när Kent säger "lägg in prognos för [månad]", "prognos för [månad]", "preliminära värden för [månad]", "stäm av prognosen för [månad]", "facit för [månad]", "fakturan för [månad]", "träffar mina prognoser rätt", eller när han bifogar en skärmdump från data.html och kallar värdena prognos / preliminära / uppskattade. Uppdaterar prognoser.md och prognoser.js, och vid facit även de fyra ordinarie datafilerna via skillen bjerred-manadsdata. kWh-facit och kostnadsfacit kommer i två steg (fakturan kring den 10:e i månaden efter).
 ---
 
 # Bjerreds Saltsjöbad – Elprognoser och träffsäkerhet
@@ -15,12 +15,17 @@ Den ordinarie månadsdata-proceduren finns i skillen `bjerred-manadsdata` – de
 här skillen **ersätter den inte**, den kompletterar den med ett prognos-steg före
 och en avstämning efter.
 
-## Två lägen
+## Två lägen (facit i två steg)
+
+kWh och kostnad kommer **inte samtidigt**. kWh-facit finns vid månadsskiftet;
+elfakturan kommer kring den **10:e i månaden efter** (t.ex. augusti ~10 september).
+Stäm av kWh så fort mätarställningen är klar – vänta inte på fakturan.
 
 | Läge | Utlöses av | Vad som händer |
 |------|-----------|----------------|
 | **1. Registrera prognos** | "lägg in prognos för sept", skärmdump kallad prognos/preliminär | Prognosen loggas i `prognoser.md` + `prognoser.js` + `data.md`, och läggs in i `monthlyData` i `index.html` med `preliminär: true`. `fore_och_efter_ombyggnad.js` och `data.html` rörs **inte**. |
-| **2. Facit-avstämning** | "facit för augusti", "stäm av prognosen", slutlig mätarställning + faktura finns | Avvikelsen räknas ut, prognosraden flyttas till *Avräknade*, träffsäkerheten uppdateras, och månaden läggs in som **faktisk** data via `bjerred-manadsdata`. |
+| **2a. kWh-facit** | "facit för augusti", "stäm av prognosen", slutlig mätarställning | Avvikelsen räknas ut, prognosraden flyttas till *Avräknade*, och månaden läggs in som **faktisk kWh** via `bjerred-manadsdata`. `cost` lämnas `null`. |
+| **2b. Kostnadsfacit** | "fakturan för augusti", kostnadssiffra kring den 10:e | Fyll `cost` / `costPerKwh` i de fyra datafilerna + `utfall.kostnad` i `prognoser.js`. |
 
 ---
 
@@ -101,10 +106,10 @@ först vid facit) och `data.html` (`originalData`).
 
 ---
 
-## LÄGE 2 – Facit-avstämning
+## LÄGE 2a – kWh-facit
 
-Utlöses när Kent har den slutliga mätarställningen och (oftast) elfakturan för en
-månad som har en öppen prognos.
+Utlöses när Kent har den **slutliga mätarställningen**. Elfakturan behövs **inte**
+här – den kommer kring den 10:e i månaden efter (läge 2b).
 
 ### Steg
 
@@ -119,7 +124,8 @@ En månad räknas som "träff" om `|avvikelse_%| ≤ 3` (samma gräns som
 `TRAFF_GRANS_PROCENT` i `prognoser.js`).
 
 **2. Uppdatera `prognoser.js`:** fyll `utfall`-objektet för månaden med de faktiska
-värdena. Kommentar: `// FACIT ÅÅÅÅ-MM-DD: [Månad] utfall [totalt] kWh, avvikelse [±X.X] %`.
+kWh-värdena. `utfall.kostnad` lämnas `null` om fakturan inte kommit.
+Kommentar: `// FACIT ÅÅÅÅ-MM-DD: [Månad] utfall [totalt] kWh, avvikelse [±X.X] %. Kostnad kommer ~10 [nästa månad].`.
 
 **3. Uppdatera `prognoser.md`:**
 - Flytta raden från *Öppna prognoser* till *Avräknade prognoser* (annat kolumnformat
@@ -131,28 +137,49 @@ värdena. Kommentar: `// FACIT ÅÅÅÅ-MM-DD: [Månad] utfall [totalt] kWh, avv
   - `Största missen` = raden med störst `|avvikelse_%|`
 - Uppdatera `Senast uppdaterad`.
 
-**4. Uppdatera `data.md`:** ta bort månadens rad ur "Preliminära prognoser"-sektionen.
+**4. Uppdatera `data.md`:** ta bort månadens rad ur "Preliminära prognoser"-sektionen
+och lägg in kWh i huvudtabellen. Kostnadskolumnen: `– (faktura ~10 [månad])`.
 
-**5. Lägg in månaden som faktisk data** – följ skillen `bjerred-manadsdata` punkt
-för punkt:
+**5. Lägg in månaden som faktisk kWh-data** – följ skillen `bjerred-manadsdata` punkt
+för punkt, med ett undantag för kostnaden:
 - `data.md` (huvudtabellen)
-- `index.html` (`monthlyData`) – **ersätt** den preliminära raden: byt `cost`/`costPerKwh`
-  från `null` till de faktiska värdena och **ta bort** `preliminär: true`. Byt
-  `// PROGNOS`-kommentaren mot `// FACIT ÅÅÅÅ-MM-DD: ...`.
-- `fore_och_efter_ombyggnad.js` (ersätt `null`-platshållaren)
-- `data.html` (`originalData`)
+- `index.html` (`monthlyData`) – **ersätt** den preliminära raden: **ta bort**
+  `preliminär: true`. Lämna `cost`/`costPerKwh` som `null` om fakturan inte kommit.
+  Byt `// PROGNOS`-kommentaren mot `// FACIT ÅÅÅÅ-MM-DD: ...`.
+- `fore_och_efter_ombyggnad.js` (ersätt kWh-platshållaren; `kostnad` kan vara `null`)
+- `data.html` (`originalData`) – `cost: null, costPerKwh: null` tills fakturan finns
 Kontrollräkna enligt `bjerred-manadsdata` (`bad + restaurant = totalKWh` osv.).
+Hoppa över `costPerKwh`-kontrollen när kostnad saknas.
+
+**LÅT:** `latSource` i `index.html` filtrerar `d.cost != null`. Rör inte det filtret –
+det hindrar att en månad utan faktura räknas som 0 kr i årssumman.
 
 **6. Rapportera till Kent:**
-- Prognos vs utfall för månaden (totalt, bad, restaurang, ev. kostnad)
+- Prognos vs utfall för månaden (totalt, bad, restaurang)
 - Avvikelse i kWh och %
+- Att kostnaden väntas kring den 10:e i månaden efter
 - Om mönstret hittills lutar åt över- eller underskattning (bias), och om
   träffsäkerheten (MAPE) förbättras eller försämras över tid
 
-### Efter läge 2
+### Efter läge 2a
 1. Verifiera både `prognoser.html` och `index.html` i webbläsaren.
 2. Sammanfatta alla ändrade filer (2 prognos-filer + 4 ordinarie).
 3. Fråga om commit/push.
+
+---
+
+## LÄGE 2b – Kostnadsfacit
+
+Utlöses när Kent har **elfakturan** för en månad som redan har kWh-facit
+(`cost` är fortfarande `null`). Kommer typiskt kring den 10:e i månaden efter.
+
+### Steg
+1. Räkna `costPerKwh = cost / totalKWh` (2 decimaler).
+2. Fyll `cost` och `costPerKwh` i `index.html`, `data.html`, `data.md` och
+   `kostnad` i `fore_och_efter_ombyggnad.js`.
+3. Fyll `utfall.kostnad` i `prognoser.js` och notera beloppet i `prognoser.md`.
+4. Kommentar: `// UPPDATERING ÅÅÅÅ-MM-DD: [Månad] kostnad tillagd (X kr, Y kr/kWh)`.
+5. Verifiera att LÅT nu inkluderar månaden (filtret `d.cost != null` släpper igenom).
 
 ---
 
@@ -175,3 +202,5 @@ Kontrollräkna enligt `bjerred-manadsdata` (`bad + restaurant = totalKWh` osv.).
 Skapad 2026-08-29 på Kents begäran ("en förmåga som hjälper mig se om mina prognoser
 träffar rätt"). Första prognosen: augusti 2026 (bad 10 768, restaurang 11 027,
 totalt 21 795 kWh, avläst 28 aug, linjär framskrivning, kostnad ej prognostiserad).
+Första kWh-facit 2026-09-01: utfall 21 836 kWh (avvikelse −0,2 %). Kostnadsfacit
+väntas kring 10 september – då formaliserades tvåstegs-facit (2a kWh / 2b faktura).

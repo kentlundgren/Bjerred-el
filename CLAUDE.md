@@ -40,12 +40,28 @@ deras träffsäkerhet hanteras separat från den faktiska månadsdatan:
   - markeras i diagrammen (lila punkt, streckad linje) och i tabellen ("(preliminär)",
     "–" i kostnadskolumnerna)
 - `data.md` har en egen sektion "Preliminära prognoser (ännu utan facit)".
-- Vid facit räknas avvikelsen ut, `preliminär`-raden ersätts av faktiska värden,
-  och månaden förs in fullt ut via den vanliga fyrfilsproceduren.
+- Facit sker i **två steg** (se tidslinjen nedan): först kWh, sedan kostnad.
+  Vid kWh-facit räknas avvikelsen ut, `preliminär`-flaggan tas bort, och månaden
+  förs in via den vanliga fyrfilsproceduren med `cost: null` tills fakturan kommit.
 
 Hela flödet – registrera prognos och stämma av mot facit – sköts av skillen
 **`bjerred-elprognos`** (`.cursor/skills/bjerred-elprognos/SKILL.md`), som triggas
 av t.ex. "lägg in prognos för september" eller "facit för augusti".
+
+## Tidslinje för en el-månad
+
+Så här kommer uppgifterna i praktiken, och så ska de läggas in:
+
+1. **Några dagar före månadsskiftet** – Kent gör en prognos (mätaravläsning +
+   linjär framskrivning). Läggs in med `preliminär: true`.
+2. **Vid månadsskiftet / de första dagarna i nästa månad** – kWh-facit från
+   elmätaren. Byter ut den preliminära raden mot faktisk förbrukning. Kostnad
+   lämnas `null`.
+3. **Kring den 10:e i månaden efter** – elfakturan kommer (t.ex. augusti-fakturan
+   runt **10 september**). Då fylls `cost` och `costPerKwh` i.
+
+**Viktigt:** tills fakturan finns ska `cost` vara `null`, inte `0`. LÅT exkluderar
+månader där `cost == null`, så att årssumman inte räknar månaden som noll kronor.
 
 ## Månadsdata – format
 
