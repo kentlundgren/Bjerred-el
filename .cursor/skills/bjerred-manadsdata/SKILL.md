@@ -20,8 +20,8 @@ anropar den här proceduren. Kolla `prognoser.md` innan du börjar.
 **Tvåstegs-inläggning:** kWh och kostnad kommer sällan samma dag. kWh kan läggas in
 vid månadsskiftet; elfakturan kommer kring den **10:e i månaden efter** (t.ex.
 augusti ~10 september). Tills fakturan finns: `cost: null, costPerKwh: null` (inte 0)
-i `index.html`. Hoppa då över kontrollen `costPerKwh = cost / totalKWh`. LÅT
-exkluderar månader med `cost == null`.
+i `index.html`. Hoppa då över kontrollen `costPerKwh = cost / totalKWh`. kWh-LÅT
+inkluderar månaden; kostnads-LÅT väntar tills `cost != null`.
 
 ## Indata – vad Kent lämnar
 

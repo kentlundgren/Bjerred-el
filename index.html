@@ -695,6 +695,7 @@
                 <h3>Årskostnad (LÅT inkl moms)</h3>
                 <div class="value" id="totalCost">-</div>
                 <div class="unit">kr/år</div>
+                <div style="font-size: 0.8em; color: #7f8c8d; margin-top: 5px;" id="latPeriodCost">-</div>
                 <!-- Tooltip för föregående LÅT -->
                 <div class="lat-tooltip" id="costTooltip">
                     <strong>Föregående LÅT:</strong><br>
@@ -707,6 +708,7 @@
                 <h3>Årskostnad (LÅT exkl moms)</h3>
                 <div class="value" id="totalCostExVAT">-</div>
                 <div class="unit">kr/år</div>
+                <div style="font-size: 0.8em; color: #7f8c8d; margin-top: 5px;" id="latPeriodCostExVAT">-</div>
                 <!-- Tooltip för föregående LÅT -->
                 <div class="lat-tooltip" id="costExVATTooltip">
                     <strong>Föregående LÅT:</strong><br>
@@ -743,9 +745,10 @@
         <div style="background: #fff3cd; border-left: 5px solid #ffc107; padding: 15px; border-radius: 8px; margin-bottom: 30px;">
             <h3 style="color: #856404; margin-bottom: 10px; font-size: 1.1em;">ℹ️ Om Löpande Årstal (LÅT)</h3>
             <p style="color: #856404; line-height: 1.6; margin: 0;">
-                <strong>Löpande Årstal (LÅT)</strong> visar alltid förbrukning och kostnad för de senaste 12 månaderna. 
-                Detta ger en mer aktuell bild av årskostnaden jämfört med totalsummor. 
-                När ny data läggs till rullar perioden framåt automatiskt.
+                <strong>Löpande Årstal (LÅT)</strong> visar de senaste 12 månaderna.
+                <strong>Årsförbrukningen</strong> rullar fram så fort kWh är fastställd.
+                <strong>Årskostnaden</strong> rullar fram när elfakturan kommit (kring den 10:e i månaden efter).
+                De två perioderna kan därför skilja sig åt en kort tid.
                 <br><br>
                 <strong>💡 Tips:</strong> Hovra över LÅT-korten för att se föregående 12-månadersperiod och jämföra hur förbrukning och kostnad förändras över tid!
                 <br><br>
@@ -757,7 +760,8 @@
                 <strong>Elfakturan</strong> kommer kring den <strong>10:e i månaden efter</strong>
                 (till exempel augusti-kostnad runt <strong>10 september</strong>).
                 Tills fakturan finns är <strong>kostnad (kr)</strong> och <strong>kr/kWh</strong>
-                okända (<code>null</code>, visas som –) – inte 0, så att LÅT inte räknar månaden som noll kronor.
+                okända (<code>null</code>, visas som –) – inte 0, så att <em>kostnads-LÅT</em>
+                inte räknar månaden som noll kronor. kWh-LÅT räknas däremot med en gång.
                 <br><br>
                 <!-- UPPDATERING 2026-08-29: notis om preliminära prognosmånader -->
                 <strong>🎯 Preliminära månader:</strong> En månad som är märkt <em>(preliminär)</em> är Kents egen
@@ -1042,7 +1046,7 @@
             { month: "Jul 2026", fullMonth: "Juli 2026", totalKWh: 21585, daysInMonth: 31, kwhPerDay: 696, type: "Restaurang och bad", bad: 10424, restaurant: 11161, cost: 48277, costPerKwh: 2.24 },
             // FACIT 2026-09-01: Augusti 2026 kWh-facit (bad: 10526, restaurang: 11310, totalt: 21836, 704 kWh/dag).
             //   preliminär-flaggan borttagen – kWh är fastställd. Kostnad kommer kring 10 sep → cost/costPerKwh null.
-            //   LÅT räknar inte med månader där cost är null (annars skulle augusti räknas som 0 kr).
+            //   kWh-LÅT inkluderar månaden; kostnads-LÅT väntar tills cost finns (annars 0 kr i årssumman).
             //   Fullständig uppföljning: prognoser.html / prognoser.md (skill: bjerred-elprognos).
             { month: "Aug 2026", fullMonth: "Augusti 2026", totalKWh: 21836, daysInMonth: 31, kwhPerDay: 704, type: "Restaurang och bad", bad: 10526, restaurant: 11310, cost: null, costPerKwh: null }
         ];
@@ -1231,51 +1235,46 @@
         // Beräknar och visar summor för Löpande Årstal (LÅT) - senaste 12 månaderna
         // UPPDATERING 2026-01: Ändrat från total till LÅT för att visa aktuell årskostnad
         // UPPDATERING 2026-01: Lagt till föregående LÅT för jämförelse vid hover
-        function updateSummary() {
-            // Beräkna LÅT (Löpande Årstal) - senaste 12 månaderna
-            let latData;
-            let latPeriodText;
-            let prevLatData = null;
-            let prevLatPeriodText = '';
+        // UPPDATERING 2026-09-01: kWh-LÅT och kostnads-LÅT har skilda fönster när
+        // kWh-facit finns men elfakturan inte kommit (kring den 10:e i månaden efter).
+        // Genomsnittspriset räknas bara på månader med känd kostnad, så täljare och
+        // nämnare gäller samma period.
 
-            // UPPDATERING 2026-08-29: LÅT baseras bara på FASTSTÄLLD data. Preliminära
-            // prognosrader (preliminär:true) räknas inte med.
-            // UPPDATERING 2026-09-01: även månader med kWh-facit men utan elfaktura
-            // (cost == null) hålls utanför LÅT – annars blir månaden 0 kr i årssumman.
-            // Elfakturan kommer kring den 10:e i månaden efter (t.ex. augusti ~10 sep).
-            const latSource = enrichedData.filter((d) => !d.preliminär && d.cost != null);
-
-            if (latSource.length >= 12) {
-                // Ta de senaste 12 månaderna (nuvarande LÅT)
-                latData = latSource.slice(-12);
-                const firstMonth = latData[0].fullMonth;
-                const lastMonth = latData[latData.length - 1].fullMonth;
-                latPeriodText = `${firstMonth} - ${lastMonth}`;
-
-                // Beräkna föregående LÅT om vi har minst 13 månader
-                if (latSource.length >= 13) {
-                    // Föregående LÅT: månad 13 från slutet till månad 2 från slutet
-                    const startIndex = Math.max(0, latSource.length - 13);
-                    const endIndex = latSource.length - 1;
-                    prevLatData = latSource.slice(startIndex, endIndex);
-                    const prevFirstMonth = prevLatData[0].fullMonth;
-                    const prevLastMonth = prevLatData[prevLatData.length - 1].fullMonth;
-                    prevLatPeriodText = `${prevFirstMonth} - ${prevLastMonth}`;
-                }
-            } else {
-                // Om vi har mindre än 12 månader, använd all tillgänglig fastställd data
-                latData = latSource;
-                latPeriodText = `${latSource.length} månader (< 12)`;
+        /** Senaste 12 månaderna (+ ev. föregående 12) ur en datakälla. */
+        function latWindow(source) {
+            const periodOf = (rows) => {
+                if (!rows.length) return '–';
+                return `${rows[0].fullMonth} - ${rows[rows.length - 1].fullMonth}`;
+            };
+            if (source.length >= 12) {
+                const current = source.slice(-12);
+                const prev = source.length >= 13
+                    ? source.slice(source.length - 13, source.length - 1)
+                    : null;
+                return { current: current, prev: prev, periodText: periodOf(current) };
             }
+            return {
+                current: source,
+                prev: null,
+                periodText: source.length ? `${source.length} månader (< 12)` : '–'
+            };
+        }
 
-            // Beräkna summor för nuvarande LÅT-perioden
-            const totalKWh = latData.reduce((sum, d) => sum + d.totalKWh, 0);
-            const totalCost = latData.reduce((sum, d) => sum + d.cost, 0);
-            const totalCostExVAT = latData.reduce((sum, d) => sum + d.costExVAT, 0);
-            const avgPrice = totalCost / totalKWh;
-            const avgPriceExVAT = totalCostExVAT / totalKWh;
+        function updateSummary() {
+            // UPPDATERING 2026-08-29: preliminära prognosrader räknas inte med.
+            // UPPDATERING 2026-09-01: kWh-LÅT = fastställd förbrukning (även utan faktura).
+            // Kostnads-LÅT = bara månader där cost != null (annars skulle månaden bli 0 kr).
+            const kwhWin = latWindow(enrichedData.filter((d) => !d.preliminär));
+            const costWin = latWindow(enrichedData.filter((d) => !d.preliminär && d.cost != null));
 
-            // Uppdatera DOM-element med formaterade värden för nuvarande LÅT
+            const totalKWh = kwhWin.current.reduce((sum, d) => sum + d.totalKWh, 0);
+            const totalCost = costWin.current.reduce((sum, d) => sum + d.cost, 0);
+            const totalCostExVAT = costWin.current.reduce((sum, d) => sum + d.costExVAT, 0);
+            // Genomsnittspris: samma månader som kostnads-LÅT (inte kWh-fönstret).
+            const costKWh = costWin.current.reduce((sum, d) => sum + d.totalKWh, 0);
+            const avgPrice = costKWh ? totalCost / costKWh : 0;
+            const avgPriceExVAT = costKWh ? totalCostExVAT / costKWh : 0;
+
             document.getElementById('totalConsumption').textContent = totalKWh.toLocaleString('sv-SE');
             document.getElementById('totalCost').textContent = totalCost.toLocaleString('sv-SE');
             document.getElementById('totalCostExVAT').textContent = totalCostExVAT.toLocaleString('sv-SE');
@@ -1284,56 +1283,65 @@
 
             // UPPDATERING 2026-06-09: Fyll tooltip för genomsnittspris med beräkning och förklaring
             document.getElementById('avgPriceFormula').innerHTML =
-                `${totalCost.toLocaleString('sv-SE')} kr &divide; ${totalKWh.toLocaleString('sv-SE')} kWh`
+                `${totalCost.toLocaleString('sv-SE')} kr &divide; ${costKWh.toLocaleString('sv-SE')} kWh`
+                + ` (${costWin.periodText})`
                 + ` = <strong>${avgPrice.toFixed(2)} kr/kWh</strong>`;
             document.getElementById('avgPriceNote').innerHTML =
                 `<strong>OBS:</strong> Detta viktat genomsnitt kan råka ligga nära `
                 + `vintermånadernas genomsnitt (Okt–Mar), trots att sommarmånaderna `
                 + `är billigare. Orsaken är att vintermånaderna förbrukar `
                 + `betydligt mer kWh och därför väger tyngre i beräkningen.`;
-            document.getElementById('latPeriod').textContent = latPeriodText;
-            document.getElementById('latPeriodInfo').textContent = latPeriodText;
+            document.getElementById('latPeriod').textContent = kwhWin.periodText;
+            document.getElementById('latPeriodCost').textContent = costWin.periodText;
+            document.getElementById('latPeriodCostExVAT').textContent = costWin.periodText;
+            document.getElementById('latPeriodInfo').textContent =
+                kwhWin.periodText === costWin.periodText
+                    ? kwhWin.periodText
+                    : `Förbrukning: ${kwhWin.periodText}. Kostnad: ${costWin.periodText} (väntar på faktura).`;
 
-            // Uppdatera tooltips med föregående LÅT om tillgängligt
-            if (prevLatData && prevLatData.length === 12) {
-                const prevTotalKWh = prevLatData.reduce((sum, d) => sum + d.totalKWh, 0);
-                const prevTotalCost = prevLatData.reduce((sum, d) => sum + d.cost, 0);
-                const prevTotalCostExVAT = prevLatData.reduce((sum, d) => sum + d.costExVAT, 0);
-
-                // Beräkna förändringar
+            const consumptionTip = document.getElementById('consumptionTooltip');
+            if (kwhWin.prev && kwhWin.prev.length === 12) {
+                consumptionTip.style.display = '';
+                const prevTotalKWh = kwhWin.prev.reduce((sum, d) => sum + d.totalKWh, 0);
                 const changeKWh = totalKWh - prevTotalKWh;
                 const changePercentKWh = ((changeKWh / prevTotalKWh) * 100).toFixed(1);
-                const changeCost = totalCost - prevTotalCost;
-                const changePercentCost = ((changeCost / prevTotalCost) * 100).toFixed(1);
-                const changeCostExVAT = totalCostExVAT - prevTotalCostExVAT;
-                const changePercentCostExVAT = ((changeCostExVAT / prevTotalCostExVAT) * 100).toFixed(1);
-
-                // Uppdatera tooltip för förbrukning
-                document.getElementById('prevLatPeriodConsumption').textContent = prevLatPeriodText;
+                const prevKwhPeriod = `${kwhWin.prev[0].fullMonth} - ${kwhWin.prev[kwhWin.prev.length - 1].fullMonth}`;
+                document.getElementById('prevLatPeriodConsumption').textContent = prevKwhPeriod;
                 document.getElementById('prevLatConsumption').textContent = prevTotalKWh.toLocaleString('sv-SE');
                 const consumptionChangeEl = document.getElementById('latChangeConsumption');
                 consumptionChangeEl.innerHTML = `<strong>Förändring:</strong> ${changeKWh > 0 ? '+' : ''}${changeKWh.toLocaleString('sv-SE')} kWh (${changePercentKWh > 0 ? '+' : ''}${changePercentKWh}%)`;
                 consumptionChangeEl.className = `lat-change ${changeKWh > 0 ? 'positive' : 'negative'}`;
+            } else {
+                consumptionTip.style.display = 'none';
+            }
 
-                // Uppdatera tooltip för kostnad inkl moms
-                document.getElementById('prevLatPeriodCost').textContent = prevLatPeriodText;
+            const costTip = document.getElementById('costTooltip');
+            const costExVATTip = document.getElementById('costExVATTooltip');
+            if (costWin.prev && costWin.prev.length === 12) {
+                costTip.style.display = '';
+                costExVATTip.style.display = '';
+                const prevTotalCost = costWin.prev.reduce((sum, d) => sum + d.cost, 0);
+                const prevTotalCostExVAT = costWin.prev.reduce((sum, d) => sum + d.costExVAT, 0);
+                const changeCost = totalCost - prevTotalCost;
+                const changePercentCost = ((changeCost / prevTotalCost) * 100).toFixed(1);
+                const changeCostExVAT = totalCostExVAT - prevTotalCostExVAT;
+                const changePercentCostExVAT = ((changeCostExVAT / prevTotalCostExVAT) * 100).toFixed(1);
+                const prevCostPeriod = `${costWin.prev[0].fullMonth} - ${costWin.prev[costWin.prev.length - 1].fullMonth}`;
+
+                document.getElementById('prevLatPeriodCost').textContent = prevCostPeriod;
                 document.getElementById('prevLatCost').textContent = prevTotalCost.toLocaleString('sv-SE');
                 const costChangeEl = document.getElementById('latChangeCost');
                 costChangeEl.innerHTML = `<strong>Förändring:</strong> ${changeCost > 0 ? '+' : ''}${changeCost.toLocaleString('sv-SE')} kr (${changePercentCost > 0 ? '+' : ''}${changePercentCost}%)`;
                 costChangeEl.className = `lat-change ${changeCost > 0 ? 'positive' : 'negative'}`;
 
-                // Uppdatera tooltip för kostnad exkl moms
-                document.getElementById('prevLatPeriodCostExVAT').textContent = prevLatPeriodText;
+                document.getElementById('prevLatPeriodCostExVAT').textContent = prevCostPeriod;
                 document.getElementById('prevLatCostExVAT').textContent = prevTotalCostExVAT.toLocaleString('sv-SE');
                 const costExVATChangeEl = document.getElementById('latChangeCostExVAT');
                 costExVATChangeEl.innerHTML = `<strong>Förändring:</strong> ${changeCostExVAT > 0 ? '+' : ''}${changeCostExVAT.toLocaleString('sv-SE')} kr (${changePercentCostExVAT > 0 ? '+' : ''}${changePercentCostExVAT}%)`;
                 costExVATChangeEl.className = `lat-change ${changeCostExVAT > 0 ? 'positive' : 'negative'}`;
             } else {
-                // Om ingen föregående LÅT finns, dölj tooltips
-                const tooltips = document.querySelectorAll('.lat-tooltip');
-                tooltips.forEach(tooltip => {
-                    tooltip.style.display = 'none';
-                });
+                costTip.style.display = 'none';
+                costExVATTip.style.display = 'none';
             }
         }
 

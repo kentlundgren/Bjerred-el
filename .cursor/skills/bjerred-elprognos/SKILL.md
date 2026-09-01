@@ -85,7 +85,7 @@ Stäm av kWh så fort mätarställningen är klar – vänta inte på fakturan.
   förlitar sig på `!= null`.
 - `preliminär: true` gör att raden: (a) filtreras bort ur baslinjerna i
   `calculateExpectedValues` (`&& !d.preliminär`), (b) filtreras bort ur LÅT via
-  `latSource` i `updateSummary`, (c) markeras i diagram (lila punkt + streckad linje,
+  `latWindow` i `updateSummary`, (c) markeras i diagram (lila punkt + streckad linje,
   via `prelimPointColor` / `prelimSegmentDash` i `createCharts`) och i tabellen
   (`(preliminär)`, `–` i kostnadskolumnerna).
 - **Rör inte** guard-koden i sig – lägg bara till dataraden. Om guard-mönstret
@@ -151,8 +151,8 @@ för punkt, med ett undantag för kostnaden:
 Kontrollräkna enligt `bjerred-manadsdata` (`bad + restaurant = totalKWh` osv.).
 Hoppa över `costPerKwh`-kontrollen när kostnad saknas.
 
-**LÅT:** `latSource` i `index.html` filtrerar `d.cost != null`. Rör inte det filtret –
-det hindrar att en månad utan faktura räknas som 0 kr i årssumman.
+**LÅT:** kWh-LÅT inkluderar månaden så fort `preliminär` är borta. Kostnads-LÅT
+filtrerar `d.cost != null` – rör inte det, annars blir månaden 0 kr i årskostnaden.
 
 **6. Rapportera till Kent:**
 - Prognos vs utfall för månaden (totalt, bad, restaurang)
@@ -179,7 +179,8 @@ Utlöses när Kent har **elfakturan** för en månad som redan har kWh-facit
    `kostnad` i `fore_och_efter_ombyggnad.js`.
 3. Fyll `utfall.kostnad` i `prognoser.js` och notera beloppet i `prognoser.md`.
 4. Kommentar: `// UPPDATERING ÅÅÅÅ-MM-DD: [Månad] kostnad tillagd (X kr, Y kr/kWh)`.
-5. Verifiera att LÅT nu inkluderar månaden (filtret `d.cost != null` släpper igenom).
+5. Verifiera att kWh-LÅT redan inkluderar månaden, och att kostnads-LÅT nu släpper
+   igenom den (`d.cost != null`).
 
 ---
 

@@ -383,7 +383,7 @@
                 <li>Klicka "Beräkna och generera kod" när du är klar</li>
                 <li>Kopiera den genererade koden och klistra in i index.html (ersätt den gamla monthlyData-arrayen)</li>
                 <li>"Lägg till ny månad" skapar en tom rad längst ner</li>
-                <li><strong>Elkostnad per månad:</strong> Elfakturan kommer kring den <strong>10:e i månaden efter</strong> (t.ex. augusti-kostnad runt 10 september). kWh kan fyllas i direkt när mätarställningen är klar. I det här formuläret kan kostnad stå som <strong>0</strong> tills fakturan finns; i <code>index.html</code> ska <code>cost</code> vara <strong>null</strong> (inte 0), så att LÅT inte räknar månaden som noll kronor.</li>
+                <li><strong>Elkostnad per månad:</strong> Elfakturan kommer kring den <strong>10:e i månaden efter</strong> (t.ex. augusti-kostnad runt 10 september). kWh kan fyllas i direkt när mätarställningen är klar. I det här formuläret kan kostnad stå som <strong>0</strong> tills fakturan finns; i <code>index.html</code> ska <code>cost</code> vara <strong>null</strong> (inte 0), så att kostnads-LÅT inte räknar månaden som noll kronor. kWh-LÅT räknas däremot så fort förbrukningen är känd.</li>
                 <li><strong>kWh-kontroll:</strong> Om summan <strong>Bad + Restaurang</strong> inte är lika med <strong>Total kWh</strong> visas en varning ovanför tabellen (uppdateras när du ändrar data).</li>
             </ul>
         </div>

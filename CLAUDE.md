@@ -36,7 +36,7 @@ deras träffsäkerhet hanteras separat från den faktiska månadsdatan:
   samma dag från "läggs inte in alls"). Flaggan `preliminär: true` gör att raden:
   - hålls utanför baslinjerna i "förmodad förbrukning"-modellen
     (`calculateExpectedValues`)
-  - hålls utanför LÅT-summorna (`updateSummary`, via `latSource`)
+  - hålls utanför LÅT-summorna (`updateSummary` / `latWindow`)
   - markeras i diagrammen (lila punkt, streckad linje) och i tabellen ("(preliminär)",
     "–" i kostnadskolumnerna)
 - `data.md` har en egen sektion "Preliminära prognoser (ännu utan facit)".
@@ -60,8 +60,10 @@ Så här kommer uppgifterna i praktiken, och så ska de läggas in:
 3. **Kring den 10:e i månaden efter** – elfakturan kommer (t.ex. augusti-fakturan
    runt **10 september**). Då fylls `cost` och `costPerKwh` i.
 
-**Viktigt:** tills fakturan finns ska `cost` vara `null`, inte `0`. LÅT exkluderar
-månader där `cost == null`, så att årssumman inte räknar månaden som noll kronor.
+**Viktigt:** tills fakturan finns ska `cost` vara `null`, inte `0`. kWh-LÅT
+inkluderar månaden så fort förbrukningen är fastställd; kostnads-LÅT och
+genomsnittspriset väntar tills `cost != null` (så att årskostnaden inte blir 0 kr
+för den månaden).
 
 ## Månadsdata – format
 
