@@ -103,6 +103,24 @@ section[id] { scroll-margin-top: 16px; }
     text-decoration: underline;
 }
 
+/* Direktlänk i varje avsnittsrubrik. UPPDATERING 2026-09-28 */
+.heading-link {
+    color: inherit;
+    text-decoration: none;
+}
+.heading-link:hover {
+    color: var(--accent);
+}
+.heading-link span {
+    color: var(--secondary);
+    font-weight: 500;
+    margin-left: 6px;
+    font-size: 0.85em;
+}
+.heading-link:hover span {
+    color: var(--accent);
+}
+
 /* ----------------------------------------------------------------
    INFORMATIONSKORT
    ---------------------------------------------------------------- */
