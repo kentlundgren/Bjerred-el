@@ -141,6 +141,22 @@ section[id] { scroll-margin-top: 16px; }
     font-size: 1.2em;
 }
 
+/* Foto vid avsnittet om stenen. UPPDATERING 2026-09-28 */
+.stone-photo {
+    margin: 0 0 14px;
+}
+.stone-photo img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+.stone-photo figcaption {
+    font-size: 0.8em;
+    color: #7f8c8d;
+    margin-top: 6px;
+}
+
 .info-card h3 {
     color: var(--accent);
     font-size: 1em;
