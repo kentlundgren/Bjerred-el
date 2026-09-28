@@ -1,0 +1,413 @@
+/* ================================================================
+   bastuaggregat.css
+   Styling för sidan "Bastuaggregatet och bastustenarna"
+   Bjerreds Saltsjöbad – samma grundtema som prognoser.css,
+   med orange accent (värme/bastu) i stället för lila.
+   NY FIL 2026-09-28
+   ================================================================ */
+
+:root {
+    --primary:     #2c3e50;
+    --secondary:   #3498db;
+    --accent:      #e67e22;   /* orange = bastu/värme */
+    --accent-soft: #fdf2e9;
+    --bg:          #ecf0f1;
+    --card-bg:     #ffffff;
+    --text:        #2c3e50;
+    --border:      #bdc3c7;
+    --hover-bg:    #f8f9fa;
+
+    /* Bedömning i butikstabellen */
+    --ok:          #27ae60;
+
+    /* Gul bakgrund för alla inmatningsfält (projektets konvention) */
+    --input-bg:    #FFF9C4;
+}
+
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    padding: 20px;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* ----------------------------------------------------------------
+   SIDHUVUD
+   ---------------------------------------------------------------- */
+.page-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.page-header h1 {
+    font-size: 2.1em;
+    color: var(--primary);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    margin: 12px 0 6px;
+}
+
+.page-header .subtitle {
+    color: #7f8c8d;
+    font-size: 1em;
+}
+
+.back-link {
+    display: inline-block;
+    color: var(--secondary);
+    text-decoration: none;
+    font-size: 0.9em;
+    margin: 0 8px 6px;
+    transition: color 0.2s;
+}
+.back-link:hover { color: var(--primary); }
+
+/* ----------------------------------------------------------------
+   INFORMATIONSKORT
+   ---------------------------------------------------------------- */
+.info-card {
+    background: var(--card-bg);
+    border-left: 5px solid var(--accent);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.info-card.highlight { background: var(--accent-soft); }
+
+.info-card h2 {
+    color: var(--primary);
+    margin-bottom: 12px;
+    font-size: 1.2em;
+}
+
+.info-card h3 {
+    color: var(--accent);
+    font-size: 1em;
+    margin: 14px 0 6px;
+}
+
+.info-card p {
+    font-size: 0.92em;
+    margin-bottom: 10px;
+}
+.info-card p:last-child { margin-bottom: 0; }
+
+.info-card ul,
+.info-card ol {
+    margin: 6px 0 10px 22px;
+    font-size: 0.9em;
+}
+
+.info-card li { margin-bottom: 6px; }
+
+.info-card a,
+.table-note a { color: var(--secondary); }
+
+.info-card code,
+.tech-card code {
+    background: var(--hover-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 0.9em;
+}
+
+/* Källförteckning: ett stycke per källa, hängande indrag */
+.sources p {
+    font-size: 0.85em;
+    padding-left: 24px;
+    text-indent: -24px;
+    margin-bottom: 12px;
+    word-break: break-word;
+}
+
+.sources .note {
+    font-style: italic;
+    color: #555;
+}
+
+/* ----------------------------------------------------------------
+   NYCKELTAL-KORT
+   ---------------------------------------------------------------- */
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.summary-card {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.25s ease;
+    text-align: center;
+}
+.summary-card:hover { transform: translateY(-4px); }
+
+.summary-card h3 {
+    color: var(--accent);
+    font-size: 0.9em;
+    margin-bottom: 8px;
+}
+
+.summary-card .value {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: var(--primary);
+    line-height: 1.2;
+}
+
+.summary-card .unit {
+    font-size: 0.78em;
+    color: #7f8c8d;
+    margin-top: 4px;
+}
+
+/* ----------------------------------------------------------------
+   STENKALKYL
+   ---------------------------------------------------------------- */
+.calc-card,
+.table-card {
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+}
+
+.calc-card h2,
+.table-card h2 {
+    color: var(--primary);
+    font-size: 1.15em;
+    margin-bottom: 6px;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 8px;
+}
+
+.card-desc {
+    font-size: 0.87em;
+    color: #7f8c8d;
+    margin-bottom: 16px;
+}
+
+.calc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.calc-grid label {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.85em;
+    font-weight: 600;
+    gap: 4px;
+}
+
+/* Gul bakgrund = här ska användaren mata in värden */
+.input-yellow {
+    background: var(--input-bg);
+    border: 1px solid #e0c200;
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 1em;
+    font-family: inherit;
+    color: var(--text);
+}
+.input-yellow:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+}
+
+.calc-result {
+    padding: 14px 18px;
+    background: var(--accent-soft);
+    border-left: 4px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    font-size: 0.95em;
+    line-height: 1.7;
+}
+
+/* ----------------------------------------------------------------
+   BUTIKSTABELL
+   ---------------------------------------------------------------- */
+.table-scroll { overflow-x: auto; }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88em;
+}
+
+th, td {
+    padding: 9px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+}
+
+th {
+    background: var(--primary);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.85em;
+    white-space: nowrap;
+}
+
+tbody tr:nth-child(even) { background: #f8f9fa; }
+tbody tr:hover { background: var(--accent-soft); }
+tbody tr.rek td:last-child { color: var(--ok); font-weight: 600; }
+
+.table-note {
+    font-size: 0.8em;
+    color: #7f8c8d;
+    margin-top: 12px;
+}
+
+/* ----------------------------------------------------------------
+   SIDFOT
+   ---------------------------------------------------------------- */
+.page-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 16px 0 40px;
+    border-top: 1px solid var(--border);
+    font-size: 0.82em;
+    color: #7f8c8d;
+}
+.page-footer a { color: var(--secondary); text-decoration: none; }
+.page-footer a:hover { color: var(--primary); }
+
+/* ----------------------------------------------------------------
+   HÖRN-LÄNKAR: { } GitHub  +  </> teknik   (par, på alla sidor)
+   ---------------------------------------------------------------- */
+.corner {
+    position: fixed;
+    bottom: 14px;
+    z-index: 200;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    font-size: 0.8em;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+    color: var(--primary);
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 10px;
+    opacity: 0.55;
+    cursor: pointer;
+    transition: opacity 0.2s, box-shadow 0.2s;
+}
+.corner:hover {
+    opacity: 1;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.corner-left  { left: 14px; }
+.corner-right { right: 14px; }
+
+/* ----------------------------------------------------------------
+   TEKNIK-MODAL
+   ---------------------------------------------------------------- */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    background: rgba(0,0,0,0.5);
+    padding: 20px;
+    overflow-y: auto;
+}
+.modal-overlay.show {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.modal {
+    background: var(--card-bg);
+    border-radius: 12px;
+    max-width: 640px;
+    width: 100%;
+    margin: 40px 0;
+    padding: 26px 28px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+    position: relative;
+}
+
+.modal h2 {
+    color: var(--primary);
+    font-size: 1.3em;
+    margin-bottom: 6px;
+}
+
+.modal .modal-intro {
+    font-size: 0.9em;
+    color: #7f8c8d;
+    margin-bottom: 18px;
+}
+
+.modal-close {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 1.6em;
+    line-height: 1;
+    color: #7f8c8d;
+    cursor: pointer;
+}
+.modal-close:hover { color: var(--accent); }
+
+.tech-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.tech-card {
+    background: var(--hover-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+}
+
+.tech-card h3 {
+    font-size: 0.92em;
+    color: var(--primary);
+    margin-bottom: 4px;
+}
+
+.tech-card p {
+    font-size: 0.82em;
+    color: #555;
+}
+
+/* ----------------------------------------------------------------
+   RESPONSIVT
+   ---------------------------------------------------------------- */
+@media (max-width: 768px) {
+    body { padding: 12px; }
+    .page-header h1 { font-size: 1.5em; }
+    .tech-grid { grid-template-columns: 1fr; }
+    .page-footer { flex-direction: column; text-align: center; }
+}
