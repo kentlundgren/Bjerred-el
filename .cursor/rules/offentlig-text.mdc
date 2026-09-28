@@ -1,0 +1,18 @@
+---
+description: >-
+  Skriv sidtexter för den som läser sidan, inte som svar i chatten.
+  Ingen dialog, inget "det du har hört", inget tilltal till Kent.
+alwaysApply: true
+---
+
+# Offentlig text, inte chatt-svar
+
+När du skriver text som hamnar på en sida, i README, i källförteckningens relevansnoter eller annan text som någon annan kan läsa: skriv för läsaren av sidan.
+
+- Ta inte med saker som bara hör till dialogen: "det du har hört stämmer", "som du nämnde", "stenen du hittade", "för era aggregat" som svar på en chattfråga.
+- Skriv inte "jag har kunnat belägga" i sidtext. Skriv vad som beläggs, med källa.
+- Namn som Kent hör hemma i sidfot eller i en tydlig avsändarroll, inte som "Kent hittade den här länken".
+- Praktiska uppmaningar till personalen på sidan är tillåtna ("kontrollera lagersaldot innan ni åker"). Det är sidans läsare, inte chattens.
+
+Fel: "Det du har hört stämmer, för den sten som säljs till era aggregat."
+Rätt: "Harvias vanliga olivindiabas bryts i västra Finland."
