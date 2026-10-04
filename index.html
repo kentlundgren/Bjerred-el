@@ -1050,7 +1050,11 @@
             //   preliminär-flaggan borttagen – kWh är fastställd. Kostnad kommer kring 10 sep → cost/costPerKwh null.
             //   kWh-LÅT inkluderar månaden; kostnads-LÅT väntar tills cost finns (annars 0 kr i årssumman).
             //   Fullständig uppföljning: prognoser.html / prognoser.md (skill: bjerred-elprognos).
-            { month: "Aug 2026", fullMonth: "Augusti 2026", totalKWh: 21836, daysInMonth: 31, kwhPerDay: 704, type: "Restaurang och bad", bad: 10526, restaurant: 11310, cost: null, costPerKwh: null }
+            // UPPDATERING 2026-10-04: Augusti 2026 kostnad tillagd (49876 kr, 2,28 kr/kWh)
+            { month: "Aug 2026", fullMonth: "Augusti 2026", totalKWh: 21836, daysInMonth: 31, kwhPerDay: 704, type: "Restaurang och bad", bad: 10526, restaurant: 11310, cost: 49876, costPerKwh: 2.28 },
+            // UPPDATERING 2026-10-04: September 2026 tillagd (bad: 11388 kWh, restaurang: 10301 kWh, totalt: 21689 kWh, 723 kWh/dag).
+            //   Kostnad ännu okänd – fakturan kommer kring 10 okt → cost/costPerKwh null (inte 0).
+            { month: "Sep 2026", fullMonth: "September 2026", totalKWh: 21689, daysInMonth: 30, kwhPerDay: 723, type: "Restaurang och bad", bad: 11388, restaurant: 10301, cost: null, costPerKwh: null }
         ];
 
         // ====================================

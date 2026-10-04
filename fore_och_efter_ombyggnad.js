@@ -84,8 +84,10 @@ const efterData = [
     // UPPDATERING 2026-08-13: Juli 2026 kostnad tillagd (48277 kr)
     { manad:'Jul', manIdx:6,  ar:2026, badKwh:10424, totalKwh:21585, kostnad:48277, dagar:31 },
     // FACIT 2026-09-01: Augusti 2026 kWh tillagd (badKwh 10526, totalKwh 21836). Kostnad kommer ~10 sep.
-    { manad:'Aug', manIdx:7,  ar:2026, badKwh:10526, totalKwh:21836, kostnad:null, dagar:31 },
-    { manad:'Sep', manIdx:8,  ar:2026, badKwh:null, totalKwh:null, kostnad:null, dagar:30 },
+    // UPPDATERING 2026-10-04: Augusti 2026 kostnad tillagd (49876 kr)
+    { manad:'Aug', manIdx:7,  ar:2026, badKwh:10526, totalKwh:21836, kostnad:49876, dagar:31 },
+    // UPPDATERING 2026-10-04: September 2026 tillagd (badKwh 11388, totalKwh 21689). Kostnad kommer ~10 okt.
+    { manad:'Sep', manIdx:8,  ar:2026, badKwh:11388, totalKwh:21689, kostnad:null, dagar:30 },
     { manad:'Okt', manIdx:9,  ar:2026, badKwh:null, totalKwh:null, kostnad:null, dagar:31 },
     { manad:'Nov', manIdx:10, ar:2026, badKwh:null, totalKwh:null, kostnad:null, dagar:30 },
     { manad:'Dec', manIdx:11, ar:2026, badKwh:null, totalKwh:null, kostnad:null, dagar:31 },
