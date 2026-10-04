@@ -399,8 +399,16 @@
         <div class="button-container">
             <button onclick="addNewMonth()" class="success">➕ Lägg till ny månad</button>
             <button onclick="generateCode()">🔄 Beräkna och generera kod</button>
-            <button onclick="resetData()" class="danger">🔄 Återställ till ursprungsdata</button>
+            <!-- UPPDATERING 2026-10-04: Knappen behålls men har fått tydligare namn och förklaring.
+                 Den gör samma sak som att ladda om sidan (F5): ändringar du skrivit in men inte
+                 kopierat in i index.html försvinner. Den återgår INTE till projektets första version. -->
+            <button onclick="resetData()" class="danger" title="Kastar bort ändringar du gjort i tabellen och visar den data som sidan innehåller just nu. Samma sak som att ladda om sidan (F5).">↩️ Ångra osparade ändringar</button>
         </div>
+        <p style="font-size: 0.9em; color: #555; margin-top: 8px;">
+            <strong>Ångra osparade ändringar</strong> kastar bort allt du skrivit in eller ändrat i tabellen sedan sidan öppnades
+            och visar den data som sidan innehåller just nu. Det är samma sak som att ladda om sidan (F5).
+            Det går <em>inte</em> tillbaka till någon äldre version av programmet, och inget sparat i <code>index.html</code> påverkas.
+        </p>
 
         <!-- Datatabell -->
         <div class="table-container">
@@ -748,12 +756,13 @@
         // ====================================
         // FUNKTION: Återställ data
         // ====================================
-        // Återställer till ursprunglig data
+        // UPPDATERING 2026-10-04: Tydligare text. Funktionen kastar bort osparade ändringar och
+        // visar originalData (den data som finns i denna fil just nu). Samma effekt som F5.
         function resetData() {
-            if (confirm('Är du säker på att du vill återställa all data till ursprungsläget?')) {
+            if (confirm('Vill du ångra alla ändringar du gjort i tabellen sedan sidan öppnades?\n\nTabellen visar då den data som sidan innehåller just nu (samma som att ladda om sidan). Det går inte att ångra.')) {
                 currentData = JSON.parse(JSON.stringify(originalData));
                 initTable();
-                showMessage('Data återställd till ursprungsläge!', 'success');
+                showMessage('Osparade ändringar ångrade. Tabellen visar sidans data igen.', 'success');
             }
         }
 
