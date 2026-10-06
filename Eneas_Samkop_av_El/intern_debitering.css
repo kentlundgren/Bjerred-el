@@ -6,6 +6,10 @@
   UPPDATERING 2026-10-06: Första versionen (Del 2 i PRD.md).
 */
 
+/* ---------- Knapp till kvalitetsgranskningen, till vänster om teknik-knappen ---------- */
+.corner-kvalitet { right: 104px; }
+@media (max-width: 420px) { .corner-kvalitet { right: 96px; } }
+
 /* ---------- Månadsväljare ---------- */
 .manadsval { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 14px; }
 .manadsval button {

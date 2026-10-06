@@ -130,7 +130,7 @@
             <td id="h-kr-1">–</td><td class="enhet">kr</td>
           </tr>
           <tr>
-            <td class="etikett">Elförbrukning</td><td class="etikett">El inkl Elcert (1,7 öre/kWh)</td>
+            <td class="etikett">Elförbrukning</td><td class="etikett">El (spot + rörliga + påslag)</td>
             <td id="h-kwh-2">–</td>
             <td><input type="text" inputmode="decimal" autocomplete="off" class="gul" id="p-el" aria-label="El inkl elcert öre/kWh"></td>
             <td id="h-kr-2">–</td><td class="enhet">kr</td>
@@ -178,6 +178,9 @@
     <p>Fyll i de <span class="gulmarkering">gula fälten</span> med de priser som Isak på Eneas har skickat
       (samma som i tabell 2 på jämförelsesidan). Fälten delar lagring med jämförelsesidan i samma
       webbläsare, så det räcker att fylla i dem på en av sidorna.</p>
+    <p><strong>Beslut:</strong> Eneas fasta månadsavgift fördelas <em>inte</em> på restaurangen. Jämförelsen här räknar
+      bara prisskillnaden per kWh (Eneas pris minus Kraftringens pris) × restaurangens kWh, plus 25 % moms. Månadsavgiften
+      ingår bara i jämförelsen av hela fakturan på Eneas-sidan.</p>
   </section>
 
   <section class="ej-underlag" aria-labelledby="TabellRestaurang">
@@ -244,6 +247,8 @@
 
 <a class="corner corner-left" href="https://github.com/kentlundgren/Bjerred-el/tree/main/Eneas_Samkop_av_El" target="_blank" rel="noopener">{ } GitHub</a>
 <button type="button" class="corner corner-right" id="techBtn" aria-label="Tekniköversikt">&lt;/&gt; teknik</button>
+<!-- Knapp till den egna sidan med kvalitetsgranskningen (inte en modal: egen adress som går att länka och skriva ut) -->
+<a class="corner corner-right corner-kvalitet" href="kvalitetsgranskning.html">✓ kvalitetsgranskning</a>
 
 <div class="modal-overlay" id="techOverlay">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="techTitel">
@@ -290,8 +295,8 @@
         <p>Mätarställningarna kan inte läsas maskinellt ur bilderna. Tre slumpade månader (januari, mars, april) lästes om och jämfördes fält för fält: inga avvikelser. De övriga tre är kontrollerade via att mätarkedjan stämmer.</p>
       </div>
       <div class="tech-card">
-        <h4>Vad som återstår</h4>
-        <p>En oberoende granskning är inte gjord, och antagandena i jämförelsen är inte granskade. Metod, resultat och skript står i <a href="https://github.com/kentlundgren/Bjerred-el/blob/main/Eneas_Samkop_av_El/KVALITETSGRANSKNING.md" target="_blank" rel="noopener">KVALITETSGRANSKNING.md</a> (finns på GitHub efter push).</p>
+        <h4>Oberoende granskning 2026-10-06</h4>
+        <p>En separat granskning läste alla sex fakturor och alla sex bilder och kontrollerade 220 fält: inga fel. Beräkningarna testades i de riktiga sidorna. Antagandena bedömdes delvis som oklara. Hela redovisningen finns på sidan <a href="kvalitetsgranskning.html">Kvalitetsgranskning</a> (knappen nere till höger).</p>
       </div>
     </div>
   </div>

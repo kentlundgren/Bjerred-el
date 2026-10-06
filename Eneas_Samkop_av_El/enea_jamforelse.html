@@ -48,12 +48,30 @@
         Eneas hade tagit för själva elen varje månad, jämfört med kolumnen &quot;El inkl elcert&quot; i tabell 1.</li>
       <li>Resten räknas ut direkt. Använd knappen &quot;Kopiera tabellerna&quot; och klistra in i ett mejl.</li>
     </ol>
-    <p><strong>Vad priset ska omfatta:</strong> allt som gäller själva elen, alltså elcertifikat, påslag och
-      eventuella profil- och balanskostnader. Kraftringens pris <span data-text-dold="">i tabell 1 </span>är spotpris + rörliga kostnader +
-      1,70 öre/kWh fast påslag. Nätavgift, energiskatt och fast avgift till Kraftringen Nät AB är oförändrade
-      oavsett elhandlare. Moms (25 %) läggs på av sidan. Det är en jämförelse i efterhand och ett försök:
-      olika elleverantörer menar olika saker med &quot;pris&quot;, så förklara gärna i fältet längre ned vad
-      priset omfattar.</p>
+    <!-- UPPDATERING 2026-10-06: Texten om vad priset ska omfatta förtydligad efter granskning 2 (avsnitt 5a). -->
+    <p><strong>Vad priset ska omfatta:</strong> Kraftringens pris för elen är summan av spotpris, rörliga
+      kostnader och fast påslag (1,70 öre/kWh) enligt fakturan. Fakturan anger inte om elcertifikat ingår, eller i
+      vilken post. Eneas pris ska därför omfatta allt som Eneas tar betalt för själva elen (elcertifikat, påslag,
+      profil- och balanskostnader, avgifter per kWh), så att det motsvarar de tre posterna tillsammans.
+      Nätavgift, energiskatt och fast avgift till Kraftringen Nät AB är oförändrade oavsett elhandlare.
+      Moms (25 %) läggs på av sidan. Det är en jämförelse i efterhand och ett försök: olika elleverantörer menar
+      olika saker med &quot;pris&quot;, så förklara gärna i fältet längre ned vad priset omfattar.</p>
+
+    <details class="forklaring" id="Forutsattningar">
+      <summary>Vad jämförelsen förutsätter</summary>
+      <ul>
+        <li><strong>Jämförbart pris.</strong> Jämförelsen byter ut hela Kraftringens elhandel (de tre posterna ovan)
+          mot Eneas pris per kWh. Det fungerar bara om Eneas pris omfattar samma saker.</li>
+        <li><strong>Viktat pris.</strong> Kraftringens pris är ett snitt per månad, viktat mot förbrukningen kvart för
+          kvart. Eneas pris bör räknas på samma sätt, viktat mot samma mätvärden. Ange om priset är viktat mot
+          förbrukningen eller ett snitt för hela månaden.</li>
+        <li><strong>Nät och skatt oförändrade.</strong> Elnätet (Kraftringen Nät AB) kan inte bytas. Fast avgift,
+          elöverföring och energiskatt (36,00 öre/kWh 2026) är därför desamma med Eneas. Eventuella nya avgifter, till
+          exempel vid separata fakturor, anges som Eneas månadsavgift.</li>
+        <li><strong>Moms.</strong> Beloppen är inklusive 25 % moms, samma sats hos båda leverantörerna. Skillnaden exkl.
+          moms är skillnaden inkl. moms delad med 1,25.</li>
+      </ul>
+    </details>
   </section>
 
   <!-- ===== Tabell 1: idag =====
@@ -247,8 +265,8 @@
         <p>Jämförelsen i tabell 2 testades med 60 slumpade prisuppsättningar (1 096 kontroller) mot en referens med heltalsaritmetik: inga fel. Eneas pris lika med Kraftringens ger noll i skillnad, och ogiltig inmatning ignoreras.</p>
       </div>
       <div class="tech-card">
-        <h4>Vad som återstår</h4>
-        <p>En oberoende granskning är inte gjord. Antagandena i jämförelsen är inte granskade: att Eneas pris är jämförbart med Kraftringens "El inkl elcert", och att nät, skatt och moms är oförändrade. Kontrollera mot källan.</p>
+        <h4>Oberoende granskning 2026-10-06</h4>
+        <p>En separat granskning, som inte tog del av egenkontrollens resultat, läste fakturorna själv och kontrollerade alla fält och beräkningarna: inga fel hittades. Antagandena i jämförelsen bedömdes som delvis oklara och förklaras under "Vad jämförelsen förutsätter". Kontrollera mot källan.</p>
       </div>
     </div>
   </div>

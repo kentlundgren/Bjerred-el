@@ -21,6 +21,8 @@
   avvikelser på någon krona mot tidigare debiterade belopp. Kent godtog det 2026-10-06.
 
   UPPDATERING 2026-10-06: Första versionen (1.0).
+  UPPDATERING 2026-10-06: Raden "El inkl Elcert (1,7 öre/kWh)" heter nu "El (spot + rörliga + påslag)",
+  eftersom fakturan inte säger att elcertifikat ingår (granskning 2, avsnitt 5a).
 */
 (function () {
   'use strict';
@@ -386,7 +388,7 @@
     var t2 = tabell(['Hyresgästens andel', 'kWh', 'öre/kWh', 'kr'], [
       ['Nätavgift, fast avgift', '0', '0', '0,00'],
       ['Nätavgift, rörlig', fmtKwh(b.hg), d.p.rorlig || '–', fmtKr(b.kr.rorlig)],
-      ['El inkl Elcert (1,7 öre/kWh)', fmtKwh(b.hg), d.p.el || '–', fmtKr(b.kr.el)],
+      ['El (spot + rörliga + påslag)', fmtKwh(b.hg), d.p.el || '–', fmtKr(b.kr.el)],
       ['Energiskatt', fmtKwh(b.hg), d.p.skatt || '–', fmtKr(b.kr.skatt)],
       ['Summa exkl moms', '', b.sumOre === null ? '–' : fmt(b.sumOre, 2), fmtKr(b.exkl)],
       ['Moms', '', '', fmtKr(b.moms)],

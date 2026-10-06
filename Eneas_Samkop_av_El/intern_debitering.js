@@ -18,7 +18,7 @@
   var klassForSkillnad = H.klassForSkillnad, htmlEscape = H.htmlEscape;
   var MOMS = H.MOMS, LAGRINGSNYCKEL = H.LAGRINGSNYCKEL, MAX_ORE = H.MAX_ORE;
 
-  var VERSION = '1.0';
+  var VERSION = '1.1';
   var VERSIONSDATUM = '2026-10-06';
 
   // ===================================================================
@@ -35,7 +35,11 @@
     { key: '2026-03', namn: 'Mar', krOre: 92.87,  hgKwh: 10302, hgKr: 19213 },
     { key: '2026-04', namn: 'Apr', krOre: 68.29,  hgKwh: 11582, hgKr: 17873 },
     { key: '2026-05', namn: 'Maj', krOre: 95.00,  hgKwh: 12430, hgKr: 23521 },
-    { key: '2026-06', namn: 'Jun', krOre: 106.45, hgKwh: 11756, hgKr: 24017 }
+    // UPPDATERING 2026-10-06: juni använder 11 755 kWh (inte bildens 11 756), så att jämförelsen och
+    // debiteringsunderlaget (intern_underlag.js) räknar med samma kWh. Underlaget räknar från bildens
+    // avrundade mätarställningar (bastu 7 431 i stället för 7 430). Bildens värde är 11 756. Ändra tillbaka
+    // här om du hellre vill följa bilden (granskning 2, avsnitt 6 punkt 1).
+    { key: '2026-06', namn: 'Jun', krOre: 106.45, hgKwh: 11755, hgKr: 24017 }
   ];
 
   // Det som är inmatat (Eneas priser som text, delas med enea_jamforelse.html)
