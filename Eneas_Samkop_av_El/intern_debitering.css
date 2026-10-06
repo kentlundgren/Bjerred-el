@@ -42,7 +42,11 @@
 .ark tr.totalt td.gron { background: #e3efdc; }
 .ark .delrubrik { text-align: left; font-weight: 700; padding-top: 14px; }
 .ark .anm { font-size: .8rem; color: var(--text-dampad); margin: 4px 0 0; text-align: left; }
-.ark .anm.fast { color: var(--text); background: #fff3a0; display: inline-block; padding: 2px 8px; }
+/* Notering (inte inmatning): blå, inte gul. Gult är reserverat för inmatningsfält. */
+.ark .anm.fast {
+  color: #0b3d66; background: #e3f0fb; border-left: 4px solid #2a7fc4;
+  display: inline-block; padding: 3px 10px; font-size: .85rem;
+}
 
 /* ---------- Kontrollruta ---------- */
 .kontroll { margin-top: 14px; border-top: 1px dashed var(--kant); padding-top: 8px; font-size: .88rem; }

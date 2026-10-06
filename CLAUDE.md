@@ -140,7 +140,10 @@ automatiskt när du säger t.ex. "lägg in data för [månad]".
 ## Användarregler att följa
 
 - Dela alltid upp kod i separata HTML/CSS/JS-filer (gäller nya sidor – index.html är legacy)
-- Gul bakgrund (`#FFF9C4`) på alla inmatningsfält
+- Gul bakgrund (`#FFF9C4`) på alla inmatningsfält. Gult är *reserverat* för fält där användaren
+  fyller i något: använd aldrig gult till noteringar, varningar, markeringar eller bakgrunder
+  (använd t.ex. blått för en notering, grönt för en markering, grått för låsta eller beräknade värden).
+  Se regel 12 i skillen `kent-bygg-sidor`.
 - Kommentera tydligt – särskilt vid uppdateringar: `// UPPDATERING ÅÅÅÅ-MM-DD: ...`
 - Fråga alltid om befintlig fil ska uppdateras eller om ny fil (`_verX`) ska skapas
 - PowerShell används – undvik `&&` i terminalen, dela upp kommandon
