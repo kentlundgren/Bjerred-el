@@ -239,8 +239,16 @@
         <p>Sidan följer <code>PRD.md</code> i samma mapp. Databas och inloggning togs bort ur kraven innan bygget, eftersom sidan bara är till för Kent och Isak.</p>
       </div>
       <div class="tech-card">
-        <h4>Kontrollräknad mot fakturorna</h4>
-        <p>kWh, mätarkedja, fakturabelopp och elpriser har kontrollräknats månad för månad mot de sex fakturorna. Resultatet står i avsnitt 13 i PRD:n.</p>
+        <h4>Egenkontroll 2026-10-06</h4>
+        <p>Kraftringens siffror (kWh, fakturabelopp, elpris, nätavgift, energiskatt) är inlästa ur de sex PDF-fakturorna med kod och jämförda med sidans data: 85 kontroller utan avvikelse. Fakturornas egen räkning (kWh × öre, moms, summor) stämde i 90 kontroller. Det är en egenkontroll, gjord av den som byggde sidan.</p>
+      </div>
+      <div class="tech-card">
+        <h4>Beräkningen slumptestad</h4>
+        <p>Jämförelsen i tabell 2 testades med 60 slumpade prisuppsättningar (1 096 kontroller) mot en referens med heltalsaritmetik: inga fel. Eneas pris lika med Kraftringens ger noll i skillnad, och ogiltig inmatning ignoreras.</p>
+      </div>
+      <div class="tech-card">
+        <h4>Vad som återstår</h4>
+        <p>En oberoende granskning är inte gjord. Antagandena i jämförelsen är inte granskade: att Eneas pris är jämförbart med Kraftringens "El inkl elcert", och att nät, skatt och moms är oförändrade. Kontrollera mot källan.</p>
       </div>
     </div>
   </div>
