@@ -41,7 +41,7 @@ Ej mål: byte av nätägare (omöjligt, se avsnitt 3), prognoser framåt i tiden
 ## 3. Nätavgiften – bekräftad mot fakturorna
 
 Ja, nätavgiften fortsätter till Kraftringen. Fakturorna är "E-faktura elnät och
-elhandel" och består av två delar från två olika bolag (Kraftringen, 2026a):
+elhandel" och består av två delar från två olika bolag (Kraftringen, 2026):
 
 | Del | Bolag | Vad som kan bytas |
 |-----|-------|-------------------|
@@ -54,7 +54,7 @@ avgift, elöverföring (öre/kWh), energiskatt (36,00 öre/kWh) och moms. Det so
 
 ## 4. Nuläge – vad Kraftringen tar betalt för (baslinje)
 
-Elhandeln hos Kraftringen består av fyra poster (Kraftringen, 2026a):
+Elhandeln hos Kraftringen består av fyra poster (Kraftringen, 2026):
 spotpris, rörliga kostnader, fast påslag (1,70 öre/kWh) och månadsavgift (0 kr).
 Avtalsformen är "Rörligt kvartspris med bindningstid", giltigt t.o.m. 2026-09-30.
 Elområde SE4, anläggning "Kallbadhus", Parkallén 15, Bjärred, kundnummer 130869.
