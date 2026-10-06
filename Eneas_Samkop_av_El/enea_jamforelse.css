@@ -114,6 +114,24 @@ textarea.gul { width: 100%; resize: vertical; }
    vid dubbelklick, så att inget avslöjar att det händer något. */
 #kraftringen-ord { -webkit-user-select: none; user-select: none; }
 
+/* ---------- Rubrik med förklaring vid hovring ("Allt elpris ⓘ") ----------
+   Egen tooltip i stället för title-attribut: syns direkt, kan formateras och fungerar med tangentbord
+   (fokus) och tryck på mobil. Texten ligger i ett span.tipp-text i själva rubriken. */
+th.tipp { position: relative; cursor: help; }
+th.tipp .info { color: var(--accent); font-size: .85em; }
+th.tipp:hover, th.tipp:focus { outline: none; background: #eef6f5; }
+th.tipp .tipp-text {
+  display: none; position: absolute; top: 100%; right: 0; z-index: 15;
+  width: min(340px, 78vw); box-sizing: border-box; padding: 9px 12px;
+  background: #fff; color: var(--text); border: 1px solid var(--accent); border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.15);
+  font-weight: 400; font-size: .85rem; line-height: 1.45; text-align: left; white-space: normal;
+}
+th.tipp:hover .tipp-text, th.tipp:focus .tipp-text, th.tipp:focus-within .tipp-text { display: block; }
+
+/* Ruta med den viktigaste upplysningen (blå, inte gul: gult är reserverat för inmatning) */
+.notis { background: #e3f0fb; border-left: 4px solid #2a7fc4; color: #0b3d66; border-radius: 4px; padding: 2px 14px; margin: 10px 0; }
+
 /* ---------- Knapp-länk uppe i vänstra hörnet: tillbaka till elöversikten ---------- */
 .topplank {
   position: fixed; top: 8px; left: 10px; z-index: 20;
@@ -181,7 +199,7 @@ textarea.gul { width: 100%; resize: vertical; }
 /* ---------- Utskrift: ren A4-sida i liggande läge ---------- */
 @page { size: A4 landscape; margin: 12mm; }
 @media print {
-  .corner, .hemlig, .knappar, .meddelande, .modal-overlay, .ankare, .forklaring { display: none !important; }
+  .corner, .hemlig, .knappar, .meddelande, .modal-overlay, .ankare, .forklaring, .tipp-text, .info { display: none !important; }
   .sida { max-width: none; padding: 0; }
   input.gul, select.gul, textarea.gul { border: none; background: var(--gul); }
   .tabell-wrap { overflow: visible; }

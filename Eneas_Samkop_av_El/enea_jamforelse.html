@@ -45,16 +45,21 @@
     <ol>
       <!-- data-text-dold = texten som visas när tabell 1 är dold (originaltexten i elementet visas när tabell 1 är synlig) -->
       <li data-text-dold="Tabell 2 visar vad Eneas priser hade betytt jämfört med dagens avtal.">Tabell 1 visar vad som faktiskt betalades till Kraftringen. Den kan inte ändras.</li>
-      <li data-text-dold="Fyll i de &lt;span class=&quot;gulmarkering&quot;&gt;gula fälten&lt;/span&gt; i tabell 2: det pris per kWh (öre) som Eneas hade tagit för själva elen varje månad.">Fyll i de <span class="gulmarkering">gula fälten</span> i tabell 2: det pris per kWh (öre) som
-        Eneas hade tagit för själva elen varje månad, jämfört med kolumnen &quot;El inkl elcert&quot; i tabell 1.</li>
+      <!-- UPPDATERING 2026-10-06: Steget förtydligat: det som ska in är Eneas hela elpris per kWh ("Allt elpris"). -->
+      <li data-text-dold="Fyll i de &lt;span class=&quot;gulmarkering&quot;&gt;gula fälten&lt;/span&gt; i tabell 2 med &lt;strong&gt;Eneas allt elpris per kWh&lt;/strong&gt; (öre) för varje månad: allt som Eneas tar betalt för själva elen. En eventuell fast månadsavgift fyller du i separat ovanför tabellen. Hovra över rubriken &quot;Allt elpris&quot; för en förklaring.">Fyll i de <span class="gulmarkering">gula fälten</span> i tabell 2 med <strong>Eneas allt elpris per kWh</strong> (öre) för varje månad: allt som
+        Eneas tar betalt för själva elen, jämfört med kolumnen &quot;Allt elpris&quot; i tabell 1. En eventuell fast månadsavgift fyller du i separat ovanför tabellen.
+        Hovra över rubriken &quot;Allt elpris&quot; för en förklaring.</li>
       <li>Resten räknas ut direkt. Använd knappen &quot;Kopiera tabellerna&quot; och klistra in i ett mejl.</li>
     </ol>
     <!-- UPPDATERING 2026-10-06: Texten om vad priset ska omfatta förtydligad efter granskning 2 (avsnitt 5a). -->
-    <p><strong>Vad priset ska omfatta:</strong> Kraftringens pris för elen är summan av spotpris, rörliga
-      kostnader och fast påslag (1,70 öre/kWh) enligt fakturan. Fakturan anger inte om elcertifikat ingår, eller i
-      vilken post. Eneas pris ska därför omfatta allt som Eneas tar betalt för själva elen (elcertifikat, påslag,
-      profil- och balanskostnader, avgifter per kWh), så att det motsvarar de tre posterna tillsammans.
-      Nätavgift, energiskatt och fast avgift till Kraftringen Nät AB är oförändrade oavsett elhandlare.
+    <div class="notis">
+      <p><strong>Vad som ska fyllas i: Eneas allt elpris per kWh.</strong> Eftersom Kraftringens pris för elen är
+        summan av spotpris, rörliga kostnader och fast påslag (1,70 öre/kWh) enligt fakturan, ska Eneas pris omfatta
+        allt som Eneas tar betalt för själva elen (elcertifikat, påslag, profil- och balanskostnader, avgifter per kWh),
+        så att det motsvarar de tre posterna tillsammans. Fakturan anger inte om elcertifikat ingår, eller i vilken post.
+        En eventuell fast månadsavgift anges separat ovanför tabellen.</p>
+    </div>
+    <p>Nätavgift, energiskatt och fast avgift till Kraftringen Nät AB är oförändrade oavsett elhandlare.
       Moms (25 %) läggs på av sidan. Det är en jämförelse i efterhand och ett försök: olika elleverantörer menar
       olika saker med &quot;pris&quot;, så förklara gärna i fältet längre ned vad priset omfattar.</p>
 
@@ -91,7 +96,8 @@
             <th>Månad</th>
             <th>Totalt<br>kWh</th>
             <th>Faktura inkl moms<br>(kr)</th>
-            <th>El inkl elcert<br>(öre/kWh)</th>
+            <!-- Hovra eller fokusera rubriken för en förklaring (egen "tooltip", fungerar även med tangentbord och tryck) -->
+            <th class="tipp" tabindex="0" aria-describedby="tipp-t1">Allt elpris <span class="info" aria-hidden="true">ⓘ</span><br>(öre/kWh)<span class="tipp-text" role="tooltip" id="tipp-t1">Kraftringens allt elpris per kWh: spotpris + rörliga kostnader + fast påslag (1,70 öre/kWh) enligt fakturan. Fakturan anger inte om elcertifikat ingår, eller i vilken post.</span></th>
             <th>Rörlig nätavgift<br>(öre/kWh)</th>
             <th>Energiskatt<br>(öre/kWh)</th>
             <th>Fast avgift<br>(kr/månad)</th>
@@ -101,7 +107,7 @@
         <tfoot></tfoot>
       </table>
     </div>
-    <p class="liten">I summaraden är kWh och faktura summor. &quot;El inkl elcert&quot; är ett kWh-vägt snitt:
+    <p class="liten">I summaraden är kWh och faktura summor. &quot;Allt elpris&quot; är ett kWh-vägt snitt:
       varje månads pris väger lika tungt som månadens förbrukning. Det är vad som i genomsnitt betalades per kWh.</p>
     </div><!-- /tabell1-innehall -->
   </section>
@@ -122,7 +128,7 @@
             <th>Månad</th>
             <th>Totalt<br>kWh</th>
             <th>Faktura inkl moms<br>(kr)</th>
-            <th>El inkl elcert<br>(öre/kWh)</th>
+            <th class="tipp" tabindex="0" aria-describedby="tipp-t2">Allt elpris <span class="info" aria-hidden="true">ⓘ</span><br>(öre/kWh)<span class="tipp-text" role="tooltip" id="tipp-t2">Fyll i Eneas allt elpris per kWh. Eftersom Kraftringens pris för elen är summan av spotpris, rörliga kostnader och fast påslag (1,70 öre/kWh) enligt fakturan, ska Eneas pris omfatta allt som Eneas tar betalt för själva elen (elcertifikat, påslag, profil- och balanskostnader, avgifter per kWh), så att det motsvarar de tre posterna tillsammans. En eventuell fast månadsavgift anges separat ovanför tabellen.</span></th>
             <th>Rörlig nätavgift<br>(öre/kWh)</th>
             <th>Energiskatt<br>(öre/kWh)</th>
             <th>Fast avgift<br>(kr/månad)</th>

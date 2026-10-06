@@ -25,6 +25,8 @@
   UPPDATERING 2026-10-06: Ruta "Vad jämförelsen förutsätter" och förtydligad text om vad priset ska omfatta (granskning 2). Version 1.8.
   UPPDATERING 2026-10-06: Upplysningen om siffrorna ändrad från "är inte kvalitetssäkrade" till "kontrollräknade
   mot dem. Antagandena i jämförelsen är inte avgjorda" (på sidan och i det som kopieras). Version 1.9.
+  UPPDATERING 2026-10-06: Kolumnrubriken "El inkl elcert" heter nu "Allt elpris" och har en förklaring vid hovring
+  (HTML/CSS). Rubriken i det som kopieras och i fältens aria-label är ändrad på samma sätt. Version 2.0.
 */
 (function () {
   'use strict';
@@ -37,7 +39,7 @@
   // ===================================================================
   // 1. Version
   // ===================================================================
-  var VERSION = '1.9';
+  var VERSION = '2.0';
   var VERSIONSDATUM = '2026-10-06';
 
   // ===================================================================
@@ -163,7 +165,7 @@
       r2 += '<tr>' + td(m.namn) + td(fmt(m.kwh)) +
             td('', null, 'e-fak-' + m.key) +
             '<td><input type="text" inputmode="decimal" autocomplete="off" class="gul" ' +
-              'data-key="' + m.key + '" id="ore-' + m.key + '" aria-label="Eneas El inkl elcert öre/kWh, ' + m.namn + '"></td>' +
+              'data-key="' + m.key + '" id="ore-' + m.key + '" aria-label="Eneas allt elpris öre/kWh, ' + m.namn + '"></td>' +
             td(fmt(m.natOre, 2)) + td(fmt(m.skattOre, 2)) + td(fmt(m.fastNatKr)) +
             td('', null, 'e-dkr-' + m.key) + td('', null, 'e-dpc-' + m.key) + '</tr>';
     });
@@ -322,7 +324,7 @@
     var t = b.tot;
 
     // Tabell 1
-    var h1 = ['Månad', 'Totalt kWh', 'Faktura inkl moms (kr)', 'El inkl elcert (öre/kWh)', 'Rörlig nätavgift (öre/kWh)', 'Energiskatt (öre/kWh)', 'Fast avgift (kr/månad)'];
+    var h1 = ['Månad', 'Totalt kWh', 'Faktura inkl moms (kr)', 'Allt elpris (öre/kWh)', 'Rörlig nätavgift (öre/kWh)', 'Energiskatt (öre/kWh)', 'Fast avgift (kr/månad)'];
     var r1 = MANADER.map(function (m) { return [m.namn, fmt(m.kwh), fmt(m.fakturaKr), fmt(m.krOre, 2), fmt(m.natOre, 2), fmt(m.skattOre, 2), fmt(m.fastNatKr)]; });
     r1.push(['Summa / vägt snitt', fmt(t.kwhAlla), fmt(t.fakturaAlla), fmt(t.snittIdag, 2) + ' (vägt snitt)', '', '', '']);
     var k1 = tabellKopia('Tabell 1. Idag: det som betalades till Kraftringen, januari–juni 2026', h1, r1, -1);
