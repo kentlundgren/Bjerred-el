@@ -2,7 +2,7 @@
 
 Projekt: Elenergiförbrukning – Bjerreds Saltsjöbad
 Mapp: `Spotpris/` (all utveckling sker inom denna mapp)
-Status: Utkast 1, 2026-10-07 (med en förstudie, avsnitt 4)
+Status: Utkast 2, 2026-10-07 (förstudie 1 och 2 i avsnitt 4; beslut efter Kents svar 2026-10-07: förbrukningen uppskattas baklänges, sidan är öppen)
 Ansvarig: Kent Lundgren
 
 > OBS! Siffrorna i förstudien (avsnitt 4) är framräknade ur spotpriser från elprisetjustnu.se och spotpriset på
@@ -33,7 +33,8 @@ få fram **ett** pris för en hel månad är därför inte en självklarhet. Det
 2. Visa spotpriset bredvid Kraftringens pris (spotpris, rörliga kostnader, fast påslag, allt elpris) och bredvid Eneas
    pris, i en tabell och ett diagram.
 3. Kunna **förklara varför spotpriset på fakturan blir som det blir** för vår förbrukning, genom att reproducera det med
-   börsens priser och vår förbrukning per kvart eller timme (validering, se avsnitt 8).
+   börsens priser och vår förbrukning per kvart eller timme (M3), eller, tills sådana data finns, med en förbrukning som uppskattas
+   baklänges ur fakturornas spotpris (M4b). Se avsnitt 3, 4.2 och 9.
 
 Ej mål (i första versionen): prognoser framåt, automatisk handel eller byte av avtal, och ändringar i
 `Eneas_Samkop_av_El/`, annat än eventuella länkar mellan sidorna.
@@ -48,7 +49,12 @@ Spotpriset ändras varje kvart (från 1 oktober 2025 är det kvartspriser på da
 | **M1** Enkelt snitt, dygnet runt | Medelvärdet av alla kvartar (eller timmar) i månaden. | Nej | Vad kostade elbörsen i genomsnitt under månaden? |
 | **M2** Enkelt snitt, 06–22 | Medelvärdet av kvartarna mellan kl. 06:00 och 22:00 varje dag (anläggningens antagna förbrukningstid). | Nej | Vad kostade elbörsen i genomsnitt under våra öppettider? |
 | **M3** Förbrukningsviktat snitt | Σ(pris × förbrukning) / Σ(förbrukning), kvart för kvart (eller timme för timme). | **Ja** | Vad betalade vi i genomsnitt per kWh för den el vi faktiskt förbrukade? |
-| **M4** Viktat mot en antagen profil | Som M3 men med en modellerad förbrukningsprofil (till exempel jämn förbrukning 06–22) i stället för mätdata. | Nej (en antagen profil) | En uppskattning av M3 när mätdata saknas. |
+| **M4a** Viktat mot en antagen profil | Som M3 men med en antagen förbrukningsprofil i stället för mätdata. Delarna (bastu, varmvatten, restaurang) har kända kWh per månad och antagna öppettider. | Nej (en antagen profil) | En uppskattning av M3 när mätdata saknas, utan att titta på fakturan. |
+| **M4b** Kalibrerad profil ("baklänges") | Som M4a, men profilens okända delar (till exempel när uppvärmningen startar och när restaurangen drar el) anpassas så att det viktade spotpriset stämmer med fakturans spotpris. Förslag av Kent 2026-10-07. | Nej (men fakturans spotpris används) | Vilken förbrukning som är **förenlig** med fakturan. En uppskattning, inte en mätning. |
+
+**Beslut 2026-10-07:** förbrukning per kvart går kanske att få fram, men tills vidare uppskattas förbrukningen "baklänges" ur fakturornas
+spotpris (M4b). M3 byggs så snart mätdata finns och blir då facit för hur bra uppskattningen var. M4b ersätter inte M3: den är
+en reservlösning med en tydlig osäkerhet (se förstudie 2 och avsnitt 9–10).
 
 **Min bedömning:** M3 är det riktiga svaret på "vilket spotpris betalar vi", eftersom det är så en elhandlare med kvartsavräkning
 räknar. Fakturornas spotpris har fler decimaler än de två som visas (implicit pris 117,3807 i stället för 117,38 för
@@ -86,13 +92,49 @@ Spotpriser för SE4 hämtades för alla 181 dygn januari–juni 2026 från elpri
 **Begränsningar i förstudien:** spotpriserna kommer från en sammanställning på elprisetjustnu.se, inte direkt från elbörsen
 (se avsnitt 6). Fakturornas spotpris är avlästa ur PDF-fakturorna. Inget av dem är kontrollerat mot en andra källa än så här.
 
+### 4.2 Förstudie 2: uppskattad förbrukning "baklänges" (2026-10-07)
+
+**Utgångspunkter.** Kent uppger att bastun är öppen kl. 06–22 varje dag och att restaurangen är öppen eftermiddagar och kvällar. Vi har dessutom
+**kWh per månad för varje del** ur debiteringsunderlagen: bastu (herr + dam), varmvatten och restaurangen (huvudmätaren minus bastu minus
+varmvatten). Delarnas andel av månadens kWh varierar: bastu 36–45 %, varmvatten 7–18 %, restaurang 37–57 %. Skripten är
+`forstudie/modell_profil.py` (kör efter `hamta_forstudie.py`).
+
+**Modellerna.** Fel = modellens viktade spotpris minus fakturans (öre/kWh, plus betyder att modellen räknar för högt).
+
+| Modell | Antagande om när el används | Fel per månad jan–jun | RMS-fel |
+|--------|-----------------------------|-----------------------|--------:|
+| **A** | En blandning av jämn förbrukning dygnet runt (M1) och jämn förbrukning 06–22 (M2). Lös blandningen per månad. | Går jämnt ut per definition, men blandningen blir 0,34, 0,29, 0,43, **3,02**, 0,77 och 0,50. | – |
+| **B** (Kents öppettider) | Bastu jämn 06–22, varmvatten jämn dygnet runt, restaurang jämn 12–22. | +7,86, +5,15, +2,67, +0,18, −0,70, −0,45 | 4,00 |
+| **C** (anpassad) | Bastu jämn 01–22 (uppvärmning före öppning), varmvatten jämn dygnet runt, restaurang jämn 10–24. | +1,63, +0,18, −1,59, −0,08, +1,33, +0,92 | 1,14 |
+| M1 (för jämförelse) | Jämn förbrukning dygnet runt. | −4,39, −3,39, −2,00, +3,42, +6,42, +3,63 | 4,10 |
+| M2 (för jämförelse) | Jämn förbrukning 06–22. | +8,38, +8,48, +2,61, +2,29, −1,95, −3,63 | 5,34 |
+
+**Leave-one-out för modell C** (anpassa antagandena på fem månader och förutsäg den sjätte; fel i öre/kWh): jan +3,00, feb +1,05, mar −1,97,
+apr −0,08, maj +1,33, jun +0,92.
+
+**Vad förstudien visar:**
+
+1. **Kents öppettider räcker inte ensamma** (modell B, RMS 4,0, i nivå med M1 på 4,1). De ger för högt pris i vintermånaderna, alltså att verklig förbrukning ligger mer i
+   billiga timmar (natt och tidig morgon) än modellen antar. Modell A visar samma sak: april går inte att få ihop med någon blandning av jämn
+   dygnsförbrukning och jämn 06–22-förbrukning (blandningen 3,02).
+2. **Med en förbrukning som börjar före 06 och som restaurangen sträcker sig sent på kvällen** ligger modellen inom 2 öre/kWh per månad (RMS 1,1) och
+   förutsäger en utelämnad månad inom 3 öre/kWh. Det är en klart bättre uppskattning än M1 och M2 (RMS 4,1 och 5,3, fel upp till 8,5 öre/kWh).
+3. **Det går alltså att uppskatta M3 baklänges med några öre/kWh i osäkerhet.** Då kan även Kraftringens "påslag över spot" och Eneas marginal
+   jämföras på en rimlig nivå.
+4. **Profilen är inte entydig.** Modellen kan inte skilja uppvärmning av bastun före 06 från annan förbrukning på natten (kyl, varmvatten, golvvärme,
+   belysning). Av 252 testade kombinationer hade 27 ett RMS-fel under 2 öre/kWh och ingen under 1,0. Förstudien visar **inte** att bastun faktiskt
+   värms upp från kl. 01. Det är en hypotes som förbrukningsdata eller kunskap om bastuaggregatets drift kan bekräfta eller avfärda.
+5. **Priset per timme styr resultatet.** I januari är det billigast nattetid (cirka 81–89 öre/kWh kl. 00–05) och dyrast kl. 16–18 (143–151). I maj är det
+   tvärtom: lågt mitt på dagen (cirka 37–46 öre/kWh kl. 11–14), dyrt på kvällen (143–159 kl. 19–21). Därför skiljer sig en förbrukning på dagen och en på kvällen
+   mycket mer i maj än i januari.
+
 ## 5. Frågor som måste redas ut
 
 | Nr | Fråga | Varför | Förslag |
 |----|-------|--------|---------|
-| 1 | Vilken metod är den primära för "månadens spotpris"? | Styr hela jämförelsen. | M3 om förbrukningsdata finns, annars M1 och M2 sida vid sida. Alla metoder redovisas. |
+| 1 | Vilken metod är den primära för "månadens spotpris"? | Styr hela jämförelsen. | **Besvarad 2026-10-07:** förbrukningen uppskattas baklänges (M4b) tills förbrukningsdata finns. M3 när data finns. M1, M2 och M4a redovisas som jämförelse, och varje värde märks med metod. |
 | 2 | **Går det att få förbrukningen per kvart eller timme** för januari–juni 2026 (och framåt) och från vem? Kraftringen Nät AB som nätägare, Kraftringen Energi AB som elhandlare, eller via mätaren? I vilket format (CSV, Excel)? Är det samma mätvärden som Kraftringen fakturerar på? | Krävs för M3 och för att kontrollera antagandet om 06–22. | Kent undersöker. Uppgiften är **inte verifierad här**: vi vet inte vad Kraftringen lämnar ut. |
-| 3 | Stämmer det att anläggningen förbrukar el bara kl. 06–22? | Bygger M2 och M4 på ett antagande som kan vara fel. Kyl, varmvatten och värme drar normalt även på natten. | Testas när fråga 2 är löst: andel av förbrukningen per timme på dygnet. |
+| 3 | Stämmer det att anläggningen förbrukar el bara kl. 06–22? | Bygger M2 och M4a på ett antagande som kan vara fel. Kyl, varmvatten och värme drar normalt även på natten. | **Delvis besvarad 2026-10-07:** bastun är öppen 06–22 och restaurangen eftermiddag och kväll (Kent). Öppettider är inte samma sak som elförbrukning: förstudie 2 tyder på förbrukning även före 06 och sent på kvällen. Fråga 17 och 18 fördjupar. |
 | 4 | Ska spotpriset visas exklusive eller inklusive moms? | Spotpriset är utan moms, skatter och tillägg (elprisetjustnu.se, u.å.). Kraftringens "allt elpris" på sidorna är också utan moms, men fakturabeloppen är med moms. | Jämför alltid i öre/kWh **exklusive moms**. Visa ev. inklusive moms (× 1,25) som extra rad. |
 | 5 | Räcker elprisetjustnu.se som källa, eller ska Nord Pool eller ENTSO-E vara facit? | Elprisetjustnu.se är en sammanställning. Ursprungskällan anges inte i den dokumentation vi läst. | Använd elprisetjustnu.se som arbetskälla. Stickprova mot Nord Pool eller ENTSO-E (vad som kräver registrering och nyckel är **inte kontrollerat**). |
 | 6 | Hur hanteras sommartid? | 2026-03-29 har 92 kvartar och 2026-10-25 förväntas ha 100 (kalendern). En enkel tolkning av "96 per dygn" blir fel. | All tid i lokal tid med förskjutning (som i API:ts `time_start`). Summera per verklig kvart, inte per klockslag. |
@@ -102,10 +144,13 @@ Spotpriser för SE4 hämtades för alla 181 dygn januari–juni 2026 från elpri
 | 10 | Hur jämförs ett Eneas-pris med spotpriset? | Eneas säkrar priser i förväg och beskriver sig inte som en elleverantör (Eneas, 2026). Ett prissäkrat pris följer inte månadens spotpris. | Visa Eneas pris minus spotpris (implicit marginal) per månad, med en tydlig upplysning om att ett prissäkrat pris inte är jämförbart månad för månad. |
 | 11 | Ingår elcertifikatet i spotpriset? | Fakturan säger inte i vilken post det ingår (granskning 2, avsnitt 5a). | Nej: spotpriset är elbörsens energipris. Elcertifikatet finns någon annanstans i Kraftringens pris, men var framgår inte. Redovisas som en känd osäkerhet. |
 | 12 | Hur uppdateras data? | Månaderna tillkommer. | Ett skript hämtar och sparar data i repot, och sidan läser filen (fungerar utan nätverk). Kent kör skriptet efter varje månadsskifte. Alternativ: sidan hämtar live. Se avsnitt 7. |
-| 13 | Är sidan intern eller öppen? | Förbrukningsdata kan vara känslig. Spotpriset är offentligt. | Förslag: spotprissidan öppen, förbrukningsdata och M3 bara på en intern sida. Beslutas av Kent. |
+| 13 | Är sidan intern eller öppen? | Förbrukningsdata kan vara känslig. Spotpriset är offentligt. | **Besvarad 2026-10-07:** sidan får vara öppen. Hela sidan, inklusive den uppskattade profilen (M4b), publiceras alltså. Om kvartsdata från mätaren senare används ska den bara redovisas som sammanvägda månadsvärden eller timprofil, inte per kvart. |
 | 14 | Var länkas sidan? | Navigering. | Från elöversikten (`index.html`) och från `Eneas_Samkop_av_El/` när den är klar. |
 | 15 | Hur kommer Eneas pris in i spotprissidan? | Isaks inmatning finns bara i hans egen webbläsare (och i mejlet han skickar), så den här sidan kan inte läsa den själv. | Kent skriver in priserna som en ifylld datafil (`data/eneas_pris.json`) eller i ett gult fält på sidan, när Isaks mejl kommit. |
 | 16 | Räcker Kraftringens poster per månad? | `enea_jamforelse.js` har bara summan "allt elpris" (`krOre`), inte spotpris, rörliga kostnader och påslag var för sig. | Lägg in de tre posterna per månad ur fakturorna i en egen datafil här (värdena finns i förstudien och i granskningsrapporten) och kontrollera dem mot fakturorna. |
+| 17 | Hur värms bastun upp, och vad drar el på natten? Finns timer eller uppvärmning före kl. 06? Kyl, frys, varmvatten, golvvärme, belysning? | Förstudie 2 får bäst träff när förbrukningen börjar före 06. Det är en hypotes, och modellen kan inte skilja uppvärmning från annan nattförbrukning. | Kent beskriver driften. Läggs in som antaganden i M4a, och profilen kalibreras (M4b) bara för det som är okänt. |
+| 18 | Vilka exakta öppettider och dagar gäller för restaurangen (kök och förberedelser, stängningstid, vilka veckodagar, säsong)? | Restaurangen är 37–57 % av förbrukningen och styr resultatet. Förstudie 2 får bäst träff med förbrukning ungefär kl. 10–24. | Kent anger tider. Kalibreringen får gärna gälla olika tider olika månader. |
+| 19 | Är varmvattenmätaren i kWh el, och när värms vattnet? | Antas vara kWh el och jämnt fördelat dygnet runt. Enheten framgår inte av underlagen (granskning 2). | Kent bekräftar enhet och drift. |
 
 ## 6. Datakällor
 
@@ -141,7 +186,19 @@ filer, kommentera i detalj, gul bakgrund bara på inmatningsfält. Källor i Har
 - **Förklaring:** en kort ruta överst om vad "månadens spotpris" betyder och varför det finns flera sätt att räkna det.
 - **Hörn och teknik-modal** som på övriga sidor, med djuplänkar (`#`) vid avsnitten.
 
-**Beräkning:** funktioner för M1, M2, M3 och M4 i en egen, väl kommenterad fil, så att de går att testa mot fakturorna.
+**Beräkning:** funktioner för M1, M2, M3, M4a och M4b i en egen, väl kommenterad fil, så att de går att testa mot fakturorna.
+
+**Uppskattad förbrukningsprofil (M4a och M4b), beslutad 2026-10-07:**
+
+- **Delar:** bastu, varmvatten och restaurang, med kända kWh per månad (ur debiteringsunderlagen) och en förbrukningsprofil per del: vilka timmar på dygnet
+  delen drar el. Profilerna är data (en tabell per del), inte inbyggda i koden, så att de går att ändra utan att räkna om för hand.
+- **M4a:** profilerna sätts utifrån öppettider och driftuppgifter (Kent, fråga 17–19) utan att titta på fakturan.
+- **M4b:** de okända gränserna (till exempel när bastuns uppvärmning börjar, när restaurangen slutar dra el) provas inom rimliga intervall, och den kombination
+  väljs som ger lägst fel mot fakturornas spotpris. Sidan visar vilka antaganden som valdes och hur bra de passar månad för månad. Skriptet redovisar även
+  hur många kombinationer som passar nästan lika bra, så att osäkerheten syns (förstudie 2: 27 av 252 under 2 öre/kWh).
+- **Leave-one-out** (anpassa på alla månader utom en, förutsäg den utelämnade) körs och redovisas för M4b. Anpassning mot fakturan är **inte** en oberoende
+  validering, eftersom samma faktura både styr valet och används som facit.
+- **Märkning:** varje värde på sidan visar om det är M1, M2, M3, M4a eller M4b, och M4b märks tydligt som en uppskattning.
 
 ## 8. Funktionella krav
 
@@ -149,7 +206,8 @@ filer, kommentera i detalj, gul bakgrund bara på inmatningsfält. Källor i Har
 |----|------|
 | F1 | Hämta spotpris för SE4 för valda månader och spara som rådata med källa och hämtdatum. |
 | F2 | Kontrollera data: alla dygn finns, antal intervall är 96 (92 och 100 vid sommartid) eller 24 före 2025-10-01, inga luckor. Avvikelser loggas. |
-| F3 | Beräkna M1, M2 och, om förbrukningsdata finns, M3. M4 enligt vald profil. Alla utan avrundning före visning. |
+| F3 | Beräkna M1, M2, M4a och M4b och, om förbrukningsdata finns, M3. M4a/M4b enligt profilerna i avsnitt 7. Alla utan avrundning före visning. |
+| F3b | M4b: pröva kombinationer av de okända gränserna inom angivna intervall, välj den med lägst fel mot fakturornas spotpris, visa valda antaganden, fel per månad, antal nästan lika bra kombinationer och leave-one-out-fel. |
 | F4 | Visa en tabell per månad enligt avsnitt 7, med öre/kWh med två decimaler. |
 | F5 | Visa månadsvärden och medelpris per timme på dygnet i diagram (SVG eller canvas, inga externa bibliotek). |
 | F6 | Kraftringens tre poster (spotpris, rörliga kostnader, fast påslag) per månad ligger i en egen datafil, kontrollerad mot fakturorna (fråga 16). Summan "allt elpris" ska stämma med `krOre` i `Eneas_Samkop_av_El/enea_jamforelse.js`. |
@@ -163,6 +221,9 @@ filer, kommentera i detalj, gul bakgrund bara på inmatningsfält. Källor i Har
 1. **Validering mot fakturorna:** när förbrukningsdata finns ska M3 återskapa fakturans spotpris för varje månad januari–juni 2026. Förslag på
    gräns: **högst 0,5 öre/kWh** i skillnad. Gränsen är ett förslag och fastställs efter att vi sett det första utfallet (fakturans öre-pris är avrundat
    till två decimaler). Stämmer det inte ska avvikelsen förklaras, inte döljas.
+1b. **M4b (utan förbrukningsdata):** passar M4b fakturan inom **högst 2 öre/kWh per månad** och förutsäger den leave-one-out inom **högst 3 öre/kWh**
+   (förstudie 2 gav 1,6 respektive 3,0 som störst). Gränserna är förslag. Kriteriet är medvetet **svagare** än punkt 1: M4b anpassas mot fakturan och kan
+   därför inte valideras mot den. När M3 finns jämförs M4b mot M3, och det är den jämförelsen som visar hur bra uppskattningen var.
 2. M1 och M2 stämmer med förstudiens värden (avsnitt 4) för januari–juni 2026.
 3. Alla dygn januari–juni 2026 finns (181 dygn) och antalet intervall stämmer med avsnitt 8, F2.
 4. Sommartiden hanteras rätt: 2026-03-29 har 92 kvartar och månadsmedlen räknas på verkliga kvartar.
@@ -173,13 +234,17 @@ filer, kommentera i detalj, gul bakgrund bara på inmatningsfält. Källor i Har
 
 ## 10. Risker
 
-- **Förbrukningsdata går inte att få** (fråga 2). Då återstår M1, M2 och M4. Förstudien visar att dessa inte träffar fakturan. Slutsatsen blir då
-  en uppskattning med en tydlig osäkerhet.
+- **Förbrukningsdata går inte att få** (fråga 2). Då återstår M1, M2, M4a och M4b. M1 och M2 träffar inte fakturan. Slutsatsen blir då
+  en uppskattning (M4b) med en tydlig osäkerhet på några öre/kWh.
+- **Flera förklaringar passar lika bra (M4b).** Modellen kan inte avgöra om förbrukningen före kl. 06 är bastuuppvärmning eller annan nattförbrukning. Att
+  profilen passar fakturan betyder inte att den är den verkliga. Resultaten ska därför beskrivas som "förenliga med fakturan", inte som "så här förbrukade vi".
+- **Överanpassning:** sex månader och några få fria parametrar ger en passning som ser bättre ut än den är. Leave-one-out och en oberoende granskning behövs.
 - **Fel källa eller fel pris:** elprisetjustnu.se är en sammanställning, och ursprungskällan anges inte där. Stickprov mot en primärkälla minskar risken.
 - **Sommartid och kvartar** ger fel om dygn och klockslag förenklas (fråga 6).
 - **Avtalsformen:** ett prissäkrat Eneas-pris går inte att jämföra med spotpriset månad för månad (fråga 10).
 - **Kvartsövergången 2025-10-01:** data före och efter har olika upplösning. Endast aktuellt om vi går bakåt före oktober 2025.
-- **Känslig information:** förbrukningsdata per kvart kan visa när anläggningen är öppen eller stängd och ska hanteras som intern (fråga 13).
+- **Offentlig sida (beslut 2026-10-07):** förbrukningsdata per kvart kan visa när anläggningen är öppen eller stängd. Sidan får vara öppen, men rådata per kvart
+  från mätaren publiceras inte. Bara sammanvägda värden per månad och medelprofil per timme visas (fråga 13). Den uppskattade profilen (M4b) är en modell och inte en mätning.
 - **Oavsiktlig jämförelse av äpplen och päron:** Kraftringens spotpris på fakturan är viktat mot vår förbrukning, medan M1 och M2 är oviktade. Det måste
   framgå i varje tabell och diagram.
 
@@ -191,13 +256,14 @@ anger "kontrollräknade" först när det är gjort.
 
 **SPEC.md-checkpoint: behövs ett SPEC.md-steg härifrån?** Nej, som separat dokument. Sidan är en tabell och ett diagram i samma mönster som övriga
 sidor. De tekniska gränsfallen som en agent behöver veta är redan gjorda explicita i det här dokumentet: indata och källa (avsnitt 6), tidsupplösning
-och sommartid (fråga 6, krav F2), negativa priser (fråga 7) och metoderna M1–M4 med formler (avsnitt 3). Skulle hämtnings- och beräkningsskriptet bli
+och sommartid (fråga 6, krav F2), negativa priser (fråga 7) och metoderna M1–M4b (avsnitt 3 och 7). Skulle hämtnings- och beräkningsskriptet bli
 mer komplext (flera källor, automatisk körning), prövas frågan igen.
 
 ## 12. Nästa steg
 
-1. **Kent svarar på frågorna i avsnitt 5**, i första hand fråga 2 (förbrukningsdata), fråga 1 (primär metod), fråga 13 (intern eller öppen sida) och fråga 15 (hur Eneas pris förs in).
-2. Kent undersöker om och hur förbrukning per kvart eller timme kan fås ut, och i vilket format.
+1. **Kent svarar på frågorna i avsnitt 5.** Fråga 1 (metod: uppskattning baklänges) och 13 (öppen sida) är besvarade 2026-10-07. Kvar i första hand: fråga 17–19 (bastuns uppvärmning och nattförbrukning, restaurangens tider, varmvattenmätaren), fråga 2 (förbrukningsdata) och fråga 15 (hur Eneas pris förs in).
+2. Kent undersöker om och hur förbrukning per kvart eller timme kan fås ut, och i vilket format. Det är inte ett hinder för bygget: M4b byggs först och M3 läggs till när data finns.
+2b. Kent beskriver bastuns uppvärmning och nattförbrukningen, och restaurangens exakta tider (fråga 17–19), så att M4a kan sättas utan att titta på fakturan.
 3. Besluta om Nord Pool eller ENTSO-E ska användas som facit för stickprov, och kontrollera då villkor och åtkomst.
 4. Bygg datalagret och skriptet, därefter sidan, och kör valideringen i avsnitt 9 punkt 1.
 5. Tvåstegsgranskning, därefter README för `Spotpris/` (Live Page-länk överst, lokal sökväg) och länkar från `index.html`.
