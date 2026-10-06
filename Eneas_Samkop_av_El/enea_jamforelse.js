@@ -13,6 +13,8 @@
   UPPDATERING 2026-10-06: Första versionen (1.0), Del 1 i PRD:n.
   UPPDATERING 2026-10-06: Tabell 3 och dess data borttagna ur filen,
   hjälpfunktionerna flyttade till enea_hjalp.js. Version 1.1.
+  UPPDATERING 2026-10-06: Kraftringens pris i tabell 1 markeras (klassen "markerad") när
+  Eneas pris för samma månad är ifyllt. Version 1.2.
 */
 (function () {
   'use strict';
@@ -25,7 +27,7 @@
   // ===================================================================
   // 1. Version
   // ===================================================================
-  var VERSION = '1.1';
+  var VERSION = '1.2';
   var VERSIONSDATUM = '2026-10-06';
 
   // ===================================================================
@@ -119,7 +121,8 @@
     // --- Tabell 1: idag (inget är ändringsbart) ---
     var r1 = '';
     MANADER.forEach(function (m) {
-      r1 += '<tr>' + td(m.namn) + td(fmt(m.kwh)) + td(fmt(m.fakturaKr)) + td(fmt(m.krOre, 2)) +
+      // Kraftringens pris får ett id så att det kan markeras när Eneas pris för samma månad fylls i.
+      r1 += '<tr>' + td(m.namn) + td(fmt(m.kwh)) + td(fmt(m.fakturaKr)) + td(fmt(m.krOre, 2), null, 'k-el-' + m.key) +
             td(fmt(m.natOre, 2)) + td(fmt(m.skattOre, 2)) + td(fmt(m.fastNatKr)) + '</tr>';
     });
     document.querySelector('#tab-idag tbody').innerHTML = r1;
@@ -155,6 +158,10 @@
     // Tabell 2: rader
     b.rader.forEach(function (r) {
       var k = r.m.key;
+      // Markera Kraftringens pris i tabell 1 (fetstil + grön bakgrund) så länge Eneas pris för
+      // månaden är ifyllt, så att man direkt ser vad som jämförs.
+      var kEl = document.getElementById('k-el-' + k);
+      if (kEl) { kEl.classList.toggle('markerad', r.eneasOre !== null); }
       satt('e-fak-' + k, r.eneasFaktura === null ? '–' : fmt(r.eneasFaktura));
       satt('e-dkr-' + k, r.diffKr === null ? '–' : fmtTecken(r.diffKr), klassForSkillnad(r.diffKr));
       satt('e-dpc-' + k, r.diffPct === null ? '–' : fmtTecken(r.diffPct, 1), klassForSkillnad(r.diffKr));

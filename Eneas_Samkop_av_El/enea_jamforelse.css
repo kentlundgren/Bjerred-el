@@ -70,6 +70,8 @@ th { font-weight: 700; vertical-align: bottom; font-size: .9rem; }
 th:first-child, td:first-child { text-align: left; }
 tfoot td { font-weight: 700; border-top: 2px solid var(--text); border-bottom: none; }
 td.last { background: var(--lasta); }
+/* Kraftringens pris i tabell 1 markeras när Eneas pris för samma månad är ifyllt */
+td.markerad { font-weight: 700; background: #d9efd5; }
 td.pos { color: var(--dyrare); }
 td.neg { color: var(--billigare); }
 
