@@ -2,7 +2,7 @@
 
 Projekt: Elenergiförbrukning – Bjerreds Saltsjöbad
 Mapp: `Spotpris/` (all utveckling sker inom denna mapp)
-Status: Utkast 3, 2026-10-07 (förstudie 1–3 i avsnitt 4; beslut efter Kents svar 2026-10-07: förbrukningen uppskattas baklänges, sidan är öppen; verkliga öppettider inlagda)
+Status: Utkast 4, 2026-10-07 (förstudie 1–4 i avsnitt 4; beslut efter Kents svar 2026-10-07: förbrukningen uppskattas baklänges, sidan är öppen; verkliga öppettider inlagda)
 Ansvarig: Kent Lundgren
 
 > OBS! Siffrorna i förstudien (avsnitt 4) är framräknade ur spotpriser från elprisetjustnu.se och spotpriset på
@@ -162,6 +162,31 @@ runt eller enligt bastuns och restaurangens tider. Fel = modellens viktade spotp
 5. **Slutsatsen från förstudie 2 gäller fortfarande:** att viktningen betyder 2–8 öre/kWh och går åt båda hållen är säkert. Profilen bakom är osäker, och förbrukningsdata per kvart eller timme (M3) är det som
    avgör saken.
 
+### 4.4 Förstudie 4: väderberoende värme (2026-10-07)
+
+**Ny uppgift (Kent):** ventilation, värme och belysning går dygnet runt. Det finns ingen golvvärme i vinterträdgården. Belysningen drar inte mycket mitt i natten. Det stöder
+att restpostens stora baslast (förstudie 3) är ventilation och värme, inte belysning eller kylar.
+
+**Test.** Värme är väderberoende: mer vid kallt väder, och kallt väder går ofta ihop med höga spotpriser. Restposten delades därför i ventilation (jämn effekt V, kW), värme (H kW per
+grad under en gränstemperatur, efter utetemperaturen timme för timme) och en driftdel enligt restaurangens öppettider. Utetemperaturen hämtades från Open-Meteo (modellerad data för ett
+rutnät vid Bjärred, inte en mätstation; månadsmedel januari −0,9, februari −0,9, mars 4,8, april 6,9, maj 11,8 och juni 17,0 °C). Skript: `forstudie/hamta_temperatur.py` och `modell_vader.py`.
+
+| Modell | Bästa passning (RMS, öre/kWh) | Leave-one-out | Kombinationer med RMS under 2 |
+|--------|------------------------------:|---------------|------------------------------:|
+| Bara ventilation (jämn effekt) | 1,21 (V = 13 kW) | +2,73, −0,54, saknas, +2,74, +1,35, −3,59 | 334 av 1 176 |
+| Ventilation + värme efter utetemperatur | 1,21 (bästa värmen: H = 0) | samma | 6 130 av 64 176 |
+
+**Vad förstudie 4 visar:**
+
+1. **Väderberoende värme förbättrar inte uppskattningen.** Den bästa passningen väljer att inte ha någon värme efter utetemperatur alls. Med bara sex månadsvärden går värmens bidrag inte att skilja från
+   en jämn baslast.
+2. **Mer flexibilitet gör osäkerheten större:** 6 130 kombinationer ger RMS under 2 öre/kWh. Modellen kan inte avgöra *vad* baslasten består av, bara att en stor jämn baslast (cirka 12–13 kW) passar.
+3. **Mars kunde inte förutsägas i leave-one-out.** De fem andra månaderna gav en baslast på 14 kW, som ger 10 402 kWh i mars, medan marsmånadens hela restpost är 10 302 kWh. Det visar att baslast och
+   driftdel inte kan fås ur sex månadsvärden samtidigt. Med baslasten fast blir driftdelen dessutom 37–42 % av restposten i januari–februari men 13–16 % i april–juni, alltså något som i verkligheten
+   mer liknar vinterns extra uppvärmning än restaurangens drift. Modellen kan inte avgöra det.
+4. **Beslut för första bygget:** utetemperatur ingår **inte**. Den kräver en extra datakälla med oklara villkor och ger ingen förbättring. Frågan kan tas upp igen när förbrukningsdata per kvart (M3) finns, eftersom
+   värmens väderberoende då går att se direkt (fråga 20).
+
 ## 5. Frågor som måste redas ut
 
 | Nr | Fråga | Varför | Förslag |
@@ -182,9 +207,10 @@ runt eller enligt bastuns och restaurangens tider. Fel = modellens viktade spotp
 | 14 | Var länkas sidan? | Navigering. | Från elöversikten (`index.html`) och från `Eneas_Samkop_av_El/` när den är klar. |
 | 15 | Hur kommer Eneas pris in i spotprissidan? | Isaks inmatning finns bara i hans egen webbläsare (och i mejlet han skickar), så den här sidan kan inte läsa den själv. | Kent skriver in priserna som en ifylld datafil (`data/eneas_pris.json`) eller i ett gult fält på sidan, när Isaks mejl kommit. |
 | 16 | Räcker Kraftringens poster per månad? | `enea_jamforelse.js` har bara summan "allt elpris" (`krOre`), inte spotpris, rörliga kostnader och påslag var för sig. | Lägg in de tre posterna per månad ur fakturorna i en egen datafil här (värdena finns i förstudien och i granskningsrapporten) och kontrollera dem mot fakturorna. |
-| 17 | **Vad är det som drar el dygnet runt i "restaurangens" del?** Ventilation, uppvärmning (direktverkande el, värmepump, golvvärme i vinterträdgården), belysning (inomhus, brygga, utomhus), kyl- och frysrum, kök? Hur värms bastun upp, och startar uppvärmningen före öppning (timer)? | Förstudie 3: 75–80 % av restposten ser ut att vara jämn dygnet runt, 10–18 kW. Ett par kylar förklarar inte det. Det är en hypotes, och modellen kan inte skilja uppvärmning av bastun från annan förbrukning på natten. | Kent beskriver driften. Läggs in som antaganden i M4a, och bara det som är okänt kalibreras (M4b). |
+| 17 | **Vad är det som drar el dygnet runt i "restaurangens" del?** | Förstudie 3: 75–80 % av restposten ser ut att vara jämn dygnet runt, 10–18 kW. | **Delvis besvarad 2026-10-07 (Kent):** ventilation, värme och belysning går dygnet runt. Det finns ingen golvvärme i vinterträdgården. Belysningen drar inte mycket mitt i natten. Alltså är ventilation och värme de stora jämna förbrukarna (och kylar). **Kvar att besvara:** hur byggnaden värms (direktverkande el, värmepump, vattenburet), om ventilation eller värme har nattsänkning eller timer, och om bastuns uppvärmning startar före öppning. Modellen kan inte skilja bastuns uppvärmning från annan nattförbrukning. |
 | 18 | Gällde restaurangens tider (må–ti stängt, on–fr 16–22, lö 11–22, sö 11–17) och badets 07.30–22 hela januari–juni 2026? När ändrades bastuns tid från 06–22 till 07.30–22? Fanns städavbrott före 1 maj, och när? | Tiderna i modellen kommer från hemsidorna 2026-10-07. Kent antar att de gällde jan–jun. | Kent bekräftar eller anger tider per månad. Modellen tar tider per månad. |
 | 19 | ~~Är varmvattenmätaren i kWh el?~~ | **Besvarad 2026-10-07 (Kent):** den mäter kWh el, för varmvatten till duschar och restaurang. | När värms vattnet (tank, timer, effektbegränsning) är fortfarande okänt. Modellen provar dygnet runt och enligt bastuns och restaurangens tider. |
+| 20 | Ska utetemperatur ingå i modellen? | Värme är väderberoende. Förstudie 4 gav ingen förbättring, och källan (Open-Meteo, modellerad data) har oklara villkor. | **Nej i första bygget.** Tas upp igen när förbrukningsdata per kvart finns, då värmens väderberoende kan ses direkt. |
 
 ## 6. Datakällor
 
@@ -195,6 +221,7 @@ runt eller enligt bastuns och restaurangens tider. Fel = modellens viktade spotp
 | Kraftringens poster | Fakturorna (`Kraftringen/Fakturor/`): spotpris, rörliga kostnader, fast påslag, månadsavgift, per månad | Finns. Redan inlästa i `Eneas_Samkop_av_El/enea_jamforelse.js`. |
 | Eneas pris | Isaks inmatning ("Allt elpris") på `enea_jamforelse.html` | Finns bara i Isaks webbläsare och i den ifyllda tabell han mejlar. Hur det förs in här är en öppen fråga (avsnitt 5, fråga 15). |
 | Förbrukning per kvart/timme | Kraftringen Nät AB eller Kraftringen Energi AB (mätvärden) | **Okänt om och hur det går att få.** Fråga 2. |
+| Utetemperatur per timme (bara förstudie 4) | **Open-Meteo**, historical weather API | Kontrollerat 2026-10-07: timdata för alla 4 344 timmar jan–jun 2026 vid Bjärred. Det är **modellerad data** (reanalys, rutnät), inte en mätstation. Villkor och källhänvisning **inte verifierade** (licenssidan går inte att läsa utan JavaScript). Används inte i första bygget (fråga 20). |
 
 Kontrollerat om prisdatan är konsekvent: `SEK_per_kWh` är `EUR_per_kWh` × `EXR` (exempel 2026-01-15 kl. 00:00: 0,06861 × 10,717706 ≈ 0,7354).
 
@@ -335,6 +362,9 @@ Kraftringen (2026) *E-faktura elnät och elhandel, januari–juni 2026* [fakturo
 
 Nord Pool (u.å.) *Nord Pool Data Portal*. Tillgänglig: [https://data.nordpoolgroup.com/](https://data.nordpoolgroup.com/) (hämtad 2026-10-07).
 *(Möjlig primärkälla för spotpriser. Åtkomst och villkor är inte undersökta här.)*
+
+Open-Meteo (u.å.) *Historical Weather API*. Tillgänglig: [https://open-meteo.com/en/docs/historical-weather-api](https://open-meteo.com/en/docs/historical-weather-api) (hämtad 2026-10-07).
+*(Timdata för utetemperatur från reanalys (ERA5 m.fl.), alltså modellerad data. Användes i förstudie 4. Villkor för användning och källhänvisning är inte verifierade.)*
 
 Varberg Energi (2025) *Vilka effekter har kvartspriser fått på elmarknaden?*, 10 december. Tillgänglig:
 [https://www.varbergenergi.se/nyheter/vilka-effekter-har-kvartspriser-fatt-pa-elmarknaden](https://www.varbergenergi.se/nyheter/vilka-effekter-har-kvartspriser-fatt-pa-elmarknaden) (hämtad 2026-10-07).
