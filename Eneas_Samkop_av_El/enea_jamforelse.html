@@ -38,21 +38,28 @@
   <section class="ruta" aria-labelledby="Anvisning">
     <h2 id="Anvisning">Så här fyller du i <a class="ankare" href="#Anvisning" aria-label="Länk till avsnittet">#</a></h2>
     <ol>
-      <li>Tabell 1 visar vad som faktiskt betalades till Kraftringen. Den kan inte ändras.</li>
-      <li>Fyll i de <span class="gulmarkering">gula fälten</span> i tabell 2: det pris per kWh (öre) som
+      <!-- data-text-dold = texten som visas när tabell 1 är dold (originaltexten i elementet visas när tabell 1 är synlig) -->
+      <li data-text-dold="Tabell 2 visar vad Eneas priser hade betytt jämfört med dagens avtal.">Tabell 1 visar vad som faktiskt betalades till Kraftringen. Den kan inte ändras.</li>
+      <li data-text-dold="Fyll i de &lt;span class=&quot;gulmarkering&quot;&gt;gula fälten&lt;/span&gt; i tabell 2: det pris per kWh (öre) som Eneas hade tagit för själva elen varje månad.">Fyll i de <span class="gulmarkering">gula fälten</span> i tabell 2: det pris per kWh (öre) som
         Eneas hade tagit för själva elen varje månad, jämfört med kolumnen &quot;El inkl elcert&quot; i tabell 1.</li>
       <li>Resten räknas ut direkt. Använd knappen &quot;Kopiera tabellerna&quot; och klistra in i ett mejl.</li>
     </ol>
     <p><strong>Vad priset ska omfatta:</strong> allt som gäller själva elen, alltså elcertifikat, påslag och
-      eventuella profil- och balanskostnader. Kraftringens pris i tabell 1 är spotpris + rörliga kostnader +
+      eventuella profil- och balanskostnader. Kraftringens pris <span data-text-dold="">i tabell 1 </span>är spotpris + rörliga kostnader +
       1,70 öre/kWh fast påslag. Nätavgift, energiskatt och fast avgift till Kraftringen Nät AB är oförändrade
       oavsett elhandlare. Moms (25 %) läggs på av sidan. Det är en jämförelse i efterhand och ett försök:
       olika elleverantörer menar olika saker med &quot;pris&quot;, så förklara gärna i fältet längre ned vad
       priset omfattar.</p>
   </section>
 
-  <!-- ===== Tabell 1: idag ===== -->
-  <section aria-labelledby="TabellIdag">
+  <!-- ===== Tabell 1: idag =====
+       UTSEENDE-VAL (2026-10-06): tabell 1 är dold som standard och visas med ett klick på den
+       diskreta knappen "···". Bytet görs med EN konstant överst i enea_jamforelse.js
+       (TABELL1_SYNLIG_SOM_STANDARD). Sätts den till true är tabell 1 alltid synlig som tidigare
+       och knappen försvinner. -->
+  <section id="sek-tabell1" aria-labelledby="TabellIdag">
+    <button type="button" id="tabell1-vaxel" class="vaxel" aria-expanded="false" aria-controls="tabell1-innehall" aria-label="Visa mer" hidden>···</button>
+    <div id="tabell1-innehall">
     <h2 id="TabellIdag">Tabell 1. Idag: det som betalades till Kraftringen <a class="ankare" href="#TabellIdag" aria-label="Länk till avsnittet">#</a></h2>
     <div class="tabell-wrap">
       <table id="tab-idag">
@@ -73,6 +80,7 @@
     </div>
     <p class="liten">I summaraden är kWh och faktura summor. &quot;El inkl elcert&quot; är ett kWh-vägt snitt:
       varje månads pris väger lika tungt som månadens förbrukning. Det är vad som i genomsnitt betalades per kWh.</p>
+    </div><!-- /tabell1-innehall -->
   </section>
 
   <!-- ===== Tabell 2: med Eneas ===== -->

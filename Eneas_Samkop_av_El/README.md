@@ -54,7 +54,7 @@ Rena HTML-, CSS- och JavaScript-filer utan ramverk och utan byggprocess. Öppnas
 
 ## Status
 
-Version 1.5 (2026-10-06). Kraftringens belopp är kontrollräknade månad för månad mot de sex
+Version 1.6 (2026-10-06). Kraftringens belopp är kontrollräknade månad för månad mot de sex
 fakturorna (se `PRD.md`, avsnitt 13). Eneas priser är ännu inte inlagda.
 
 ## Källor

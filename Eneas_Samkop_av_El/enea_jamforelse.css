@@ -110,6 +110,18 @@ textarea.gul { width: 100%; resize: vertical; }
 .kallor li { margin-bottom: 8px; }
 .fot { margin-top: 28px; font-size: .85rem; color: var(--text-dampad); }
 
+/* ---------- Omkopplare för tabell 1 ("···") ----------
+   Medvetet nästan osynlig: man måste veta var man ska klicka. Syns tydligare vid hover/fokus.
+   Visas bara om tabell 1 är dold som standard (styrs av TABELL1_SYNLIG_SOM_STANDARD i JS). */
+.vaxel {
+  display: block; margin: 6px 0 0; padding: 2px 8px; border: 0; background: none;
+  font: inherit; font-size: 1.1rem; letter-spacing: .15em; color: var(--text-dampad);
+  opacity: .14; cursor: pointer;
+}
+.vaxel:hover, .vaxel:focus { opacity: .6; }
+.vaxel[hidden] { display: none; }
+@media print { .vaxel { display: none !important; } }
+
 /* ---------- Diskret länk uppe till höger (till den interna sidan) ----------
    Liten cirkel med mycket låg synlighet. Utan text, så ingen utomstående ser vad den är.
    Syns lite tydligare vid hover/fokus. Syns inte i utskrift. */

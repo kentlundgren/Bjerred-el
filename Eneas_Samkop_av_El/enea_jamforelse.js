@@ -19,6 +19,8 @@
   UPPDATERING 2026-10-06: Markeringen försvinner när man lämnar prisfälten. Version 1.4.
   UPPDATERING 2026-10-06: Summaraden heter "Summa / vägt snitt" (kWh och faktura är summor,
   "El inkl elcert" är kWh-vägt snitt). Version 1.5.
+  UPPDATERING 2026-10-06: Tabell 1 är dold som standard och visas med en diskret knapp ("···").
+  Ett enda val överst (TABELL1_SYNLIG_SOM_STANDARD) går tillbaka till alltid synlig. Version 1.6.
 */
 (function () {
   'use strict';
@@ -31,8 +33,25 @@
   // ===================================================================
   // 1. Version
   // ===================================================================
-  var VERSION = '1.5';
+  var VERSION = '1.6';
   var VERSIONSDATUM = '2026-10-06';
+
+  // ===================================================================
+  // UTSEENDE-VAL: ska tabell 1 (det som betalades till Kraftringen) vara synlig från start?
+  //
+  //   false = tabell 1 är dold. Ett diskret klick på "···" (nästan osynlig knapp ovanför
+  //           tabell 2) visar den, och ett klick till döljer den igen.      <-- nuvarande val
+  //   true  = tabell 1 är alltid synlig, precis som i version 1.5. Knappen försvinner.
+  //
+  //   För att gå tillbaka: ändra false till true på raden nedan. Inget annat behöver ändras.
+  //   OBS: Det här döljer bara tabellen på skärmen. Siffrorna finns kvar i sidans källkod,
+  //   och kolumnerna "Skillnad mot idag" i tabell 2 visar fortfarande skillnaden.
+  // UPPDATERING 2026-10-06: Tillagt (version 1.6).
+  // ===================================================================
+  var TABELL1_SYNLIG_SOM_STANDARD = false;
+
+  // Är tabell 1 synlig just nu? Startar enligt valet ovan; kan växlas med knappen "···".
+  var tabell1Synlig = TABELL1_SYNLIG_SOM_STANDARD;
 
   // ===================================================================
   // 2. Referensdata: Kraftringens faktiska utfall januari–juni 2026
@@ -180,11 +199,30 @@
       : '<tr>' + td('Summa / vägt snitt') + td(fmt(t.kwhIfyllda)) + td(fmt(t.eneasSumma)) + td(fmt(t.snittEneas, 2)) + td('') + td('') + td('') +
         td(fmtTecken(t.diffKr), klassForSkillnad(t.diffKr)) + td(fmtTecken(t.diffPct, 1), klassForSkillnad(t.diffKr)) + '</tr>';
 
+    // Beloppen "idag" i förklaringen visas bara när tabell 1 är synlig.
+    var idagDel = tabell1Synlig ? ' Idag för samma månader: ' + fmt(t.idagIfyllda) + ' kr.' : '';
     satt('tab-eneas-not',
       t.antal === 0 ? 'Fyll i de gula fälten för att se jämförelsen.'
       : (t.antal < MANADER.length
-          ? 'Summaraden gäller de ' + t.antal + ' av ' + MANADER.length + ' månader som är ifyllda (kWh, kr och snitt räknas på samma månader). Idag för samma månader: ' + fmt(t.idagIfyllda) + ' kr.'
-          : 'Summaraden gäller alla sex månader. Idag: ' + fmt(t.idagIfyllda) + ' kr. Med Eneas: ' + fmt(t.eneasSumma) + ' kr.'));
+          ? 'Summaraden gäller de ' + t.antal + ' av ' + MANADER.length + ' månader som är ifyllda (kWh, kr och snitt räknas på samma månader).' + idagDel
+          : 'Summaraden gäller alla sex månader.' + (tabell1Synlig ? ' Idag: ' + fmt(t.idagIfyllda) + ' kr.' : '') + ' Med Eneas: ' + fmt(t.eneasSumma) + ' kr.'));
+  }
+
+  // Visar eller döljer tabell 1 och byter de texter som hänvisar till den.
+  // Originaltexten (när tabell 1 är synlig) sparas första gången i en JavaScript-egenskap.
+  function visaTabell1(synlig) {
+    tabell1Synlig = synlig;
+    var innehall = document.getElementById('tabell1-innehall');
+    var knapp = document.getElementById('tabell1-vaxel');
+    innehall.hidden = !synlig;
+    knapp.hidden = TABELL1_SYNLIG_SOM_STANDARD;             // knappen finns bara när tabell 1 är dold som standard
+    knapp.setAttribute('aria-expanded', synlig ? 'true' : 'false');
+    var texter = document.querySelectorAll('[data-text-dold]');
+    for (var i = 0; i < texter.length; i++) {
+      var e = texter[i];
+      if (e._originalHtml === undefined) { e._originalHtml = e.innerHTML; }
+      e.innerHTML = synlig ? e._originalHtml : e.getAttribute('data-text-dold');
+    }
   }
 
   // ===================================================================
@@ -320,9 +358,9 @@
     return {
       html: '<div style="font-family:Arial,sans-serif;">' +
             '<p style="font-family:Arial,sans-serif;font-size:16px;"><b>Elkostnad januari–juni 2026: Kraftringen och Eneas</b></p>' +
-            k1.html + k2.html + an +
+            (tabell1Synlig ? k1.html : '') + k2.html + an +
             '<p style="font-family:Arial,sans-serif;font-size:12px;color:#555;">' + htmlEscape(not) + '</p></div>',
-      text: 'Elkostnad januari–juni 2026: Kraftringen och Eneas\n\n' + k1.text + k2.text + anText + '\n' + not + '\n'
+      text: 'Elkostnad januari–juni 2026: Kraftringen och Eneas\n\n' + (tabell1Synlig ? k1.text : '') + k2.text + anText + '\n' + not + '\n'
     };
   }
 
@@ -423,6 +461,12 @@
       visaMeddelande('Inmatningen är rensad.');
     });
 
+    // Diskret omkopplare för tabell 1 ("···")
+    document.getElementById('tabell1-vaxel').addEventListener('click', function () {
+      visaTabell1(!tabell1Synlig);
+      uppdatera();
+    });
+
     H.kopplaTeknikModal();
   }
 
@@ -436,6 +480,7 @@
     las();
     tillFalt();
     kopplaHandelser();
+    visaTabell1(TABELL1_SYNLIG_SOM_STANDARD);
     uppdatera();
   }
 
