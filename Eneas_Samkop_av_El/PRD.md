@@ -164,8 +164,12 @@ januari–juni 2026 plus en summarad, i samma upplägg som Kents debiteringsunde
     enligt Kents bild. Eneas fasta månadsavgift (kr/mån exkl. moms, valfri) är ett enda
     gult fält ovanför tabell 2. Övriga poster och anteckning per månad utgår; en gemensam
     fritext om vad priset omfattar finns i stället.
-  - Sidan visar tre tabeller: 1 idag (Kraftringen), 2 med Eneas priser (samma kolumner som
-    bilden plus skillnad i kr och %) och 3 restaurangens andel.
+  - Isaks sida (`enea_jamforelse.*`) visar två tabeller: 1 idag (Kraftringen) och 2 med
+    Eneas priser (samma kolumner som bilden plus skillnad i kr och %). Restaurangens andel
+    (tidigare tabell 3) ligger inte längre i Isaks filer, varken som tabell eller som data i
+    JavaScript. Den ligger i den interna sidan `intern_debitering.html` (avsnitt 12).
+    Isaks sida har en nästan osynlig cirkel uppe till höger som länkar dit. Det är ingen
+    åtkomstkontroll: sidan är publik för den som känner adressen (`noindex` är satt).
 - *Gula fält en gång för hela jämförelsen:* prismodell (rullista: spot + påslag, fast
   pris, prissäkrad portfölj, annat), fritext om vad priset omfattar och inte omfattar,
   samt Isaks namn och datum.
@@ -276,12 +280,15 @@ visar "Debiteringsunderlag El [månad] 2026" i samma uppställning som idag, så
 underlaget kan upprepas varje månad och kontrolleras mot fakturan. Samma uppställning
 används på Isaks sida för hyresgästens andel (F1).
 
-**Filer (egna, inte länkade från Isaks sida).** `intern_debitering.html`,
-`intern_debitering.css`, `intern_debitering.js` i `Eneas_Samkop_av_El/`. Beräkningen
-av hyresgästens kostnad ligger i en liten, avgränsad funktion som delas med
-`enea_jamforelse.js` (egen fil `berakning.js`, så att samma formler inte finns på två
-ställen). Obs: GitHub Pages är publikt för den som känner adressen; sidan innehåller
-bara belopp som redan ligger i repot som bilder.
+**Filer.** `intern_debitering.html` och `intern_debitering.js` i `Eneas_Samkop_av_El/`
+(byggda 2026-10-06, version 1.0: tabellen "Restaurangens andel" med egna gula prisfält för
+Eneas). De delar stilmallen `enea_jamforelse.css` och hjälpfunktionerna i `enea_hjalp.js`
+(ersätter den tidigare planerade `berakning.js`) med Isaks sida. Restaurangens data och
+beräkning finns bara i `intern_debitering.js`, inte i Isaks filer. Eneas priser delar
+lagringsnyckel (`localStorage`) med Isaks sida, så de räcker att fylla i på en av sidorna.
+Del 2 bygger vidare i dessa filer. Obs: GitHub Pages är publikt för den som känner adressen;
+sidan innehåller bara belopp som redan ligger i repot som bilder. Länken från Isaks sida är
+dold men inte skyddad.
 
 **Funktioner (D1–D6).**
 - **D1 Månadsväljare** för januari–juni 2026, och möjlighet att lägga till senare

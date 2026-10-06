@@ -8,6 +8,7 @@
   Öppnas direkt i webbläsaren. Se PRD.md i samma mapp (utkast 3).
 
   UPPDATERING 2026-10-06: Första versionen (1.0), Del 1 i PRD:n.
+  UPPDATERING 2026-10-06: Version 1.1. Den här sidan är den som Isak på Eneas får.
 -->
 <html lang="sv">
 <head>
@@ -18,6 +19,9 @@
   <link rel="stylesheet" href="enea_jamforelse.css">
 </head>
 <body>
+
+<!-- Diskret länk uppe till höger. Medvetet utan text och med mycket låg synlighet. -->
+<a class="hemlig" href="intern_debitering.html" aria-label="Mer"></a>
 
 <main class="sida">
 
@@ -108,28 +112,6 @@
     </details>
   </section>
 
-  <!-- ===== Tabell 3: restaurangens andel ===== -->
-  <section aria-labelledby="TabellRestaurang">
-    <h2 id="TabellRestaurang">Tabell 3. Restaurangens andel <a class="ankare" href="#TabellRestaurang" aria-label="Länk till avsnittet">#</a></h2>
-    <p>Restaurangen (hyresgästen) debiteras för sin förbrukning: totalt minus bastu minus varmvatten.
-      Den betalar ingen fast nätavgift. Kostnaden är rörlig nätavgift, el inkl elcert och energiskatt, plus 25 % moms.</p>
-    <div class="tabell-wrap">
-      <table id="tab-hg">
-        <thead>
-          <tr>
-            <th>Månad</th>
-            <th>Restaurangens<br>kWh</th>
-            <th>Idag<br>(kr inkl moms)</th>
-            <th>Med Eneas<br>(kr inkl moms)</th>
-            <th>Skillnad<br>(kr)</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-        <tfoot></tfoot>
-      </table>
-    </div>
-  </section>
-
   <!-- ===== Anteckningar från den som fyller i ===== -->
   <section class="ruta" aria-labelledby="Anteckningar">
     <h2 id="Anteckningar">Förklaring av Eneas pris <a class="ankare" href="#Anteckningar" aria-label="Länk till avsnittet">#</a></h2>
@@ -193,10 +175,6 @@
         <em>Beskriver tjänsten Samköp av el. Innehåller inga priser.</em>
         <a href="Eneas%20Samkop%20av%20El%202026.pdf" target="_blank" rel="noopener">Broschyren</a>.
       </li>
-      <li id="ref-debitering">Bjerreds Saltsjöbad (2026) <em>Debiteringsunderlag El januari–juni 2026</em>
-        [eget underlag]. <em>Underlag för restaurangens kWh och debiterade belopp i tabell 3.</em>
-        <a href="https://github.com/kentlundgren/Bjerred-el/tree/main/Kraftringen/Intern_debitering" target="_blank" rel="noopener">Underlagen</a>.
-      </li>
     </ul>
   </section>
 
@@ -254,6 +232,8 @@
   </div>
 </div>
 
+<!-- Hjälpfunktioner först, därefter sidans egen logik -->
+<script src="enea_hjalp.js"></script>
 <script src="enea_jamforelse.js"></script>
 </body>
 </html>

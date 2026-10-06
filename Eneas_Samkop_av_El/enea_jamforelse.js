@@ -1,23 +1,31 @@
 /*
   enea_jamforelse.js
-  Logik för enea_jamforelse.html: tre tabeller (idag hos Kraftringen, med Eneas priser,
-  restaurangens andel), beräkning, sparande i webbläsaren och kopiering till mejl.
+  Logik för enea_jamforelse.html (sidan som Isak på Eneas får): två tabeller (idag hos
+  Kraftringen, och med Eneas priser), beräkning, sparande i webbläsaren och kopiering
+  till mejl.
+
+  Gemensamma hjälpfunktioner (tolkning, talformat) finns i enea_hjalp.js, som måste
+  laddas före den här filen.
 
   Ingen kod med ES2023+ används. Allt är vanlig JavaScript (ES2015) som körs i alla
   vanliga webbläsare. Inget nätverksanrop görs.
 
-  FRAMTIDA ÄNDRING (struken i PRD, utkast 2): databas/inloggning byggs inte. Om det
-  någonsin behövs ska det göras i en separat fil, inte här.
-
   UPPDATERING 2026-10-06: Första versionen (1.0), Del 1 i PRD:n.
+  UPPDATERING 2026-10-06: Tabell 3 och dess data borttagna ur filen,
+  hjälpfunktionerna flyttade till enea_hjalp.js. Version 1.1.
 */
 (function () {
   'use strict';
 
+  var H = window.EneaHjalp;
+  var tolka = H.tolka, fmt = H.fmt, fmtTecken = H.fmtTecken;
+  var klassForSkillnad = H.klassForSkillnad, htmlEscape = H.htmlEscape;
+  var MOMS = H.MOMS, LAGRINGSNYCKEL = H.LAGRINGSNYCKEL, MAX_ORE = H.MAX_ORE;
+
   // ===================================================================
   // 1. Version
   // ===================================================================
-  var VERSION = '1.0';
+  var VERSION = '1.1';
   var VERSIONSDATUM = '2026-10-06';
 
   // ===================================================================
@@ -29,21 +37,15 @@
   //    natOre     = rörlig nätavgift (elöverföring), öre/kWh
   //    skattOre   = energiskatt, öre/kWh
   //    fastNatKr  = fast nätavgift, kr/månad (Kraftringen Nät AB, kan inte bytas)
-  //    hgKwh      = restaurangens (hyresgästens) kWh = total - bastu - varmvatten
-  //    hgKr       = restaurangens debiterade belopp inkl moms, hela kr. Fast nätavgift ingår
-  //                 aldrig (PRD 4.3, beslut 2026-10-06), så april–juni är de rättade beloppen.
   // ===================================================================
   var MANADER = [
-    { key: '2026-01', namn: 'Jan', kwh: 35422.14, fakturaKr: 90779, krOre: 122.24, natOre: 21.87, skattOre: 36.00, fastNatKr: 8824, hgKwh: 16586, hgKr: 37341 },
-    { key: '2026-02', namn: 'Feb', kwh: 32002.14, fakturaKr: 82794, krOre: 121.56, natOre: 21.84, skattOre: 36.00, fastNatKr: 8824, hgKwh: 16342, hgKr: 36647 },
-    { key: '2026-03', namn: 'Mar', kwh: 28073.52, fakturaKr: 63389, krOre: 92.87,  natOre: 20.33, skattOre: 36.00, fastNatKr: 8824, hgKwh: 10302, hgKr: 19213 },
-    { key: '2026-04', namn: 'Apr', kwh: 26671.14, fakturaKr: 52186, krOre: 68.29,  natOre: 19.16, skattOre: 36.00, fastNatKr: 8824, hgKwh: 11582, hgKr: 17873 },
-    { key: '2026-05', namn: 'Maj', kwh: 23941.02, fakturaKr: 56338, krOre: 95.00,  natOre: 20.39, skattOre: 36.00, fastNatKr: 8824, hgKwh: 12430, hgKr: 23521 },
-    { key: '2026-06', namn: 'Jun', kwh: 20609.34, fakturaKr: 53134, krOre: 106.45, natOre: 20.99, skattOre: 36.00, fastNatKr: 8824, hgKwh: 11756, hgKr: 24017 }
+    { key: '2026-01', namn: 'Jan', kwh: 35422.14, fakturaKr: 90779, krOre: 122.24, natOre: 21.87, skattOre: 36.00, fastNatKr: 8824 },
+    { key: '2026-02', namn: 'Feb', kwh: 32002.14, fakturaKr: 82794, krOre: 121.56, natOre: 21.84, skattOre: 36.00, fastNatKr: 8824 },
+    { key: '2026-03', namn: 'Mar', kwh: 28073.52, fakturaKr: 63389, krOre: 92.87,  natOre: 20.33, skattOre: 36.00, fastNatKr: 8824 },
+    { key: '2026-04', namn: 'Apr', kwh: 26671.14, fakturaKr: 52186, krOre: 68.29,  natOre: 19.16, skattOre: 36.00, fastNatKr: 8824 },
+    { key: '2026-05', namn: 'Maj', kwh: 23941.02, fakturaKr: 56338, krOre: 95.00,  natOre: 20.39, skattOre: 36.00, fastNatKr: 8824 },
+    { key: '2026-06', namn: 'Jun', kwh: 20609.34, fakturaKr: 53134, krOre: 106.45, natOre: 20.99, skattOre: 36.00, fastNatKr: 8824 }
   ];
-  var MOMS = 1.25;                       // 25 % moms
-  var LAGRINGSNYCKEL = 'enea_jamforelse_v1';
-  var MAX_ORE = 1000;                    // rimlighetsgräns för ett pris i öre/kWh
 
   // ===================================================================
   // 3. Inmatat tillstånd (det Isak fyller i)
@@ -58,47 +60,7 @@
   };
 
   // ===================================================================
-  // 4. Hjälpfunktioner: tolkning och formatering
-  // ===================================================================
-
-  // Tolkar svensk inmatning ("95,5", "95.5", "1 234,5"). Returnerar null om tomt eller ogiltigt.
-  function tolka(text) {
-    if (text === null || text === undefined) { return null; }
-    var s = String(text).replace(/\s/g, '').replace(',', '.');
-    if (s === '') { return null; }
-    var n = Number(s);
-    if (!isFinite(n) || n < 0) { return null; }
-    return n;
-  }
-
-  // Formaterar tal med mellanslag som tusentalsavgränsare och decimalkomma. Minus skrivs som "-".
-  function fmt(n, dec) {
-    if (n === null || n === undefined || !isFinite(n)) { return '–'; }
-    dec = dec || 0;
-    var s = Math.abs(n).toFixed(dec);
-    var neg = n < 0 && Number(s) !== 0;
-    var delar = s.split('.');
-    var heltal = delar[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-    return (neg ? '-' : '') + heltal + (delar[1] ? ',' + delar[1] : '');
-  }
-
-  // Som fmt men med plustecken för positiva tal (skillnader).
-  function fmtTecken(n, dec) {
-    var t = fmt(n, dec);
-    return (n > 0 && t !== '–' && t.charAt(0) !== '-' && Number(Math.abs(n).toFixed(dec || 0)) !== 0) ? '+' + t : t;
-  }
-
-  function klassForSkillnad(n) {
-    if (n === null || n === undefined || !isFinite(n) || Math.abs(n) < 0.5) { return ''; }
-    return n > 0 ? 'pos' : 'neg';
-  }
-
-  function htmlEscape(s) {
-    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  }
-
-  // ===================================================================
-  // 5. Beräkning
+  // 4. Beräkning
   // ===================================================================
 
   // Beräknar allt som visas, utifrån MANADER och tillstand.
@@ -109,20 +71,17 @@
     var rader = [];
     var tot = {
       kwhAlla: 0, fakturaAlla: 0, kwhOreAlla: 0,       // alla sex månader (tabell 1)
-      antal: 0, kwhIfyllda: 0, idagIfyllda: 0, eneasSumma: 0, kwhOreEneas: 0,
-      hgIdagIfyllda: 0, hgEneas: 0, hgKwhIfyllda: 0, hgIdagAlla: 0, hgKwhAlla: 0
+      antal: 0, kwhIfyllda: 0, idagIfyllda: 0, eneasSumma: 0, kwhOreEneas: 0
     };
 
     MANADER.forEach(function (m) {
       var ore = tolka(tillstand.ore[m.key]);
       if (ore !== null && ore > MAX_ORE) { ore = null; }
-      var rad = { m: m, eneasOre: ore, eneasFaktura: null, diffKr: null, diffPct: null, hgEneas: null, hgDiff: null };
+      var rad = { m: m, eneasOre: ore, eneasFaktura: null, diffKr: null, diffPct: null };
 
       tot.kwhAlla += m.kwh;
       tot.fakturaAlla += m.fakturaKr;
       tot.kwhOreAlla += m.kwh * m.krOre;
-      tot.hgIdagAlla += m.hgKr;
-      tot.hgKwhAlla += m.hgKwh;
 
       if (ore !== null) {
         // Fakturan med Eneas = faktura idag + (prisskillnad × kWh + månadsavgift) × moms.
@@ -131,18 +90,12 @@
         rad.eneasFaktura = Math.round(m.fakturaKr + deltaExkl * MOMS);
         rad.diffKr = rad.eneasFaktura - m.fakturaKr;
         rad.diffPct = rad.diffKr / m.fakturaKr * 100;
-        // Restaurangen: bara prisskillnaden på elen, ingen månadsavgift (ingen fast avgift för hyresgästen).
-        rad.hgEneas = Math.round(m.hgKr + (ore - m.krOre) / 100 * m.hgKwh * MOMS);
-        rad.hgDiff = rad.hgEneas - m.hgKr;
 
         tot.antal += 1;
         tot.kwhIfyllda += m.kwh;
         tot.idagIfyllda += m.fakturaKr;
         tot.eneasSumma += rad.eneasFaktura;
         tot.kwhOreEneas += m.kwh * ore;
-        tot.hgIdagIfyllda += m.hgKr;
-        tot.hgEneas += rad.hgEneas;
-        tot.hgKwhIfyllda += m.hgKwh;
       }
       rader.push(rad);
     });
@@ -151,12 +104,11 @@
     tot.snittEneas = tot.kwhIfyllda ? tot.kwhOreEneas / tot.kwhIfyllda : null;
     tot.diffKr = tot.antal ? tot.eneasSumma - tot.idagIfyllda : null;
     tot.diffPct = tot.antal ? tot.diffKr / tot.idagIfyllda * 100 : null;
-    tot.hgDiff = tot.antal ? tot.hgEneas - tot.hgIdagIfyllda : null;
     return { rader: rader, tot: tot, avgift: avgift };
   }
 
   // ===================================================================
-  // 6. Bygg tabellerna (en gång) och uppdatera siffrorna (vid varje ändring)
+  // 5. Bygg tabellerna (en gång) och uppdatera siffrorna (vid varje ändring)
   // ===================================================================
 
   function td(text, klass, id) {
@@ -183,14 +135,6 @@
             td('', null, 'e-dkr-' + m.key) + td('', null, 'e-dpc-' + m.key) + '</tr>';
     });
     document.querySelector('#tab-eneas tbody').innerHTML = r2;
-
-    // --- Tabell 3: restaurangen ---
-    var r3 = '';
-    MANADER.forEach(function (m) {
-      r3 += '<tr>' + td(m.namn) + td(fmt(m.hgKwh)) + td(fmt(m.hgKr)) +
-            td('', null, 'h-eneas-' + m.key) + td('', null, 'h-diff-' + m.key) + '</tr>';
-    });
-    document.querySelector('#tab-hg tbody').innerHTML = r3;
   }
 
   function satt(id, text, klass) {
@@ -227,26 +171,24 @@
       : (t.antal < MANADER.length
           ? 'Summaraden gäller de ' + t.antal + ' av ' + MANADER.length + ' månader som är ifyllda (kWh, kr och snitt räknas på samma månader). Idag för samma månader: ' + fmt(t.idagIfyllda) + ' kr.'
           : 'Summaraden gäller alla sex månader. Idag: ' + fmt(t.idagIfyllda) + ' kr. Med Eneas: ' + fmt(t.eneasSumma) + ' kr.'));
-
-    // Tabell 3
-    b.rader.forEach(function (r) {
-      var k = r.m.key;
-      satt('h-eneas-' + k, r.hgEneas === null ? '–' : fmt(r.hgEneas));
-      satt('h-diff-' + k, r.hgDiff === null ? '–' : fmtTecken(r.hgDiff), klassForSkillnad(r.hgDiff));
-    });
-    document.querySelector('#tab-hg tfoot').innerHTML = t.antal === 0
-      ? '<tr>' + td('Summa') + td(fmt(t.hgKwhAlla)) + td(fmt(t.hgIdagAlla)) + td('–') + td('–') + '</tr>'
-      : '<tr>' + td('Summa') + td(fmt(t.hgKwhIfyllda)) + td(fmt(t.hgIdagIfyllda)) + td(fmt(t.hgEneas)) +
-        td(fmtTecken(t.hgDiff), klassForSkillnad(t.hgDiff)) + '</tr>';
   }
 
   // ===================================================================
-  // 7. Spara och läsa tillbaka från webbläsaren (localStorage)
+  // 6. Spara och läsa tillbaka från webbläsaren (localStorage)
   //    Allt inom try/catch: privat läge, blockerad lagring m.m. ska aldrig stoppa sidan.
   // ===================================================================
 
   function spara() {
-    try { localStorage.setItem(LAGRINGSNYCKEL, JSON.stringify(tillstand)); } catch (e) { /* ignoreras */ }
+    try {
+      // Läs först det som redan ligger så att inget annat fält på den delade nyckeln skrivs över.
+      var gammalt = {};
+      var s = localStorage.getItem(LAGRINGSNYCKEL);
+      if (s) { gammalt = JSON.parse(s) || {}; }
+      var ny = {};
+      Object.keys(gammalt).forEach(function (k) { ny[k] = gammalt[k]; });
+      Object.keys(tillstand).forEach(function (k) { ny[k] = tillstand[k]; });
+      localStorage.setItem(LAGRINGSNYCKEL, JSON.stringify(ny));
+    } catch (e) { /* ignoreras */ }
   }
 
   function las() {
@@ -290,7 +232,7 @@
   }
 
   // ===================================================================
-  // 8. Kopiera tabellerna (HTML + text) och skriv ut
+  // 7. Kopiera tabellerna (HTML + text) och skriv ut
   // ===================================================================
 
   var CELL = 'border:1px solid #999;padding:4px 8px;text-align:right;font-family:Arial,sans-serif;font-size:13px;';
@@ -341,16 +283,6 @@
       : ['Summa (' + t.antal + ' av ' + MANADER.length + ' månader)', fmt(t.kwhIfyllda), fmt(t.eneasSumma), fmt(t.snittEneas, 2) + ' (snitt)', '', '', '', fmtTecken(t.diffKr), fmtTecken(t.diffPct, 1)]);
     var k2 = tabellKopia('Tabell 2. Med Eneas priser (gula fält ifyllda av Eneas)', h2, r2, 3);
 
-    // Tabell 3
-    var h3 = ['Månad', 'Restaurangens kWh', 'Idag (kr inkl moms)', 'Med Eneas (kr inkl moms)', 'Skillnad (kr)'];
-    var r3 = b.rader.map(function (r) {
-      return [r.m.namn, fmt(r.m.hgKwh), fmt(r.m.hgKr), r.hgEneas === null ? '–' : fmt(r.hgEneas), r.hgDiff === null ? '–' : fmtTecken(r.hgDiff)];
-    });
-    r3.push(t.antal === 0
-      ? ['Summa', fmt(t.hgKwhAlla), fmt(t.hgIdagAlla), '–', '–']
-      : ['Summa', fmt(t.hgKwhIfyllda), fmt(t.hgIdagIfyllda), fmt(t.hgEneas), fmtTecken(t.hgDiff)]);
-    var k3 = tabellKopia('Tabell 3. Restaurangens andel (ingen fast nätavgift)', h3, r3, -1);
-
     // Anteckningar
     var rader = [
       ['Fast månadsavgift Eneas (kr/mån exkl moms)', tillstand.avgift || '–'],
@@ -374,9 +306,9 @@
     return {
       html: '<div style="font-family:Arial,sans-serif;">' +
             '<p style="font-family:Arial,sans-serif;font-size:16px;"><b>Elkostnad januari–juni 2026: Kraftringen och Eneas</b></p>' +
-            k1.html + k2.html + k3.html + an +
+            k1.html + k2.html + an +
             '<p style="font-family:Arial,sans-serif;font-size:12px;color:#555;">' + htmlEscape(not) + '</p></div>',
-      text: 'Elkostnad januari–juni 2026: Kraftringen och Eneas\n\n' + k1.text + k2.text + k3.text + anText + '\n' + not + '\n'
+      text: 'Elkostnad januari–juni 2026: Kraftringen och Eneas\n\n' + k1.text + k2.text + anText + '\n' + not + '\n'
     };
   }
 
@@ -427,7 +359,7 @@
   }
 
   // ===================================================================
-  // 9. Händelser
+  // 8. Händelser
   // ===================================================================
 
   function kopplaHandelser() {
@@ -459,16 +391,11 @@
       visaMeddelande('Inmatningen är rensad.');
     });
 
-    // Teknik-modal: öppna/stäng via knapp, stängknapp, klick på bakgrunden och Escape
-    var overlay = document.getElementById('techOverlay');
-    document.getElementById('techBtn').addEventListener('click', function () { overlay.classList.add('show'); });
-    document.getElementById('techClose').addEventListener('click', function () { overlay.classList.remove('show'); });
-    overlay.addEventListener('click', function (e) { if (e.target === overlay) { overlay.classList.remove('show'); } });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { overlay.classList.remove('show'); } });
+    H.kopplaTeknikModal();
   }
 
   // ===================================================================
-  // 10. Start
+  // 9. Start
   // ===================================================================
   function start() {
     document.getElementById('version').textContent = VERSION;
