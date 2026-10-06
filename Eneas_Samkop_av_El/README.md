@@ -48,6 +48,7 @@ kostnader + 1,70 öre/kWh fast påslag).
 | `intern_debitering.js` | Restaurangens data och jämförelse med Eneas priser. |
 | `intern_debitering.css` | Utseendet på debiteringsunderlaget (liknar dagens underlag). |
 | `PRD.md` | Kravdokument med bakgrund, beslut och kontrollräkning mot fakturorna. |
+| `KVALITETSGRANSKNING.md` | Hur siffrorna och beräkningarna har granskats, resultat och det som återstår. Skript i `kvalitetsgranskning/`. |
 | `Eneas Samkop av El 2026.pdf` | Eneas broschyr (innehåller inga priser). |
 
 Rena HTML-, CSS- och JavaScript-filer utan ramverk och utan byggprocess. Öppnas direkt i webbläsaren.

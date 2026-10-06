@@ -1,0 +1,40 @@
+# Läser siffror ur Kraftringens PDF-fakturor med kod (ingen handtranskribering).
+import fitz, re, json, glob, os
+BAS = r"D:\VåraFiler_primära_på_SSD\Kent_dokument\Data\HTML\kentlundgren_se\program\Bjerred\El\Kraftringen\Fakturor"
+def tal(s):  # "8 824,00" -> 8824.00 ; hanterar mellanslag (även NBSP)
+    return float(s.replace('\u00a0','').replace(' ','').replace(',','.'))
+ut = {}
+for f in sorted(glob.glob(os.path.join(BAS, '*.pdf'))):
+    t = "\n".join(p.get_text() for p in fitz.open(f))
+    t1 = re.sub(r'\s+', ' ', t)
+    d = {}
+    d['fil'] = os.path.basename(f)
+    d['nr'] = re.search(r'OCR-nummer (\d+)', t1).group(1)
+    d['avser'] = re.search(r'Avser (\w+ 2026)', t1).group(1)
+    d['total_inkl'] = tal(re.search(r'Avser \w+ 2026 ([\d ]+) kr', t1).group(1))
+    d['ore_utj'] = tal(re.search(r'\(Öresutjämning (-?[\d,]+)', t1).group(1))
+    d['exkl_moms'] = tal(re.search(r'Summa exkl\. moms ([\d ,]+?) Moms', t1).group(1))
+    d['moms'] = tal(re.search(r'Moms ([\d ,]+?) Bankgiro', t1).group(1))
+    m = re.search(r'Avläsning (\d{4}-\d\d-\d\d) ([\d ]+,\d\d) Avläsning (\d{4}-\d\d-\d\d) ([\d ]+,\d\d) ([\d ]+,\d\d) kWh', t1)
+    d['mat_start'] = tal(m.group(2)); d['mat_slut'] = tal(m.group(4)); d['kwh_fakturan'] = tal(m.group(5))
+    m = re.search(r'Fast avgift \(1\.00 mån à ([\d ,]+) kr/mån\) Avser \S+ ([\d ]+,\d\d) Elöverföring', t1)
+    d['fast_nat_rate'] = tal(m.group(1)); d['fast_nat_kr'] = tal(m.group(2))
+    m = re.search(r'Elöverföring \(([\d.]+) kWh à ([\d,]+) öre/kWh\) Avser \S+ ([\d ]+,\d\d)', t1)
+    d['kwh_nat'] = float(m.group(1)); d['nat_ore'] = tal(m.group(2)); d['nat_kr'] = tal(m.group(3))
+    m = re.search(r'Energiskatt \(([\d.]+) kWh à ([\d,]+) öre/kWh\) Avser \S+ ([\d ]+,\d\d)', t1)
+    d['skatt_ore'] = tal(m.group(2)); d['skatt_kr'] = tal(m.group(3))
+    m = re.search(r'Moms \(25%\) ([\d ]+,\d\d) Totalt Elnät ([\d ]+,\d\d)', t1)
+    d['moms_nat'] = tal(m.group(1)); d['tot_nat'] = tal(m.group(2))
+    m = re.search(r'Spotpris \(([\d.]+) kWh à ([\d,]+) öre/kWh\) Avser \S+ ([\d ]+,\d\d)', t1)
+    d['spot_ore'] = tal(m.group(2)); d['spot_kr'] = tal(m.group(3))
+    m = re.search(r'Rörliga kostnader \(([\d.]+) kWh à ([\d,]+) öre/kWh\) Avser \S+ ([\d ]+,\d\d)', t1)
+    d['rorl_ore'] = tal(m.group(2)); d['rorl_kr'] = tal(m.group(3))
+    m = re.search(r'Fast påslag \(([\d.]+) kWh à ([\d,]+) öre/kWh\) Avser \S+ ([\d ]+,\d\d)', t1)
+    d['pasl_ore'] = tal(m.group(2)); d['pasl_kr'] = tal(m.group(3))
+    m = re.search(r'Månadsavgift \(1\.00 mån à ([\d ,]+) kr/mån\)', t1)
+    d['manadsavgift'] = tal(m.group(1))
+    m = re.search(r'Moms \(25%\) ([\d ]+,\d\d) Totalt Elhandel ([\d ]+,\d\d)', t1)
+    d['moms_handel'] = tal(m.group(1)); d['tot_handel'] = tal(m.group(2))
+    ut[d['avser']] = d
+json.dump(ut, open('fakturor.json','w'), ensure_ascii=False, indent=1)
+for k,v in ut.items(): print(k, v['nr'], v['kwh_fakturan'], v['mat_slut']-v['mat_start'], v['total_inkl'], v['nat_ore'], v['spot_ore'], v['rorl_ore'], v['pasl_ore'])
