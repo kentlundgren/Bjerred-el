@@ -360,14 +360,21 @@ kvalitetssäkrade i övrigt; kontrollera mot originalen.
   1–3 kr (februari 82 795 mot 82 794, mars 63 387 mot 63 389, maj 56 335 mot 56 338
   med flera). Orsaken är att Kraftringen räknar med öre-priser i fler decimaler än de två
   som fakturan visar.
-- Hyresgästen april–juni blir 17 872, 23 522 och 24 018 kr mot rättade 17 873, 23 521 och
-  24 017 kr (±1 kr). Orsaken är att mätarställningarna har decimaler som kalkylbladet bara
-  visar avrundade: bastu dam maj visas som 4 449 men skillnaden mellan avrundade
+- Hyresgästen april–juni blir 17 872, 23 522 och 24 015 kr mot rättade 17 873, 23 521 och
+  24 017 kr (−1, +1 och −2 kr). Orsaken är att mätarställningarna har decimaler som kalkylbladet
+  bara visar avrundade: bastu dam maj visas som 4 449 men skillnaden mellan avrundade
   ställningar är 4 448, och juni visar 3 916 + 3 515 = 7 431 mot summan 7 430.
+  UPPDATERING 2026-10-06 (rättelse efter granskning 2): avsnittet angav tidigare 24 018 kr för
+  juni. Det värdet fås med bildens hyresgäst-kWh (11 756). Debiteringsunderlaget räknar från de
+  avrundade ställningarna (11 755 kWh) och ger 24 015 kr. Jämförelsesidan använder 11 756 kWh,
+  underlaget 11 755: de skiljer 1 kWh, vilket bör hanteras (se KVALITETSGRANSKNING.md).
 - Åtgärd: baslinjen förankras i fakturans faktiska belopp. Eneas-scenariot beräknas som
-  Kraftringens faktura (och hyresgästens debitering) minus Kraftringens elhandel plus
-  Eneas elhandel, så att baslinjen stämmer exakt och skillnaden blir korrekt. Del 2 tar emot
-  mätarställningar med decimaler.
+  fakturan (och hyresgästens debitering) idag plus prisskillnaden (Eneas pris minus Kraftringens
+  "El inkl elcert" i öre/kWh) × kWh × 1,25. UPPDATERING 2026-10-06 (rättelse efter granskning 2):
+  det står inte, som tidigare, "minus Kraftringens elhandel plus Eneas elhandel". Koden drar bort
+  `krOre` × kWh och inte fakturans faktiska elbelopp i kr. Skillnaden är högst 1,15 kr exkl.
+  moms (1,44 kr inkl. moms) per månad. Fördelen är att Eneas pris lika med Kraftringens pris ger
+  exakt noll. Del 2 tar emot mätarställningar med decimaler.
 
 **Kraftringens elhandel per månad (kr exkl. moms, spotpris + rörliga kostnader + fast påslag,
 månadsavgift 0 kr):** jan 43 300,29, feb 38 902,96, mar 26 072,72, apr 18 213,82, maj 22 744,97,
