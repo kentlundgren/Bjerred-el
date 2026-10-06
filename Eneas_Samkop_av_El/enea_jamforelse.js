@@ -15,6 +15,7 @@
   hjälpfunktionerna flyttade till enea_hjalp.js. Version 1.1.
   UPPDATERING 2026-10-06: Kraftringens pris i tabell 1 markeras (klassen "markerad") när
   Eneas pris för samma månad är ifyllt. Version 1.2.
+  UPPDATERING 2026-10-06: Bara en månad i taget markeras (den som fyllts i eller fått fokus). Version 1.3.
 */
 (function () {
   'use strict';
@@ -27,7 +28,7 @@
   // ===================================================================
   // 1. Version
   // ===================================================================
-  var VERSION = '1.2';
+  var VERSION = '1.3';
   var VERSIONSDATUM = '2026-10-06';
 
   // ===================================================================
@@ -52,6 +53,9 @@
   // ===================================================================
   // 3. Inmatat tillstånd (det Isak fyller i)
   // ===================================================================
+  // Den månad vars prisfält senast fick fokus eller ändrades. Bara den månadens pris markeras i tabell 1.
+  var aktivNyckel = null;
+
   var tillstand = {
     ore: {},          // { '2026-01': '95,5', ... } som text, precis som det skrevs
     avgift: '',       // Eneas fasta månadsavgift, kr/mån exkl moms
@@ -158,10 +162,10 @@
     // Tabell 2: rader
     b.rader.forEach(function (r) {
       var k = r.m.key;
-      // Markera Kraftringens pris i tabell 1 (fetstil + grön bakgrund) så länge Eneas pris för
-      // månaden är ifyllt, så att man direkt ser vad som jämförs.
+      // Markera Kraftringens pris i tabell 1 (fetstil + grön bakgrund) för den månad man just
+      // fyller i (bara en månad i taget), så att man direkt ser vad som jämförs.
       var kEl = document.getElementById('k-el-' + k);
-      if (kEl) { kEl.classList.toggle('markerad', r.eneasOre !== null); }
+      if (kEl) { kEl.classList.toggle('markerad', k === aktivNyckel && r.eneasOre !== null); }
       satt('e-fak-' + k, r.eneasFaktura === null ? '–' : fmt(r.eneasFaktura));
       satt('e-dkr-' + k, r.diffKr === null ? '–' : fmtTecken(r.diffKr), klassForSkillnad(r.diffKr));
       satt('e-dpc-' + k, r.diffPct === null ? '–' : fmtTecken(r.diffPct, 1), klassForSkillnad(r.diffKr));
@@ -374,9 +378,18 @@
     document.getElementById('tab-eneas').addEventListener('input', function (e) {
       var el = e.target;
       if (el && el.getAttribute('data-key')) {
-        tillstand.ore[el.getAttribute('data-key')] = el.value;
+        aktivNyckel = el.getAttribute('data-key');
+        tillstand.ore[aktivNyckel] = el.value;
         markeraOgiltigt(el);
         spara();
+        uppdatera();
+      }
+    });
+    // Klickar man i ett prisfält flyttas markeringen i tabell 1 till den månaden.
+    document.getElementById('tab-eneas').addEventListener('focusin', function (e) {
+      var el = e.target;
+      if (el && el.getAttribute && el.getAttribute('data-key')) {
+        aktivNyckel = el.getAttribute('data-key');
         uppdatera();
       }
     });
