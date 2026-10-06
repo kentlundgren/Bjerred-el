@@ -326,6 +326,11 @@ jämförelsen med Eneas priser. Filer: `intern_underlag.js` (logik och data), `i
 - D5 Kontroller: huvudmätarens förbrukning mot kWh på fakturan (±1 kWh) och totalbelopp mot tidigare
   debiterat (varning om avvikelsen är över 2 kr), samt varning för utgående under ingående och för
   negativ hyresgäst-kWh.
+- Skydd för fasta månader (2026-10-06): januari–juni 2026 kan aldrig tas bort. "Återställ månaden"
+  sätter tillbaka de fasta värdena för en fast månad och tömmer fälten för en tillagd månad.
+  "Ta bort månaden" visas bara för den sista tillagda månaden (annars bryts kedjan av ingående
+  mätarställningar). Sidan förklarar detta under knapparna, och bekräftelsedialogerna beskriver
+  vad som händer.
 - D6 "Kopiera underlaget" (HTML + text), "Skriv ut underlaget" (bara arket, A4) och sparande i
   webbläsaren (egen nyckel `intern_underlag_v1`).
 

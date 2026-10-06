@@ -198,7 +198,29 @@
     el('p-rorlig').value = d.p.rorlig || '';
     el('p-el').value = d.p.el || '';
     el('p-skatt').value = d.p.skatt || '';
-    el('btn-u-ta-bort').hidden = !d.extra;
+    // "Ta bort månaden" visas bara för en tillagd månad och bara för den sista (annars skulle
+    // kedjan av ingående mätarställningar brytas). Januari–juni 2026 kan aldrig tas bort.
+    var k = nycklar();
+    var arSista = k[k.length - 1] === valt;
+    el('btn-u-ta-bort').hidden = !(d.extra && arSista);
+    knappInfo(d, arSista);
+  }
+
+  // Förklarar för användaren vad "Återställ" och "Ta bort" gör för den valda månaden.
+  function knappInfo(d, arSista) {
+    var namn = manadsNamn(valt);
+    var h = '';
+    if (!d.extra) {
+      h += '<li><b>Återställ månaden:</b> sätter tillbaka de fasta värdena för ' + htmlEscape(namn) +
+           ' (hämtade ur fakturan och dagens underlag). Det du själv har ändrat för månaden försvinner.</li>';
+      h += '<li>Januari–juni 2026 är fasta månader och <b>kan inte tas bort</b>.</li>';
+    } else {
+      h += '<li><b>Återställ månaden:</b> tömmer alla fält för ' + htmlEscape(namn) + ' (månaden finns kvar).</li>';
+      h += arSista
+        ? '<li><b>Ta bort månaden:</b> tar bort hela månaden ' + htmlEscape(namn) + ' och det du fyllt i. Går inte att ångra. Fasta månader påverkas inte.</li>'
+        : '<li>Bara den sista månaden kan tas bort. Ta bort de senare månaderna först.</li>';
+    }
+    el('knapp-info').innerHTML = h;
   }
 
   function uppdateraBeraknat() {
@@ -298,7 +320,10 @@
   }
 
   function aterstall() {
-    if (!window.confirm('Återställ ' + manadsNamn(valt) + '? Det du fyllt i för månaden försvinner.')) { return; }
+    var arFast = !data[valt].extra;
+    if (!window.confirm(arFast
+        ? 'Återställ ' + manadsNamn(valt) + ' till de fasta värdena? Det du själv har ändrat för månaden försvinner.'
+        : 'Töm alla fält för ' + manadsNamn(valt) + '? Månaden finns kvar.')) { return; }
     var std = null;
     STANDARD.forEach(function (m) { if (m.key === valt) { std = kopia(m); } });
     if (std) {
@@ -313,8 +338,10 @@
   }
 
   function taBort() {
-    if (!data[valt].extra) { return; }
-    if (!window.confirm('Ta bort ' + manadsNamn(valt) + '?')) { return; }
+    // Skydd: bara en tillagd månad, och bara den sista, kan tas bort. Fasta månader (jan–jun 2026) aldrig.
+    var k = nycklar();
+    if (!data[valt].extra || k[k.length - 1] !== valt) { return; }
+    if (!window.confirm('Ta bort ' + manadsNamn(valt) + '? Månaden och det du fyllt i försvinner. Det går inte att ångra.')) { return; }
     delete data[valt];
     var k = nycklar();
     valt = k[k.length - 1];
