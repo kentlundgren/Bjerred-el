@@ -16,6 +16,7 @@
   UPPDATERING 2026-10-06: Kraftringens pris i tabell 1 markeras (klassen "markerad") när
   Eneas pris för samma månad är ifyllt. Version 1.2.
   UPPDATERING 2026-10-06: Bara en månad i taget markeras (den som fyllts i eller fått fokus). Version 1.3.
+  UPPDATERING 2026-10-06: Markeringen försvinner när man lämnar prisfälten. Version 1.4.
 */
 (function () {
   'use strict';
@@ -28,7 +29,7 @@
   // ===================================================================
   // 1. Version
   // ===================================================================
-  var VERSION = '1.3';
+  var VERSION = '1.4';
   var VERSIONSDATUM = '2026-10-06';
 
   // ===================================================================
@@ -390,6 +391,15 @@
       var el = e.target;
       if (el && el.getAttribute && el.getAttribute('data-key')) {
         aktivNyckel = el.getAttribute('data-key');
+        uppdatera();
+      }
+    });
+    // Lämnar man prisfälten (klickar någon annanstans) försvinner markeringen. Går fokus till ett
+    // annat prisfält tar focusin ovan över och markerar den månaden i stället.
+    document.getElementById('tab-eneas').addEventListener('focusout', function (e) {
+      var till = e.relatedTarget;
+      if (!till || !till.getAttribute || !till.getAttribute('data-key')) {
+        aktivNyckel = null;
         uppdatera();
       }
     });
