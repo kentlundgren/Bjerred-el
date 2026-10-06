@@ -2,7 +2,7 @@
 
 Projekt: Elenergiförbrukning – Bjerreds Saltsjöbad
 Mapp: `Spotpris/` (all utveckling sker inom denna mapp)
-Status: Utkast 4, 2026-10-07 (förstudie 1–4 i avsnitt 4; beslut efter Kents svar 2026-10-07: förbrukningen uppskattas baklänges, sidan är öppen; verkliga öppettider inlagda)
+Status: Utkast 5, 2026-10-07 (förstudie 1–5 i avsnitt 4; beslut efter Kents svar 2026-10-07: förbrukningen uppskattas baklänges, sidan är öppen; verkliga öppettider inlagda; luft-värmepump till restaurangen antas; genomläst med nya ögon och klar för SPEC.md av beräkningsskriptet, se avsnitt 11–12)
 Ansvarig: Kent Lundgren
 
 > OBS! Siffrorna i förstudien (avsnitt 4) är framräknade ur spotpriser från elprisetjustnu.se och spotpriset på
@@ -56,13 +56,17 @@ Spotpriset ändras varje kvart (från 1 oktober 2025 är det kvartspriser på da
 spotpris (M4b). M3 byggs så snart mätdata finns och blir då facit för hur bra uppskattningen var. M4b ersätter inte M3: den är
 en reservlösning med en tydlig osäkerhet (se förstudie 2 och avsnitt 9–10).
 
-**Min bedömning:** M3 är det riktiga svaret på "vilket spotpris betalar vi", eftersom det är så en elhandlare med kvartsavräkning
+**Bedömning:** M3 är det riktiga svaret på "vilket spotpris betalar vi", eftersom det är så en elhandlare med kvartsavräkning
 räknar. Fakturornas spotpris har fler decimaler än de två som visas (implicit pris 117,3807 i stället för 117,38 för
 januari, enligt granskningen av fakturorna), vilket tyder på att beloppet räknas per kvart och inte som ett enkelt snitt. Det är
 en slutsats och inte något Kraftringen har bekräftat. M1 och M2 behövs ändå, eftersom de går att räkna utan förbrukningsdata
 och visar hur mycket viktningen betyder.
 
-## 4. Förstudie: M1 och M2 mot fakturornas spotpris (2026-10-07)
+## 4. Förstudier (2026-10-07)
+
+Fem förstudier gjordes i följd, och varje bygger på den förra. Skript, och för förstudie 5 diagrammet, ligger i [`forstudie/`](forstudie/).
+
+### 4.1 Förstudie 1: M1 och M2 mot fakturornas spotpris
 
 Spotpriser för SE4 hämtades för alla 181 dygn januari–juni 2026 från elprisetjustnu.se (96 kvartspriser per dygn, utom
 2026-03-29 som har 92 på grund av sommartiden) och räknades fram till M1 och M2. Skripten ligger i
@@ -121,7 +125,7 @@ apr −0,08, maj +1,33, jun +0,92.
    förutsäger en utelämnad månad inom 3 öre/kWh. Det är en klart bättre uppskattning än M1 och M2 (RMS 4,1 och 5,3, fel upp till 8,5 öre/kWh).
 3. **Det går alltså att uppskatta M3 baklänges med några öre/kWh i osäkerhet.** Då kan även Kraftringens "påslag över spot" och Eneas marginal
    jämföras på en rimlig nivå.
-4. **Profilen är inte entydig.** Modellen kan inte skilja uppvärmning av bastun före 06 från annan förbrukning på natten (kyl, varmvatten, golvvärme,
+4. **Profilen är inte entydig.** Modellen kan inte skilja uppvärmning av bastun före 06 från annan förbrukning på natten (kyl, ventilation, värme,
    belysning). Av 252 testade kombinationer hade 27 ett RMS-fel under 2 öre/kWh och ingen under 1,0. Förstudien visar **inte** att bastun faktiskt
    värms upp från kl. 01. Det är en hypotes som förbrukningsdata eller kunskap om bastuaggregatets drift kan bekräfta eller avfärda.
 5. **Priset per timme styr resultatet.** I januari är det billigast nattetid (cirka 81–89 öre/kWh kl. 00–05) och dyrast kl. 16–18 (143–151). I maj är det
@@ -136,17 +140,17 @@ och gäller varmvatten till duschar och restaurang. Restaurangens tider antas ha
 städas varje dag före 07.30, och från 1 maj är badet öppet hela dagen utan avbrott för städning (Bjerreds Saltsjöbad, u.å.a; tider för städavbrott före 1 maj anges inte).
 Restaurangen är stängd måndag–tisdag, öppen onsdag–fredag 16.00–22.00, lördag 11.00–22.00 och söndag 11.00–17.00 (Bjerreds Saltsjöbad, u.å.b).
 
-**Modellen.** Profilen räknas per kvart och veckodag (skript `forstudie/modell_veckodag.py`): bastu jämn från öppning (minus eventuell uppvärmning) till 22, restaurangen som en
+**Modellerna D1–D3** (kallas D för att skilja dem från A–C i förstudie 2). Profilen räknas per kvart och veckodag (skript `forstudie/modell_veckodag.py`): bastu jämn från öppning (minus eventuell uppvärmning) till 22, restaurangen som en
 **baslast** (andel av kWh jämn dygnet runt) plus en **driftdel** enligt öppettiderna per veckodag (med eventuell förberedelse före öppning), och varmvatten antingen jämnt dygnet
 runt eller enligt bastuns och restaurangens tider. Fel = modellens viktade spotpris minus fakturans (öre/kWh).
 
 | Antagande | RMS-fel | Fel jan–jun |
 |-----------|--------:|-------------|
-| A. Bara öppettider: bastu 06–22, varmvatten dygnet runt | 3,43 | +2,50, +1,17, +4,43, +3,43, −2,35, −5,10 |
-| A. Bara öppettider: bastu 07.30–22, varmvatten dygnet runt | 3,54 | +3,65, +1,66, +3,28, +1,80, −3,62, −5,65 |
-| B. Plus baslast 80 % av restaurangens kWh (bastu 07.30–22, varmvatten dygnet runt) | 1,38 | +2,39, +1,52, −0,19, +1,42, +0,88, −0,75 |
-| C. Bäst av 2 652 kombinationer: bastu 07.30–22 med uppvärmning 4,5 h före öppning, baslast 80 %, restaurangens förberedelse 1 h, varmvatten enligt tider | 1,16 | −0,22, −0,05, +0,03, +2,09, +1,25, −1,45 |
-| C. Leave-one-out (förutsäg utelämnad månad) | – | +2,39, −0,05, +0,03, +2,09, +1,25, −3,70 |
+| D1. Bara öppettider: bastu 06–22, varmvatten dygnet runt | 3,43 | +2,50, +1,17, +4,43, +3,43, −2,35, −5,10 |
+| D1. Bara öppettider: bastu 07.30–22, varmvatten dygnet runt | 3,54 | +3,65, +1,66, +3,28, +1,80, −3,62, −5,65 |
+| D2. Plus baslast 80 % av restaurangens kWh (bastu 07.30–22, varmvatten dygnet runt) | 1,38 | +2,39, +1,52, −0,19, +1,42, +0,88, −0,75 |
+| D3. Bäst av 2 652 kombinationer: bastu 07.30–22 med uppvärmning 4,5 h före öppning, baslast 80 %, restaurangens förberedelse 1 h, varmvatten enligt tider | 1,16 | −0,22, −0,05, +0,03, +2,09, +1,25, −1,45 |
+| D3. Leave-one-out (förutsäg utelämnad månad) | – | +2,39, −0,05, +0,03, +2,09, +1,25, −3,70 |
 
 **Vad förstudie 3 visar:**
 
@@ -234,7 +238,7 @@ ett grått band för 66 alternativa lika bra passningar (RMS högst 1,5 öre/kWh
 | 14 | Var länkas sidan? | Navigering. | Från elöversikten (`index.html`) och från `Eneas_Samkop_av_El/` när den är klar. |
 | 15 | Hur kommer Eneas pris in i spotprissidan? | Isaks inmatning finns bara i hans egen webbläsare (och i mejlet han skickar), så den här sidan kan inte läsa den själv. | Kent skriver in priserna som en ifylld datafil (`data/eneas_pris.json`) eller i ett gult fält på sidan, när Isaks mejl kommit. |
 | 16 | Räcker Kraftringens poster per månad? | `enea_jamforelse.js` har bara summan "allt elpris" (`krOre`), inte spotpris, rörliga kostnader och påslag var för sig. | Lägg in de tre posterna per månad ur fakturorna i en egen datafil här (värdena finns i förstudien och i granskningsrapporten) och kontrollera dem mot fakturorna. |
-| 17 | **Vad är det som drar el dygnet runt i "restaurangens" del?** | Förstudie 3: 75–80 % av restposten ser ut att vara jämn dygnet runt, 10–18 kW. | **Delvis besvarad 2026-10-07 (Kent):** ventilation, värme och belysning går dygnet runt. Det finns ingen golvvärme i vinterträdgården. Belysningen drar inte mycket mitt i natten. Alltså är ventilation och värme de stora jämna förbrukarna (och kylar). **Uppvärmning (Kent, 2026-10-07):** bastuarna värms med el, omklädningsrummen med vattenburen el och restaurangen med el. Kent sade först att det inte finns någon värmepump, och tillade sedan att det **kanske** finns en värmepump till restaurangen. Det är oklart och ska bekräftas. **Kvar att besvara:** finns en värmepump till restaurangen (och i så fall vilken sorts), om ventilation eller värme har nattsänkning eller timer, och om bastuns uppvärmning startar före öppning. Modellen kan inte skilja bastuns uppvärmning från annan nattförbrukning. En värmepump ändrar inte siffrorna i förstudierna (värmen är en del av baslasten, och väderberoende värme gav ingen förbättring, förstudie 4), men den ändrar hur baslasten ska tolkas och hur väderberoende den kan förväntas vara. |
+| 17 | **Vad är det som drar el dygnet runt i "restaurangens" del?** | Förstudie 3: 75–80 % av restposten ser ut att vara jämn dygnet runt, 10–18 kW. | **Delvis besvarad 2026-10-07 (Kent):** ventilation, värme och belysning går dygnet runt. Det finns ingen golvvärme i vinterträdgården. Belysningen drar inte mycket mitt i natten. Alltså är ventilation och värme de stora jämna förbrukarna (och kylar). **Uppvärmning (Kent, 2026-10-07):** bastuarna värms med el, omklädningsrummen med vattenburen el och restaurangen med el. Kent sade först att det inte finns någon värmepump, och tillade sedan att det kanske finns en värmepump till restaurangen. **Arbetsantagande 2026-10-07 (Kent): det finns en luft-värmepump till restaurangen.** Det ska bekräftas. **Kvar att besvara:** hur stor och hur styrd luft-värmepumpen är, om ventilation eller värme har nattsänkning eller timer, och om bastuns uppvärmning startar före öppning. Modellen kan inte skilja bastuns uppvärmning från annan nattförbrukning. En värmepump ändrar inte siffrorna i förstudierna (värmen är en del av baslasten, och väderberoende värme gav ingen förbättring, förstudie 4), men den ändrar hur baslasten ska tolkas och hur väderberoende den kan förväntas vara. |
 | 18 | Gällde restaurangens tider (må–ti stängt, on–fr 16–22, lö 11–22, sö 11–17) och badets 07.30–22 hela januari–juni 2026? När ändrades bastuns tid från 06–22 till 07.30–22? Fanns städavbrott före 1 maj, och när? | Tiderna i modellen kommer från hemsidorna 2026-10-07. Kent antar att de gällde jan–jun. | Kent bekräftar eller anger tider per månad. Modellen tar tider per månad. |
 | 19 | ~~Är varmvattenmätaren i kWh el?~~ | **Besvarad 2026-10-07 (Kent):** den mäter kWh el, för varmvatten till duschar och restaurang. | När värms vattnet (tank, timer, effektbegränsning) är fortfarande okänt. Modellen provar dygnet runt och enligt bastuns och restaurangens tider. |
 | 20 | Ska utetemperatur ingå i modellen? | Värme är väderberoende. Förstudie 4 gav ingen förbättring, och källan (Open-Meteo, modellerad data) har oklara villkor. | **Nej i första bygget.** Tas upp igen när förbrukningsdata per kvart finns, då värmens väderberoende kan ses direkt. |
@@ -290,6 +294,17 @@ filer, kommentera i detalj, gul bakgrund bara på inmatningsfält. Källor i Har
   validering, eftersom samma faktura både styr valet och används som facit.
 - **Märkning:** varje värde på sidan visar om det är M1, M2, M3, M4a eller M4b, och M4b märks tydligt som en uppskattning.
 
+**Arbetsantaganden för M4a och M4b (2026-10-07).** Antagandena ska ligga som data och visas på sidan:
+
+- **Bastu:** öppen 07.30–22.00 alla dagar enligt hemsidan (var 06–22 tidigare; när ändringen skedde är okänt, så båda provas). Bastuaggregaten värms med el. Om uppvärmningen startar före öppning
+  är okänt och provas 0–6 timmar före.
+- **Varmvatten:** kWh el, för duschar och restaurang. Provas jämnt dygnet runt och enligt bastuns och restaurangens tider.
+- **Restaurang:** stängd måndag–tisdag, onsdag–fredag 16–22, lördag 11–22, söndag 11–17. Antas ha gällt januari–juni.
+- **Restposten** (huvudmätaren minus bastu minus varmvatten) innehåller allt annat: ventilation, uppvärmning med el (omklädningsrum vattenburen el, restaurangen el, antagen luft-värmepump),
+  belysning, kylar och kök. Ventilation, värme och belysning går dygnet runt, men belysningen drar lite på natten. Ingen golvvärme i vinterträdgården. Värmen ingår i den jämna baslasten och
+  modelleras inte efter väder (förstudie 4).
+- **Priser:** spotpris för SE4, utan moms, per kvart (från 2025-10-01). Månadens kWh per del hämtas ur debiteringsunderlagen.
+
 ## 8. Funktionella krav
 
 | Nr | Krav |
@@ -323,6 +338,7 @@ filer, kommentera i detalj, gul bakgrund bara på inmatningsfält. Källor i Har
 6. Sidan fungerar utan nätverk, är läsbar i mobil (16 px marginal, ingen sidledsrullning för sidan) och visar versionsnummer och datum.
 7. Källor anges i Harvardformat med klickbara, kontrollerade länkar, och sidan anger att priserna är utan moms och hämtade ur angiven källa.
 8. Tvåstegsgranskning (avsnitt 11) är gjord innan texten säger att siffrorna är granskade.
+9. **Effektkurvan:** medeleffekten per månad är månadens kWh delat på antal timmar (kontrolleras mot huvudmätarens förbrukning), kurvan är tydligt märkt som uppskattning och bandet av alternativa passningar visas.
 
 ## 10. Risker
 
@@ -346,19 +362,42 @@ filer, kommentera i detalj, gul bakgrund bara på inmatningsfält. Källor i Har
 med ett skriftligt uppdrag och godkänd-kriterier som fastställs före körningen). Stickprov av spotpriserna mot en primärkälla ingår. Texten på sidorna
 anger "kontrollräknade" först när det är gjort.
 
-**SPEC.md-checkpoint: behövs ett SPEC.md-steg härifrån?** Nej, som separat dokument. Sidan är en tabell och ett diagram i samma mönster som övriga
-sidor. De tekniska gränsfallen som en agent behöver veta är redan gjorda explicita i det här dokumentet: indata och källa (avsnitt 6), tidsupplösning
-och sommartid (fråga 6, krav F2), negativa priser (fråga 7) och metoderna M1–M4b (avsnitt 3 och 7). Skulle hämtnings- och beräkningsskriptet bli
-mer komplext (flera källor, automatisk körning), prövas frågan igen.
+**SPEC.md-checkpoint: behövs ett SPEC.md-steg härifrån?** **Ja, för beräkningsskriptet. Nej, för sidan.** (Utkast 1 svarade nej. Svaret ändrades efter förstudierna.)
+
+Det som började som tre tal per månad har blivit en modell med ett sökrum (när bastun öppnar och värms upp, restaurangens förberedelse, baslastens storlek, varmvattnets fördelning),
+leave-one-out, ett band av alternativa passningar, sommartid, negativa priser och regler för omöjliga kombinationer. Där gissar en agent lätt fel om inget är skrivet exakt. En SPEC.md ska därför fastställa:
+
+- indata och format: spotpriser per kvart (lokal tid, 92–100 kvartar vid sommartid), kWh per del och månad, fakturornas spotpris, öppettider som data;
+- sökrymdens gränser och stegstorlek, och hur "lika bra passning" räknas (RMS-gräns, antal kombinationer);
+- hur oavgjort bryts, och vad som händer vid en omöjlig kombination (baslasten större än restposten);
+- leave-one-out-förfarandet, och hur en månad som inte går att förutsäga redovisas;
+- avrundning (ingen före visning) och teckenkonvention (fel = modell minus faktura);
+- utdataformat för sidans tabell och diagram (månadsvärden, valda antaganden, fel per månad, band, effektkurva).
+
+Sidan (tabell, diagram och förklaringar i samma mönster som övriga sidor) behöver ingen egen SPEC.md. Den beskrivs i det här dokumentet och bygger på skriptets utdata.
 
 ## 12. Nästa steg
 
-1. **Kent svarar på frågorna i avsnitt 5.** Fråga 1 (metod: uppskattning baklänges) och 13 (öppen sida) är besvarade 2026-10-07. Kvar i första hand: fråga 17–19 (bastuns uppvärmning och nattförbrukning, restaurangens tider, varmvattenmätaren), fråga 2 (förbrukningsdata) och fråga 15 (hur Eneas pris förs in).
-2. Kent undersöker om och hur förbrukning per kvart eller timme kan fås ut, och i vilket format. Det är inte ett hinder för bygget: M4b byggs först och M3 läggs till när data finns.
-2b. Kent beskriver bastuns uppvärmning och nattförbrukningen, och restaurangens exakta tider (fråga 17–19), så att M4a kan sättas utan att titta på fakturan.
-3. Besluta om Nord Pool eller ENTSO-E ska användas som facit för stickprov, och kontrollera då villkor och åtkomst.
-4. Bygg datalagret och skriptet, därefter sidan, och kör valideringen i avsnitt 9 punkt 1.
+**Bedömning efter genomläsning med nya ögon (2026-10-07): PRD:n är klar för att skriva SPEC.md för beräkningsskriptet.** Det som är oavgjort (fråga 2, 15, 17, 18, 19 och 21) påverkar inte skriptet, utom tre beslut som
+bör tas innan SPEC.md skrivs:
+
+- **A. Gränserna för M4b** (acceptanskriterium 1b): förslag passning högst 2 och leave-one-out högst 4 öre/kWh. Fastställs av Kent innan körning.
+- **B. Sökrymden för M4b:** godkänn intervallen (bastun öppnar 06.00 eller 07.30, uppvärmning 0–6 timmar före öppning, restaurangens förberedelse 0–2 timmar, baslast 0–20 kW, varmvatten dygnet runt eller enligt tider)
+  och att el-värmen och den antagna luft-värmepumpen ingår i baslasten utan egen modellering.
+- **C. Fråga 21:** ska effektkurvan visas på sidan? Förslag: ja, märkt som uppskattning med bandet synligt.
+
+**Sidan väntar** på fråga 15 (hur Eneas pris förs in) och fråga 14 (länkning), och på fråga 18 om tiderna ska gälla olika per månad. De hindrar inte skriptet.
+
+Ordning:
+
+1. Kent beslutar A–C (eller godkänner förslagen).
+2. SPEC.md för beräkningsskriptet skrivs (`Spotpris/SPEC.md`), därefter en fräscha-ögon-genomläsning av den.
+3. Datalager och skript byggs, och kontrolleras mot förstudiernas värden (acceptanskriterium 2, 3 och 4).
+4. Sidan byggs.
 5. Tvåstegsgranskning, därefter README för `Spotpris/` (Live Page-länk överst, lokal sökväg) och länkar från `index.html`.
+
+**Pågår parallellt, utan att blockera:** Kent undersöker om och hur förbrukning per kvart eller timme kan fås ut (fråga 2), och besvarar resten av fråga 17–19. Beslut om Nord Pool eller ENTSO-E ska vara facit för stickprov
+av spotpriserna (fråga 5) behövs före granskningen.
 
 ---
 
@@ -376,14 +415,14 @@ Bjerreds Saltsjöbad (u.å.a) *Badet* [webbsida]. Tillgänglig: [https://bjerred
 Bjerreds Saltsjöbad (u.å.b) *Restaurangen* [webbsida]. Tillgänglig: [https://bjerredskallbadhus.se/restaurangen-ny/](https://bjerredskallbadhus.se/restaurangen-ny/) (hämtad 2026-10-07).
 *(Restaurangens öppettider: måndag–tisdag stängt, onsdag–fredag 16–22, lördag 11–22, söndag 11–17. Beskriver nuläget, inte nödvändigtvis januari–juni 2026.)*
 
-ENTSO-E (u.å.) *ENTSO-E Transparency Platform*. Tillgänglig: [https://transparency.entsoe.eu/](https://transparency.entsoe.eu/) (hämtad 2026-10-07).
-*(Möjlig primärkälla för spotpriser. Åtkomst och villkor är inte undersökta här.)*
-
 Elprisetjustnu.se (u.å.) *Elpris-API*. Tillgänglig: [https://www.elprisetjustnu.se/elpris-api](https://www.elprisetjustnu.se/elpris-api) (hämtad 2026-10-07).
 *(Arbetskälla för spotpriser per kvart och timme i SE4. Anger att priserna är utan moms, tillägg och skatter, att historik finns från 1 november 2022 och att källan ska anges vid offentlig visning.)*
 
 Eneas (2026) *Samköp av el* [broschyr, PDF]. Eneas. Tillgänglig: [Eneas Samkop av El 2026.pdf](../Eneas_Samkop_av_El/Eneas%20Samkop%20av%20El%202026.pdf) (lokal fil i projektet).
 *(Beskriver Eneas som oberoende aktör som prissäkrar. Ingår för att prissäkrade priser inte följer månadens spotpris, avsnitt 5 fråga 10.)*
+
+ENTSO-E (u.å.) *ENTSO-E Transparency Platform*. Tillgänglig: [https://transparency.entsoe.eu/](https://transparency.entsoe.eu/) (hämtad 2026-10-07).
+*(Möjlig primärkälla för spotpriser. Åtkomst och villkor är inte undersökta här.)*
 
 Kraftringen (2026) *E-faktura elnät och elhandel, januari–juni 2026* [fakturor, PDF]. Kraftringen Nät AB och Kraftringen Energi AB. Lokalt i projektet:
 [`../Kraftringen/Fakturor/`](../Kraftringen/Fakturor/).
