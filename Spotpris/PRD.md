@@ -2,7 +2,7 @@
 
 Projekt: Elenergiförbrukning – Bjerreds Saltsjöbad
 Mapp: `Spotpris/` (all utveckling sker inom denna mapp)
-Status: Utkast 2, 2026-10-07 (förstudie 1 och 2 i avsnitt 4; beslut efter Kents svar 2026-10-07: förbrukningen uppskattas baklänges, sidan är öppen)
+Status: Utkast 3, 2026-10-07 (förstudie 1–3 i avsnitt 4; beslut efter Kents svar 2026-10-07: förbrukningen uppskattas baklänges, sidan är öppen; verkliga öppettider inlagda)
 Ansvarig: Kent Lundgren
 
 > OBS! Siffrorna i förstudien (avsnitt 4) är framräknade ur spotpriser från elprisetjustnu.se och spotpriset på
@@ -128,13 +128,47 @@ apr −0,08, maj +1,33, jun +0,92.
    tvärtom: lågt mitt på dagen (cirka 37–46 öre/kWh kl. 11–14), dyrt på kvällen (143–159 kl. 19–21). Därför skiljer sig en förbrukning på dagen och en på kvällen
    mycket mer i maj än i januari.
 
+### 4.3 Förstudie 3: verkliga öppettider, veckodagar och baslast (2026-10-07)
+
+**Nya uppgifter.** Kent: bastun var öppen 06–22 men har på sista tiden ändrat till 07.30–22. Restaurangen har ett par kylar. Varmvattenmätaren mäter kWh el
+och gäller varmvatten till duschar och restaurang. Restaurangens tider antas ha gällt januari–juni, men det är inte säkert.
+**Hemsidorna** (lästa 2026-10-07): badet är öppet 07.30–22.00 alla dagar, sista inpassering 21.30 och bastun stänger 21.45 (Bjerreds Saltsjöbad, u.å.a). Badavdelningarna
+städas varje dag före 07.30, och från 1 maj är badet öppet hela dagen utan avbrott för städning (Bjerreds Saltsjöbad, u.å.a; tider för städavbrott före 1 maj anges inte).
+Restaurangen är stängd måndag–tisdag, öppen onsdag–fredag 16.00–22.00, lördag 11.00–22.00 och söndag 11.00–17.00 (Bjerreds Saltsjöbad, u.å.b).
+
+**Modellen.** Profilen räknas per kvart och veckodag (skript `forstudie/modell_veckodag.py`): bastu jämn från öppning (minus eventuell uppvärmning) till 22, restaurangen som en
+**baslast** (andel av kWh jämn dygnet runt) plus en **driftdel** enligt öppettiderna per veckodag (med eventuell förberedelse före öppning), och varmvatten antingen jämnt dygnet
+runt eller enligt bastuns och restaurangens tider. Fel = modellens viktade spotpris minus fakturans (öre/kWh).
+
+| Antagande | RMS-fel | Fel jan–jun |
+|-----------|--------:|-------------|
+| A. Bara öppettider: bastu 06–22, varmvatten dygnet runt | 3,43 | +2,50, +1,17, +4,43, +3,43, −2,35, −5,10 |
+| A. Bara öppettider: bastu 07.30–22, varmvatten dygnet runt | 3,54 | +3,65, +1,66, +3,28, +1,80, −3,62, −5,65 |
+| B. Plus baslast 80 % av restaurangens kWh (bastu 07.30–22, varmvatten dygnet runt) | 1,38 | +2,39, +1,52, −0,19, +1,42, +0,88, −0,75 |
+| C. Bäst av 2 652 kombinationer: bastu 07.30–22 med uppvärmning 4,5 h före öppning, baslast 80 %, restaurangens förberedelse 1 h, varmvatten enligt tider | 1,16 | −0,22, −0,05, +0,03, +2,09, +1,25, −1,45 |
+| C. Leave-one-out (förutsäg utelämnad månad) | – | +2,39, −0,05, +0,03, +2,09, +1,25, −3,70 |
+
+**Vad förstudie 3 visar:**
+
+1. **Öppettiderna räcker inte ensamma** (RMS 3,4–3,5, i nivå med M1). Felet byter tecken: för högt pris i januari–april, för lågt i maj–juni.
+2. **Det som kallas "restaurangen" är en restpost** (huvudmätaren minus bastu minus varmvatten): allt annat som drar el på anläggningen och inte har egen mätare ligger i den
+   (till exempel ventilation, uppvärmning, belysning, kyl- och frysrum, kök och vinterträdgården, om de finns). Modellen blir klart bättre (RMS 1,4–1,7) när 75–80 % av den delen är jämn dygnet runt. Storleksordning: 75 % av restposten motsvarar 10–18 kW dygnet runt.
+   Ett par kylar kan inte vara hela förklaringen (om en kylanläggning drar 0,2–0,5 kW blir det högst någon halv kW för ett par, ett grovt antagande av oss, inte en uppgift).
+   Det måste alltså finnas större förbrukare som går dygnet runt. Det är en hypotes, och fråga 17 i avsnitt 5 gäller just det.
+3. **Bästa träffen har uppvärmning av bastun 4–5 timmar före öppning (kring kl. 03).** Att badavdelningarna städas före 07.30 (hemsidan) stöder att det sker förbrukning före öppning,
+   men **tidpunkten går inte att läsa ur modellen**: 728 av 2 652 testade kombinationer har RMS under 2 öre/kWh, och ingen under 1,0.
+4. **Mer realistiska antaganden gav inte en bättre förutsägelse.** Passningen är i praktiken lika som i förstudie 2 (RMS 1,16 mot 1,14), och leave-one-out-felet är som störst 3,7 öre/kWh (juni),
+   större än i förstudie 2 (3,0). Flera fria parametrar kan ge en passning som ser bättre ut än den är. Passning är inte förutsägelseförmåga.
+5. **Slutsatsen från förstudie 2 gäller fortfarande:** att viktningen betyder 2–8 öre/kWh och går åt båda hållen är säkert. Profilen bakom är osäker, och förbrukningsdata per kvart eller timme (M3) är det som
+   avgör saken.
+
 ## 5. Frågor som måste redas ut
 
 | Nr | Fråga | Varför | Förslag |
 |----|-------|--------|---------|
 | 1 | Vilken metod är den primära för "månadens spotpris"? | Styr hela jämförelsen. | **Besvarad 2026-10-07:** förbrukningen uppskattas baklänges (M4b) tills förbrukningsdata finns. M3 när data finns. M1, M2 och M4a redovisas som jämförelse, och varje värde märks med metod. |
 | 2 | **Går det att få förbrukningen per kvart eller timme** för januari–juni 2026 (och framåt) och från vem? Kraftringen Nät AB som nätägare, Kraftringen Energi AB som elhandlare, eller via mätaren? I vilket format (CSV, Excel)? Är det samma mätvärden som Kraftringen fakturerar på? | Krävs för M3 och för att kontrollera antagandet om 06–22. | Kent undersöker. Uppgiften är **inte verifierad här**: vi vet inte vad Kraftringen lämnar ut. |
-| 3 | Stämmer det att anläggningen förbrukar el bara kl. 06–22? | Bygger M2 och M4a på ett antagande som kan vara fel. Kyl, varmvatten och värme drar normalt även på natten. | **Delvis besvarad 2026-10-07:** bastun är öppen 06–22 och restaurangen eftermiddag och kväll (Kent). Öppettider är inte samma sak som elförbrukning: förstudie 2 tyder på förbrukning även före 06 och sent på kvällen. Fråga 17 och 18 fördjupar. |
+| 3 | Stämmer det att anläggningen förbrukar el bara kl. 06–22? | Bygger M2 och M4a på ett antagande som kan vara fel. Kyl, varmvatten och värme drar normalt även på natten. | **Besvarad 2026-10-07 (nej, enligt förstudie 2 och 3):** bastun var öppen 06–22, nu 07.30–22. Restaurangen: må–ti stängt, on–fr 16–22, lö 11–22, sö 11–17 (hemsidan, antas ha gällt jan–jun). Öppettider är inte samma sak som elförbrukning: förstudierna tyder på en stor baslast dygnet runt och förbrukning före öppning. |
 | 4 | Ska spotpriset visas exklusive eller inklusive moms? | Spotpriset är utan moms, skatter och tillägg (elprisetjustnu.se, u.å.). Kraftringens "allt elpris" på sidorna är också utan moms, men fakturabeloppen är med moms. | Jämför alltid i öre/kWh **exklusive moms**. Visa ev. inklusive moms (× 1,25) som extra rad. |
 | 5 | Räcker elprisetjustnu.se som källa, eller ska Nord Pool eller ENTSO-E vara facit? | Elprisetjustnu.se är en sammanställning. Ursprungskällan anges inte i den dokumentation vi läst. | Använd elprisetjustnu.se som arbetskälla. Stickprova mot Nord Pool eller ENTSO-E (vad som kräver registrering och nyckel är **inte kontrollerat**). |
 | 6 | Hur hanteras sommartid? | 2026-03-29 har 92 kvartar och 2026-10-25 förväntas ha 100 (kalendern). En enkel tolkning av "96 per dygn" blir fel. | All tid i lokal tid med förskjutning (som i API:ts `time_start`). Summera per verklig kvart, inte per klockslag. |
@@ -148,9 +182,9 @@ apr −0,08, maj +1,33, jun +0,92.
 | 14 | Var länkas sidan? | Navigering. | Från elöversikten (`index.html`) och från `Eneas_Samkop_av_El/` när den är klar. |
 | 15 | Hur kommer Eneas pris in i spotprissidan? | Isaks inmatning finns bara i hans egen webbläsare (och i mejlet han skickar), så den här sidan kan inte läsa den själv. | Kent skriver in priserna som en ifylld datafil (`data/eneas_pris.json`) eller i ett gult fält på sidan, när Isaks mejl kommit. |
 | 16 | Räcker Kraftringens poster per månad? | `enea_jamforelse.js` har bara summan "allt elpris" (`krOre`), inte spotpris, rörliga kostnader och påslag var för sig. | Lägg in de tre posterna per månad ur fakturorna i en egen datafil här (värdena finns i förstudien och i granskningsrapporten) och kontrollera dem mot fakturorna. |
-| 17 | Hur värms bastun upp, och vad drar el på natten? Finns timer eller uppvärmning före kl. 06? Kyl, frys, varmvatten, golvvärme, belysning? | Förstudie 2 får bäst träff när förbrukningen börjar före 06. Det är en hypotes, och modellen kan inte skilja uppvärmning från annan nattförbrukning. | Kent beskriver driften. Läggs in som antaganden i M4a, och profilen kalibreras (M4b) bara för det som är okänt. |
-| 18 | Vilka exakta öppettider och dagar gäller för restaurangen (kök och förberedelser, stängningstid, vilka veckodagar, säsong)? | Restaurangen är 37–57 % av förbrukningen och styr resultatet. Förstudie 2 får bäst träff med förbrukning ungefär kl. 10–24. | Kent anger tider. Kalibreringen får gärna gälla olika tider olika månader. |
-| 19 | Är varmvattenmätaren i kWh el, och när värms vattnet? | Antas vara kWh el och jämnt fördelat dygnet runt. Enheten framgår inte av underlagen (granskning 2). | Kent bekräftar enhet och drift. |
+| 17 | **Vad är det som drar el dygnet runt i "restaurangens" del?** Ventilation, uppvärmning (direktverkande el, värmepump, golvvärme i vinterträdgården), belysning (inomhus, brygga, utomhus), kyl- och frysrum, kök? Hur värms bastun upp, och startar uppvärmningen före öppning (timer)? | Förstudie 3: 75–80 % av restposten ser ut att vara jämn dygnet runt, 10–18 kW. Ett par kylar förklarar inte det. Det är en hypotes, och modellen kan inte skilja uppvärmning av bastun från annan förbrukning på natten. | Kent beskriver driften. Läggs in som antaganden i M4a, och bara det som är okänt kalibreras (M4b). |
+| 18 | Gällde restaurangens tider (må–ti stängt, on–fr 16–22, lö 11–22, sö 11–17) och badets 07.30–22 hela januari–juni 2026? När ändrades bastuns tid från 06–22 till 07.30–22? Fanns städavbrott före 1 maj, och när? | Tiderna i modellen kommer från hemsidorna 2026-10-07. Kent antar att de gällde jan–jun. | Kent bekräftar eller anger tider per månad. Modellen tar tider per månad. |
+| 19 | ~~Är varmvattenmätaren i kWh el?~~ | **Besvarad 2026-10-07 (Kent):** den mäter kWh el, för varmvatten till duschar och restaurang. | När värms vattnet (tank, timer, effektbegränsning) är fortfarande okänt. Modellen provar dygnet runt och enligt bastuns och restaurangens tider. |
 
 ## 6. Datakällor
 
@@ -190,8 +224,9 @@ filer, kommentera i detalj, gul bakgrund bara på inmatningsfält. Källor i Har
 
 **Uppskattad förbrukningsprofil (M4a och M4b), beslutad 2026-10-07:**
 
-- **Delar:** bastu, varmvatten och restaurang, med kända kWh per månad (ur debiteringsunderlagen) och en förbrukningsprofil per del: vilka timmar på dygnet
-  delen drar el. Profilerna är data (en tabell per del), inte inbyggda i koden, så att de går att ändra utan att räkna om för hand.
+- **Delar:** bastu, varmvatten och "restaurang", med kända kWh per månad (ur debiteringsunderlagen) och en förbrukningsprofil per del: vilka kvartar på dygnet och veckan
+  delen drar el. "Restaurang" är en **restpost** (huvudmätaren minus bastu minus varmvatten), alltså allt utom bastu och varmvatten, och modelleras som en baslast (jämn
+  dygnet runt) plus en driftdel enligt öppettiderna per veckodag. Profilerna är data (tider per del, veckodag och månad), inte inbyggda i koden, så att de går att ändra utan att räkna om för hand.
 - **M4a:** profilerna sätts utifrån öppettider och driftuppgifter (Kent, fråga 17–19) utan att titta på fakturan.
 - **M4b:** de okända gränserna (till exempel när bastuns uppvärmning börjar, när restaurangen slutar dra el) provas inom rimliga intervall, och den kombination
   väljs som ger lägst fel mot fakturornas spotpris. Sidan visar vilka antaganden som valdes och hur bra de passar månad för månad. Skriptet redovisar även
@@ -221,9 +256,10 @@ filer, kommentera i detalj, gul bakgrund bara på inmatningsfält. Källor i Har
 1. **Validering mot fakturorna:** när förbrukningsdata finns ska M3 återskapa fakturans spotpris för varje månad januari–juni 2026. Förslag på
    gräns: **högst 0,5 öre/kWh** i skillnad. Gränsen är ett förslag och fastställs efter att vi sett det första utfallet (fakturans öre-pris är avrundat
    till två decimaler). Stämmer det inte ska avvikelsen förklaras, inte döljas.
-1b. **M4b (utan förbrukningsdata):** passar M4b fakturan inom **högst 2 öre/kWh per månad** och förutsäger den leave-one-out inom **högst 3 öre/kWh**
-   (förstudie 2 gav 1,6 respektive 3,0 som störst). Gränserna är förslag. Kriteriet är medvetet **svagare** än punkt 1: M4b anpassas mot fakturan och kan
-   därför inte valideras mot den. När M3 finns jämförs M4b mot M3, och det är den jämförelsen som visar hur bra uppskattningen var.
+1b. **M4b (utan förbrukningsdata):** M4b ska redovisas med passning per månad och leave-one-out-fel per månad. **Gränserna fastställs av Kent innan bygget körs**, så att de inte
+   flyttas efter utfallet. Förstudierna gav som utfall: passning högst 1,6 öre/kWh per månad och leave-one-out högst 3,0 (förstudie 2) respektive 3,7 (förstudie 3). Förslag att utgå från:
+   passning högst 2 och leave-one-out högst 4 öre/kWh. Kriteriet är medvetet **svagare** än punkt 1: M4b anpassas mot fakturan och kan därför inte valideras mot den. När M3 finns
+   jämförs M4b mot M3, och det är den jämförelsen som visar hur bra uppskattningen var.
 2. M1 och M2 stämmer med förstudiens värden (avsnitt 4) för januari–juni 2026.
 3. Alla dygn januari–juni 2026 finns (181 dygn) och antalet intervall stämmer med avsnitt 8, F2.
 4. Sommartiden hanteras rätt: 2026-03-29 har 92 kvartar och månadsmedlen räknas på verkliga kvartar.
@@ -277,6 +313,12 @@ Alfabetisk ordning. Externa länkar kontrollerades 2026-10-07.
 Bjerreds Saltsjöbad (2026) *Kvalitetsgranskning av siffror och beräkningar* [webbsida]. Tillgänglig:
 [kvalitetsgranskning.html](../Eneas_Samkop_av_El/kvalitetsgranskning.html) (lokal fil i projektet).
 *(Redovisar den tvåstegsgranskning som avsnitt 11 hänvisar till, och granskningens resultat för fakturornas data och antaganden.)*
+
+Bjerreds Saltsjöbad (u.å.a) *Badet* [webbsida]. Tillgänglig: [https://bjerredskallbadhus.se/badet/](https://bjerredskallbadhus.se/badet/) (hämtad 2026-10-07).
+*(Öppettider för badet (07.30–22.00 alla dagar), sista inpassering, bastuns stängning och att badavdelningarna städas före 07.30. Beskriver nuläget, inte nödvändigtvis januari–juni 2026.)*
+
+Bjerreds Saltsjöbad (u.å.b) *Restaurangen* [webbsida]. Tillgänglig: [https://bjerredskallbadhus.se/restaurangen-ny/](https://bjerredskallbadhus.se/restaurangen-ny/) (hämtad 2026-10-07).
+*(Restaurangens öppettider: måndag–tisdag stängt, onsdag–fredag 16–22, lördag 11–22, söndag 11–17. Beskriver nuläget, inte nödvändigtvis januari–juni 2026.)*
 
 ENTSO-E (u.å.) *ENTSO-E Transparency Platform*. Tillgänglig: [https://transparency.entsoe.eu/](https://transparency.entsoe.eu/) (hämtad 2026-10-07).
 *(Möjlig primärkälla för spotpriser. Åtkomst och villkor är inte undersökta här.)*
