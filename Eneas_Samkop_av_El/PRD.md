@@ -2,7 +2,7 @@
 
 Projekt: Elenergiförbrukning – Bjerreds Saltsjöbad
 Mapp: `Eneas_Samkop_av_El/` (all utveckling sker inom denna mapp)
-Status: Utkast 1, 2026-10-06
+Status: Utkast 3, 2026-10-06 (databas och inloggning struket, se avsnitt 8; Del 2 internt debiteringsunderlag tillagd, se avsnitt 12; kontrollräkning i avsnitt 13)
 Ansvarig: Kent Lundgren
 Extern kontakt: Isak Cerwén, kundrådgivare, Eneas
 
@@ -28,15 +28,25 @@ utanför denna jämförelse.
 
 ## 2. Mål
 
-1. Isak (Eneas) ska kunna mata in Eneas priser för januari–juni 2026 direkt i en
-   webbsida, i samma upplägg som vi själva redovisar interndebiteringen.
-2. Sidan ska visa vad hela fakturan och hyresgästens (restaurangens) andel hade
-   blivit med Eneas, jämfört med faktiskt utfall hos Kraftringen.
-3. Uppgifterna ska sparas i en databas så att jämförelsen finns kvar och går att
-   dela med styrelsen.
+1. Isak (Eneas) ska kunna anteckna vilka priser Eneas hade erbjudit för januari–juni
+   2026 i en tabell på en webbsida, i samma upplägg som vi själva redovisar
+   interndebiteringen. Det är en jämförelse i efterhand och ett försök: olika
+   elleverantörer menar olika saker med "pris", så Isak ska också kunna förklara vad
+   priset omfattar.
+2. Sidan ska räkna ut vad hela fakturan och hyresgästens (restaurangens) andel hade
+   blivit med Eneas, jämfört med faktiskt utfall hos Kraftringen, månad för månad.
+3. Isak ska enkelt kunna kopiera tabellen (med sina anteckningar) och klistra in den
+   i ett mejl till oss. Inget lagras på någon server (se avsnitt 8).
 
-Ej mål: byte av nätägare (omöjligt, se avsnitt 3), prognoser framåt i tiden, och
-ändringar i `index.html`.
+Ej mål: byte av nätägare (omöjligt, se avsnitt 3), prognoser framåt i tiden,
+ändringar i `index.html`, databas och inloggning.
+
+Projektet har två delar:
+- **Del 1 (avsnitt 1–11): jämförelse Kraftringen kontra Eneas.** Riktar sig till Isak
+  (Eneas). Visar ingen intern debitering av restaurangen med mätarställningar.
+- **Del 2 (avsnitt 12): mall för internt debiteringsunderlag.** Internt för Kent. Visas
+  inte för Eneas och länkas inte från Isaks sida. Avsnitt 5 beskriver hur underlaget
+  räknas.
 
 ## 3. Nätavgiften – bekräftad mot fakturorna
 
@@ -125,27 +135,42 @@ Underlaget "Debiteringsunderlag El [månad] 2026" räknar så (Bjerreds Saltsjö
 5. Summa exkl. moms, plus 25 % moms, avrundat till hela kronor. Totalt = fakturerat
    belopp till restaurangen.
 
-Fältet för fast nätavgift är låst till 0 kr i sidan. Isak ska mata in på samma sätt: gula fält, samma rader, samma ordning. Enda
-skillnaden är att raden "El inkl Elcert" fylls i med Eneas pris.
+Fältet för fast nätavgift är låst till 0 kr i sidan. Sidan redovisar restaurangens
+kostnad med samma rader och i samma ordning som underlaget. Enda skillnaden är att
+raden "El inkl Elcert" räknas med Eneas pris. Mätarställningar för bastu och
+varmvatten behöver inte visas; hyresgästens kWh (avsnitt 4.2) är förifyllda.
 
-## 6. Öppna frågor (måste besvaras före bygget)
+## 6. Frågor och beslut
 
-| Nr | Fråga | Varför |
+| Nr | Fråga | Status |
 |----|-------|--------|
-| 1 | ~~Fast nätavgift för hyresgästen~~ **Besvarad 2026-10-06:** hyresgästen ska aldrig debiteras fast nätavgift. Raderna för april–juni i underlagen var ett räkneexempel och rättas (se 4.3). | Löst. |
-| 2 | Hur ser Eneas prismodell ut? Spotpris plus påslag, fast pris, eller prissäkrad portfölj ("samköp")? Finns månadsavgift, elcertifikat och profilkostnader (uttagsprofil) separat? | Avgör vilka fält Isak ska fylla i. Broschyren anger inga priser (Eneas, 2026). |
-| 3 | Vad är Eneas pris för januari–juni i efterhand? Om Eneas säkrar priser i förväg är det inte samma sak som ett spotpris. | Jämförelsen ska göras på samma förbrukning. |
-| 4 | Ska jämförelsen visa hela fakturan, hyresgästens andel, eller båda? Förslag: båda. | Styr layout. |
-| 5 | Hur loggar Isak in? Se avsnitt 8. | Säkerhet. |
-| 6 | Är avräkningen hos Eneas månadsvis och baserad på samma mätvärden (kvartsvärden) som Kraftringens fakturering? | Rörligt kvartspris hos Kraftringen. Timvärden och kvartsvärden kan ge skillnader. |
+| 1 | Fast nätavgift för hyresgästen | **Besvarad 2026-10-06:** hyresgästen ska aldrig debiteras fast nätavgift. Raderna för april–juni i underlagen var ett räkneexempel och rättas (se 4.3). |
+| 2 | Hur ser Eneas prismodell ut? | **Okänd för oss (2026-10-06).** Broschyren anger inga priser (Eneas, 2026). Isak anger vad priset omfattar (prismodell och fritext, se F1). Jämförelsen är ett försök, eftersom elleverantörer menar olika saker med "pris". |
+| 3 | Vad är Eneas pris för januari–juni i efterhand? | **Isak fyller i** (F1). Om Eneas säkrar priser i förväg är det inte samma sak som ett spotpris. |
+| 4 | Hela fakturan, hyresgästens andel, eller båda? | **Båda** (F2, F3). |
+| 5 | Inloggning och databas | **Utgår (2026-10-06).** Plattformen är bara mellan Kent och Isak. Ingen Firebase, ingen inloggning. Isak kopierar tabellen och mejlar den (F6). Firebase Authentication (tidigare alternativ B) utgår också och byggs inte. |
+| 6 | Är avräkningen hos Eneas månadsvis och baserad på samma mätvärden (kvartsvärden) som Kraftringens fakturering? | **Öppen.** Isak får en fritextruta där han kan förklara detta (F1). Timvärden och kvartsvärden kan ge skillnader. |
 
 ## 7. Funktionella krav
 
-**F1 Inmatningssida (Isak).** Månadsväljare januari–juni 2026. Gula fält (`#FFF9C4`)
-enligt projektets regel. Fält per månad: Eneas pris för elhandel (öre/kWh),
-eventuell fast månadsavgift (kr), eventuella övriga poster, och en kommentarsruta.
-Förbrukningen (kWh) är förifylld från Kraftringens fakturor och ska inte kunna
-ändras av Isak.
+**F1 Inmatning i en tabell (Isak).** En enda sida med en tabell, en rad per månad
+januari–juni 2026 plus en summarad, i samma upplägg som Kents debiteringsunderlag
+(gula fält, samma rader och ordning).
+- *Gula fält per månad (Isak fyller i):*
+  - "El inkl Elcert (öre/kWh)": Eneas totala pris för själva elen. Det ska omfatta
+    elcertifikat, påslag och eventuella profil- och balanskostnader, så att det går
+    att jämföra med Kraftringens "spotpris + rörliga kostnader + 1,70 öre/kWh".
+  - Fast månadsavgift från Eneas (kr), valfri, så att den inte göms i öre-priset.
+  - Övriga poster (kr), valfri.
+  - Anteckning, en kort fritext per månad.
+- *Gula fält en gång för hela jämförelsen:* prismodell (rullista: spot + påslag, fast
+  pris, prissäkrad portfölj, annat), fritext om vad priset omfattar och inte omfattar,
+  samt Isaks namn och datum.
+- *Grå, låsta fält (förifyllda från Kraftringens fakturor):* total kWh, faktura inkl.
+  moms, rörlig nätavgift (öre/kWh), energiskatt (36,00 öre/kWh) och fast nätavgift
+  (8 824 kr/mån) med förklaringen att den är Kraftringen Nät AB:s avgift och inte kan
+  bytas. Hyresgästens kWh är också förifyllda (avsnitt 4.2).
+- Kolumn och tabell ska vara lätta att läsa som text när den klistras in i ett mejl.
 
 **F2 Beräkning.** För varje månad:
 - Eneas elhandelskostnad = kWh × Eneas pris + fasta avgifter
@@ -158,52 +183,69 @@ Förbrukningen (kWh) är förifylld från Kraftringens fakturor och ska inte kun
 kontra Eneas (kr och öre/kWh). Tydlig text om vad som är lika (nät, skatt) och vad
 som skiljer (elhandel).
 
-**F4 Databas.** Spara Isaks inmatning med tidsstämpel. Visa vem och när senast ändrat.
+**F4 (struken).** Databas utgår. Inget sparas på någon server.
 
-**F5 Referensdata.** Kraftringens utfall och interndebiteringens mätarvärden
-(avsnitt 4–5) finns inbakade som fallback i sidans JavaScript, så att sidan fungerar
-även utan databaskontakt (samma mönster som `fore_och_efter_ombyggnad.js`).
+**F5 Referensdata.** Kraftringens utfall (avsnitt 4.1–4.3) ligger inbakat i sidans
+JavaScript. Sidan behöver inget nätverksanrop och fungerar öppnad direkt från fil.
+Som bekvämlighet sparas Isaks inmatning i hans egen webbläsare (localStorage), så att
+han inte tappar den om fliken stängs. Allt som rör localStorage ska ligga i try/catch,
+och sidan ska fungera även utan.
 
-**F6 Export.** Knapp för att kopiera tabellen så att den kan klistras in i Word.
+**F6 Kopiera och skicka.** Isak ska kunna skicka resultatet till Kent i ett mejl:
+- Knapp **"Kopiera tabellen"**: kopierar hela tabellen (Isaks priser och anteckningar,
+  Kraftringens utfall, Eneas utfall och skillnad) både som HTML-tabell och som
+  tabbseparerad text, så att den klistras in rent i Outlook, Gmail eller Word.
+  Reservlösning om webbläsaren inte tillåter kopiering: markera tabellen så att Isak
+  kan kopiera med Ctrl+C.
+- Knapp **"Skriv ut / spara som PDF"** med print-CSS för en ren A4-sida (valfri
+  extra).
+- Ingen filnedladdning och ingen inbyggd e-postsändning.
 
-## 8. Teknik och datamodell (förslag)
+## 8. Teknik (beslutad 2026-10-06)
 
-- Rena filer utan ramverk: `enea_jamforelse.html`, `enea_jamforelse.css`,
-  `enea_jamforelse.js` samt `enea_isak.html` för inmatningen (kod delas upp i
-  separata filer enligt projektregeln). Alla filer i `Eneas_Samkop_av_El/`.
-- Databas: Firebase Realtime Database via REST API, som projektet redan gör för
-  inpasseringar (`skylt-e0c45`). Förslag: ny nod `bjerred-enea-offert/` så att
-  befintlig data inte påverkas.
-- Datamodell per månad, nyckel `2026-01` till `2026-06`:
+- Rena filer utan ramverk och utan byggprocess, uppdelade i HTML, CSS och JS enligt
+  projektregeln. Alla filer i `Eneas_Samkop_av_El/`, utan versionsnummer i filnamnet:
+  `enea_jamforelse.html`, `enea_jamforelse.css`, `enea_jamforelse.js`.
+- Version och datum ska visas i sidans sidfot, till exempel "Version 1.0 · 2026-10-06".
+- Ingen databas, ingen Firebase, ingen inloggning, inga externa bibliotek. Diagrammet
+  ritas i ren SVG eller canvas. Sidan är avsedd bara för Kent och Isak, och inget av
+  Eneas priser lagras av oss på någon server.
+- Datamodell i minnet (och i localStorage), nyckel `2026-01` till `2026-06`:
 
 ```
 {
   eneasOrePerKwh: 0.00,        // Eneas pris för elhandel, öre/kWh
   eneasManadsavgiftKr: 0.00,   // fast avgift per månad, kr
   ovrigt: 0.00,                // övriga poster, kr
-  kommentar: "",
-  uppdaterad: "ISO-tidsstämpel",
-  uppdateradAv: "Isak"
+  kommentar: ""                // Isaks anteckning för månaden
 }
 ```
 
-- Säkerhet: projektets databas har idag öppen läsning. För skrivning krävs en
-  säkerhetsregel. Alternativ A: delad inmatningslänk med lösenordskod, regeln tillåter
-  skrivning enbart till noden `bjerred-enea-offert`. Alternativ B: Firebase
-  Authentication med inloggning för Isak. Rekommendation: B om uppgifterna är
-  affärskänsliga, annars A. Detta behöver beslutas (fråga 5).
+  Dessutom en gång för hela jämförelsen: prismodell, fritext om vad priset omfattar,
+  Isaks namn och datum.
+- Beräkning, per månad, med kWh, nätavgifter och energiskatt från avsnitt 4:
+  - Hela fakturan med Eneas = (fast nätavgift + rörlig nät × kWh + energiskatt × kWh +
+    Eneas pris × kWh + Eneas månadsavgift + övrigt) × 1,25, avrundat till hela kronor.
+  - Hyresgästen = (rörlig nät + Eneas pris + energiskatt) × hyresgästens kWh × 1,25,
+    avrundat till hela kronor. Fast nätavgift är alltid 0.
 - Ingen kod med ES2023+ utan kommentar. All kod kommenteras i detalj, med
   `// UPPDATERING ÅÅÅÅ-MM-DD:` vid ändringar.
 
 ## 9. Acceptanskriterier
 
-1. Kraftringens baslinje i sidan stämmer med avsnitt 4 för alla sex månader.
+1. Kraftringens baslinje i sidan stämmer med avsnitt 4 för alla sex månader. Hela
+   fakturan återskapas exakt (90 779, 82 794, 63 389, 52 186, 56 338 och 53 134 kr)
+   genom att baslinjen förankras i fakturans faktiska belopp (se avsnitt 13).
 2. Hyresgästens totalbelopp med Kraftringens pris återskapar exakt interndebiteringen
-   (37 341, 36 647, 19 213, 17 873, 23 521 och 24 017 kr, de tre sista utan fast nätavgift, se 4.3).
+   (37 341, 36 647, 19 213, 17 873, 23 521 och 24 017 kr, de tre sista utan fast nätavgift, se 4.3),
+   genom samma förankring. Skillnaden mot Eneas beräknas från den förankrade baslinjen.
 3. Ändrar Isak ett pris uppdateras beräkning och diagram direkt.
-4. Sidan fungerar vid databasfel genom att visa senast kända värden och ett tydligt
-   felmeddelande.
+4. Knappen "Kopiera tabellen" ger en tabell som klistras in läsbart i ett mejl, med
+   Isaks priser och anteckningar. Sidan fungerar öppnad direkt från fil, utan nätverk.
 5. Sidan är läsbar i mobil (16 px marginal, ingen sidledsrullning).
+6. Version och datum syns i sidfoten. Sidan anger att siffrorna är hämtade ur
+   Kraftringens fakturor och inte är kvalitetssäkrade, och att läsaren ska kontrollera
+   mot källan. Kent Lundgren anges som avsändare.
 
 ## 10. Risker
 
@@ -217,10 +259,88 @@ som skiljer (elhandel).
 
 ## 11. Nästa steg
 
-1. Kent svarar på öppna frågor 2–6 (fråga 1 är besvarad).
-2. Kent bekräftar om nya filer ska skapas (`_ver1`) i `Eneas_Samkop_av_El/`.
-3. Bygg inmatningssidan och beräkningen, därefter databaskopplingen och diagrammen.
-4. Isak provar med januari–juni, och Kent kontrollräknar mot fakturorna.
+1. Kent godkänner PRD:n (utkast 2).
+2. Bygg tabellen med inmatning och beräkning, därefter diagram och kopieringsknappen.
+3. Kent kontrollräknar baslinjen mot fakturorna (acceptanskriterium 1–2).
+4. Kent skickar länken till Isak, som fyller i tabellen och mejlar tillbaka den.
+
+---
+
+## 12. Del 2 – Mall för internt debiteringsunderlag (internt, visas inte för Eneas)
+
+**Syfte.** Ersätta bilderna i `Kraftringen/Intern_debitering/` med en sida som räknar och
+visar "Debiteringsunderlag El [månad] 2026" i samma uppställning som idag, så att
+underlaget kan upprepas varje månad och kontrolleras mot fakturan. Samma uppställning
+används på Isaks sida för hyresgästens andel (F1).
+
+**Filer (egna, inte länkade från Isaks sida).** `intern_debitering.html`,
+`intern_debitering.css`, `intern_debitering.js` i `Eneas_Samkop_av_El/`. Beräkningen
+av hyresgästens kostnad ligger i en liten, avgränsad funktion som delas med
+`enea_jamforelse.js` (egen fil `berakning.js`, så att samma formler inte finns på två
+ställen). Obs: GitHub Pages är publikt för den som känner adressen; sidan innehåller
+bara belopp som redan ligger i repot som bilder.
+
+**Funktioner (D1–D6).**
+- **D1 Månadsväljare** för januari–juni 2026, och möjlighet att lägga till senare
+  månader.
+- **D2 Gula inmatningsfält** (`#FFF9C4`), som i underlaget: fakturanummer, hela fakturan
+  (kr), mätarställning vid månadens slut för huvudmätaren, bastu herr, bastu dam och
+  varmvatten, samt öre/kWh för rörlig nätavgift, "El inkl Elcert" och energiskatt.
+  Mätarställningar tas emot med decimaler (se avsnitt 13).
+- **D3 Mätarställning vid månadens början** förifylls från föregående månads slut och
+  är låst (kedjan stämmer alla sex månader, se avsnitt 13). Första månaden fylls i
+  manuellt.
+- **D4 Beräkning enligt avsnitt 5:** förbrukning per mätare, bastu totalt, hyresgästens
+  kWh = total − bastu − varmvatten, kostnad per rad, summa exkl. moms, moms 25 %,
+  totalt avrundat till hela kronor. Fast nätavgift är låst till 0 kr.
+- **D5 Avstämning mot fakturan**, per månad: total kWh jämförs med kWh på Kraftringens
+  faktura (tolerans ±1 kWh), "El inkl Elcert" jämförs med spotpris + rörliga kostnader
+  + 1,70 öre/kWh, och fakturanumret kontrolleras. Avvikelse visas som en tydlig varning.
+- **D6 Utskrift och kopiering:** "Skriv ut / spara som PDF" (A4) och "Kopiera tabellen".
+  Inmatningen sparas i webbläsaren (localStorage, inom try/catch). Januari–juni 2026 är
+  förifyllda som fallback i JavaScript.
+
+**Öppna frågor för Del 2.**
+1. Har underlaget mätarställningar med decimaler (kalkylbladet visar avrundade värden)?
+   Skicka i så fall dem, eller bekräfta att ±1 kr godtas (avsnitt 13).
+2. Ska "Hela fakturan" fyllas i för hand, eller räknas ut från Kraftringens poster?
+3. Ska underlaget kunna skrivas ut med samma utseende som dagens bilder, eller räcker
+   en ren tabell?
+
+## 13. Kontrollräkning av kWh och belopp (2026-10-06)
+
+Gjord mot de sex fakturorna i `Kraftringen/Fakturor/` och de sex debiteringsunderlagen i
+`Kraftringen/Intern_debitering/`. Siffrorna är avlästa ur fakturor och bilder och är inte
+kvalitetssäkrade i övrigt; kontrollera mot originalen.
+
+**Stämmer (kontrollerat för alla sex månader):**
+- Total kWh i underlaget (avrundat) = kWh på fakturan (35 422,14 / 32 002,14 / 28 073,52 /
+  26 671,14 / 23 941,02 / 20 609,34).
+- Mätarkedjan: varje månads startställning = föregående månads slutställning, för
+  huvudmätare, bastu herr, bastu dam och varmvatten.
+- Hyresgästens kWh = total − bastu − varmvatten = 16 586 / 16 342 / 10 302 / 11 582 /
+  12 430 / 11 756.
+- Fakturanummer, "Hela fakturan" och "El inkl Elcert" (spotpris + rörliga kostnader +
+  1,70 öre/kWh) stämmer mot fakturorna. Hyresgästens totaler 37 341, 36 647 och 19 213 kr
+  återskapas exakt av avrundade indata.
+
+**Avvikelser och orsak:**
+- Beräknat från avrundade öre-priser och kWh (utan förankring) blir hela fakturan fel med
+  1–3 kr (februari 82 795 mot 82 794, mars 63 387 mot 63 389, maj 56 335 mot 56 338
+  med flera). Orsaken är att Kraftringen räknar med öre-priser i fler decimaler än de två
+  som fakturan visar.
+- Hyresgästen april–juni blir 17 872, 23 522 och 24 018 kr mot rättade 17 873, 23 521 och
+  24 017 kr (±1 kr). Orsaken är att mätarställningarna har decimaler som kalkylbladet bara
+  visar avrundade: bastu dam maj visas som 4 449 men skillnaden mellan avrundade
+  ställningar är 4 448, och juni visar 3 916 + 3 515 = 7 431 mot summan 7 430.
+- Åtgärd: baslinjen förankras i fakturans faktiska belopp. Eneas-scenariot beräknas som
+  Kraftringens faktura (och hyresgästens debitering) minus Kraftringens elhandel plus
+  Eneas elhandel, så att baslinjen stämmer exakt och skillnaden blir korrekt. Del 2 tar emot
+  mätarställningar med decimaler.
+
+**Kraftringens elhandel per månad (kr exkl. moms, spotpris + rörliga kostnader + fast påslag,
+månadsavgift 0 kr):** jan 43 300,29, feb 38 902,96, mar 26 072,72, apr 18 213,82, maj 22 744,97,
+jun 21 938,70.
 
 ---
 
