@@ -17,6 +17,8 @@
   Eneas pris för samma månad är ifyllt. Version 1.2.
   UPPDATERING 2026-10-06: Bara en månad i taget markeras (den som fyllts i eller fått fokus). Version 1.3.
   UPPDATERING 2026-10-06: Markeringen försvinner när man lämnar prisfälten. Version 1.4.
+  UPPDATERING 2026-10-06: Summaraden heter "Summa / vägt snitt" (kWh och faktura är summor,
+  "El inkl elcert" är kWh-vägt snitt). Version 1.5.
 */
 (function () {
   'use strict';
@@ -29,7 +31,7 @@
   // ===================================================================
   // 1. Version
   // ===================================================================
-  var VERSION = '1.4';
+  var VERSION = '1.5';
   var VERSIONSDATUM = '2026-10-06';
 
   // ===================================================================
@@ -158,7 +160,7 @@
 
     // Tabell 1: summarad
     document.querySelector('#tab-idag tfoot').innerHTML =
-      '<tr>' + td('Summa') + td(fmt(t.kwhAlla)) + td(fmt(t.fakturaAlla)) + td(fmt(t.snittIdag, 2)) + td('') + td('') + td('') + '</tr>';
+      '<tr>' + td('Summa / vägt snitt') + td(fmt(t.kwhAlla)) + td(fmt(t.fakturaAlla)) + td(fmt(t.snittIdag, 2)) + td('') + td('') + td('') + '</tr>';
 
     // Tabell 2: rader
     b.rader.forEach(function (r) {
@@ -174,8 +176,8 @@
 
     // Tabell 2: summarad (bara ifyllda månader; kWh och skillnad räknas på samma månader)
     document.querySelector('#tab-eneas tfoot').innerHTML = t.antal === 0
-      ? '<tr>' + td('Summa') + td('–') + td('–') + td('–') + td('') + td('') + td('') + td('–') + td('–') + '</tr>'
-      : '<tr>' + td('Summa') + td(fmt(t.kwhIfyllda)) + td(fmt(t.eneasSumma)) + td(fmt(t.snittEneas, 2)) + td('') + td('') + td('') +
+      ? '<tr>' + td('Summa / vägt snitt') + td('–') + td('–') + td('–') + td('') + td('') + td('') + td('–') + td('–') + '</tr>'
+      : '<tr>' + td('Summa / vägt snitt') + td(fmt(t.kwhIfyllda)) + td(fmt(t.eneasSumma)) + td(fmt(t.snittEneas, 2)) + td('') + td('') + td('') +
         td(fmtTecken(t.diffKr), klassForSkillnad(t.diffKr)) + td(fmtTecken(t.diffPct, 1), klassForSkillnad(t.diffKr)) + '</tr>';
 
     satt('tab-eneas-not',
@@ -280,7 +282,7 @@
     // Tabell 1
     var h1 = ['Månad', 'Totalt kWh', 'Faktura inkl moms (kr)', 'El inkl elcert (öre/kWh)', 'Rörlig nätavgift (öre/kWh)', 'Energiskatt (öre/kWh)', 'Fast avgift (kr/månad)'];
     var r1 = MANADER.map(function (m) { return [m.namn, fmt(m.kwh), fmt(m.fakturaKr), fmt(m.krOre, 2), fmt(m.natOre, 2), fmt(m.skattOre, 2), fmt(m.fastNatKr)]; });
-    r1.push(['Summa', fmt(t.kwhAlla), fmt(t.fakturaAlla), fmt(t.snittIdag, 2) + ' (snitt)', '', '', '']);
+    r1.push(['Summa / vägt snitt', fmt(t.kwhAlla), fmt(t.fakturaAlla), fmt(t.snittIdag, 2) + ' (vägt snitt)', '', '', '']);
     var k1 = tabellKopia('Tabell 1. Idag: det som betalades till Kraftringen, januari–juni 2026', h1, r1, -1);
 
     // Tabell 2
@@ -291,8 +293,8 @@
               r.diffKr === null ? '–' : fmtTecken(r.diffKr), r.diffPct === null ? '–' : fmtTecken(r.diffPct, 1)];
     });
     r2.push(t.antal === 0
-      ? ['Summa', '–', '–', '–', '', '', '', '–', '–']
-      : ['Summa (' + t.antal + ' av ' + MANADER.length + ' månader)', fmt(t.kwhIfyllda), fmt(t.eneasSumma), fmt(t.snittEneas, 2) + ' (snitt)', '', '', '', fmtTecken(t.diffKr), fmtTecken(t.diffPct, 1)]);
+      ? ['Summa / vägt snitt', '–', '–', '–', '', '', '', '–', '–']
+      : ['Summa / vägt snitt (' + t.antal + ' av ' + MANADER.length + ' månader)', fmt(t.kwhIfyllda), fmt(t.eneasSumma), fmt(t.snittEneas, 2) + ' (vägt snitt)', '', '', '', fmtTecken(t.diffKr), fmtTecken(t.diffPct, 1)]);
     var k2 = tabellKopia('Tabell 2. Med Eneas priser (gula fält ifyllda av Eneas)', h2, r2, 3);
 
     // Anteckningar
