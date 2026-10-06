@@ -85,10 +85,28 @@ Det är den raden som Eneas pris ska ersätta i jämförelsen.
 | Jan | 16 586 | 37 341 |
 | Feb | 16 342 | 36 647 |
 | Mar | 10 302 | 19 213 |
-| Apr | 11 582 | 22 662 |
-| Maj | 12 430 | 29 248 |
-| Jun | 11 756 | 30 310 |
-| Summa | 78 998 | 175 421 |
+| Apr | 11 582 | 17 873 |
+| Maj | 12 430 | 23 521 |
+| Jun | 11 756 | 24 017 |
+| Summa | 78 998 | 158 612 |
+
+### 4.3 Rättelse april–juni (beslut 2026-10-06)
+
+Hyresgästen ska inte betala fast nätavgift. Underlagen för april–juni visade en
+fast avgift (3 831,44, 4 581,55 och 5 033,90 kr) som ett räkneexempel. Rätt belopp
+är:
+
+| Månad | Summa exkl. moms (kr) | Moms (kr) | Totalt, avrundat (kr) |
+|-------|----------------------:|----------:|----------------------:|
+| Apr | 14 298,40 | 3 574,60 | 17 873 |
+| Maj | 18 817,15 | 4 704,29 | 23 521 |
+| Jun | 19 213,92 | 4 803,48 | 24 017 |
+
+Beräknat som summan av de tre kvarvarande raderna (rörlig nät, el inkl elcert,
+energiskatt) × 1,25. Bilderna `202604`–`202606_Intern_debitering.jpg` i
+`Kraftringen/Intern_debitering/` visar fortfarande de gamla beloppen och behöver
+ersättas av rättade underlag. Kontrollera att rätt belopp är fakturerat till
+restaurangen.
 
 ## 5. Interndebiteringens uppbyggnad (ska återskapas i sidan)
 
@@ -100,21 +118,21 @@ Underlaget "Debiteringsunderlag El [månad] 2026" räknar så (Bjerreds Saltsjö
 3. Hyresgästens kWh = total förbrukning − bastu totalt − varmvatten.
    Exempel januari: 35 422 − 14 729 − 4 107 = 16 586 kWh.
 4. Hyresgästens kostnad, per kWh-post (öre/kWh × hyresgästens kWh):
-   - Nätavgift, fast avgift
+   - Nätavgift, fast avgift (alltid 0 kr, se nedan)
    - Nätavgift, rörlig (elöverföring)
    - El inkl elcert
    - Energiskatt
 5. Summa exkl. moms, plus 25 % moms, avrundat till hela kronor. Totalt = fakturerat
    belopp till restaurangen.
 
-Isak ska mata in på samma sätt: gula fält, samma rader, samma ordning. Enda
+Fältet för fast nätavgift är låst till 0 kr i sidan. Isak ska mata in på samma sätt: gula fält, samma rader, samma ordning. Enda
 skillnaden är att raden "El inkl Elcert" fylls i med Eneas pris.
 
 ## 6. Öppna frågor (måste besvaras före bygget)
 
 | Nr | Fråga | Varför |
 |----|-------|--------|
-| 1 | **Fast nätavgift för hyresgästen.** Januari–mars är den 0 kr (anteckningen på bilderna: "Hyresgästen, restaurangen, ska inte betala fast nätavgift"). April–juni debiteras den ändå: 3 831,44 kr, 4 581,55 kr och 5 033,90 kr (33,08, 36,86 och 42,82 öre/kWh). Ändrades principen, eller är det ett fel i april–juni? | Påverkar baslinjen för hyresgästens andel. Nätavgiften är lika i båda scenarierna, men summan i jämförelsen blir olika. |
+| 1 | ~~Fast nätavgift för hyresgästen~~ **Besvarad 2026-10-06:** hyresgästen ska aldrig debiteras fast nätavgift. Raderna för april–juni i underlagen var ett räkneexempel och rättas (se 4.3). | Löst. |
 | 2 | Hur ser Eneas prismodell ut? Spotpris plus påslag, fast pris, eller prissäkrad portfölj ("samköp")? Finns månadsavgift, elcertifikat och profilkostnader (uttagsprofil) separat? | Avgör vilka fält Isak ska fylla i. Broschyren anger inga priser (Eneas, 2026). |
 | 3 | Vad är Eneas pris för januari–juni i efterhand? Om Eneas säkrar priser i förväg är det inte samma sak som ett spotpris. | Jämförelsen ska göras på samma förbrukning. |
 | 4 | Ska jämförelsen visa hela fakturan, hyresgästens andel, eller båda? Förslag: båda. | Styr layout. |
@@ -181,7 +199,7 @@ som skiljer (elhandel).
 
 1. Kraftringens baslinje i sidan stämmer med avsnitt 4 för alla sex månader.
 2. Hyresgästens totalbelopp med Kraftringens pris återskapar exakt interndebiteringen
-   (37 341, 36 647, 19 213, 22 662, 29 248 och 30 310 kr).
+   (37 341, 36 647, 19 213, 17 873, 23 521 och 24 017 kr, de tre sista utan fast nätavgift, se 4.3).
 3. Ändrar Isak ett pris uppdateras beräkning och diagram direkt.
 4. Sidan fungerar vid databasfel genom att visa senast kända värden och ett tydligt
    felmeddelande.
@@ -199,7 +217,7 @@ som skiljer (elhandel).
 
 ## 11. Nästa steg
 
-1. Kent svarar på öppna frågor 1–6.
+1. Kent svarar på öppna frågor 2–6 (fråga 1 är besvarad).
 2. Kent bekräftar om nya filer ska skapas (`_ver1`) i `Eneas_Samkop_av_El/`.
 3. Bygg inmatningssidan och beräkningen, därefter databaskopplingen och diagrammen.
 4. Isak provar med januari–juni, och Kent kontrollräknar mot fakturorna.
