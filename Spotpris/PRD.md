@@ -187,6 +187,33 @@ rutnät vid Bjärred, inte en mätstation; månadsmedel januari −0,9, februari
 4. **Beslut för första bygget:** utetemperatur ingår **inte**. Den kräver en extra datakälla med oklara villkor och ger ingen förbättring. Frågan kan tas upp igen när förbrukningsdata per kvart (M3) finns, eftersom
    värmens väderberoende då går att se direkt (fråga 20).
 
+### 4.5 Förstudie 5: uppskattad effektkurva (2026-10-07)
+
+Kent föreslog att modellen också borde ge en **ungefärlig effektkurva**: medeleffekt (kW) timme för timme. Det går, eftersom modellen fördelar varje del av månadens kWh över dygnet.
+Diagrammet [`forstudie/effektkurva.svg`](forstudie/effektkurva.svg) visar medeleffekt per timme på dygnet för varje månad, uppdelad på ventilation/baslast, varmvatten, bastu och restaurangens drift, med
+ett grått band för 66 alternativa lika bra passningar (RMS högst 1,5 öre/kWh). Skript: `forstudie/effektkurva.py`.
+
+| Månad | Medeleffekt (kW) | Topp (kW, kl.) | Bandet vid toppen (kW) | Lägsta (kW) |
+|-------|-----------------:|---------------:|-----------------------:|------------:|
+| Januari | 47,6 | 76,6 (16) | 69–90 | 13,0 |
+| Februari | 47,6 | 80,6 (16) | 72–95 | 13,0 |
+| Mars | 37,8 | 50,9 (16) | 45–61 | 13,0 |
+| April | 37,0 | 53,0 (16) | 47–64 | 13,0 |
+| Maj | 32,2 | 46,0 (16) | 42–57 | 13,0 |
+| Juni | 28,6 | 39,8 (16) | 38–51 | 13,0 |
+
+**Vad det visar och inte visar:**
+
+1. **Medeleffekten är känd och säker:** den är månadens kWh delat på timmarna (januari 35 422 kWh / 744 h = 47,6 kW).
+2. **Kurvans form är modellens antaganden, inte en mätning.** Varje del är ett jämnt block mellan antagna tider, så kurvan är en trappa. Nivån i varje block styrs av månadens kWh, men *när* effekten
+   tas ut styrs av antagandena. Förstudien visar inte att bastuns uppvärmning verkligen börjar kl. 03, eller att toppen verkligen ligger kl. 16.
+3. **Toppen är en timmedel.** Verkliga toppar (till exempel när bastuaggregaten och köket går samtidigt) är kortvariga och högre än ett timmedel, och syns bara i kvartsdata.
+4. **Sanity-check:** abonnemanget är 200 A (fakturorna), vilket för 3-fas 400 V motsvarar högst cirka 139 kW. Uppskattade timtoppar på 40–81 kW (band upp till 95 kW) ligger under det. Det är en övre gräns, inte
+   en uppgift om förbrukningen.
+5. **Det som skulle göra kurvan till en effektkurva på riktigt är förbrukning per kvart eller timme** (fråga 2). Då kan den uppskattade kurvan prövas mot den verkliga, och M4b får sin validering.
+6. **Användning:** kurvan kan visa var i dygnet effekten ligger (till exempel om toppen sammanfaller med dyra timmar) och hur stor spridningen mellan lika bra antaganden är. Den ska märkas som en uppskattning
+   överallt där den visas.
+
 ## 5. Frågor som måste redas ut
 
 | Nr | Fråga | Varför | Förslag |
@@ -207,10 +234,11 @@ rutnät vid Bjärred, inte en mätstation; månadsmedel januari −0,9, februari
 | 14 | Var länkas sidan? | Navigering. | Från elöversikten (`index.html`) och från `Eneas_Samkop_av_El/` när den är klar. |
 | 15 | Hur kommer Eneas pris in i spotprissidan? | Isaks inmatning finns bara i hans egen webbläsare (och i mejlet han skickar), så den här sidan kan inte läsa den själv. | Kent skriver in priserna som en ifylld datafil (`data/eneas_pris.json`) eller i ett gult fält på sidan, när Isaks mejl kommit. |
 | 16 | Räcker Kraftringens poster per månad? | `enea_jamforelse.js` har bara summan "allt elpris" (`krOre`), inte spotpris, rörliga kostnader och påslag var för sig. | Lägg in de tre posterna per månad ur fakturorna i en egen datafil här (värdena finns i förstudien och i granskningsrapporten) och kontrollera dem mot fakturorna. |
-| 17 | **Vad är det som drar el dygnet runt i "restaurangens" del?** | Förstudie 3: 75–80 % av restposten ser ut att vara jämn dygnet runt, 10–18 kW. | **Delvis besvarad 2026-10-07 (Kent):** ventilation, värme och belysning går dygnet runt. Det finns ingen golvvärme i vinterträdgården. Belysningen drar inte mycket mitt i natten. Alltså är ventilation och värme de stora jämna förbrukarna (och kylar). **Kvar att besvara:** hur byggnaden värms (direktverkande el, värmepump, vattenburet), om ventilation eller värme har nattsänkning eller timer, och om bastuns uppvärmning startar före öppning. Modellen kan inte skilja bastuns uppvärmning från annan nattförbrukning. |
+| 17 | **Vad är det som drar el dygnet runt i "restaurangens" del?** | Förstudie 3: 75–80 % av restposten ser ut att vara jämn dygnet runt, 10–18 kW. | **Delvis besvarad 2026-10-07 (Kent):** ventilation, värme och belysning går dygnet runt. Det finns ingen golvvärme i vinterträdgården. Belysningen drar inte mycket mitt i natten. Alltså är ventilation och värme de stora jämna förbrukarna (och kylar). **Uppvärmning (Kent, 2026-10-07):** bastuarna värms med el, omklädningsrummen med vattenburen el och restaurangen med el. Kent sade först att det inte finns någon värmepump, och tillade sedan att det **kanske** finns en värmepump till restaurangen. Det är oklart och ska bekräftas. **Kvar att besvara:** finns en värmepump till restaurangen (och i så fall vilken sorts), om ventilation eller värme har nattsänkning eller timer, och om bastuns uppvärmning startar före öppning. Modellen kan inte skilja bastuns uppvärmning från annan nattförbrukning. En värmepump ändrar inte siffrorna i förstudierna (värmen är en del av baslasten, och väderberoende värme gav ingen förbättring, förstudie 4), men den ändrar hur baslasten ska tolkas och hur väderberoende den kan förväntas vara. |
 | 18 | Gällde restaurangens tider (må–ti stängt, on–fr 16–22, lö 11–22, sö 11–17) och badets 07.30–22 hela januari–juni 2026? När ändrades bastuns tid från 06–22 till 07.30–22? Fanns städavbrott före 1 maj, och när? | Tiderna i modellen kommer från hemsidorna 2026-10-07. Kent antar att de gällde jan–jun. | Kent bekräftar eller anger tider per månad. Modellen tar tider per månad. |
 | 19 | ~~Är varmvattenmätaren i kWh el?~~ | **Besvarad 2026-10-07 (Kent):** den mäter kWh el, för varmvatten till duschar och restaurang. | När värms vattnet (tank, timer, effektbegränsning) är fortfarande okänt. Modellen provar dygnet runt och enligt bastuns och restaurangens tider. |
 | 20 | Ska utetemperatur ingå i modellen? | Värme är väderberoende. Förstudie 4 gav ingen förbättring, och källan (Open-Meteo, modellerad data) har oklara villkor. | **Nej i första bygget.** Tas upp igen när förbrukningsdata per kvart finns, då värmens väderberoende kan ses direkt. |
+| 21 | Hur ska effektkurvan användas och visas? (Bara i PRD och förstudie, eller på spotprissidan? Per månad, per veckodag, eller typdygn?) | En uppskattad kurva kan misstas för en mätning. Sidan är öppen. | Visa den på sidan, tydligt märkt som uppskattning med bandet synligt. Kent beslutar. |
 
 ## 6. Datakällor
 
@@ -277,6 +305,7 @@ filer, kommentera i detalj, gul bakgrund bara på inmatningsfält. Källor i Har
 | F8 | Visa tydligt vilken metod varje värde bygger på, och vilka värden som inte går att räkna (till exempel M3 utan förbrukningsdata). |
 | F9 | Kopiera tabellen till urklipp så att den går att klistra in i ett mejl (samma mönster som på `enea_jamforelse.html`). |
 | F10 | Fungera öppnad från fil och utan nätverk, med data från filerna i `data/`. |
+| F11 | Visa en uppskattad effektkurva (kW per timme på dygnet, per månad) uppdelad på delar, med ett band för alternativa lika bra passningar, enligt förstudie 5. Märkt som uppskattning. Prövas mot förbrukningsdata när sådana finns. |
 
 ## 9. Acceptanskriterier
 
