@@ -16,6 +16,17 @@ därför överspelade av granskning 2.
 
 ---
 
+## Tvåstegsgranskning
+
+Granskningen kallas här **tvåstegsgranskning**. Det är vårt eget arbetsnamn, inte en standardbeteckning. Den består av
+två steg: (1) en **egenkontroll** av den som byggde sidorna, med maskinell avstämning mot källdokumenten, och
+(2) en **oberoende granskning** i en separat session som läser källorna själv och inte tar del av egenkontrollens
+resultat förrän den egna rapporten är skriven. Båda stegen innehåller avstämning mot källdokument, omräkning och
+stickprov eller fullständig omläsning. Det är en granskning av att sidornas siffror och formler stämmer med
+underlagen, och inte en kvalitetssäkring av underlagen eller antagandena.
+
+---
+
 ## 1. Vad som ska granskas
 
 | Del | Fråga | Hur det kan kontrolleras |
@@ -118,7 +129,13 @@ Skripten kräver `python` med paketet `pymupdf` och `node`.
 
 ## 7. Förslag på justering av texten på sidan
 
-Sidan säger idag att siffrorna "inte är kvalitetssäkrade". Det stämmer tills en oberoende granskning är gjord.
+UPPDATERING 2026-10-06: Sidorna sa tidigare att siffrorna "inte är kvalitetssäkrade". Det stämde tills en oberoende
+granskning var gjord. Efter granskning 2 ändrades texten (beslut av Kent) till "kontrollräknade mot dem. Antagandena i
+jämförelsen är inte avgjorda", på alla sidor och i alla dokument utom granskarens egen rapport och den ursprungliga
+`Cursor_startprompt.md`. Orden "kvalitetssäkrade" undviks medvetet: det som gjorts är en granskning (se avsnittet
+"Tvåstegsgranskning" överst), inte en kvalitetssäkring.
+
+Tidigare förslag, för historiken:
 Efter den kan texten ändras till vad som faktiskt är gjort, till exempel: "Siffrorna är hämtade ur Kraftringens
 fakturor och kontrollräknade mot dem (se granskningen). Antagandena i jämförelsen är inte granskade."
 Det är Kents beslut när och hur texten ändras.

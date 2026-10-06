@@ -9,8 +9,9 @@
 En jämförelse av vad Bjerreds Saltsjöbad betalade för el till Kraftringen januari–juni 2026
 och vad det hade blivit med Eneas priser (tjänsten Samköp av el). Sammanställd av Kent Lundgren.
 
-> Siffrorna är hämtade ur Kraftringens fakturor och är inte kvalitetssäkrade. Kontrollera mot
-> källan innan något återges.
+> Siffrorna är hämtade ur Kraftringens fakturor och kontrollräknade mot dem i en tvåstegsgranskning
+> (egenkontroll och oberoende granskning, se [kvalitetsgranskning.html](kvalitetsgranskning.html)).
+> Antagandena i jämförelsen är inte avgjorda. Kontrollera mot källan innan något återges.
 
 ## Vad sidan gör
 
@@ -58,7 +59,7 @@ Rena HTML-, CSS- och JavaScript-filer utan ramverk och utan byggprocess. Öppnas
 
 ## Status
 
-Version 1.8 (2026-10-06). Kraftringens belopp är kontrollräknade månad för månad mot de sex
+Version 1.9 (2026-10-06). Kraftringens belopp är kontrollräknade månad för månad mot de sex
 fakturorna (se `PRD.md`, avsnitt 13). Eneas priser är ännu inte inlagda.
 
 ## Källor

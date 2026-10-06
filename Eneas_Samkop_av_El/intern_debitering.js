@@ -18,7 +18,7 @@
   var klassForSkillnad = H.klassForSkillnad, htmlEscape = H.htmlEscape;
   var MOMS = H.MOMS, LAGRINGSNYCKEL = H.LAGRINGSNYCKEL, MAX_ORE = H.MAX_ORE;
 
-  var VERSION = '1.1';
+  var VERSION = '1.2';
   var VERSIONSDATUM = '2026-10-06';
 
   // ===================================================================
@@ -27,7 +27,7 @@
   //   hgKwh = restaurangens kWh = total - bastu - varmvatten (debiteringsunderlagen).
   //   hgKr  = restaurangens debiterade belopp inkl moms, hela kronor. Fast nätavgift ingår
   //           aldrig (PRD 4.3, beslut 2026-10-06), så april–juni är de rättade beloppen.
-  //   Källa: Kraftringens fakturor och Bjerreds Saltsjöbads debiteringsunderlag. Inte kvalitetssäkrat.
+  //   Källa: Kraftringens fakturor och Bjerreds Saltsjöbads debiteringsunderlag. Granskad 2026-10-06 (tvåstegsgranskning, se kvalitetsgranskning.html).
   // ===================================================================
   var MANADER = [
     { key: '2026-01', namn: 'Jan', krOre: 122.24, hgKwh: 16586, hgKr: 37341 },
@@ -164,7 +164,7 @@
     rader.push(t.antal === 0 ? ['Summa', fmt(t.kwhAlla), fmt(t.idagAlla), '', '', '–', '–']
                              : ['Summa', fmt(t.kwhIfyllda), fmt(t.idagIfyllda), '', '', fmt(t.eneas), fmtTecken(t.diff)]);
     var rubrik = 'Intern debitering: restaurangens andel januari–juni 2026';
-    var not = 'Intern sammanställning av Kent Lundgren. Siffrorna är hämtade ur Kraftringens fakturor och debiteringsunderlag och är inte kvalitetssäkrade. Kontrollera mot källan. Version ' + VERSION + ', ' + VERSIONSDATUM + '.';
+    var not = 'Intern sammanställning av Kent Lundgren. Siffrorna är hämtade ur Kraftringens fakturor och debiteringsunderlag och kontrollräknade mot dem i en tvåstegsgranskning. Antagandena i jämförelsen är inte avgjorda. Kontrollera mot källan. Version ' + VERSION + ', ' + VERSIONSDATUM + '.';
     var html = '<p style="font-family:Arial,sans-serif;font-size:14px;"><b>' + htmlEscape(rubrik) + '</b></p><table style="border-collapse:collapse;"><thead><tr>';
     var text = rubrik + '\n' + huvud.join('\t') + '\n';
     huvud.forEach(function (h, i) { html += '<th style="' + (i === 0 ? HEAD_V : HEAD) + '">' + htmlEscape(h) + '</th>'; });

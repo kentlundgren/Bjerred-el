@@ -7,8 +7,9 @@ Ansvarig: Kent Lundgren
 Extern kontakt: Isak Cerwén, kundrådgivare, Eneas
 
 > OBS! Siffror i detta dokument är hämtade ur fakturor och interndebiteringsunderlag
-> i projektet (se källförteckningen). De är inte kvalitetssäkrade i övrigt. Kontrollera
-> alltid mot originalfakturorna.
+> i projektet (se källförteckningen). De är kontrollräknade mot källorna i en tvåstegsgranskning
+> (se KVALITETSGRANSKNING.md och kvalitetsgranskning.html), men underlagen i sig och antagandena i
+> jämförelsen är inte granskade. Kontrollera alltid mot originalfakturorna.
 
 ---
 
@@ -255,8 +256,9 @@ och sidan ska fungera även utan.
    Isaks priser och anteckningar. Sidan fungerar öppnad direkt från fil, utan nätverk.
 5. Sidan är läsbar i mobil (16 px marginal, ingen sidledsrullning).
 6. Version och datum syns i sidfoten. Sidan anger att siffrorna är hämtade ur
-   Kraftringens fakturor och inte är kvalitetssäkrade, och att läsaren ska kontrollera
-   mot källan. Kent Lundgren anges som avsändare.
+   Kraftringens fakturor och kontrollräknade mot dem, att antagandena i jämförelsen inte är
+   avgjorda, och att läsaren ska kontrollera mot källan. Kent Lundgren anges som avsändare.
+   (Ändrat 2026-10-06 efter tvåstegsgranskningen; tidigare "inte kvalitetssäkrade".)
 
 ## 10. Risker
 
@@ -345,8 +347,9 @@ eftersom de avrundade ställningarna ger bastu 7 431 kWh i stället för 7 430 (
 ## 13. Kontrollräkning av kWh och belopp (2026-10-06)
 
 Gjord mot de sex fakturorna i `Kraftringen/Fakturor/` och de sex debiteringsunderlagen i
-`Kraftringen/Intern_debitering/`. Siffrorna är avlästa ur fakturor och bilder och är inte
-kvalitetssäkrade i övrigt; kontrollera mot originalen.
+`Kraftringen/Intern_debitering/`. Siffrorna är avlästa ur fakturor och bilder och
+kontrollräknade mot dem (egenkontroll, senare även oberoende granskning: se
+KVALITETSGRANSKNING.md). Kontrollera mot originalen.
 
 **Stämmer (kontrollerat för alla sex månader):**
 - Total kWh i underlaget (avrundat) = kWh på fakturan (35 422,14 / 32 002,14 / 28 073,52 /

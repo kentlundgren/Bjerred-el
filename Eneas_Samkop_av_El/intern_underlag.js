@@ -41,7 +41,7 @@
   //    p = öre/kWh: rörlig nätavgift, el inkl elcert, energiskatt
   //    kwhFaktura = användning enligt Kraftringens faktura (kontroll)
   //    facit = tidigare debiterat belopp till restaurangen inkl moms (rättat, PRD 4.3)
-  //    Källa: Kraftringens fakturor och Bjerreds Saltsjöbads debiteringsunderlag. Inte kvalitetssäkrat.
+  //    Källa: Kraftringens fakturor och Bjerreds Saltsjöbads debiteringsunderlag. Granskad 2026-10-06 (tvåstegsgranskning, se kvalitetsgranskning.html).
   // ===================================================================
   var STANDARD = [
     { key: '2026-01', faktura: '90779', nr: '3082197306', kwhFaktura: '35422,14', facit: 37341,
@@ -394,7 +394,7 @@
       ['Moms', '', '', fmtKr(b.moms)],
       ['Totalt', '', '', b.tot === null ? '–' : fmt(b.tot, 2)]
     ]);
-    var not = 'Hyresgästen betalar ingen fast nätavgift. Siffrorna är hämtade ur Kraftringens fakturor och är inte kvalitetssäkrade. Kontrollera mot källan. Sammanställd av Kent Lundgren.';
+    var not = 'Hyresgästen betalar ingen fast nätavgift. Siffrorna är hämtade ur Kraftringens fakturor och kontrollräknade mot dem i en tvåstegsgranskning. Hur restaurangens kWh delas upp är inte avgjort. Kontrollera mot källan. Sammanställd av Kent Lundgren.';
     return {
       html: '<div style="font-family:Arial,sans-serif;"><p style="font-size:16px;"><b>' + htmlEscape(rubrik) + '</b></p><p style="font-size:13px;">' +
             htmlEscape(rad1) + '</p>' + t1.html + t2.html + '<p style="font-size:12px;color:#555;">' + htmlEscape(not) + '</p></div>',

@@ -23,6 +23,8 @@
   Ett enda val överst (TABELL1_SYNLIG_SOM_STANDARD) går tillbaka till alltid synlig. Version 1.6.
   UPPDATERING 2026-10-06: Dubbelklick på ordet "Kraftringen" i rubriken visar/döljer också tabell 1. Version 1.7.
   UPPDATERING 2026-10-06: Ruta "Vad jämförelsen förutsätter" och förtydligad text om vad priset ska omfatta (granskning 2). Version 1.8.
+  UPPDATERING 2026-10-06: Upplysningen om siffrorna ändrad från "är inte kvalitetssäkrade" till "kontrollräknade
+  mot dem. Antagandena i jämförelsen är inte avgjorda" (på sidan och i det som kopieras). Version 1.9.
 */
 (function () {
   'use strict';
@@ -35,7 +37,7 @@
   // ===================================================================
   // 1. Version
   // ===================================================================
-  var VERSION = '1.8';
+  var VERSION = '1.9';
   var VERSIONSDATUM = '2026-10-06';
 
   // ===================================================================
@@ -57,7 +59,7 @@
 
   // ===================================================================
   // 2. Referensdata: Kraftringens faktiska utfall januari–juni 2026
-  //    Källa: Kraftringens fakturor (se källistan på sidan). Inte kvalitetssäkrat.
+  //    Källa: Kraftringens fakturor (se källistan på sidan). Granskad 2026-10-06 (tvåstegsgranskning).
   //    kwh        = användning enligt fakturan (med decimaler, används i beräkningen)
   //    fakturaKr  = fakturabelopp inkl moms, hela kronor (avrundat enligt fakturan)
   //    krOre      = "El inkl elcert" = spotpris + rörliga kostnader + 1,70 öre/kWh fast påslag
@@ -353,7 +355,7 @@
     });
     an += '</table>';
 
-    var not = 'Siffrorna är hämtade ur Kraftringens fakturor januari–juni 2026 och är inte kvalitetssäkrade. Kontrollera mot källan innan något återges. ' +
+    var not = 'Siffrorna är hämtade ur Kraftringens fakturor januari–juni 2026 och kontrollräknade mot dem. Antagandena i jämförelsen är inte avgjorda. Kontrollera mot källan innan något återges. ' +
               'Sammanställd av Kent Lundgren. Jämförelsen är gjord i efterhand: nät, energiskatt och fast nätavgift är oförändrade, bara elhandeln byts ut. ' +
               'Version ' + VERSION + ', ' + VERSIONSDATUM + '.';
 
