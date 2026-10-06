@@ -110,6 +110,10 @@ textarea.gul { width: 100%; resize: vertical; }
 .kallor li { margin-bottom: 8px; }
 .fot { margin-top: 28px; font-size: .85rem; color: var(--text-dampad); }
 
+/* Ordet "Kraftringen" i rubriken: dubbelklick visar/döljer tabell 1. Texten ska inte markeras
+   vid dubbelklick, så att inget avslöjar att det händer något. */
+#kraftringen-ord { -webkit-user-select: none; user-select: none; }
+
 /* ---------- Omkopplare för tabell 1 ("···") ----------
    Medvetet nästan osynlig: man måste veta var man ska klicka. Syns tydligare vid hover/fokus.
    Visas bara om tabell 1 är dold som standard (styrs av TABELL1_SYNLIG_SOM_STANDARD i JS). */

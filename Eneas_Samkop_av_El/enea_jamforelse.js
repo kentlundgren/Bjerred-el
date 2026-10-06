@@ -21,6 +21,7 @@
   "El inkl elcert" är kWh-vägt snitt). Version 1.5.
   UPPDATERING 2026-10-06: Tabell 1 är dold som standard och visas med en diskret knapp ("···").
   Ett enda val överst (TABELL1_SYNLIG_SOM_STANDARD) går tillbaka till alltid synlig. Version 1.6.
+  UPPDATERING 2026-10-06: Dubbelklick på ordet "Kraftringen" i rubriken visar/döljer också tabell 1. Version 1.7.
 */
 (function () {
   'use strict';
@@ -33,7 +34,7 @@
   // ===================================================================
   // 1. Version
   // ===================================================================
-  var VERSION = '1.6';
+  var VERSION = '1.7';
   var VERSIONSDATUM = '2026-10-06';
 
   // ===================================================================
@@ -465,6 +466,17 @@
     document.getElementById('tabell1-vaxel').addEventListener('click', function () {
       visaTabell1(!tabell1Synlig);
       uppdatera();
+    });
+    // Dubbelklick på ordet "Kraftringen" i rubriken visar eller döljer också tabell 1.
+    // Fungerar bara när tabell 1 är dold som standard. Ingen synlig ledtråd på sidan.
+    document.getElementById('kraftringen-ord').addEventListener('dblclick', function () {
+      if (TABELL1_SYNLIG_SOM_STANDARD) { return; }
+      visaTabell1(!tabell1Synlig);
+      uppdatera();
+      if (tabell1Synlig) {
+        // Visa tabellen i bild, eftersom den ligger en bit ned på sidan.
+        document.getElementById('TabellIdag').scrollIntoView({ block: 'start' });
+      }
     });
 
     H.kopplaTeknikModal();
