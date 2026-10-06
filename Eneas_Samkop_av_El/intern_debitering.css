@@ -42,6 +42,10 @@
 .ark tr.totalt td.gron { background: #e3efdc; }
 .ark .delrubrik { text-align: left; font-weight: 700; padding-top: 14px; }
 .ark .anm { font-size: .8rem; color: var(--text-dampad); margin: 4px 0 0; text-align: left; }
+/* Den låsta rutan "Fast avgift 0" har samma blå färg som noteringen nedanför, eftersom
+   noteringen förklarar just den rutan (hyresgästen betalar ingen fast nätavgift). */
+.ark input.last.blatt { background: #e3f0fb; border-color: #2a7fc4; color: #0b3d66; }
+
 /* Notering (inte inmatning): blå, inte gul. Gult är reserverat för inmatningsfält. */
 .ark .anm.fast {
   color: #0b3d66; background: #e3f0fb; border-left: 4px solid #2a7fc4;
