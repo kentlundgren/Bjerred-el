@@ -310,12 +310,28 @@ dold men inte skyddad.
   Inmatningen sparas i webbläsaren (localStorage, inom try/catch). Januari–juni 2026 är
   förifyllda som fallback i JavaScript.
 
-**Öppna frågor för Del 2.**
-1. Har underlaget mätarställningar med decimaler (kalkylbladet visar avrundade värden)?
-   Skicka i så fall dem, eller bekräfta att ±1 kr godtas (avsnitt 13).
-2. Ska "Hela fakturan" fyllas i för hand, eller räknas ut från Kraftringens poster?
-3. Ska underlaget kunna skrivas ut med samma utseende som dagens bilder, eller räcker
-   en ren tabell?
+**Beslut för Del 2 (2026-10-06).**
+1. Avrundningsfel på någon krona godtas. Mätarställningarna för januari–juni är därför de
+   avrundade heltalen ur bilderna.
+2. "Hela fakturan" är ett gult fält (förifyllt för januari–juni, ifylls från fakturan för nya
+   månader). Det räknas inte ut.
+3. Underlaget ska ha ungefär samma utseende som dagens underlag, så att Kent känner igen sig.
+
+**Byggt (version 1.0, 2026-10-06).** `intern_debitering.html` visar "arket" först, därefter
+jämförelsen med Eneas priser. Filer: `intern_underlag.js` (logik och data), `intern_debitering.css`
+(arkets utseende). Funktioner:
+- D1 Månadsväljare jan–jun 2026 och knappen "+ Ny månad" (nästa månad, ingående mätarställningar
+  hämtas från föregående). Tillagda månader kan tas bort; standardmånader kan återställas.
+- D2–D4 Gula fält som i dagens underlag och beräkning enligt avsnitt 5. Fast nätavgift är låst till 0.
+- D5 Kontroller: huvudmätarens förbrukning mot kWh på fakturan (±1 kWh) och totalbelopp mot tidigare
+  debiterat (varning om avvikelsen är över 2 kr), samt varning för utgående under ingående och för
+  negativ hyresgäst-kWh.
+- D6 "Kopiera underlaget" (HTML + text), "Skriv ut underlaget" (bara arket, A4) och sparande i
+  webbläsaren (egen nyckel `intern_underlag_v1`).
+
+**Testresultat med förifyllda värden (totalt kr mot tidigare debiterat):** jan 37 341 (0),
+feb 36 647 (0), mar 19 213 (0), apr 17 872 (−1), maj 23 522 (+1), jun 24 015 (−2). Juni avviker mest
+eftersom de avrundade ställningarna ger bastu 7 431 kWh i stället för 7 430 (avsnitt 13).
 
 ## 13. Kontrollräkning av kWh och belopp (2026-10-06)
 

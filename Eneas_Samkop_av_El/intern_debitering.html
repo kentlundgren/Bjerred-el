@@ -18,21 +18,152 @@
   <meta name="robots" content="noindex, nofollow">
   <title>Intern debitering</title>
   <link rel="stylesheet" href="enea_jamforelse.css">
+  <link rel="stylesheet" href="intern_debitering.css">
 </head>
 <body>
 
 <main class="sida">
 
   <header class="topp">
-    <h1 id="Start">Intern debitering: restaurangens andel</h1>
+    <h1 id="Start">Intern debitering av restaurangen</h1>
     <p class="undertitel">Internt för Kent Lundgren. Visas inte för Eneas.
       <a href="enea_jamforelse.html">Till jämförelsen för Eneas</a>.</p>
     <p class="status">Siffrorna är hämtade ur Kraftringens fakturor och Bjerreds Saltsjöbads debiteringsunderlag
       och är inte kvalitetssäkrade. Kontrollera mot källan (<a href="#Kallor">se källor</a>).</p>
   </header>
 
-  <section class="ruta" aria-labelledby="Anvisning">
-    <h2 id="Anvisning">Så fungerar den <a class="ankare" href="#Anvisning" aria-label="Länk till avsnittet">#</a></h2>
+  <!-- ============ DEL 2: Debiteringsunderlag (liknar dagens underlag) ============ -->
+  <section class="endast-underlag" aria-labelledby="Underlag">
+    <h2 id="Underlag">Debiteringsunderlag El <a class="ankare" href="#Underlag" aria-label="Länk till avsnittet">#</a></h2>
+    <p class="liten">Välj månad. Fyll i de <span class="gulmarkering">gula fälten</span> (utgående mätarställningar,
+      priser och fakturabelopp). Ingående mätarställning hämtas från föregående månads utgående.
+      Restaurangen betalar ingen fast nätavgift. Inmatningen sparas bara i den här webbläsaren.</p>
+
+    <div class="manadsval" id="manadsval" role="tablist" aria-label="Välj månad"></div>
+
+    <div class="ark" id="ark">
+      <div class="ark-topp">
+        <span>Kundnummer: 130869</span>
+        <span class="gul-etikett">Gula fält ifylles</span>
+      </div>
+
+      <div class="ark-titelrad">
+        <h3 id="ark-titel">Debiteringsunderlag El</h3>
+        <span>– Hela fakturan:</span>
+        <input type="text" inputmode="decimal" autocomplete="off" class="gul" id="f-faktura" aria-label="Hela fakturan, kr">
+        <span>kr</span>
+        <span>(Fakturanummer:</span>
+        <input type="text" autocomplete="off" class="gul bred" id="f-nr" aria-label="Fakturanummer">
+        <span>)</span>
+      </div>
+
+      <!-- Mätarställningar -->
+      <table id="tab-mat">
+        <thead>
+          <tr>
+            <th colspan="2"></th>
+            <th id="datum-start"></th>
+            <th id="datum-slut"></th>
+            <th>Förbrukning</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="etikett" colspan="2">Huvudmätare vid bryggfästet</td>
+            <td><input type="text" inputmode="decimal" autocomplete="off" id="s-huvud" aria-label="Huvudmätare, ingående"></td>
+            <td><input type="text" inputmode="decimal" autocomplete="off" class="gul" id="e-huvud" aria-label="Huvudmätare, utgående"></td>
+            <td class="gron" id="u-huvud">–</td><td class="enhet">kWh</td>
+          </tr>
+          <tr><th class="delrubrik" colspan="6">Hyresvärdens andel</th></tr>
+          <tr>
+            <td class="etikett" colspan="2">Mätare bastu herr</td>
+            <td><input type="text" inputmode="decimal" autocomplete="off" id="s-herr" aria-label="Bastu herr, ingående"></td>
+            <td><input type="text" inputmode="decimal" autocomplete="off" class="gul" id="e-herr" aria-label="Bastu herr, utgående"></td>
+            <td id="u-herr">–</td><td></td>
+          </tr>
+          <tr>
+            <td class="etikett" colspan="2">Mätare bastu dam</td>
+            <td><input type="text" inputmode="decimal" autocomplete="off" id="s-dam" aria-label="Bastu dam, ingående"></td>
+            <td><input type="text" inputmode="decimal" autocomplete="off" class="gul" id="e-dam" aria-label="Bastu dam, utgående"></td>
+            <td id="u-dam">–</td><td></td>
+          </tr>
+          <tr class="summa">
+            <td class="etikett" colspan="2">Mätare bastu TOT</td>
+            <td id="t-bastu-s">–</td><td id="t-bastu-e">–</td>
+            <td id="u-bastu">–</td><td class="enhet">kWh</td>
+          </tr>
+          <tr><td colspan="6">&nbsp;</td></tr>
+          <tr>
+            <td class="etikett" colspan="2">Mätare varmvatten</td>
+            <td><input type="text" inputmode="decimal" autocomplete="off" id="s-varm" aria-label="Varmvatten, ingående"></td>
+            <td><input type="text" inputmode="decimal" autocomplete="off" class="gul" id="e-varm" aria-label="Varmvatten, utgående"></td>
+            <td class="gron" id="u-varm">–</td><td class="enhet">kWh</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Hyresgästens andel -->
+      <table id="tab-hgandel">
+        <thead>
+          <tr><th class="delrubrik" colspan="2" style="text-align:left">Hyresgästens andel</th>
+              <th colspan="4" style="font-weight:400;font-size:.78rem;text-align:left">(förbrukning − förbrukning bastu − förbrukning varmv)</th></tr>
+          <tr><th colspan="2"></th><th>kWh</th><th>öre/kWh</th><th>kr</th><th></th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="etikett">Nätavgift</td><td class="etikett">Fast avgift</td>
+            <td>0</td>
+            <td><input type="text" class="last" value="0" readonly aria-label="Fast avgift öre/kWh, låst till 0"></td>
+            <td>0,00</td><td class="enhet">kr</td>
+          </tr>
+          <tr>
+            <td class="etikett">Nätavgift</td><td class="etikett">Rörlig</td>
+            <td id="h-kwh-1">–</td>
+            <td><input type="text" inputmode="decimal" autocomplete="off" class="gul" id="p-rorlig" aria-label="Rörlig nätavgift öre/kWh"></td>
+            <td id="h-kr-1">–</td><td class="enhet">kr</td>
+          </tr>
+          <tr>
+            <td class="etikett">Elförbrukning</td><td class="etikett">El inkl Elcert (1,7 öre/kWh)</td>
+            <td id="h-kwh-2">–</td>
+            <td><input type="text" inputmode="decimal" autocomplete="off" class="gul" id="p-el" aria-label="El inkl elcert öre/kWh"></td>
+            <td id="h-kr-2">–</td><td class="enhet">kr</td>
+          </tr>
+          <tr>
+            <td class="etikett"></td><td class="etikett">Energiskatt</td>
+            <td id="h-kwh-3">–</td>
+            <td><input type="text" inputmode="decimal" autocomplete="off" class="gul" id="p-skatt" aria-label="Energiskatt öre/kWh"></td>
+            <td id="h-kr-3">–</td><td class="enhet">kr</td>
+          </tr>
+          <tr class="summa">
+            <td colspan="2"></td><td></td><td id="h-sumore">–</td><td id="h-exkl">–</td><td class="enhet">kr</td>
+          </tr>
+          <tr><td class="etikett" colspan="2">Moms</td><td></td><td></td><td id="h-moms">–</td><td class="enhet">kr</td></tr>
+          <tr class="totalt">
+            <td class="etikett" colspan="2">Totalt</td><td></td><td></td><td class="gron" id="h-tot">–</td><td class="enhet">kr</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="anm fast">Hyresgästen, restaurangen, ska inte betala fast nätavgift.</p>
+
+      <div class="kontroll" id="kontroll" aria-live="polite">
+        <p><label for="f-kwh">kWh enligt Kraftringens faktura (kontroll, valfritt):</label>
+          <input type="text" inputmode="decimal" autocomplete="off" class="gul" id="f-kwh" style="width:7.5em;text-align:right"></p>
+        <div id="kontroll-resultat"></div>
+      </div>
+    </div>
+
+    <div class="knappar ark-verktyg">
+      <button type="button" id="btn-u-kopiera" class="knapp primar">Kopiera underlaget</button>
+      <button type="button" id="btn-u-skriv" class="knapp">Skriv ut underlaget</button>
+      <button type="button" id="btn-u-aterstall" class="knapp">Återställ månaden</button>
+      <button type="button" id="btn-u-ta-bort" class="knapp" hidden>Ta bort månaden</button>
+    </div>
+    <p id="meddelande-u" class="meddelande" role="status" aria-live="polite"></p>
+  </section>
+
+  <section class="ruta ej-underlag" aria-labelledby="Anvisning">
+    <h2 id="Anvisning">Jämförelse med Eneas priser <a class="ankare" href="#Anvisning" aria-label="Länk till avsnittet">#</a></h2>
     <p>Restaurangen (hyresgästen) debiteras för sin förbrukning: total förbrukning minus bastu minus varmvatten.
       Den betalar ingen fast nätavgift. Kostnaden är rörlig nätavgift + el inkl elcert + energiskatt, plus 25 % moms,
       avrundat till hela kronor.</p>
@@ -41,7 +172,7 @@
       webbläsare, så det räcker att fylla i dem på en av sidorna.</p>
   </section>
 
-  <section aria-labelledby="TabellRestaurang">
+  <section class="ej-underlag" aria-labelledby="TabellRestaurang">
     <h2 id="TabellRestaurang">Restaurangens andel januari–juni 2026 <a class="ankare" href="#TabellRestaurang" aria-label="Länk till avsnittet">#</a></h2>
     <div class="tabell-wrap">
       <table id="tab-hg">
@@ -65,13 +196,13 @@
       Restaurangens belopp med Eneas = belopp idag + (Eneas pris − Kraftringens pris) × restaurangens kWh / 100 × 1,25.</p>
   </section>
 
-  <div class="knappar">
+  <div class="knappar ej-underlag">
     <button type="button" id="btn-kopiera" class="knapp primar">Kopiera tabellen</button>
     <button type="button" id="btn-skriv" class="knapp">Skriv ut / spara som PDF</button>
   </div>
   <p id="meddelande" class="meddelande" role="status" aria-live="polite"></p>
 
-  <section aria-labelledby="Kallor">
+  <section class="ej-underlag" aria-labelledby="Kallor">
     <h2 id="Kallor">Källor <a class="ankare" href="#Kallor" aria-label="Länk till avsnittet">#</a></h2>
     <ul class="kallor">
       <li id="ref-kraftringen">Kraftringen (2026) <em>E-faktura elnät och elhandel, januari–juni 2026</em>
@@ -131,6 +262,10 @@
     <h3>Metoden</h3>
     <div class="tech-grid">
       <div class="tech-card">
+        <h4>Underlag som liknar dagens</h4>
+        <p>Debiteringsunderlaget följer uppställningen i dagens underlag (huvudmätare, bastu, varmvatten, hyresgästens andel). Ingående mätarställning hämtas från föregående månads utgående. Januari–juni är förifyllda från underlagens heltal, och avvikelser på någon krona godtas.</p>
+      </div>
+      <div class="tech-card">
         <h4>Utlyft ur Eneas-sidan</h4>
         <p>Restaurangens tabell låg först i jämförelsen för Eneas. Kent bad om att den skulle lyftas ur filen som Isak får.</p>
       </div>
@@ -144,5 +279,6 @@
 
 <script src="enea_hjalp.js"></script>
 <script src="intern_debitering.js"></script>
+<script src="intern_underlag.js"></script>
 </body>
 </html>

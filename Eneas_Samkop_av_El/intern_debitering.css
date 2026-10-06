@@ -1,0 +1,61 @@
+/*
+  intern_debitering.css
+  Tilläggsstil för intern_debitering.html: debiteringsunderlaget ("arket") som ska se ut ungefär
+  som dagens underlag. Laddas efter enea_jamforelse.css och använder dess variabler.
+
+  UPPDATERING 2026-10-06: Första versionen (Del 2 i PRD.md).
+*/
+
+/* ---------- Månadsväljare ---------- */
+.manadsval { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 14px; }
+.manadsval button {
+  font: inherit; padding: 6px 12px; border-radius: 6px; cursor: pointer;
+  border: 1px solid var(--kant); background: #fff; color: var(--text);
+}
+.manadsval button[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.manadsval button.ny { border-style: dashed; color: var(--accent); }
+
+/* ---------- Arket (liknar kalkylbladet) ---------- */
+.ark {
+  max-width: 760px; background: #fff; border: 1px solid var(--kant);
+  padding: 14px 16px 16px; font-size: .95rem;
+}
+.ark-topp { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; font-size: .9rem; }
+.gul-etikett { background: var(--gul); padding: 1px 8px; }
+.ark-titelrad {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 14px 0 10px;
+}
+.ark-titelrad h3 { margin: 0; font-size: 1.15rem; }
+.ark input.gul, .ark input.last {
+  padding: 3px 6px; width: 7.5em; text-align: right; font: inherit;
+}
+.ark input.last { background: var(--lasta); border: 1px solid var(--kant); border-radius: 4px; color: var(--text); }
+.ark input.bred { width: 10em; }
+.ark table { min-width: 0; margin-top: 6px; }
+.ark th, .ark td { padding: 3px 8px; border-bottom: none; white-space: nowrap; }
+.ark th { font-size: .88rem; }
+.ark td.etikett { text-align: left; }
+.ark td.enhet { text-align: left; color: var(--text-dampad); }
+.ark td.gron { background: #e3efdc; font-weight: 700; }
+.ark tr.summa td { border-top: 1px solid var(--text); font-weight: 700; }
+.ark tr.totalt td { font-weight: 700; border-top: 2px solid var(--text); }
+.ark tr.totalt td.gron { background: #e3efdc; }
+.ark .delrubrik { text-align: left; font-weight: 700; padding-top: 14px; }
+.ark .anm { font-size: .8rem; color: var(--text-dampad); margin: 4px 0 0; text-align: left; }
+.ark .anm.fast { color: var(--text); background: #fff3a0; display: inline-block; padding: 2px 8px; }
+
+/* ---------- Kontrollruta ---------- */
+.kontroll { margin-top: 14px; border-top: 1px dashed var(--kant); padding-top: 8px; font-size: .88rem; }
+.kontroll p { margin: 4px 0; }
+.kontroll .ok { color: var(--billigare); }
+.kontroll .varning { color: var(--dyrare); font-weight: 700; }
+
+/* ---------- Utskrift av bara underlaget ---------- */
+@media print {
+  body.skriv-underlag .ej-underlag { display: none !important; }
+  body:not(.skriv-underlag) .endast-underlag { display: none !important; }
+  .manadsval, .ark-verktyg { display: none !important; }
+  .ark { border: none; padding: 0; max-width: none; }
+  .ark input.gul, .ark input.last { border: none; }
+  @page { size: A4 portrait; }
+}

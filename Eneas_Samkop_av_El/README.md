@@ -43,8 +43,10 @@ kostnader + 1,70 öre/kWh fast påslag).
 | `enea_jamforelse.css` | Utseende och utskriftsformat. |
 | `enea_jamforelse.js` | Kraftringens utfall, beräkning, sparande i webbläsaren och kopiering. |
 | `enea_hjalp.js` | Gemensamma hjälpfunktioner (tolkning av tal, talformat). |
-| `intern_debitering.html` | Intern sida: restaurangens andel idag och med Eneas priser. Grunden till en mall för internt debiteringsunderlag. |
-| `intern_debitering.js` | Restaurangens data och beräkning för den interna sidan. |
+| `intern_debitering.html` | Intern sida: mall för debiteringsunderlag (som dagens underlag) och restaurangens andel idag och med Eneas priser. |
+| `intern_underlag.js` | Debiteringsunderlaget: månadsval, mätarställningar, beräkning, kontroller, kopiering och utskrift. |
+| `intern_debitering.js` | Restaurangens data och jämförelse med Eneas priser. |
+| `intern_debitering.css` | Utseendet på debiteringsunderlaget (liknar dagens underlag). |
 | `PRD.md` | Kravdokument med bakgrund, beslut och kontrollräkning mot fakturorna. |
 | `Eneas Samkop av El 2026.pdf` | Eneas broschyr (innehåller inga priser). |
 
