@@ -1,0 +1,42 @@
+/*
+  kvalitetsgranskning.css
+  Tilläggsstil för kvalitetsgranskning.html. Laddas efter enea_jamforelse.css och använder dess variabler.
+
+  UPPDATERING 2026-10-06: Första versionen (1.0).
+*/
+
+/* Kort sammanfattning överst, som ett eget kort */
+.sammanfattning {
+  background: var(--ruta); border: 1px solid var(--kant); border-left: 4px solid var(--accent);
+  border-radius: 8px; padding: 6px 18px 14px; margin: 18px 0 8px;
+}
+.punkter { padding-left: 20px; }
+.punkter li { margin-bottom: 8px; }
+
+/* Rubrik som skiljer den fullständiga redovisningen från sammanfattningen */
+h2.delrubrik { margin-top: 36px; padding-top: 12px; border-top: 2px solid var(--kant); }
+h3 { margin-top: 28px; }
+h4 { margin: 16px 0 6px; font-size: 1rem; }
+h3:hover .ankare, h4:hover .ankare, h3:focus-within .ankare { opacity: .7; }
+
+/* Vanliga tabeller med text: vänsterställd och radbrytande, till skillnad från sifferstabellerna */
+table.vanlig { min-width: 520px; }
+table.vanlig th, table.vanlig td { text-align: left; white-space: normal; vertical-align: top; }
+table.vanlig td:not(:first-child) { min-width: 8em; }
+
+/* Antaganden */
+dl.antaganden dt { font-weight: 700; margin-top: 14px; }
+dl.antaganden dd { margin: 4px 0 0; }
+.bedomning {
+  display: inline-block; margin-left: 8px; padding: 1px 8px; border-radius: 10px;
+  font-size: .78rem; font-weight: 700; vertical-align: 1px;
+}
+.bedomning.rimligt { background: #d9efd5; color: #1b6b2e; }
+.bedomning.oklart { background: #e3f0fb; color: #0b3d66; }   /* blå, inte gul: gult är reserverat för inmatning */
+
+code { font-size: .9em; background: var(--lasta); padding: 0 4px; border-radius: 3px; }
+
+@media print {
+  .sammanfattning { break-inside: avoid; }
+  h3 { break-after: avoid; }
+}

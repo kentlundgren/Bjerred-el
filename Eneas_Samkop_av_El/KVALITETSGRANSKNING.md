@@ -3,7 +3,12 @@
 Projekt: Elenergiförbrukning – Bjerreds Saltsjöbad, mappen `Eneas_Samkop_av_El/`
 Granskat: version 1.7 av `enea_jamforelse.*` och version 1.0 av `intern_debitering.*` / `intern_underlag.js`
 Datum: 2026-10-06
-Status: **Granskning 1 (egenkontroll) klar. Oberoende granskning (granskning 2) återstår.**
+Status: **Granskning 1 (egenkontroll) och granskning 2 (oberoende granskning) är klara 2026-10-06.**
+Redovisning på egen sida: [kvalitetsgranskning.html](kvalitetsgranskning.html). Den oberoende rapporten:
+[kvalitetsgranskning/granskning2_resultat.md](kvalitetsgranskning/granskning2_resultat.md). Uppdraget till den:
+[kvalitetsgranskning/granskning2_prompt.md](kvalitetsgranskning/granskning2_prompt.md).
+Texten under är egenkontrollen och skrevs innan granskning 2 var gjord. Avsnitt 5 ("rekommenderas") och 7 är
+därför överspelade av granskning 2.
 
 > Siffrorna i sidorna är hämtade ur Kraftringens fakturor och Bjerreds Saltsjöbads debiteringsunderlag.
 > Den här granskningen visar att sidornas siffror och formler stämmer med de underlagen. Den visar inte att

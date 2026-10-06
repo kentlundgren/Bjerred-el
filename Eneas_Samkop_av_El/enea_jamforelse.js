@@ -22,6 +22,7 @@
   UPPDATERING 2026-10-06: Tabell 1 är dold som standard och visas med en diskret knapp ("···").
   Ett enda val överst (TABELL1_SYNLIG_SOM_STANDARD) går tillbaka till alltid synlig. Version 1.6.
   UPPDATERING 2026-10-06: Dubbelklick på ordet "Kraftringen" i rubriken visar/döljer också tabell 1. Version 1.7.
+  UPPDATERING 2026-10-06: Ruta "Vad jämförelsen förutsätter" och förtydligad text om vad priset ska omfatta (granskning 2). Version 1.8.
 */
 (function () {
   'use strict';
@@ -34,7 +35,7 @@
   // ===================================================================
   // 1. Version
   // ===================================================================
-  var VERSION = '1.7';
+  var VERSION = '1.8';
   var VERSIONSDATUM = '2026-10-06';
 
   // ===================================================================

@@ -100,6 +100,10 @@ Det är den raden som Eneas pris ska ersätta i jämförelsen.
 | Jun | 11 756 | 24 017 |
 | Summa | 78 998 | 158 612 |
 
+UPPDATERING 2026-10-06: Tabellen visar kWh enligt underlagsbilderna. Sidan `intern_debitering.html` räknar
+juni med 11 755 kWh (summan blir 78 997), eftersom debiteringsunderlaget räknar från bildernas avrundade
+mätarställningar. Se granskning 2, avsnitt 6 punkt 1.
+
 ### 4.3 Rättelse april–juni (beslut 2026-10-06)
 
 Hyresgästen ska inte betala fast nätavgift. Underlagen för april–juni visade en

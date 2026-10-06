@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<!--
+  kvalitetsgranskning.html
+  Redovisning av kvalitetsgranskningen av siffror och beräkningar i mappen Eneas_Samkop_av_El:
+  vad som granskats, vilken metod som använts och vad resultatet blev. Kort sammanfattning överst,
+  fullständig redovisning längre ned. Egen sida med egen adress så att den går att länka till.
+
+  Sidan räknar ingenting. Siffrorna är hämtade ur granskningsrapporterna:
+    kvalitetsgranskning/granskning2_resultat.md   (oberoende granskning)
+    KVALITETSGRANSKNING.md                        (egenkontroll)
+
+  Internt: länkas från intern_debitering.html (knappen "kvalitetsgranskning" nere till höger).
+  Stilmall: enea_jamforelse.css (delas) och kvalitetsgranskning.css.
+
+  UPPDATERING 2026-10-06: Första versionen (1.0).
+-->
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Kvalitetsgranskning</title>
+  <meta name="description" content="Kvalitetsgranskning av siffror och beräkningar i jämförelsen mellan Kraftringen och Eneas: omfattning, metod och resultat.">
+  <link rel="stylesheet" href="enea_jamforelse.css">
+  <link rel="stylesheet" href="kvalitetsgranskning.css">
+</head>
+<body>
+
+<a class="topplank" href="intern_debitering.html">← Intern debitering</a>
+
+<main class="sida">
+
+  <header class="topp">
+    <h1 id="Start">Kvalitetsgranskning av siffror och beräkningar</h1>
+    <p class="undertitel">Jämförelsen mellan Kraftringen och Eneas och debiteringsunderlaget för restaurangen, januari–juni 2026.
+      Bjerreds Saltsjöbad. Sammanställd av Kent Lundgren. Granskad 2026-10-06.</p>
+    <p class="status">Siffrorna är hämtade ur Kraftringens fakturor och Bjerreds Saltsjöbads debiteringsunderlag. Granskningen visar
+      att sidornas siffror och formler stämmer med de underlagen. Den visar inte att underlagen i sig är riktiga eller att
+      jämförelsen med Eneas är rättvisande. Kontrollera mot källan innan något återges (<a href="#Kallor">se källor</a>).</p>
+  </header>
+
+  <!-- ====================== KORT SAMMANFATTNING ====================== -->
+  <section class="sammanfattning" aria-labelledby="Sammanfattning">
+    <h2 id="Sammanfattning">Kort sammanfattning <a class="ankare" href="#Sammanfattning" aria-label="Länk till avsnittet">#</a></h2>
+    <ul class="punkter">
+      <li><strong>Två granskningar gjordes.</strong> En <em>egenkontroll</em> av den som byggde sidorna, där siffrorna lästes ur
+        PDF-fakturorna med kod, och en <em>oberoende granskning</em> i en separat session som läste fakturorna och bilderna själv
+        och inte tog del av egenkontrollens resultat innan den var klar.</li>
+      <li><strong>Inga fel hittades i data eller beräkningar.</strong> Den oberoende granskningen kontrollerade 220 fält för alla
+        sex månader mot fakturor och bilder. Jämförelsens formler gav samma belopp som formeln i 66 av 66 testfall, både för hela
+        fakturan och för restaurangens andel.</li>
+      <li><strong>Avvikelserna är avrundning.</strong> Mätarställningarna i underlagen är heltal och ligger högst 1 kWh från
+        fakturans. Restaurangens belopp avviker −2 till +1 kr mot tidigare debiterat. Räknat från grunden, utan att utgå från
+        fakturans belopp, skiljer sig jämförelsen högst 3 kr.</li>
+      <li><strong>Antagandena är det osäkra.</strong> Att nät, energiskatt och moms är oförändrade är rimligt. Att Eneas pris
+        är jämförbart med Kraftringens (elcertifikat, viktning mot förbrukning) och hur restaurangens kWh delas upp är oklart.
+        Sådant går inte att avgöra med kod och har förklarats i texten på sidorna.</li>
+      <li><strong>Godkänd-kriterierna är uppfyllda.</strong> De fastställdes innan granskningen kördes (se
+        <a href="#MetodOberoende">metoden</a>).</li>
+      <li><strong>Efter granskningen</strong> har fyra förslag genomförts och två motsägelser i projektets egna texter rättats
+        (se <a href="#Atgarder">åtgärder</a>).</li>
+    </ul>
+
+    <h3 id="ResultatTabell">Resultat per del</h3>
+    <div class="tabell-wrap">
+      <table class="vanlig">
+        <thead>
+          <tr><th>Del</th><th>Egenkontroll</th><th>Oberoende granskning</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Fakturornas egen räkning</td><td>90 kontroller, inga avvikelser</td><td>Alla 30 kWh-rader, summor och moms: högst 1,48 kr, avrundning av fakturans öre-priser</td></tr>
+          <tr><td>Sidornas data mot källorna</td><td>85 kontroller mot fakturorna, stickprov på 3 av 6 bilder: inga avvikelser</td><td>220 fältkontroller, alla sex månader och alla fält: inga fel, 9 avrundningar</td></tr>
+          <tr><td>Jämförelsens formler</td><td>60 slumpade scenarier, 1 096 kontroller: inga fel</td><td>11 prisuppsättningar × 6 månader körda i de riktiga sidorna: formel = sida i 66 av 66 fall</td></tr>
+          <tr><td>Debiteringsunderlaget</td><td>66 kontroller: inga avvikelser mot omräkning</td><td>0, 0, 0, −1, +1, −2 kr mot tidigare debiterat</td></tr>
+          <tr><td>Antaganden</td><td>Inte bedömda</td><td>Två rimliga, tre oklara, med förslag till text</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="liten">Fullständig rapport: <a href="https://github.com/kentlundgren/Bjerred-el/blob/main/Eneas_Samkop_av_El/kvalitetsgranskning/granskning2_resultat.md" target="_blank" rel="noopener">granskning2_resultat.md</a>
+      (oberoende granskning, med alla 220 kontrollerade fält) och
+      <a href="https://github.com/kentlundgren/Bjerred-el/blob/main/Eneas_Samkop_av_El/KVALITETSGRANSKNING.md" target="_blank" rel="noopener">KVALITETSGRANSKNING.md</a> (egenkontroll).
+      Längre ned på den här sidan finns den fullständiga redovisningen: omfattning, metod, resultat och begränsningar.</p>
+  </section>
+
+  <!-- ====================== FULLSTÄNDIG REDOVISNING ====================== -->
+  <h2 class="delrubrik" id="Fullstandig">Fullständig redovisning <a class="ankare" href="#Fullstandig" aria-label="Länk till avsnittet">#</a></h2>
+
+  <!-- ---------- 1. Omfattning ---------- -->
+  <section aria-labelledby="Omfattning">
+    <h3 id="Omfattning">1. Vad som granskades <a class="ankare" href="#Omfattning" aria-label="Länk till avsnittet">#</a></h3>
+    <div class="tabell-wrap">
+      <table class="vanlig">
+        <thead><tr><th>Del</th><th>Fråga</th><th>Hur den kunde kontrolleras</th></tr></thead>
+        <tbody>
+          <tr><td>A. Fakturorna</td><td>Stämmer fakturornas egen räkning (kWh × öre, moms, summor)?</td><td>Maskinellt, genom att läsa PDF-texten och räkna om.</td></tr>
+          <tr><td>B. Sidornas data</td><td>Är de inbakade siffrorna lika med fakturorna?</td><td>Maskinellt: PDF och JavaScript-data jämförs fält för fält.</td></tr>
+          <tr><td>C. Jämförelsen</td><td>Räknar sidan rätt när Eneas pris fylls i?</td><td>Slumptest och prisuppsättningar mot en referensberäkning, i de riktiga sidorna.</td></tr>
+          <tr><td>D. Debiteringsunderlaget</td><td>Räknar mallen rätt från mätarställningar till totalbelopp?</td><td>Omräkning med exakt decimalaritmetik mot det sidan visar och mot tidigare debiterade belopp.</td></tr>
+          <tr><td>E. Indata ur bilderna</td><td>Stämmer mätarställningar och belopp som lästs ur bilderna?</td><td>Går inte att läsa maskinellt. Stickprov (egenkontroll) och fullständig omläsning (oberoende granskning).</td></tr>
+          <tr><td>F. Antaganden</td><td>Är jämförelsen rimlig i sak?</td><td>Bedömning mot offentliga källor. Kan inte avgöras med kod.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Datafiler som granskades: <code>enea_jamforelse.js</code> (listan <code>MANADER</code>), <code>intern_debitering.js</code>
+      (<code>MANADER</code>) och <code>intern_underlag.js</code> (<code>STANDARD</code>). Formler: avsnittet "Så räknas fakturan med Eneas" i
+      <code>README.md</code> och avsnitt 4.3 och 5 i <code>PRD.md</code>. Källor: sex PDF-fakturor från Kraftringen och sex bilder av
+      debiteringsunderlag.</p>
+  </section>
+
+  <!-- ---------- 2. Metod, egenkontroll ---------- -->
+  <section aria-labelledby="MetodEgen">
+    <h3 id="MetodEgen">2. Metod: egenkontroll <a class="ankare" href="#MetodEgen" aria-label="Länk till avsnittet">#</a></h3>
+    <p>Gjordes av den som byggde sidorna. Den som bygger är inte oberoende. Därför gjordes allt som går att göra maskinellt
+      med kod som läser siffrorna ur PDF-filerna, och inte med siffror som skrivits in för hand.</p>
+    <ol>
+      <li><strong>Fakturorna lästes med kod</strong> (<code>pymupdf</code>) och fakturornas egen räkning kontrollerades: kWh × öre = kr för
+        elöverföring, energiskatt, spotpris, rörliga kostnader och fast påslag, mätarens slut minus början, 25 % moms, summor och
+        totalbelopp med öresutjämning (90 kontroller).</li>
+      <li><strong>Sidornas data jämfördes med fakturorna.</strong> Datatabellerna lästes ur JavaScript-filerna utan att köra resten av koden, och
+        jämfördes fält för fält med fakturorna, inklusive att "El inkl elcert" = spotpris + rörliga kostnader + 1,70 öre/kWh (85 kontroller).</li>
+      <li><strong>Jämförelsens matematik slumptestades.</strong> 60 slumpade prisuppsättningar (olika månader, med och utan månadsavgift, komma och
+        punkt som decimaltecken) kördes i den riktiga sidan och jämfördes med en referens med heltalsaritmetik (BigInt). 1 096 kontroller.
+        Dessutom: Eneas pris lika med Kraftringens ger exakt noll i skillnad, och ogiltig inmatning ignoreras.</li>
+      <li><strong>Debiteringsunderlaget räknades om</strong> från mätarställningarna med exakt decimalaritmetik (Python <code>Decimal</code>) och jämfördes
+        med det sidan visade (66 kontroller) och med tidigare debiterade belopp.</li>
+      <li><strong>Stickprov mot bilderna.</strong> Tre månader slumpades fram (januari, mars, april). Alla mätarställningar, priser, fakturanummer och
+        belopp lästes om och jämfördes.</li>
+    </ol>
+  </section>
+
+  <!-- ---------- 3. Metod, oberoende granskning ---------- -->
+  <section aria-labelledby="MetodOberoende">
+    <h3 id="MetodOberoende">3. Metod: oberoende granskning <a class="ankare" href="#MetodOberoende" aria-label="Länk till avsnittet">#</a></h3>
+    <p>En separat session fick ett skriftligt uppdrag (se
+      <a href="https://github.com/kentlundgren/Bjerred-el/blob/main/Eneas_Samkop_av_El/kvalitetsgranskning/granskning2_prompt.md" target="_blank" rel="noopener">granskning2_prompt.md</a>)
+      och skulle läsa källorna själv, inte ändra något i projektet och skriva en rapport.</p>
+    <h4>Så säkrades oberoendet</h4>
+    <ul>
+      <li>Granskaren fick inte läsa egenkontrollens rapport, mappen med dess skript eller avsnitt 13 i <code>PRD.md</code> innan den egna rapporten var skriven.</li>
+      <li>Allt skulle läsas från källan: alla sex fakturor och alla sex bilder, alla fält, inte ett urval.</li>
+      <li>Granskaren redovisar själv att två saker från egenkontrollen ändå syntes under arbetet, eftersom de stod i filer som ingick i
+        granskningen: en kort testsammanfattning i slutet av avsnitt 12 i <code>PRD.md</code> och tekniktexterna i HTML-filerna. De egna siffrorna
+        räknades fram oberoende av dem.</li>
+    </ul>
+    <h4>Godkänd-kriterier (fastställda innan körningen)</h4>
+    <ol>
+      <li>En tabell över alla kontrollerade fält: fil, fält, förväntat värde, värde i sidan, källa.</li>
+      <li>Inga okända avvikelser i data. Tillåtna: mätarställningar som är avrundade heltal (högst 1 kWh från fakturan) och totalbelopp som
+        avviker högst 2 kr från tidigare debiterat på grund av detta. Varje avvikelse ska klassas som fel, avrundning eller tolkning.</li>
+      <li>Egna beräkningar som kan göras om. Faktura med Eneas ska stämma exakt med formeln i README, eller inom 3 kr om granskaren räknar från
+        grunden utan att utgå från fakturans belopp.</li>
+      <li>En bedömning av varje antagande: rimligt, oklart eller problematiskt, med förslag på formulering.</li>
+      <li>En lista över det som inte kunde kontrolleras, och hur säker granskaren är på rapporten som helhet.</li>
+    </ol>
+    <h4>Hur granskaren arbetade</h4>
+    <ol>
+      <li><strong>Fakturorna</strong> lästes med <code>pdftotext</code> och tolkades med ett Python-skript. Tre månader kontrollerades dessutom visuellt mot sidan som bild.</li>
+      <li><strong>Bilderna</strong> lästes visuellt, alla sex och alla fält. Varje avläsning kontrollerades aritmetiskt: utgående minus ingående = förbrukning, herr + dam =
+        bastu totalt, kedjan mellan månaderna, belopp ÷ öre = kWh och summa × 1,25 = totalt. Alla avläsningar gick ihop.</li>
+      <li><strong>Koden:</strong> listorna lästes ur JS-filerna med skript. Formlerna testades genom att köra de riktiga sidorna i Chromium (Playwright), fylla i de gula fälten
+        och läsa av det sidan visar.</li>
+      <li><strong>Egna beräkningar</strong> med exakt decimalaritmetik (Python <code>Decimal</code>, avrundning halvt uppåt).</li>
+    </ol>
+  </section>
+
+  <!-- ---------- 4. Resultat ---------- -->
+  <section aria-labelledby="ResultatDetalj">
+    <h3 id="ResultatDetalj">4. Resultat i detalj <a class="ankare" href="#ResultatDetalj" aria-label="Länk till avsnittet">#</a></h3>
+
+    <h4 id="Data">4.1 Data mot fakturor och bilder</h4>
+    <p>220 fältkontroller, alla sex månader, utan fel. Kontrollerat per månad: kWh, fakturabelopp, "El inkl elcert" (spotpris + rörliga kostnader +
+      1,70 öre/kWh), rörlig nätavgift, energiskatt, fast nätavgift och fakturanummer mot fakturorna. Dessutom ingående och utgående mätarställning för
+      huvudmätare, bastu herr, bastu dam och varmvatten, priser, "Hela fakturan" och totalbelopp mot bilderna, samt att mätarkedjan stämmer
+      (varje månads ingående ställning är föregående månads utgående), både i bilderna och i fakturorna. Hela listan finns i
+      <a href="https://github.com/kentlundgren/Bjerred-el/blob/main/Eneas_Samkop_av_El/kvalitetsgranskning/granskning2_resultat.md" target="_blank" rel="noopener">rapporten</a>, avsnitt 2.</p>
+
+    <h4 id="Fakturor">4.2 Fakturornas egen räkning</h4>
+    <ul>
+      <li>Energiskatt, rörliga kostnader och fast påslag stämmer på öret.</li>
+      <li>Elöverföring och spotpris avviker från kWh × öre-pris med högst 1,48 kr (februari, elöverföring). Fakturans öre-pris är avrundat till två decimaler,
+        och beloppet verkar räknas per kvart. Det är avrundning, inte fel.</li>
+      <li>Momsraderna avviker högst 0,01 kr från 25 % av delsumman. Summa exkl. moms + moms + öresutjämning = totalbeloppet varje månad.</li>
+      <li>"Spot + rörliga + påslag" ger exakt värdena i sidans <code>krOre</code>.</li>
+    </ul>
+
+    <h4 id="Formler">4.3 Jämförelsens formler</h4>
+    <p>Formeln: <em>faktura med Eneas = faktura idag + ((Eneas pris − Kraftringens pris) × kWh / 100 + månadsavgift) × 1,25, avrundat till hela kronor.</em>
+      Den oberoende granskningen körde elva prisuppsättningar för alla sex månader (66 fall) i de riktiga sidorna och jämförde med egen beräkning. Resultat:</p>
+    <ul>
+      <li>Sidan gav samma belopp som formeln i <strong>66 av 66</strong> fall. Restaurangens andel gav samma belopp som sin formel i 66 av 66 fall.</li>
+      <li>Räknat från grunden, utan att utgå från fakturans belopp, skiljer sig sidan −1 till +3 kr (hela fakturan) och −2 till +1 kr (restaurangen).
+        Orsakerna är fakturans avrundade öre-priser och öresutjämningen. Egenkontrollens motsvarande största avvikelse var 2,98 kr.</li>
+      <li>Månadsavgiften läggs på fakturan exkl. moms och får moms: 500 kr ger +625 kr per månad. Komma, punkt och mellanslag ("1 000") tolkas rätt.</li>
+      <li>Formeln drar bort Kraftringens el som <code>krOre × kWh</code>. Fakturans faktiska elbelopp är 0,05–1,15 kr högre per månad, vilket ger högst 1,44 kr
+        i Eneas belopp (februari). Det är avrundning och godtogs. Fördelen med nuvarande sätt är att Eneas pris lika med Kraftringens pris ger exakt noll i skillnad.</li>
+    </ul>
+    <details class="forklaring">
+      <summary>De elva prisuppsättningarna och några resultat</summary>
+      <p>S1 samma som Kraftringen. S2 100 öre. S3 100 öre + 500 kr/mån. S4 Kraftringen − 10 öre. S5 Kraftringen + 5 öre + 250 kr/mån. S6 0 öre (gränsfall).
+        S7 decimaler med komma och punkt + avgift "1 000". S8 110 / 105 / 80 / 60 / 85 / 95 öre. S9 som S8 + 399 kr/mån. S10 250 öre. S11 bara januari (120) och juni (100) + 100 kr/mån.</p>
+      <div class="tabell-wrap">
+        <table class="vanlig">
+          <thead><tr><th>Scenario</th><th>Faktura med Eneas, summa (kr)</th><th>Skillnad mot idag (kr)</th><th>Skillnad (%)</th></tr></thead>
+          <tbody>
+            <tr><td>S1 samma pris som Kraftringen</td><td>398 620</td><td>0</td><td>0,0</td></tr>
+            <tr><td>S2 100 öre alla månader</td><td>393 056</td><td>−5 564</td><td>−1,4</td></tr>
+            <tr><td>S4 Kraftringen − 10 öre</td><td>377 780</td><td>−20 840</td><td>−5,2</td></tr>
+            <tr><td>S8 varierande pris</td><td>373 353</td><td>−25 267</td><td>−6,3</td></tr>
+            <tr><td>S10 250 öre alla månader</td><td>705 655</td><td>+307 035</td><td>+77,0</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="liten">Exempel ur rapporten, avsnitt 4.1. Summan idag för alla sex månader är 398 620 kr. Hela tabellen med alla fall finns i rapporten.</p>
+    </details>
+
+    <h4 id="Underlag">4.4 Debiteringsunderlaget</h4>
+    <p>Räknat från mätarställningarna för alla sex månader enligt regeln: restaurangens kWh = total − bastu − varmvatten, fast nätavgift 0, summa exkl. moms plus 25 % moms,
+      avrundat till hela kronor. Sidan visade exakt samma förbrukning, kr per rad, moms och totalt som den oberoende omräkningen.</p>
+    <div class="tabell-wrap">
+      <table class="vanlig">
+        <thead>
+          <tr><th>Månad</th><th>Restaurangens kWh</th><th>Exkl. moms (kr)</th><th>Moms (kr)</th><th>Totalt (kr)</th><th>Tidigare debiterat (kr)</th><th>Skillnad (kr)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Jan</td><td>16 586</td><td>29 873,04</td><td>7 468,26</td><td>37 341</td><td>37 341</td><td>0</td></tr>
+          <tr><td>Feb</td><td>16 342</td><td>29 317,55</td><td>7 329,39</td><td>36 647</td><td>36 647</td><td>0</td></tr>
+          <tr><td>Mar</td><td>10 302</td><td>15 370,58</td><td>3 842,65</td><td>19 213</td><td>19 213</td><td>0</td></tr>
+          <tr><td>Apr</td><td>11 582</td><td>14 297,98</td><td>3 574,49</td><td>17 872</td><td>17 873</td><td>−1</td></tr>
+          <tr><td>Maj</td><td>12 430</td><td>18 817,78</td><td>4 704,44</td><td>23 522</td><td>23 521</td><td>+1</td></tr>
+          <tr><td>Jun</td><td>11 755</td><td>19 212,37</td><td>4 803,09</td><td>24 015</td><td>24 017</td><td>−2</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="liten">"Tidigare debiterat" för april–juni är de rättade beloppen utan fast nätavgift (PRD.md, avsnitt 4.3). De är härledda ur de gamla underlagen och
+      kontrollerades av den oberoende granskningen mot bildernas rader: april 17 873, maj 23 521 och juni 24 017 kr.</p>
+  </section>
+
+  <!-- ---------- 5. Avvikelser ---------- -->
+  <section aria-labelledby="Avvikelser">
+    <h3 id="Avvikelser">5. Avvikelser och hur de klassades <a class="ankare" href="#Avvikelser" aria-label="Länk till avsnittet">#</a></h3>
+    <p>Inga fel. Varje avvikelse är klassad som avrundning eller tolkning.</p>
+    <div class="tabell-wrap">
+      <table class="vanlig">
+        <thead><tr><th>Var</th><th>Avvikelse</th><th>Klass</th></tr></thead>
+        <tbody>
+          <tr><td>Huvudmätare i bilderna (9 ställningar)</td><td>Bildens heltal är 1 kWh högre än fakturans avrundade ställning (176 910,32 → 176 911). Förbrukningen per månad stämmer ändå inom 1 kWh.</td><td>Avrundning</td></tr>
+          <tr><td>Maj, bastu dam</td><td>Bilden visar 4 449, men ställningarna (45 725 → 50 173) ger 4 448. Bastu totalt (9 024) stämmer.</td><td>Avrundning</td></tr>
+          <tr><td>Juni, bastu och restaurangens kWh</td><td>Bilden: bastu 7 430 och restaurang 11 756. Ställningarna ger 3 916 + 3 515 = 7 431 och 11 755. Det ger −2 kr mot tidigare debiterat.</td><td>Avrundning</td></tr>
+          <tr><td>Bildernas kr-rader</td><td>Belopp ÷ öre ger restaurangens kWh med decimaler (januari 16 585,78 i stället för 16 586), så raderna i underlaget skiljer sig några ören upp till cirka 1 kr från sidans. Totalen ligger inom ±2 kr. Mars stämmer på öret.</td><td>Avrundning</td></tr>
+          <tr><td>Öre-summan april–juni (och januari)</td><td>Bilden räknar med fast avgift i öre-summan (till exempel 205,02). Sidan visar summan utan (180,11).</td><td>Tolkning: följer beslutet att fast nätavgift aldrig debiteras</td></tr>
+          <tr><td>Januari, fast avgift</td><td>24,91 öre/kWh står i bilden, men kWh-kolumnen är 0 och beloppet 0,00. 24,91 = 8 824 / 35 422,14.</td><td>Tolkning: januari debiterades redan utan fast avgift</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ---------- 6. Antaganden ---------- -->
+  <section aria-labelledby="Antaganden">
+    <h3 id="Antaganden">6. Antagandena <a class="ankare" href="#Antaganden" aria-label="Länk till avsnittet">#</a></h3>
+    <p>Det här är bedömningar, och flera vilar på uppgifter som saknas i källorna. Granskaren stödde sig på offentliga källor (se <a href="#Kallor">källor</a>).</p>
+    <dl class="antaganden">
+      <dt>(a) Kraftringens "El inkl elcert" är jämförbart med ett Eneas-pris <span class="bedomning oklart">Oklart</span></dt>
+      <dd>Att byta ut hela summan spotpris + rörliga kostnader + fast påslag mot Eneas pris är rätt avgränsning, eftersom månadsavgiften är 0 kr. Men fakturan nämner inte
+        elcertifikat. Posten heter "Fast påslag (1,70 öre/kWh)". Rubriken "El inkl Elcert (1,7 öre/kWh)" kommer från det interna kalkylbladet och stöds inte av fakturan.
+        Kostnaden för elcertifikat brukar ingå i elpriset till kunden, men i vilken post framgår inte. Det viktiga är att Eneas pris omfattar samma saker som de tre posterna tillsammans.</dd>
+
+      <dt>(b) Nät, energiskatt och fast nätavgift är oförändrade <span class="bedomning rimligt">Rimligt</span></dt>
+      <dd>Elnätsföretaget kan inte bytas, bara elhandelsföretaget. Energiskatten tas ut av nätinnehavaren och är 36,0 öre/kWh 2026, vilket stämmer med fakturorna.
+        Reservation: efter ett byte kommer oftast två fakturor, och eventuella nya faktureringsavgifter fångas bara via Eneas månadsavgift.</dd>
+
+      <dt>(c) Moms är 25 % och gäller på samma sätt hos Eneas <span class="bedomning rimligt">Rimligt</span></dt>
+      <dd>25 % är den generella momssatsen och gäller för elhandel oavsett leverantör. Reservation: om Bjerreds Saltsjöbad drar av ingående moms är jämförelsen exkl. moms den relevanta.</dd>
+
+      <dt>(d) Restaurangens kWh = total − bastu − varmvatten <span class="bedomning oklart">Oklart</span></dt>
+      <dd>Räkningen följer dagens underlag och är rätt utförd. I sak betyder den att all el som inte går genom bastu- eller varmvattenmätarna läggs på restaurangen:
+        belysning, gemensamma utrymmen, pumpar, utomhusbelysning och eventuella förluster. Det kan vara avtalat men går inte att kontrollera ur källorna. Varmvattenmätarens enhet framgår inte
+        av bilden och antas vara kWh el. Uppdelningen påverkar inte jämförelsen för hela fakturan, bara restaurangens andel.</dd>
+
+      <dt>(e) Kvartspris mot månadsvärden <span class="bedomning oklart">Oklart</span></dt>
+      <dd>Avtalet är "Rörligt kvartspris med bindningstid". Fakturans spotpris är ett förbrukningsviktat snitt för månaden. Det är rätt att jämföra med ett månadsvärde, men bara om
+        Eneas månadspris också är viktat mot anläggningens egen förbrukning. Ett oviktat månadssnitt plus påslag ger en annan siffra, och skillnaden kan gå åt båda hållen.</dd>
+    </dl>
+  </section>
+
+  <!-- ---------- 7. Åtgärder ---------- -->
+  <section aria-labelledby="Atgarder">
+    <h3 id="Atgarder">7. Vad som ändrades efter granskningen <a class="ankare" href="#Atgarder" aria-label="Länk till avsnittet">#</a></h3>
+    <p>Granskningen hittade inga datafel, men gav fyra förslag och pekade ut två motsägelser i projektets egna texter. Så här hanterades de:</p>
+    <ol>
+      <li><strong>Rubriken "El inkl Elcert (1,7 öre/kWh)"</strong> i debiteringsunderlaget heter nu "El (spot + rörliga + påslag)". Texten om vad Eneas pris ska omfatta på
+        jämförelsesidan förtydligades, och en ruta "Vad jämförelsen förutsätter" lades in (punkterna om jämförbart pris, viktning, nät och skatt, och moms).</li>
+      <li><strong>Restaurangens kWh för juni</strong> var 11 756 i jämförelsen men 11 755 i underlaget. Jämförelsen använder nu 11 755 som underlaget. Bildens värde är 11 756 och
+        kan återställas i <code>intern_debitering.js</code> om det är att föredra.</li>
+      <li><strong>Eneas fasta månadsavgift</strong> fördelas inte på restaurangen. Det står nu på den interna sidan som ett uttalat beslut: jämförelsen för restaurangen räknar bara
+        prisskillnaden per kWh.</li>
+      <li><strong>Motsägelser i <code>PRD.md</code> avsnitt 13 rättades:</strong> juni står som 24 015 kr (inte 24 018) och formelbeskrivningen stämmer nu med koden
+        (prisskillnad × kWh, inte "faktura minus Kraftringens elhandel plus Eneas elhandel").</li>
+    </ol>
+    <p><strong>Förslaget som inte genomfördes:</strong> att räkna med Kraftringens faktiska elbelopp i kr i stället för <code>krOre × kWh</code>. Det hade tagit bort en avvikelse på högst 1,44 kr
+      men gjort att Eneas pris lika med Kraftringens pris inte längre ger exakt noll i skillnad.</p>
+  </section>
+
+  <!-- ---------- 8. Begränsningar ---------- -->
+  <section aria-labelledby="Begransningar">
+    <h3 id="Begransningar">8. Det som inte kunde kontrolleras, och säkerhet <a class="ankare" href="#Begransningar" aria-label="Länk till avsnittet">#</a></h3>
+    <ul>
+      <li>Bilderna är skärmbilder av ett kalkylblad. Decimalerna bakom de visade heltalen syns inte. Exakta mätarställningar med decimaler för bastu och varmvatten finns inte i källorna.</li>
+      <li>Varmvattenmätarens enhet framgår inte, och inte heller hur Kraftringen räknar fram "rörliga kostnader" eller om elcertifikat ingår.</li>
+      <li>Hyresavtalets regler för vad restaurangen ska betala.</li>
+      <li>Eneas priser och prismodell. De finns inte i projektet, och broschyren saknar priser. Hela jämförelsen är därför ett försök i efterhand.</li>
+      <li>Utseende (CSS), utskrift, kopiering och lagring i webbläsaren ingick inte i den oberoende granskningen. Kopieringen provades i egenkontrollen med ett riktigt klick, men inte inklistrad i Outlook eller Gmail.</li>
+      <li>Granskningen är inte fullständigt oberoende av egenkontrollen: två saker därifrån syntes för granskaren (se <a href="#MetodOberoende">metoden</a>).</li>
+      <li>Allt som gick att läsa gick att läsa. Ingen PDF och ingen bild var oläslig.</li>
+    </ul>
+    <p><strong>Säkerhet:</strong> hög för data och räkning, eftersom alla fält i alla sex månader jämförts mot källan och bildavläsningarna går ihop aritmetiskt i alla led. Medel för
+      antagandena, som är bedömningar.</p>
+  </section>
+
+  <!-- ---------- 9. Jämförelse ---------- -->
+  <section aria-labelledby="Jamforelse">
+    <h3 id="Jamforelse">9. De två granskningarna jämförda <a class="ankare" href="#Jamforelse" aria-label="Länk till avsnittet">#</a></h3>
+    <p><strong>Samma resultat:</strong> fakturornas egen räkning stämmer, sidornas data är lika med fakturorna, debiteringsunderlaget ger 0, 0, 0, −1, +1 och −2 kr mot debiterat, beräkning från grunden
+      avviker upp till cirka 3 kr, och mätarställningarna i bilderna ligger upp till 1 kWh över fakturans.</p>
+    <p><strong>Den oberoende granskningen lade till:</strong> alla sex bilder lästes (egenkontrollen tog tre), formlerna testades genom att köra de riktiga sidorna, antagandena bedömdes med förslag till text, och
+      två motsägelser i projektets texter hittades (se avsnitt 7). Egenkontrollen gjorde i sin tur ett test av ogiltig inmatning och kopieringsknappen som den oberoende granskningen inte gjorde.</p>
+  </section>
+
+  <!-- ---------- 10. Filer ---------- -->
+  <section aria-labelledby="Filer">
+    <h3 id="Filer">10. Filer, och hur granskningen görs om <a class="ankare" href="#Filer" aria-label="Länk till avsnittet">#</a></h3>
+    <p>Alla filer ligger i <a href="https://github.com/kentlundgren/Bjerred-el/tree/main/Eneas_Samkop_av_El" target="_blank" rel="noopener">mappen Eneas_Samkop_av_El</a> i repot.</p>
+    <ul>
+      <li><a href="https://github.com/kentlundgren/Bjerred-el/blob/main/Eneas_Samkop_av_El/KVALITETSGRANSKNING.md" target="_blank" rel="noopener">KVALITETSGRANSKNING.md</a>: egenkontrollen, med skript i mappen
+        <a href="https://github.com/kentlundgren/Bjerred-el/tree/main/Eneas_Samkop_av_El/kvalitetsgranskning" target="_blank" rel="noopener">kvalitetsgranskning/</a>
+        (<code>lasa_fakturor.py</code>, <code>dumpa_js.js</code>, <code>granska_data.py</code>, <code>granska_intern.py</code>, <code>testa_modellen_i_webblasaren.js</code>).</li>
+      <li><a href="https://github.com/kentlundgren/Bjerred-el/blob/main/Eneas_Samkop_av_El/kvalitetsgranskning/granskning2_prompt.md" target="_blank" rel="noopener">granskning2_prompt.md</a>: uppdraget till den oberoende granskningen, med godkänd-kriterierna.</li>
+      <li><a href="https://github.com/kentlundgren/Bjerred-el/blob/main/Eneas_Samkop_av_El/kvalitetsgranskning/granskning2_resultat.md" target="_blank" rel="noopener">granskning2_resultat.md</a>: den oberoende granskningens rapport. Skripten
+        <code>granskning2_granska.py</code> och <code>granskning2_formler.py</code> ligger bredvid och kan köras om. Formelskriptet kräver Python-paketet <code>playwright</code> och Chromium.</li>
+    </ul>
+  </section>
+
+  <!-- ---------- Källor ---------- -->
+  <section aria-labelledby="Kallor">
+    <h3 id="Kallor">Källor <a class="ankare" href="#Kallor" aria-label="Länk till avsnittet">#</a></h3>
+    <p class="liten">Externa länkar kontrollerades 2026-10-06 (hämtade samma dag). Kontrollera mot källan innan något återges.</p>
+    <ul class="kallor">
+      <li id="ref-kraftringen">Kraftringen (2026) <em>E-faktura elnät och elhandel, januari–juni 2026</em> [fakturor, PDF]. Kraftringen Nät AB och Kraftringen Energi AB.
+        <em>Huvudkälla för kWh, öre-priser, belopp och fakturanummer.</em>
+        <a href="../Kraftringen/Fakturor/202601_Kraftringen_Januari-20265_3082197306.pdf" target="_blank" rel="noopener">januari</a>,
+        <a href="../Kraftringen/Fakturor/202602_Kraftringen_Februari_2026_3098735503.pdf" target="_blank" rel="noopener">februari</a>,
+        <a href="../Kraftringen/Fakturor/202603_Kraftringen_Mars_2026_3112109404.pdf" target="_blank" rel="noopener">mars</a>,
+        <a href="../Kraftringen/Fakturor/202604_Kraftfringen_April_3126369101.pdf" target="_blank" rel="noopener">april</a>,
+        <a href="../Kraftringen/Fakturor/202605_Kraftringen_Maj_2026_3141677009.pdf" target="_blank" rel="noopener">maj</a>,
+        <a href="../Kraftringen/Fakturor/202606_Kraftringen_Juni_2026_3154522605.pdf" target="_blank" rel="noopener">juni</a>.</li>
+      <li id="ref-debitering">Bjerreds Saltsjöbad (2026) <em>Debiteringsunderlag El januari–juni 2026</em> [kalkylblad, bilder]. <em>Underlag för mätarställningar, restaurangens kWh och debiterade belopp.</em>
+        <a href="../Kraftringen/Intern_debitering/202601_Intern_debitering.jpg" target="_blank" rel="noopener">januari</a>,
+        <a href="../Kraftringen/Intern_debitering/202602_Intern_debitering.jpg" target="_blank" rel="noopener">februari</a>,
+        <a href="../Kraftringen/Intern_debitering/202603_Intern_debitering.jpg" target="_blank" rel="noopener">mars</a>,
+        <a href="../Kraftringen/Intern_debitering/202604_Intern_debitering.jpg" target="_blank" rel="noopener">april</a>,
+        <a href="../Kraftringen/Intern_debitering/202605_Intern_debitering.jpg" target="_blank" rel="noopener">maj</a>,
+        <a href="../Kraftringen/Intern_debitering/202606_Intern_debitering.jpg" target="_blank" rel="noopener">juni</a>.</li>
+      <li id="ref-ekonomifakta">Ekonomifakta (2010) <em>Elkonsumentens del i elcertifikatsystemet</em>. Tillgänglig:
+        <a href="https://www.ekonomifakta.se/sakomraden/energi/elkonsumentens-del-i-elcertifikatsystemet_1208586.html" target="_blank" rel="noopener">ekonomifakta.se</a> (hämtad 2026-10-06).
+        <em>Visar att elleverantörer är kvotpliktiga och att kostnaden ingår i elpriset. Äldre artikel; systemets slutdatum kan ha ändrats.</em></li>
+      <li id="ref-energimarknadsbyran">Energimarknadsbyrån (u.å.) <em>Att byta elhandelsföretag</em> [PDF]. Tillgänglig:
+        <a href="https://energimarknadsbyran.se/media/1093/byta-elhandelsforetag.pdf" target="_blank" rel="noopener">energimarknadsbyran.se</a> (hämtad 2026-10-06).
+        <em>Stöd för att elnätsföretaget inte kan bytas och att två fakturor är vanligt efter byte.</em></li>
+      <li id="ref-regeringen">Regeringskansliet (2026) <em>Uppdrag till Statens energimyndighet att ta fram förslag för att möjliggöra ett tidigare avslut av elcertifikatsystemet</em>, 10 juni. Tillgänglig:
+        <a href="https://regeringen.se/regeringsuppdrag/2026/06/uppdrag-till-statens-energimyndighet-att-ta-fram-forslag-for-att-mojliggora-ett-tidigare-avslut-av-elcertifikatsystemet/" target="_blank" rel="noopener">regeringen.se</a> (hämtad 2026-10-06).
+        <em>Visar att elcertifikatsystemet kan komma att avslutas i förtid.</em></li>
+      <li id="ref-skatteverket-2025">Skatteverket (2025) <em>Sänkt skatt på el 1 januari 2026</em>, 11 december. Tillgänglig:
+        <a href="https://www.skatteverket.se/foretag/skatterochavdrag/punktskatter/nyheterinompunktskatter/2025/nyheterinompunktskatter/sanktskattpael1januari2026.5.1522bf3f19aea8075ba96f.html" target="_blank" rel="noopener">skatteverket.se</a> (hämtad 2026-10-06).
+        <em>Bekräftar energiskatten 36,0 öre/kWh 2026.</em></li>
+      <li id="ref-skatteverket-el">Skatteverket (u.å.a) <em>Skatt på el</em>. Tillgänglig:
+        <a href="https://www.skatteverket.se/foretag/skatterochavdrag/punktskatter/energiskatter/skattpael" target="_blank" rel="noopener">skatteverket.se</a> (hämtad 2026-10-06).
+        <em>Visar att nätinnehavaren är skattskyldig, alltså att energiskatten följer elnätet.</em></li>
+      <li id="ref-skatteverket-moms">Skatteverket (u.å.b) <em>Momssatser och undantag från moms</em>. Tillgänglig:
+        <a href="https://www.skatteverket.se/foretag/moms/saljavarorochtjanster/momssatspavarorochtjanster.4.58d555751259e4d66168000409.html" target="_blank" rel="noopener">skatteverket.se</a> (hämtad 2026-10-06).
+        <em>Generell momssats 25 %.</em></li>
+      <li id="ref-varberg">Varberg Energi (2025) <em>Vilka effekter har kvartspriser fått på elmarknaden?</em>, 10 december. Tillgänglig:
+        <a href="https://www.varbergenergi.se/nyheter/vilka-effekter-har-kvartspriser-fatt-pa-elmarknaden" target="_blank" rel="noopener">varbergenergi.se</a> (hämtad 2026-10-06).
+        <em>Kvartspriser på dagenföremarknaden från 1 oktober 2025.</em></li>
+    </ul>
+  </section>
+
+  <footer class="fot">
+    <p>Version 1.0 · 2026-10-06 · Kent Lundgren</p>
+  </footer>
+</main>
+
+<!-- ===== Hörn: GitHub (vänster) och teknik (höger) ===== -->
+<a class="corner corner-left" href="https://github.com/kentlundgren/Bjerred-el/tree/main/Eneas_Samkop_av_El" target="_blank" rel="noopener">{ } GitHub</a>
+<button type="button" class="corner corner-right" id="techBtn" aria-label="Tekniköversikt">&lt;/&gt; teknik</button>
+
+<div class="modal-overlay" id="techOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="techTitel">
+    <button type="button" class="modal-stang" id="techClose" aria-label="Stäng">&times;</button>
+    <h2 id="techTitel">Hur den här sidan är byggd</h2>
+    <p>En statisk redovisning av granskningen. Sidan räknar ingenting.</p>
+
+    <h3>Tekniken</h3>
+    <div class="tech-grid">
+      <div class="tech-card">
+        <h4>Ren HTML och CSS</h4>
+        <p>Ingen JavaScript utöver teknik-rutan, inga bibliotek, ingen server och ingen databas. Inget skickas från sidan.</p>
+      </div>
+      <div class="tech-card">
+        <h4>Siffrorna är inskrivna som text</h4>
+        <p>Alla tal på sidan är hämtade ur de två granskningsrapporterna och står som vanlig text. Rapporterna ligger i repot och är källan: kontrollera mot dem.</p>
+      </div>
+      <div class="tech-card">
+        <h4>Egen sida, inte en modal</h4>
+        <p>Redovisningen ligger på en egen adress i stället för i ett fönster ovanpå en annan sida, så att den går att länka till, skriva ut och djuplänka (varje avsnitt har ett <code>#</code>-ankare).</p>
+      </div>
+    </div>
+
+    <h3>Metoden</h3>
+    <div class="tech-grid">
+      <div class="tech-card">
+        <h4>Rapporten kontrollerades i delar</h4>
+        <p>Innan rapporten lades in här kontrollerades dess två påpekanden om motsägelser i projektets egna texter (de stämde och rättades) och alla sju externa länkar. Rapportens övriga siffror är inte omräknade en gång till.</p>
+      </div>
+      <div class="tech-card">
+        <h4>Kriterier före körning</h4>
+        <p>Godkänd-kriterierna fastställdes innan den oberoende granskningen kördes och finns i uppdraget som sparats i repot.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="enea_hjalp.js"></script>
+<script>
+  // Teknik-rutan (samma som på de andra sidorna)
+  window.EneaHjalp.kopplaTeknikModal();
+</script>
+</body>
+</html>
