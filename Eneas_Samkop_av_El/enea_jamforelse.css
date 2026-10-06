@@ -35,7 +35,7 @@ body {
 .sida {
   max-width: 1000px;
   margin: 0 auto;
-  padding: 24px var(--marginal) 80px;   /* extra botten så hörnlänkarna inte täcker innehåll */
+  padding: 52px var(--marginal) 80px;   /* extra topp och botten så hörnlänkarna inte täcker innehåll */
 }
 
 h1 { font-size: 1.6rem; margin: 0 0 6px; line-height: 1.25; }
@@ -113,6 +113,16 @@ textarea.gul { width: 100%; resize: vertical; }
 /* Ordet "Kraftringen" i rubriken: dubbelklick visar/döljer tabell 1. Texten ska inte markeras
    vid dubbelklick, så att inget avslöjar att det händer något. */
 #kraftringen-ord { -webkit-user-select: none; user-select: none; }
+
+/* ---------- Knapp-länk uppe i vänstra hörnet: tillbaka till elöversikten ---------- */
+.topplank {
+  position: fixed; top: 8px; left: 10px; z-index: 20;
+  font-size: .85rem; text-decoration: none; color: var(--accent);
+  background: rgba(255,255,255,.92); border: 1px solid var(--kant); border-radius: 6px;
+  padding: 4px 10px;
+}
+.topplank:hover, .topplank:focus { border-color: var(--accent); }
+@media print { .topplank { display: none !important; } }
 
 /* ---------- Omkopplare för tabell 1 ("···") ----------
    Medvetet nästan osynlig: man måste veta var man ska klicka. Syns tydligare vid hover/fokus.
