@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<!--
+  enea_jamforelse.html
+  Jämförelse: vad Bjerreds Saltsjöbad betalade till Kraftringen januari–juni 2026
+  och vad det hade blivit med Eneas priser.
+
+  Rena HTML/CSS/JS-filer, inget ramverk, ingen byggprocess, ingen databas.
+  Öppnas direkt i webbläsaren. Se PRD.md i samma mapp (utkast 3).
+
+  UPPDATERING 2026-10-06: Första versionen (1.0), Del 1 i PRD:n.
+-->
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Elhandel Kraftringen och Eneas</title>
+  <meta name="description" content="Jämförelse av elkostnaden januari–juni 2026: vad som betalades till Kraftringen och vad det hade blivit med Eneas priser.">
+  <link rel="stylesheet" href="enea_jamforelse.css">
+</head>
+<body>
+
+<main class="sida">
+
+  <!-- ===== Rubrik ===== -->
+  <header class="topp">
+    <h1 id="Start">Elkostnad januari–juni 2026: Kraftringen och Eneas</h1>
+    <p class="undertitel">Bjerreds Saltsjöbad, kallbadhuset i Bjärred. Sammanställd av Kent Lundgren.</p>
+    <p class="status">Siffrorna är hämtade ur Kraftringens fakturor och är inte kvalitetssäkrade.
+      Kontrollera mot källan innan något återges (<a href="#Kallor">se källor</a>).</p>
+  </header>
+
+  <!-- ===== Hur den används ===== -->
+  <section class="ruta" aria-labelledby="Anvisning">
+    <h2 id="Anvisning">Så här fyller du i <a class="ankare" href="#Anvisning" aria-label="Länk till avsnittet">#</a></h2>
+    <ol>
+      <li>Tabell 1 visar vad som faktiskt betalades till Kraftringen. Den kan inte ändras.</li>
+      <li>Fyll i de <span class="gulmarkering">gula fälten</span> i tabell 2: det pris per kWh (öre) som
+        Eneas hade tagit för själva elen varje månad, jämfört med kolumnen &quot;El inkl elcert&quot; i tabell 1.</li>
+      <li>Resten räknas ut direkt. Använd knappen &quot;Kopiera tabellerna&quot; och klistra in i ett mejl.</li>
+    </ol>
+    <p><strong>Vad priset ska omfatta:</strong> allt som gäller själva elen, alltså elcertifikat, påslag och
+      eventuella profil- och balanskostnader. Kraftringens pris i tabell 1 är spotpris + rörliga kostnader +
+      1,70 öre/kWh fast påslag. Nätavgift, energiskatt och fast avgift till Kraftringen Nät AB är oförändrade
+      oavsett elhandlare. Moms (25 %) läggs på av sidan. Det är en jämförelse i efterhand och ett försök:
+      olika elleverantörer menar olika saker med &quot;pris&quot;, så förklara gärna i fältet längre ned vad
+      priset omfattar.</p>
+  </section>
+
+  <!-- ===== Tabell 1: idag ===== -->
+  <section aria-labelledby="TabellIdag">
+    <h2 id="TabellIdag">Tabell 1. Idag: det som betalades till Kraftringen <a class="ankare" href="#TabellIdag" aria-label="Länk till avsnittet">#</a></h2>
+    <div class="tabell-wrap">
+      <table id="tab-idag">
+        <thead>
+          <tr>
+            <th>Månad</th>
+            <th>Totalt<br>kWh</th>
+            <th>Faktura inkl moms<br>(kr)</th>
+            <th>El inkl elcert<br>(öre/kWh)</th>
+            <th>Rörlig nätavgift<br>(öre/kWh)</th>
+            <th>Energiskatt<br>(öre/kWh)</th>
+            <th>Fast avgift<br>(kr/månad)</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot></tfoot>
+      </table>
+    </div>
+    <p class="liten">Summaraden visar kWh-vägt snitt för &quot;El inkl elcert&quot;.</p>
+  </section>
+
+  <!-- ===== Tabell 2: med Eneas ===== -->
+  <section aria-labelledby="TabellEneas">
+    <h2 id="TabellEneas">Tabell 2. Med Eneas priser <a class="ankare" href="#TabellEneas" aria-label="Länk till avsnittet">#</a></h2>
+
+    <div class="fält-rad">
+      <label for="avgift">Eneas fasta månadsavgift (kr per månad, exkl. moms). Lämna tomt om ingen.</label>
+      <input id="avgift" type="text" inputmode="decimal" autocomplete="off" placeholder="t.ex. 0" class="gul smal">
+    </div>
+
+    <div class="tabell-wrap">
+      <table id="tab-eneas">
+        <thead>
+          <tr>
+            <th>Månad</th>
+            <th>Totalt<br>kWh</th>
+            <th>Faktura inkl moms<br>(kr)</th>
+            <th>El inkl elcert<br>(öre/kWh)</th>
+            <th>Rörlig nätavgift<br>(öre/kWh)</th>
+            <th>Energiskatt<br>(öre/kWh)</th>
+            <th>Fast avgift<br>(kr/månad)</th>
+            <th>Skillnad mot idag<br>(kr)</th>
+            <th>Skillnad<br>(%)</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot></tfoot>
+      </table>
+    </div>
+    <p class="liten" id="tab-eneas-not"></p>
+    <p class="liten">Minustecken betyder att det hade blivit billigare med Eneas.</p>
+
+    <details class="forklaring">
+      <summary>Så räknas fakturan med Eneas</summary>
+      <p>Faktura med Eneas = faktura idag + ((Eneas pris − Kraftringens pris) × kWh / 100 + Eneas månadsavgift) × 1,25.
+        Nätavgift, energiskatt och fast nätavgift är oförändrade. Räknat från Kraftringens faktiska fakturabelopp,
+        så att tabell 1 stämmer med fakturorna och bara elhandelsdelen byts ut. Belopp avrundas till hela kronor.</p>
+    </details>
+  </section>
+
+  <!-- ===== Tabell 3: restaurangens andel ===== -->
+  <section aria-labelledby="TabellRestaurang">
+    <h2 id="TabellRestaurang">Tabell 3. Restaurangens andel <a class="ankare" href="#TabellRestaurang" aria-label="Länk till avsnittet">#</a></h2>
+    <p>Restaurangen (hyresgästen) debiteras för sin förbrukning: totalt minus bastu minus varmvatten.
+      Den betalar ingen fast nätavgift. Kostnaden är rörlig nätavgift, el inkl elcert och energiskatt, plus 25 % moms.</p>
+    <div class="tabell-wrap">
+      <table id="tab-hg">
+        <thead>
+          <tr>
+            <th>Månad</th>
+            <th>Restaurangens<br>kWh</th>
+            <th>Idag<br>(kr inkl moms)</th>
+            <th>Med Eneas<br>(kr inkl moms)</th>
+            <th>Skillnad<br>(kr)</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot></tfoot>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== Anteckningar från den som fyller i ===== -->
+  <section class="ruta" aria-labelledby="Anteckningar">
+    <h2 id="Anteckningar">Förklaring av Eneas pris <a class="ankare" href="#Anteckningar" aria-label="Länk till avsnittet">#</a></h2>
+
+    <div class="fält-rad">
+      <label for="modell">Prismodell</label>
+      <select id="modell" class="gul">
+        <option value="">Välj…</option>
+        <option>Spotpris + påslag</option>
+        <option>Fast pris</option>
+        <option>Prissäkrad portfölj (samköp)</option>
+        <option>Annat (förklara nedan)</option>
+      </select>
+    </div>
+
+    <div class="fält-rad">
+      <label for="omfattar">Vad omfattar priset, och vad ingår inte? Gäller avräkningen samma mätvärden (kvartsvärden) som Kraftringens?</label>
+      <textarea id="omfattar" rows="4" class="gul" placeholder="Fritext"></textarea>
+    </div>
+
+    <div class="fält-par">
+      <div class="fält-rad">
+        <label for="namn">Ifylld av</label>
+        <input id="namn" type="text" autocomplete="off" class="gul">
+      </div>
+      <div class="fält-rad">
+        <label for="datum">Datum</label>
+        <input id="datum" type="date" class="gul">
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Knappar ===== -->
+  <div class="knappar">
+    <button type="button" id="btn-kopiera" class="knapp primar">Kopiera tabellerna</button>
+    <button type="button" id="btn-skriv" class="knapp">Skriv ut / spara som PDF</button>
+    <button type="button" id="btn-rensa" class="knapp">Rensa inmatning</button>
+  </div>
+  <p id="meddelande" class="meddelande" role="status" aria-live="polite"></p>
+  <p class="liten">Inget skickas från sidan. Klistra in det du kopierat i ett mejl till Kent Lundgren.
+    Det du fyller i sparas bara i din egen webbläsare.</p>
+
+  <!-- ===== Källor ===== -->
+  <section aria-labelledby="Kallor">
+    <h2 id="Kallor">Källor <a class="ankare" href="#Kallor" aria-label="Länk till avsnittet">#</a></h2>
+    <p class="liten">Siffrorna är hämtade ur källorna nedan och är inte kvalitetssäkrade. Kontrollera mot
+      källan innan något återges.</p>
+    <ul class="kallor">
+      <li id="ref-kraftringen">Kraftringen (2026) <em>E-faktura elnät och elhandel, januari–juni 2026</em>
+        [fakturor, PDF]. Kraftringen Nät AB och Kraftringen Energi AB.
+        <em>Underlag för kWh, fakturabelopp, nätavgifter, energiskatt och Kraftringens elpris.</em>
+        Fakturor:
+        <a href="../Kraftringen/Fakturor/202601_Kraftringen_Januari-20265_3082197306.pdf" target="_blank" rel="noopener">januari</a>,
+        <a href="../Kraftringen/Fakturor/202602_Kraftringen_Februari_2026_3098735503.pdf" target="_blank" rel="noopener">februari</a>,
+        <a href="../Kraftringen/Fakturor/202603_Kraftringen_Mars_2026_3112109404.pdf" target="_blank" rel="noopener">mars</a>,
+        <a href="../Kraftringen/Fakturor/202604_Kraftfringen_April_3126369101.pdf" target="_blank" rel="noopener">april</a>,
+        <a href="../Kraftringen/Fakturor/202605_Kraftringen_Maj_2026_3141677009.pdf" target="_blank" rel="noopener">maj</a>,
+        <a href="../Kraftringen/Fakturor/202606_Kraftringen_Juni_2026_3154522605.pdf" target="_blank" rel="noopener">juni</a>.
+      </li>
+      <li id="ref-eneas">Eneas (2026) <em>Samköp av el</em> [broschyr, PDF]. Eneas.
+        <em>Beskriver tjänsten Samköp av el. Innehåller inga priser.</em>
+        <a href="Eneas%20Samkop%20av%20El%202026.pdf" target="_blank" rel="noopener">Broschyren</a>.
+      </li>
+      <li id="ref-debitering">Bjerreds Saltsjöbad (2026) <em>Debiteringsunderlag El januari–juni 2026</em>
+        [eget underlag]. <em>Underlag för restaurangens kWh och debiterade belopp i tabell 3.</em>
+        <a href="https://github.com/kentlundgren/Bjerred-el/tree/main/Kraftringen/Intern_debitering" target="_blank" rel="noopener">Underlagen</a>.
+      </li>
+    </ul>
+  </section>
+
+  <footer class="fot">
+    <p>Version <span id="version"></span> · <span id="versionsdatum"></span> · Kent Lundgren</p>
+  </footer>
+</main>
+
+<!-- ===== Hörn: GitHub (vänster) och teknik (höger) ===== -->
+<a class="corner corner-left" href="https://github.com/kentlundgren/Bjerred-el/tree/main/Eneas_Samkop_av_El" target="_blank" rel="noopener">{ } GitHub</a>
+<button type="button" class="corner corner-right" id="techBtn" aria-label="Tekniköversikt">&lt;/&gt; teknik</button>
+
+<!-- ===== Teknik-modal ===== -->
+<div class="modal-overlay" id="techOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="techTitel">
+    <button type="button" class="modal-stang" id="techClose" aria-label="Stäng">&times;</button>
+    <h2 id="techTitel">Hur den här sidan är byggd</h2>
+    <p>Tre filer, en jämförelse och inga externa tjänster.</p>
+
+    <h3>Tekniken</h3>
+    <div class="tech-grid">
+      <div class="tech-card">
+        <h4>Ren HTML, CSS och JavaScript</h4>
+        <p>Inga ramverk, inga bibliotek och ingen byggprocess. Sidan öppnas direkt från fil eller från GitHub Pages.</p>
+      </div>
+      <div class="tech-card">
+        <h4>Ingen server eller databas</h4>
+        <p>Det som fylls i skickas ingenstans. Det sparas bara i den egna webbläsaren (localStorage) så att det inte försvinner om fliken stängs.</p>
+      </div>
+      <div class="tech-card">
+        <h4>Kraftringens belopp är fasta</h4>
+        <p>kWh, fakturabelopp och priser per månad ligger inbakade i JavaScript och är hämtade ur de sex fakturorna.</p>
+      </div>
+      <div class="tech-card">
+        <h4>Beräkning från fakturans belopp</h4>
+        <p>Eneas-scenariot byter bara ut elhandelsdelen i Kraftringens faktiska fakturabelopp. Då stämmer tabell 1 exakt med fakturorna trots att öre-priserna på fakturan är avrundade.</p>
+      </div>
+      <div class="tech-card">
+        <h4>Kopiering till mejl</h4>
+        <p>Knappen lägger tabellerna både som HTML och som text på urklipp, så att de klistras in som tabeller i Outlook och Gmail.</p>
+      </div>
+    </div>
+
+    <h3>Metoden</h3>
+    <div class="tech-grid">
+      <div class="tech-card">
+        <h4>Kravdokument först</h4>
+        <p>Sidan följer <code>PRD.md</code> i samma mapp. Databas och inloggning togs bort ur kraven innan bygget, eftersom sidan bara är till för Kent och Isak.</p>
+      </div>
+      <div class="tech-card">
+        <h4>Kontrollräknad mot fakturorna</h4>
+        <p>kWh, mätarkedja, fakturabelopp och elpriser har kontrollräknats månad för månad mot de sex fakturorna. Resultatet står i avsnitt 13 i PRD:n.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="enea_jamforelse.js"></script>
+</body>
+</html>

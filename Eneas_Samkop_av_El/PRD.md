@@ -160,9 +160,12 @@ januari–juni 2026 plus en summarad, i samma upplägg som Kents debiteringsunde
   - "El inkl Elcert (öre/kWh)": Eneas totala pris för själva elen. Det ska omfatta
     elcertifikat, påslag och eventuella profil- och balanskostnader, så att det går
     att jämföra med Kraftringens "spotpris + rörliga kostnader + 1,70 öre/kWh".
-  - Fast månadsavgift från Eneas (kr), valfri, så att den inte göms i öre-priset.
-  - Övriga poster (kr), valfri.
-  - Anteckning, en kort fritext per månad.
+  - UPPDATERING 2026-10-06 (byggd version 1.0): bara "El inkl Elcert" är gult per månad,
+    enligt Kents bild. Eneas fasta månadsavgift (kr/mån exkl. moms, valfri) är ett enda
+    gult fält ovanför tabell 2. Övriga poster och anteckning per månad utgår; en gemensam
+    fritext om vad priset omfattar finns i stället.
+  - Sidan visar tre tabeller: 1 idag (Kraftringen), 2 med Eneas priser (samma kolumner som
+    bilden plus skillnad i kr och %) och 3 restaurangens andel.
 - *Gula fält en gång för hela jämförelsen:* prismodell (rullista: spot + påslag, fast
   pris, prissäkrad portfölj, annat), fritext om vad priset omfattar och inte omfattar,
   samt Isaks namn och datum.
