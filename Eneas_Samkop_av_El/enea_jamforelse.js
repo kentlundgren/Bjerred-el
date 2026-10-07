@@ -27,6 +27,8 @@
   mot dem. Antagandena i jämförelsen är inte avgjorda" (på sidan och i det som kopieras). Version 1.9.
   UPPDATERING 2026-10-06: Kolumnrubriken "El inkl elcert" heter nu "Allt elpris" och har en förklaring vid hovring
   (HTML/CSS). Rubriken i det som kopieras och i fältens aria-label är ändrad på samma sätt. Version 2.0.
+  UPPDATERING 2026-10-07: Kolumnen "Skillnad mot idag" heter "(kr inkl. moms, inkl. fast avgift)" och under tabell 2 visas totalen med och utan moms,
+  uppdelad på lägre pris per kWh och Eneas månadsavgift (ruta "tab-eneas-total", även i det som kopieras). Version 2.2.
   UPPDATERING 2026-10-07: Tre snabba klick (trippelklick) på rubriken "Tabell 2. Med Eneas priser" fyller i Eneas pris, månadsavgift,
   prismodell, fritext och underskrift ur Isak Cerwéns mejl (konstanten ENEAS_ISAK_MEJL). Ingen synlig ledtråd på sidan, på samma sätt
   som dubbelklicket på "Kraftringen". Uppgifterna ligger i den här filen och går alltså att läsa i källkoden (Kent har godkänt det). Version 2.1.
@@ -42,7 +44,7 @@
   // ===================================================================
   // 1. Version
   // ===================================================================
-  var VERSION = '2.1';
+  var VERSION = '2.2';
   var VERSIONSDATUM = '2026-10-07';
 
   // ===================================================================
@@ -145,7 +147,8 @@
     var rader = [];
     var tot = {
       kwhAlla: 0, fakturaAlla: 0, kwhOreAlla: 0,       // alla sex månader (tabell 1)
-      antal: 0, kwhIfyllda: 0, idagIfyllda: 0, eneasSumma: 0, kwhOreEneas: 0
+      antal: 0, kwhIfyllda: 0, idagIfyllda: 0, eneasSumma: 0, kwhOreEneas: 0,
+      prisExkl: 0, avgiftExkl: 0                         // UPPDATERING 2026-10-07: delar av skillnaden, kr exkl moms
     };
 
     MANADER.forEach(function (m) {
@@ -170,6 +173,8 @@
         tot.idagIfyllda += m.fakturaKr;
         tot.eneasSumma += rad.eneasFaktura;
         tot.kwhOreEneas += m.kwh * ore;
+        tot.prisExkl += (ore - m.krOre) / 100 * m.kwh;
+        tot.avgiftExkl += avgift;
       }
       rader.push(rad);
     });
@@ -178,6 +183,7 @@
     tot.snittEneas = tot.kwhIfyllda ? tot.kwhOreEneas / tot.kwhIfyllda : null;
     tot.diffKr = tot.antal ? tot.eneasSumma - tot.idagIfyllda : null;
     tot.diffPct = tot.antal ? tot.diffKr / tot.idagIfyllda * 100 : null;
+    tot.diffExkl = tot.antal ? tot.prisExkl + tot.avgiftExkl : null;   // total skillnad exkl moms (priset + månadsavgiften)
     return { rader: rader, tot: tot, avgift: avgift };
   }
 
@@ -219,6 +225,21 @@
     if (klass !== undefined) { el.className = klass; }
   }
 
+  // Total skillnad med och utan moms, uppdelad på pris och fast månadsavgift (UPPDATERING 2026-10-07).
+  function totalText(b) {
+    var t = b.tot;
+    if (t.antal === 0) { return null; }
+    var prisInkl = Math.round(t.prisExkl * MOMS), avgInkl = Math.round(t.avgiftExkl * MOMS);
+    var manader = t.antal === MANADER.length ? 'alla sex månader' : 'de ' + t.antal + ' ifyllda månaderna';
+    return {
+      rubrik: 'Total skillnad mot idag, ' + manader + ', inklusive Eneas fasta månadsavgift',
+      inkl: fmtTecken(t.diffKr) + ' kr inklusive moms',
+      exkl: fmtTecken(Math.round(t.diffExkl)) + ' kr exklusive moms',
+      delar: 'Av det är ' + (b.avgift > 0 ? 'prisskillnaden per kWh ' + fmtTecken(prisInkl) + ' kr och Eneas fasta månadsavgift ' + fmtTecken(avgInkl) + ' kr (inklusive moms)'
+        : 'hela skillnaden pris per kWh, eftersom ingen fast månadsavgift är angiven')
+    };
+  }
+
   function uppdatera() {
     var b = berakna();
     var t = b.tot;
@@ -244,6 +265,15 @@
       ? '<tr>' + td('Summa / vägt snitt') + td('–') + td('–') + td('–') + td('') + td('') + td('') + td('–') + td('–') + '</tr>'
       : '<tr>' + td('Summa / vägt snitt') + td(fmt(t.kwhIfyllda)) + td(fmt(t.eneasSumma)) + td(fmt(t.snittEneas, 2)) + td('') + td('') + td('') +
         td(fmtTecken(t.diffKr), klassForSkillnad(t.diffKr)) + td(fmtTecken(t.diffPct, 1), klassForSkillnad(t.diffKr)) + '</tr>';
+
+    // Ruta med totalen under tabell 2
+    var tot = totalText(b), rutan = document.getElementById('tab-eneas-total');
+    if (!tot) { rutan.hidden = true; rutan.innerHTML = ''; }
+    else {
+      rutan.hidden = false;
+      rutan.innerHTML = '<p><strong>' + tot.rubrik + ':</strong> ' + tot.inkl + ' (' + tot.exkl + '). ' + tot.delar + '.' +
+        (b.avgift > 0 ? ' Månadsavgiften är ' + fmt(b.avgift, 2) + ' kr per månad exklusive moms.' : '') + ' Minustecken betyder att det hade blivit billigare med Eneas.</p>';
+    }
 
     // Beloppen "idag" i förklaringen visas bara när tabell 1 är synlig.
     var idagDel = tabell1Synlig ? ' Idag för samma månader: ' + fmt(t.idagIfyllda) + ' kr.' : '';
@@ -370,7 +400,7 @@
     var k1 = tabellKopia('Tabell 1. Idag: det som betalades till Kraftringen, januari–juni 2026', h1, r1, -1);
 
     // Tabell 2
-    var h2 = h1.concat(['Skillnad mot idag (kr)', 'Skillnad (%)']);
+    var h2 = h1.concat(['Skillnad mot idag (kr inkl moms, inkl fast avgift)', 'Skillnad (%)']);
     var r2 = b.rader.map(function (r) {
       var m = r.m;
       return [m.namn, fmt(m.kwh), fmt(r.eneasFaktura), r.eneasOre === null ? '–' : fmt(r.eneasOre, 2), fmt(m.natOre, 2), fmt(m.skattOre, 2), fmt(m.fastNatKr),
@@ -380,6 +410,11 @@
       ? ['Summa / vägt snitt', '–', '–', '–', '', '', '', '–', '–']
       : ['Summa / vägt snitt (' + t.antal + ' av ' + MANADER.length + ' månader)', fmt(t.kwhIfyllda), fmt(t.eneasSumma), fmt(t.snittEneas, 2) + ' (vägt snitt)', '', '', '', fmtTecken(t.diffKr), fmtTecken(t.diffPct, 1)]);
     var k2 = tabellKopia('Tabell 2. Med Eneas priser (gula fält ifyllda av Eneas)', h2, r2, 3);
+
+    // Total skillnad (UPPDATERING 2026-10-07)
+    var tt = totalText(b);
+    var totHtml = tt ? '<p style="font-family:Arial,sans-serif;font-size:13px;"><b>' + htmlEscape(tt.rubrik) + ':</b> ' + htmlEscape(tt.inkl) + ' (' + htmlEscape(tt.exkl) + '). ' + htmlEscape(tt.delar) + '.</p>' : '';
+    var totText = tt ? tt.rubrik + ': ' + tt.inkl + ' (' + tt.exkl + '). ' + tt.delar + '.\n\n' : '';
 
     // Anteckningar
     var rader = [
@@ -404,9 +439,9 @@
     return {
       html: '<div style="font-family:Arial,sans-serif;">' +
             '<p style="font-family:Arial,sans-serif;font-size:16px;"><b>Elkostnad januari–juni 2026: Kraftringen och Eneas</b></p>' +
-            (tabell1Synlig ? k1.html : '') + k2.html + an +
+            (tabell1Synlig ? k1.html : '') + k2.html + totHtml + an +
             '<p style="font-family:Arial,sans-serif;font-size:12px;color:#555;">' + htmlEscape(not) + '</p></div>',
-      text: 'Elkostnad januari–juni 2026: Kraftringen och Eneas\n\n' + (tabell1Synlig ? k1.text : '') + k2.text + anText + '\n' + not + '\n'
+      text: 'Elkostnad januari–juni 2026: Kraftringen och Eneas\n\n' + (tabell1Synlig ? k1.text : '') + k2.text + totText + anText + '\n' + not + '\n'
     };
   }
 
