@@ -2,7 +2,7 @@
 
 Projekt: Elenergiförbrukning – Bjerreds Saltsjöbad
 Mapp: `Spotpris/` (all utveckling sker inom denna mapp)
-Status: Utkast 5, 2026-10-07 (förstudie 1–5 i avsnitt 4; beslut efter Kents svar 2026-10-07: förbrukningen uppskattas baklänges, sidan är öppen; verkliga öppettider inlagda; luft-värmepump till restaurangen antas; genomläst med nya ögon och klar för SPEC.md av beräkningsskriptet, se avsnitt 11–12)
+Status: Utkast 5, 2026-10-07 (förstudie 1–5 i avsnitt 4; beslut efter Kents svar 2026-10-07: förbrukningen uppskattas baklänges, sidan är öppen; verkliga öppettider inlagda; luft-värmepump till restaurangen antas; genomläst med nya ögon; `SPEC.md` för beräkningsskriptet är skriven, se avsnitt 11–12)
 Ansvarig: Kent Lundgren
 
 > OBS! Siffrorna i förstudien (avsnitt 4) är framräknade ur spotpriser från elprisetjustnu.se och spotpriset på
@@ -327,10 +327,10 @@ filer, kommentera i detalj, gul bakgrund bara på inmatningsfält. Källor i Har
 1. **Validering mot fakturorna:** när förbrukningsdata finns ska M3 återskapa fakturans spotpris för varje månad januari–juni 2026. Förslag på
    gräns: **högst 0,5 öre/kWh** i skillnad. Gränsen är ett förslag och fastställs efter att vi sett det första utfallet (fakturans öre-pris är avrundat
    till två decimaler). Stämmer det inte ska avvikelsen förklaras, inte döljas.
-1b. **M4b (utan förbrukningsdata):** M4b ska redovisas med passning per månad och leave-one-out-fel per månad. **Gränserna fastställs av Kent innan bygget körs**, så att de inte
-   flyttas efter utfallet. Förstudierna gav som utfall: passning högst 1,6 öre/kWh per månad och leave-one-out högst 3,0 (förstudie 2) respektive 3,7 (förstudie 3). Förslag att utgå från:
-   passning högst 2 och leave-one-out högst 4 öre/kWh. Kriteriet är medvetet **svagare** än punkt 1: M4b anpassas mot fakturan och kan därför inte valideras mot den. När M3 finns
-   jämförs M4b mot M3, och det är den jämförelsen som visar hur bra uppskattningen var.
+1b. **M4b (utan förbrukningsdata):** passningen ska vara högst **3,0 öre/kWh per månad** och leave-one-out-felet högst **4,5 öre/kWh** (Kent, 2026-10-07). Gränserna sattes först till 2 och 4, och ändrades
+   till 3 och 4,5 efter att förstudien med bastun påslagen en timme före öppning gav 2,55 och 4,09. De är alltså satta efter att utfallet var känt, och fungerar som skydd mot försämring, inte som
+   oberoende bevis (se `SPEC.md` avsnitt 6.4). Kriteriet är medvetet **svagare** än punkt 1: M4b anpassas mot fakturan och kan därför inte valideras mot den. När M3 finns jämförs M4b mot M3, och
+   det är den jämförelsen som visar hur bra uppskattningen var.
 2. M1 och M2 stämmer med förstudiens värden (avsnitt 4) för januari–juni 2026.
 3. Alla dygn januari–juni 2026 finns (181 dygn) och antalet intervall stämmer med avsnitt 8, F2.
 4. Sommartiden hanteras rätt: 2026-03-29 har 92 kvartar och månadsmedlen räknas på verkliga kvartar.
@@ -374,14 +374,14 @@ leave-one-out, ett band av alternativa passningar, sommartid, negativa priser oc
 - avrundning (ingen före visning) och teckenkonvention (fel = modell minus faktura);
 - utdataformat för sidans tabell och diagram (månadsvärden, valda antaganden, fel per månad, band, effektkurva).
 
-Sidan (tabell, diagram och förklaringar i samma mönster som övriga sidor) behöver ingen egen SPEC.md. Den beskrivs i det här dokumentet och bygger på skriptets utdata.
+`SPEC.md` är skriven (2026-10-07, [`SPEC.md`](SPEC.md)). Sidan (tabell, diagram och förklaringar i samma mönster som övriga sidor) behöver ingen egen SPEC.md. Den beskrivs i det här dokumentet och bygger på skriptets utdata.
 
 ## 12. Nästa steg
 
-**Bedömning efter genomläsning med nya ögon (2026-10-07): PRD:n är klar för att skriva SPEC.md för beräkningsskriptet.** Det som är oavgjort (fråga 2, 15, 17, 18, 19 och 21) påverkar inte skriptet, utom tre beslut som
+**Bedömning efter genomläsning med nya ögon (2026-10-07): PRD:n är klar. Kent har godkänt beslut A–C, och `SPEC.md` för beräkningsskriptet är skriven (utkast 1).** Det som är oavgjort (fråga 2, 15, 17, 18, 19 och 21) påverkar inte skriptet, utom tre beslut som
 bör tas innan SPEC.md skrivs:
 
-- **A. Gränserna för M4b** (acceptanskriterium 1b): förslag passning högst 2 och leave-one-out högst 4 öre/kWh. Fastställs av Kent innan körning.
+- **A. Gränserna för M4b** (acceptanskriterium 1b): **beslutade 2026-10-07: passning högst 3,0 och leave-one-out högst 4,5 öre/kWh** (först 2 och 4, ändrade efter utfallet, se SPEC avsnitt 6.4).
 - **B. Sökrymden för M4b:** godkänn intervallen (bastun öppnar 06.00 eller 07.30, uppvärmning 0–6 timmar före öppning, restaurangens förberedelse 0–2 timmar, baslast 0–20 kW, varmvatten dygnet runt eller enligt tider)
   och att el-värmen och den antagna luft-värmepumpen ingår i baslasten utan egen modellering.
 - **C. Fråga 21:** ska effektkurvan visas på sidan? Förslag: ja, märkt som uppskattning med bandet synligt.
