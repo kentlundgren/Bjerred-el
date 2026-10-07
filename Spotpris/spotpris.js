@@ -549,9 +549,9 @@
         '<li><strong>Det beror inte bara på att övriga antaganden var inställda på den platta formen.</strong> När hela sökningen görs om med pulsen inbyggd (tabell längre ned) blir den bästa passningen fortfarande sämre: ' + omanp.map(function (x) { return fmt(x.rms); }).join(' → ') + ' öre/kWh i RMS-fel.</li>' +
         '<li><strong>Vad det betyder.</strong> Fakturans månadspris innehåller inte tillräckligt med information för att visa en morgontopp. Toppen kan vara verklig och ändå inte synas i månadens snittpris, eller så är pulsens storlek och längd annorlunda (till exempel längre tid på lägre effekt). Skillnaden mellan ingen puls och ett aggregat (36 kW) är liten jämfört med modellens osäkerhet, så fakturorna säger inte emot en liten puls. Att avgöra den kräver förbrukning per kvart, där en morgontopp syns direkt (fråga 2 i PRD).</li>' +
         '</ol>' +
-        '<div class="tabell-wrap"><table><thead><tr><th>Månad</th><th>Bastuns<br>snittpris</th><th>Pris<br>kl. 05–06</th><th>Skillnad</th><th>Pulsen flyttar<br>modellvärdet</th><th>Fel utan<br>puls</th><th>Fel med<br>puls (72 kW)</th></tr></thead><tbody>' + rader1 + '</tbody></table></div>' +
+        '<div class="tabell-wrap"><table><thead><tr><th>Månad</th><th>Bastuns snittpris<br>(öre/kWh)</th><th>Pris kl. 05–06<br>(öre/kWh)</th><th>Skillnad<br>(öre/kWh)</th><th>Pulsen flyttar<br>modellvärdet (öre/kWh)</th><th>Fel utan puls<br>(öre/kWh)</th><th>Fel med puls<br>(72 kW, öre/kWh)</th></tr></thead><tbody>' + rader1 + '</tbody></table></div>' +
         '<p class="liten">Öre/kWh. Antagandena (U1 från januari–juni) är fixa. Juli och augusti är blindprov. Fel = modell minus faktura.</p>' +
-        '<div class="tabell-wrap"><table><thead><tr><th>Startpuls<br>(hela sökningen omgjord)</th><th>Bästa<br>RMS-fel</th><th>Största<br>leave-one-out-fel</th><th>Antal i<br>bandet</th><th>Fel<br>juli</th><th>Fel<br>augusti</th></tr></thead><tbody>' + rader2 + '</tbody></table></div>' +
+        '<div class="tabell-wrap"><table><thead><tr><th>Startpuls<br>(hela sökningen omgjord)</th><th>Bästa RMS-fel<br>(öre/kWh)</th><th>Största leave-one-out-fel<br>(öre/kWh)</th><th>Antal i<br>bandet</th><th>Fel juli<br>(öre/kWh)</th><th>Fel augusti<br>(öre/kWh)</th></tr></thead><tbody>' + rader2 + '</tbody></table></div>' +
         '<p class="liten">Här har alla 252 kombinationer av antaganden prövats på nytt för varje puls. Bandet är antalet kombinationer som passar fakturorna nästan lika bra (RMS högst 1,5).</p>' +
         '<p>Nedan visas pulsen med övriga antaganden fixa (samma antaganden som i primärkörningen).</p>';
       tp.hidden = false;
@@ -665,6 +665,35 @@
   }
 
   // ---------------------------------------------------------------------------------------------------------
+  // Avläsningstidpunkt (UPPDATERING 2026-10-07): kan några dagars fel i avläsningen av bastu- och varmvattenmätarna förklara att felen växlar?
+  // ---------------------------------------------------------------------------------------------------------
+  function renderAvlasning() {
+    var A = window.AVLASNING, el1 = document.getElementById('avlasning-text');
+    if (!A) { document.getElementById('Avlasning').style.display = 'none'; el1.style.display = 'none'; return; }
+    var rader = '', manga = 0, maxTre = 0, maxFel = 0;
+    A.rader.forEach(function (r) {
+      var tre = A.metadata.dagar_tankta * r.bastu_kwh_per_dag;
+      if (Math.abs(r.dagar_som_kravs) > A.metadata.dagar_tankta) { manga += 1; }
+      maxTre = Math.max(maxTre, Math.abs(r.effekt_av_tre_dagar_ore)); maxFel = Math.max(maxFel, Math.abs(r.fel_nu_ore));
+      rader += '<tr>' + td(esc(lang(r.manad))) + td(fmtT(r.fel_nu_ore), klass(r.fel_nu_ore)) + td(fmt(r.bastu_kwh_per_dag, 0)) + td(fmt(r.varmvatten_kwh_per_dag, 0)) + td(fmt(tre, 0)) +
+               td(fmtT(r.effekt_av_tre_dagar_ore)) + td(fmtT(r.kwh_som_kravs, 0) + (r.vid_grans ? ' (minst)' : '')) + td(fmtT(r.dagar_som_kravs, 1)) + '</tr>';
+    });
+    document.querySelector('#tab-avl tbody').innerHTML = rader;
+    // varmvattnet: störst avvikelse från snittet av grannmånaderna
+    var vm = A.rader.map(function (r) { return r.varmvatten_kwh_per_dag; }), bast = 0, bi = -1;
+    for (var i = 1; i < vm.length - 1; i++) { var d = vm[i] - (vm[i - 1] + vm[i + 1]) / 2; if (Math.abs(d) > Math.abs(bast)) { bast = d; bi = i; } }
+    el1.innerHTML = '<p>Idén: om bastu- och varmvattenmätarna inte läses av exakt vid månadsskiftet, utan till exempel den 2:a eller 3:e, hamnar några dagars kWh i fel månad. Månaden före får då för lite och månaden efter för mycket, och det kan se ut som svängningar. ' +
+      'Så ser det ut i fördelningen mellan bad och restaurang i elöversikten. Därför har jag prövat om det också kan förklara att modellens fel växlar mellan plus och minus.</p>' +
+      '<p><strong>Huvudmätaren är inte ett problem:</strong> Kraftringens fakturor läser av den den 1:a varje månad (kontrollerat på alla åtta fakturor), så månadens totala kWh är exakt en kalendermånad. Det som kan vara fel är uppdelningen i bastu, varmvatten och rest, eftersom de mätarna läses av manuellt och avläsningsdagen inte är känd (underlagen visar bara 1:a och sista dagen).</p>' +
+      '<p><strong>Resultat:</strong> tre dagars felläsning av bastun flyttar modellens värde med högst ' + fmt(maxTre) + ' öre/kWh i någon månad, medan felen mot fakturan är upp till ' + fmt(maxFel) + ' öre/kWh. ' +
+      'För att helt förklara felen skulle bastumätaren behöva ha lästs fel med mer än tre dagar i ' + manga + ' av ' + A.rader.length + ' månader (sökgränsen var 4 000 kWh, cirka 11–14 dagars bastu). ' +
+      'Avläsningstidpunkten kan alltså mycket väl förklara svängningarna i fördelningen mellan bad och restaurang (tre dagars bastu är 700–1 400 kWh, runt tio procent av bastuns månad), men den kan inte förklara felen i spotpriset. Skälet är att prisskillnaden mellan bastuns timmar och restpostens timmar bara är cirka 2–16 öre/kWh, så att flytta kWh mellan dem ändrar månadens snittpris mycket lite.</p>' +
+      (bi > 0 ? '<p>En sak i varmvattnet sticker ut: ' + lang(A.rader[bi].manad).toLowerCase() + ' har ' + fmt(vm[bi], 0) + ' kWh/dag mot ' + fmt(vm[bi - 1], 0) + ' före och ' + fmt(vm[bi + 1], 0) + ' efter. Det kan vara avläsningsdagen eller ett verkligt högre uttag, och är värt att kontrollera mot datumet för avläsningen.</p>' : '');
+    document.getElementById('avlasning-not').textContent = 'Beräknat med antagandena från januari–juni oförändrade och med de verkliga bastu- och varmvattenmätarna för juli–augusti, så felen för juli och augusti skiljer sig något från blindprovets (som byggde på en antagen uppdelning). ' +
+      'Känsligheten är hur många öre/kWh månadens modellvärde ändras när 100 kWh flyttas från restposten till bastun. "(minst)" betyder att sökgränsen på 4 000 kWh nåddes.';
+  }
+
+  // ---------------------------------------------------------------------------------------------------------
   // Ordförklaringar (UPPDATERING 2026-10-07): fackord får en prickad understrykning och en förklaring vid pekning, fokus eller tryck.
   // Regeln (Kent): förklara förkortningar och facktermer, även där de visas i löptext som skapas av skriptet.
   // ---------------------------------------------------------------------------------------------------------
@@ -759,6 +788,7 @@
       renderDiagramManad();
     });
     Array.prototype.forEach.call(document.querySelectorAll('input[name="effekt-val"]'), function (r) { r.addEventListener('change', renderEffekt); });
+    renderAvlasning();
     forklara(document.querySelector('main'));
     ordHandelser();
     el('btn-kopiera').addEventListener('click', kopiera);
