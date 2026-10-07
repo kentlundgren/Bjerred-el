@@ -62,11 +62,16 @@
   // ---------------------------------------------------------------------------------------------------------
   var eneas = {};          // månad -> text som den skrevs
   var hamtatFranJamforelse = false;
+  var facit = {};          // UPPDATERING 2026-10-07: månad -> {spot, rorliga} (text) som fakturorna för blindprovet (tabell 3)
 
   function lasEneas() {
     try {
       var s = localStorage.getItem(LAGRING);
-      if (s) { var o = JSON.parse(s); if (o && o.eneas && typeof o.eneas === 'object') { eneas = o.eneas; } }
+      if (s) {
+        var o = JSON.parse(s);
+        if (o && o.eneas && typeof o.eneas === 'object') { eneas = o.eneas; }
+        if (o && o.facit && typeof o.facit === 'object') { facit = o.facit; }
+      }
       // Tomma månader fylls (utan att skrivas) från jämförelsesidans inmatning, om den finns i samma webbläsare.
       var j = localStorage.getItem(LAGRING_JAMFORELSE);
       if (j) {
@@ -80,7 +85,7 @@
     } catch (e) { /* lagring blockerad: sidan fungerar ändå */ }
   }
   function sparaEneas() {
-    try { localStorage.setItem(LAGRING, JSON.stringify({ eneas: eneas })); } catch (e) { /* ignoreras */ }
+    try { localStorage.setItem(LAGRING, JSON.stringify({ eneas: eneas, facit: facit })); } catch (e) { /* ignoreras */ }
   }
   function eneasVarde(m) { return tolka(eneas[m]); }
 
@@ -165,6 +170,73 @@
     var not = hamtatFranJamforelse ? 'Några fält är förifyllda från jämförelsesidans inmatning i den här webbläsaren. ' : '';
     el('tab-2-not').textContent = not + (fyllda === 0 ? 'Fyll i Eneas allt elpris för att se skillnaderna.' :
       (ejAlla ? 'Eneas snitt gäller de ' + fyllda + ' av ' + MAN.length + ' månader som är ifyllda; Kraftringens snitt gäller alla månader.' : ''));
+  }
+
+  // ---------------------------------------------------------------------------------------------------------
+  // Tabell 3: förutsagt mot faktura (januari-juni anpassade, juli-september blindprov)
+  // ---------------------------------------------------------------------------------------------------------
+  var F = window.FORUTSAGELSE;
+  var FAST = 1.70;       // fast påslag, öre/kWh (enligt fakturorna)
+
+  function byggTabell3() {
+    var sek = el('sektion-tabell3');
+    if (!F) { sek.style.display = 'none'; return; }
+    var h = '';
+    MAN.forEach(function (m) {
+      h += '<tr id="t3-' + m + '">' + td(esc(lang(m))) + '<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>';
+    });
+    Object.keys(F.manader).sort().forEach(function (m) {
+      h += '<tr id="t3-' + m + '">' + td(esc(lang(m)) + ' <span class="metod uppskattning">blindprov</span>') + td(fmt(F.manader[m].m4b_ore)) +
+           td(fmt(F.manader[m].spann_min_ore) + '–' + fmt(F.manader[m].spann_max_ore)) +
+           '<td><input type="text" inputmode="decimal" autocomplete="off" class="gul" data-f="spot" data-m="' + m + '" aria-label="Fakturans spotpris öre/kWh, ' + esc(lang(m)) + '"></td>' +
+           '<td id="t3-fel-' + m + '">–</td>' +
+           td(fmt(F.rorliga.snitt_ore) + ' <span class="liten">(' + fmt(F.rorliga.min_ore) + '–' + fmt(F.rorliga.max_ore) + ')</span>') +
+           '<td><input type="text" inputmode="decimal" autocomplete="off" class="gul" data-f="rorliga" data-m="' + m + '" aria-label="Fakturans rörliga kostnader öre/kWh, ' + esc(lang(m)) + '"></td>' +
+           td(fmt(F.manader[m].m4b_ore + F.rorliga.snitt_ore + FAST)) +
+           '<td id="t3-allt-' + m + '">–</td><td id="t3-feliallt-' + m + '">–</td></tr>';
+    });
+    document.querySelector('#tab-3 tbody').innerHTML = h;
+    // Januari-juni: värdena finns redan (modellen anpassades på dem), inga inmatningsfält
+    MAN.forEach(function (m) {
+      var v = D.manadsnitt[m], c = el('t3-' + m).children, f = v.faktura;
+      c[1].textContent = fmt(v.m4b.varde_ore);
+      c[2].textContent = 'anpassad';
+      c[3].textContent = fmt(f.spot_ore);
+      c[4].textContent = fmtT(v.m4b.fel_ore); c[4].className = klass(v.m4b.fel_ore);
+      c[5].textContent = '–';
+      c[6].textContent = fmt(f.rorliga_ore);
+      c[7].textContent = fmt(v.m4b.varde_ore + f.rorliga_ore + FAST);
+      c[8].textContent = fmt(f.allt_elpris_ore);
+      var fa = v.m4b.varde_ore + f.rorliga_ore + FAST - f.allt_elpris_ore;
+      c[9].textContent = fmtT(fa); c[9].className = klass(fa);
+    });
+    Object.keys(F.manader).forEach(function (m) {
+      var f = facit[m] || {};
+      Array.prototype.forEach.call(document.querySelectorAll('#t3-' + m + ' input'), function (i) { i.value = f[i.getAttribute('data-f')] || ''; });
+    });
+    uppdateraTabell3();
+  }
+
+  function uppdateraTabell3() {
+    if (!F) { return; }
+    var kompletta = 0, stor = 0;
+    Object.keys(F.manader).forEach(function (m) {
+      var fm = facit[m] || {}, spot = tolka(fm.spot), rl = tolka(fm.rorliga), p = F.manader[m].m4b_ore;
+      var cf = el('t3-fel-' + m), ca = el('t3-allt-' + m), cfa = el('t3-feliallt-' + m);
+      cf.textContent = spot === null ? '–' : fmtT(p - spot); cf.className = spot === null ? '' : klass(p - spot);
+      if (spot !== null) { kompletta += 1; stor = Math.max(stor, Math.abs(p - spot)); }
+      if (spot !== null && rl !== null) {
+        var allt = spot + rl + FAST, fa = p + F.rorliga.snitt_ore + FAST - allt;
+        ca.textContent = fmt(allt); cfa.textContent = fmtT(fa); cfa.className = klass(fa);
+      } else { ca.textContent = '–'; cfa.textContent = '–'; cfa.className = ''; }
+      Array.prototype.forEach.call(document.querySelectorAll('#t3-' + m + ' input'), function (i) { i.classList.toggle('ogiltig', i.value.trim() !== '' && tolka(i.value) === null); });
+    });
+    var grans = D.m4b.primar.kriterier.leave_one_out.grans;
+    el('tab-3-not').textContent = 'Förutsägelserna gjordes innan fakturorna lästes in (' + F.metadata.gjord + '). Spannet kommer av osäkerheten i uppdelningen mellan bastu och varmvatten och av de alternativa antagandena. ' +
+      'Rörliga kostnader förutsägs inte av någon modell: de är det vägda snittet av januari–juni (' + fmt(F.rorliga.snitt_ore) + ', spann ' + fmt(F.rorliga.min_ore) + '–' + fmt(F.rorliga.max_ore) + '). ' +
+      'Sommarens öppettider är antagna lika som januari–juni och är inte kontrollerade. ' +
+      (kompletta === 0 ? 'Fyll i fakturans spotpris för att se felen. Gräns att jämföra med: ' + fmt(grans, 1) + ' öre/kWh (leave-one-out).' :
+        'Största fel i spotpriset hittills: ' + fmt(stor) + ' öre/kWh (gräns ' + fmt(grans, 1) + ').');
   }
 
   // ---------------------------------------------------------------------------------------------------------
@@ -383,10 +455,20 @@
     renderTabell1();
     byggTabell2();
     uppdateraTabell2();
+    byggTabell3();
     renderDiagramManad();
     renderDiagramTimme();
     renderEffekt();
     renderNoggrannhet();
+
+    el('tab-3').addEventListener('input', function (e) {
+      var m = e.target && e.target.getAttribute && e.target.getAttribute('data-m'), f = e.target.getAttribute('data-f');
+      if (!m || !f) { return; }
+      facit[m] = facit[m] || {};
+      facit[m][f] = e.target.value;
+      sparaEneas();
+      uppdateraTabell3();
+    });
 
     el('tab-2').addEventListener('input', function (e) {
       var m = e.target && e.target.getAttribute && e.target.getAttribute('data-m');

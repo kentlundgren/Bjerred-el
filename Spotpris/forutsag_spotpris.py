@@ -68,6 +68,15 @@ def main():
         print(f"{m}: M4b {punkt['varde']:.2f} öre/kWh (spann {min(varden):.2f}-{max(varden):.2f}), M1 {mn.m1():.2f}, M2 {mn.m2():.2f}")
     with open("data/forutsagelse_jul_sep.json", "w", encoding="utf-8") as f:
         json.dump(resultat, f, ensure_ascii=False, indent=2)
+    # Samma data som skriptfil, så att sidan kan läsa den från file:// (se webbpaket i berakna_spotpris.py).
+    # Rörliga kostnader förutsägs inte av någon modell: snitt (vägt med kWh) och spann av januari-juni används.
+    rl = [(float(kr[m]["rorliga_ore"]), kr[m]["kwh_huvud"]) for m in kr]
+    resultat["rorliga"] = {"snitt_ore": sum(v * w for v, w in rl) / sum(w for _, w in rl),
+                           "min_ore": min(v for v, _ in rl), "max_ore": max(v for v, _ in rl),
+                           "text": "Ingen modell: vägt snitt och spann av januari-juni"}
+    with open("data/forutsagelse_data.js", "w", encoding="utf-8") as f:
+        f.write("// Skapad av forutsag_spotpris.py. Förutsägelse gjord innan fakturornas spotpris lästes in.\n")
+        f.write("window.FORUTSAGELSE = " + json.dumps(resultat, ensure_ascii=False, indent=1) + ";\n")
     print(f"Varmvattenandel av bad Jan-Jun: medel {andel_medel:.3f}, min {andel_min:.3f}, max {andel_max:.3f}")
 
 

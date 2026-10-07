@@ -109,6 +109,35 @@
       så ett prissäkrat pris följer inte månadens spotpris och är inte jämförbart månad för månad.</p>
   </section>
 
+  <!-- UPPDATERING 2026-10-07: Tabell 3, blindprov juli–september (förutsagt mot fakturan) -->
+  <section aria-labelledby="Tabell3" id="sektion-tabell3">
+    <h2 id="Tabell3">Tabell 3. Förutsagt mot faktura, månad för månad <a class="ankare" href="#Tabell3" aria-label="Länk till avsnittet">#</a></h2>
+    <p class="liten">Öre/kWh, utan moms. Januari–juni är de månader som antagandena anpassades på. Juli–september är ett <strong>blindprov</strong>:
+      de förutsades med samma antaganden innan fakturornas spotpris lästes in. Fyll i fakturans spotpris och rörliga kostnader i de
+      <span style="background:var(--gul);padding:0 4px;border-radius:3px">gula fälten</span> när fakturorna finns, så räknas felen ut.
+      Det du fyller i sparas bara i den här webbläsaren.</p>
+    <div class="tabell-wrap">
+      <table id="tab-3">
+        <thead>
+          <tr>
+            <th>Månad</th>
+            <th>Förutsagt<br>spot (M4b)</th>
+            <th>Spann</th>
+            <th>Fakturans<br>spot</th>
+            <th>Fel<br>spot</th>
+            <th>Förutsagda<br>rörliga kostnader</th>
+            <th>Fakturans<br>rörliga kostnader</th>
+            <th>Förutsagt<br>allt elpris</th>
+            <th>Fakturans<br>allt elpris</th>
+            <th>Fel<br>allt elpris</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="liten" id="tab-3-not"></p>
+  </section>
+
   <!-- ===== Diagram 1 ===== -->
   <section aria-labelledby="Diagram1">
     <h2 id="Diagram1">Diagram 1. Månadsvärden <a class="ankare" href="#Diagram1" aria-label="Länk till avsnittet">#</a></h2>
@@ -291,6 +320,7 @@ kontrolleras som "inte kontrollerat".</pre>
 </div>
 
 <script src="data/spotpris_data.js"></script>
+<script src="data/forutsagelse_data.js"></script>
 <script src="spotpris.js"></script>
 </body>
 </html>
