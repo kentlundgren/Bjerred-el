@@ -526,9 +526,21 @@
 
     // Trippelklick på rubriken i tabell 2 fyller i uppgifterna ur Isaks mejl (se ENEAS_ISAK_MEJL). Ingen synlig ledtråd på sidan.
     // Är något redan ifyllt som skulle ersättas frågar sidan först.
+    // UPPDATERING 2026-10-07: ett nytt trippelklick tar bort uppgifterna igen (om det som står är precis det som trippelklicket fyllde i),
+    // och ett tredje fyller i dem på nytt, och så vidare.
     document.getElementById('TabellEneas').addEventListener('click', function (e) {
       if (e.detail !== 3) { return; }
-      var finns = tillstand.avgift || tillstand.omfattar || tillstand.namn || Object.keys(tillstand.ore).some(function (k) { return tillstand.ore[k]; });
+      var arIfyllt = Object.keys(ENEAS_ISAK_MEJL.ore).every(function (k) { return tillstand.ore[k] === ENEAS_ISAK_MEJL.ore[k]; }) &&
+        tillstand.avgift === ENEAS_ISAK_MEJL.avgift && tillstand.namn === ENEAS_ISAK_MEJL.namn;
+      if (arIfyllt) {
+        tillstand = { ore: {}, avgift: '', modell: '', omfattar: '', namn: '', datum: '' };
+        spara(); tillFalt(); uppdatera();
+        document.getElementById('omfattar').rows = 4;
+        if (window.getSelection) { window.getSelection().removeAllRanges(); }
+        visaMeddelande('Uppgifterna är borttagna.');
+        return;
+      }
+      var finns =tillstand.avgift || tillstand.omfattar || tillstand.namn || Object.keys(tillstand.ore).some(function (k) { return tillstand.ore[k]; });
       if (finns && !window.confirm('Fylla i uppgifterna ur Isaks mejl? Det ersätter det som redan är ifyllt.')) { return; }
       tillstand.ore = {};
       Object.keys(ENEAS_ISAK_MEJL.ore).forEach(function (k) { tillstand.ore[k] = ENEAS_ISAK_MEJL.ore[k]; });
