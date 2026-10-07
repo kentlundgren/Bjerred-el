@@ -296,7 +296,7 @@
       s += '<h3>Går felet växelvis plus och minus?</h3><p>Felets tecken i tur och ordning (M4b): ' + namn.map(function (n, i) { return n + ' ' + tecken(fel[i]); }).join(', ') + '. ' +
            (rf === null ? '' : 'Samband mellan ett fel och nästa månads fel (autokorrelation, fördröjning 1): ' + fmt(rf) + '. Med ' + (fel.length - 1) + ' par krävs ett värde utanför cirka ±0,75 för att skiljas från slumpen (5 %-nivå, standardtabell för korrelation). ' +
            (Math.abs(rf) < 0.75 ? 'Det är inte uppnått, så det går inte att säga att felen växlar systematiskt. ' + (Math.abs(rf) > 0.6 ? 'Värdet ligger dock nära gränsen och talar för att det kan finnas ett växlande mönster, främst i de senaste månaderna. ' : '') : 'Det är uppnått. ') +
-           'Med så få månader går det inte att avgöra om det är ett mönster eller slump.') + '</p>';
+           'Med så få månader går det inte att avgöra om det är ett mönster eller slump. ') + 'Att mätarna för bastu och varmvatten lästes av på olika dagar förklarar inte växlingen (se <a href="#Avlasning">avläsningstidpunkten</a>).</p>';
       var mek = rader.map(function (r) {
         return lang(r.m) + ': dagtidspriset (M2) ligger ' + fmt(Math.abs(r.m2 - r.m1), 1) + ' öre ' + (r.m2 < r.m1 ? 'under' : 'över') + ' dygnssnittet (M1), fakturan ' + fmt(Math.abs(r.spot - r.m1), 1) + ' öre ' + (r.spot < r.m1 ? 'under' : 'över') +
                ' och M4b ' + fmt(Math.abs(r.m4 - r.m1), 1) + ' öre ' + (r.m4 < r.m1 ? 'under' : 'över') + '.';
@@ -682,7 +682,8 @@
     // varmvattnet: störst avvikelse från snittet av grannmånaderna
     var vm = A.rader.map(function (r) { return r.varmvatten_kwh_per_dag; }), bast = 0, bi = -1;
     for (var i = 1; i < vm.length - 1; i++) { var d = vm[i] - (vm[i - 1] + vm[i + 1]) / 2; if (Math.abs(d) > Math.abs(bast)) { bast = d; bi = i; } }
-    el1.innerHTML = '<p>Idén: om bastu- och varmvattenmätarna inte läses av exakt vid månadsskiftet, utan till exempel den 2:a eller 3:e, hamnar några dagars kWh i fel månad. Månaden före får då för lite och månaden efter för mycket, och det kan se ut som svängningar. ' +
+    el1.innerHTML = '<div class="notis"><p><strong>Slutsats:</strong> Avläsningsdagen kan bidra med några tiondels öre/kWh och förklara svängningarna i kWh-fördelningen mellan bad och restaurang. Den förklarar inte varför felen i spotpriset byter tecken. Den förklaringen ligger troligare i att modellen följer prisformen över dygnet (skillnaden mellan dagtidspriset och dygnssnittet) för svagt, se <a href="#Blindprov">analysen av blindprovet</a>. Det är en tolkning av två månader och inget bevis.</p></div>' +
+      '<p>Idén: om bastu- och varmvattenmätarna inte läses av exakt vid månadsskiftet, utan till exempel den 2:a eller 3:e, hamnar några dagars kWh i fel månad. Månaden före får då för lite och månaden efter för mycket, och det kan se ut som svängningar. ' +
       'Så ser det ut i fördelningen mellan bad och restaurang i elöversikten. Därför har jag prövat om det också kan förklara att modellens fel växlar mellan plus och minus.</p>' +
       '<p><strong>Huvudmätaren är inte ett problem:</strong> Kraftringens fakturor läser av den den 1:a varje månad (kontrollerat på alla åtta fakturor), så månadens totala kWh är exakt en kalendermånad. Det som kan vara fel är uppdelningen i bastu, varmvatten och rest, eftersom de mätarna läses av manuellt och avläsningsdagen inte är känd (underlagen visar bara 1:a och sista dagen).</p>' +
       '<p><strong>Resultat:</strong> tre dagars felläsning av bastun flyttar modellens värde med högst ' + fmt(maxTre) + ' öre/kWh i någon månad, medan felen mot fakturan är upp till ' + fmt(maxFel) + ' öre/kWh. ' +
