@@ -263,6 +263,30 @@
         <p>Skriptet har 17 tester med referensvärden ur förstudierna, och de går igenom. Resultaten är inte granskade i en tvåstegsgranskning, och sidan säger det.</p>
       </div>
     </div>
+
+    <!-- UPPDATERING 2026-10-07: Tvåstegsgranskningen skjuts upp och beskrivs här som en möjlighet, med en promt att ta fram senare -->
+    <h3>Möjlighet senare: tvåstegsgranskning</h3>
+    <p>Sidan är inte tvåstegsgranskad. Granskningen är uppskjuten, och det är inte säkert att den behövs: siffrorna är en uppskattning
+      som redan har tester mot förstudierna, och sidan säger öppet att den inte är granskad. Den behövs om siffrorna ska skickas vidare
+      eller läggas till grund för ett beslut, till exempel ett byte av elhandlare.</p>
+    <p>Så här kan du be om den, i en ny session (så att granskaren inte ärver mina tidigare slutsatser):</p>
+    <pre>Granska Spotpris/ i två steg. Ändra ingenting i filerna, rapportera bara.
+
+Steg 1, egenkontroll: kör test_spotpris.py. Räkna om M1, M2 och M4b för januari-juni
+ur data/spot_SE4_*.json och data/kraftringen.json utan att använda berakna_spotpris.py,
+och jämför med tabell 1 i spotpris.html. Kontrollera varje fakturapost i kraftringen.json mot
+Kraftringen/Fakturor/*.pdf. Kontrollera att texten på sidan stämmer med siffrorna.
+
+Steg 2, oberoende granskning: läs bara SPEC.md och indatafilerna. Bygg modellen själv
+och jämför resultatet med m4b_resultat.json. Pröva om kriterierna 3,0 och 4,5 öre/kWh
+verkligen uppfylls, och om påståendena om noggrannhet är försiktigt nog formulerade.
+
+Rapportera avvikelser med fil, värde och förväntat värde. Skriv det som inte kunde
+kontrolleras som "inte kontrollerat".</pre>
+
+    <h3>Blindprov: juli, augusti och september</h3>
+    <p><code>forutsag_spotpris.py</code> förutsäger fakturans spotpris för juli–september med de antaganden som valdes på januari–juni.
+      Resultatet ligger i <code>data/forutsagelse_jul_sep.json</code>. Jämför med fakturorna när de är lästa.</p>
   </div>
 </div>
 
