@@ -529,10 +529,31 @@
     var pf = el('puls-forklaring'), tp = el('tab-puls');
     if (val === 'puls' && SP) {
       var kw = SP.metadata.aggregat_antal * SP.metadata.aggregat_kw;
+      var per = SP.per_manad || [], omanp = SP.omanpassning || [];
+      var sämre = per.filter(function (x) { return Math.abs(x.fel_med_puls) > Math.abs(x.fel_utan_puls); }).length;
+      var rader1 = per.map(function (x) {
+        return '<tr>' + td(esc(lang(x.manad))) + td(fmt(x.bastu_snittpris, 0)) + td(fmt(x.pris_forsta_timmen, 0)) + td(fmtT(x.pris_forsta_timmen - x.bastu_snittpris, 0), klass(x.pris_forsta_timmen - x.bastu_snittpris)) +
+               td(fmtT(x.forskjutning), klass(x.forskjutning)) + td(fmtT(x.fel_utan_puls), klass(x.fel_utan_puls)) + td(fmtT(x.fel_med_puls), klass(x.fel_med_puls)) + '</tr>';
+      }).join('');
+      var rader2 = omanp.map(function (x) {
+        return '<tr>' + td(x.puls_kw === 0 ? 'ingen (nuvarande modell)' : fmt(x.puls_kw, 0) + ' kW') + td(fmt(x.rms)) + td(fmt(x.loo_storsta)) + td(String(x.antal_i_band)) + td(fmtT(x.fel_jul), klass(x.fel_jul)) + td(fmtT(x.fel_aug), klass(x.fel_aug)) + '</tr>';
+      }).join('');
       pf.innerHTML = '<div class="notis"><p><strong>Illustration, inte ett resultat.</strong> Bastun har ' + SP.metadata.aggregat_antal + ' aggregat (ett per bastu, Harvia Qube 360, ' + fmt(SP.metadata.aggregat_kw, 0) + ' kW vardera, alltså ' + fmt(kw, 0) + ' kW tillsammans). ' +
         'Här antas båda gå på full effekt under den första timmen efter att bastun slagits på och därefter jämnt, med samma energi per dag som i primärkörningen. Det ger en tydlig topp på morgonen. ' +
-        'Hur länge aggregaten verkligen går på full effekt vid uppvärmningen är inte känt, och månadssummorna innehåller inte tidpunkten. Därför visas pulsen som en känslighetsvariant och inte i primärkörningen.</p>' +
-        '<p>Tabellen nedan visar vad en sådan startpuls gör med träffen mot fakturorna när övriga antaganden hålls oförändrade: ju större puls, desto sämre träff. Fakturorna kräver alltså inte en stor startpuls i modellen, men utesluter den inte, eftersom övriga antaganden då kunde ha valts om.</p></div>';
+        'Hur länge aggregaten verkligen går på full effekt vid uppvärmningen är inte känt, och månadssummorna innehåller inte tidpunkten. Därför visas pulsen som en känslighetsvariant och inte i primärkörningen.</p></div>' +
+        '<h3>Varför blir uppskattningen sämre fast formen liknar verkligheten mer? <a class="ankare" href="#Startpuls" id="Startpuls" aria-label="Länk till avsnittet">#</a></h3>' +
+        '<ol>' +
+        '<li><strong>"Sämre" gäller bara ett tal per månad.</strong> Modellen prövas mot ett enda facit per månad: fakturans spotpris, alltså månadens snittpris för vår förbrukning. Den prövas inte mot en uppmätt effektkurva, för den finns inte. En kurva som liknar verkligheten mer ger därför inte automatiskt ett bättre månadstal.</li>' +
+        '<li><strong>Pulsen flyttar energi till timmen kl. 05–06.</strong> Då räknas en del av bastuns kWh med det pris som gällde just den timmen i stället för bastuns genomsnittspris. Om timmen är billigare än bastuns genomsnitt sjunker modellens månadspris, annars stiger det. Tabellen nedan visar hur mycket pulsen (72 kW) flyttar modellens värde per månad.</li>' +
+        '<li><strong>Förskjutningen följer prisformen, inte felen.</strong> Priset kl. 05–06 jämfört med bastuns snitt skiftar från månad till månad, men modellens fel mot fakturan gör det inte på samma sätt. I ' + sämre + ' av ' + per.length + ' månader flyttar pulsen modellen längre bort från fakturan. Före pulsen låg modellen nära fakturan i januari–mars (fel kring 0), och då kan en förskjutning bara göra det sämre.</li>' +
+        '<li><strong>Det beror inte bara på att övriga antaganden var inställda på den platta formen.</strong> När hela sökningen görs om med pulsen inbyggd (tabell längre ned) blir den bästa passningen fortfarande sämre: ' + omanp.map(function (x) { return fmt(x.rms); }).join(' → ') + ' öre/kWh i RMS-fel.</li>' +
+        '<li><strong>Vad det betyder.</strong> Fakturans månadspris innehåller inte tillräckligt med information för att visa en morgontopp. Toppen kan vara verklig och ändå inte synas i månadens snittpris, eller så är pulsens storlek och längd annorlunda (till exempel längre tid på lägre effekt). Skillnaden mellan ingen puls och ett aggregat (36 kW) är liten jämfört med modellens osäkerhet, så fakturorna säger inte emot en liten puls. Att avgöra den kräver förbrukning per kvart, där en morgontopp syns direkt (fråga 2 i PRD).</li>' +
+        '</ol>' +
+        '<div class="tabell-wrap"><table><thead><tr><th>Månad</th><th>Bastuns<br>snittpris</th><th>Pris<br>kl. 05–06</th><th>Skillnad</th><th>Pulsen flyttar<br>modellvärdet</th><th>Fel utan<br>puls</th><th>Fel med<br>puls (72 kW)</th></tr></thead><tbody>' + rader1 + '</tbody></table></div>' +
+        '<p class="liten">Öre/kWh. Antagandena (U1 från januari–juni) är fixa. Juli och augusti är blindprov. Fel = modell minus faktura.</p>' +
+        '<div class="tabell-wrap"><table><thead><tr><th>Startpuls<br>(hela sökningen omgjord)</th><th>Bästa<br>RMS-fel</th><th>Största<br>leave-one-out-fel</th><th>Antal i<br>bandet</th><th>Fel<br>juli</th><th>Fel<br>augusti</th></tr></thead><tbody>' + rader2 + '</tbody></table></div>' +
+        '<p class="liten">Här har alla 252 kombinationer av antaganden prövats på nytt för varje puls. Bandet är antalet kombinationer som passar fakturorna nästan lika bra (RMS högst 1,5).</p>' +
+        '<p>Nedan visas pulsen med övriga antaganden fixa (samma antaganden som i primärkörningen).</p>';
       tp.hidden = false;
       tp.querySelector('tbody').innerHTML = SP.rader.map(function (x) {
         return '<tr>' + td(x.puls_kw === 0 ? 'ingen (nuvarande modell)' : fmt(x.puls_kw, 0) + ' kW' + (x.puls_kw === kw ? ' (båda aggregaten)' : (x.puls_kw === SP.metadata.aggregat_kw ? ' (ett aggregat)' : ' (överdrivet, visar riktningen)'))) +
