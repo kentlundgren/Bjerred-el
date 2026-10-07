@@ -57,5 +57,85 @@ window.FORUTSAGELSE = {
   "min_ore": 3.16,
   "max_ore": 5.11,
   "text": "Ingen modell: vägt snitt och spann av januari-juni"
- }
+ },
+ "facit": {
+  "2026-07": {
+   "spot_ore": 79.21,
+   "rorliga_ore": 5.1,
+   "paslag_ore": 1.7,
+   "kwh_faktura": 21584.28
+  },
+  "2026-08": {
+   "spot_ore": 83.72,
+   "rorliga_ore": 4.6,
+   "paslag_ore": 1.7,
+   "kwh_faktura": 21835.32
+  }
+ },
+ "analys_v": [
+  {
+   "manad": "2026-01",
+   "V_bast_kw": 20.7,
+   "kvarstaende_fel_ore": -0.002168867835635524,
+   "fel_vid_vald_V_ore": 0.40046753100509136,
+   "V_vald_kw": 13.0,
+   "rest_kwh_per_timme": 22.293010752688172
+  },
+  {
+   "manad": "2026-02",
+   "V_bast_kw": 11.9,
+   "kvarstaende_fel_ore": -0.000846349296466542,
+   "fel_vid_vald_V_ore": 0.022645830046499782,
+   "V_vald_kw": 13.0,
+   "rest_kwh_per_timme": 24.31845238095238
+  },
+  {
+   "manad": "2026-03",
+   "V_bast_kw": 12.0,
+   "kvarstaende_fel_ore": 0.0007416638440815859,
+   "fel_vid_vald_V_ore": -0.04176391951916969,
+   "V_vald_kw": 13.0,
+   "rest_kwh_per_timme": 13.865410497981157
+  },
+  {
+   "manad": "2026-04",
+   "V_bast_kw": 0.7,
+   "kvarstaende_fel_ore": 0.004546457523417757,
+   "fel_vid_vald_V_ore": 2.545032615882384,
+   "V_vald_kw": 13.0,
+   "rest_kwh_per_timme": 16.086111111111112
+  },
+  {
+   "manad": "2026-05",
+   "V_bast_kw": 11.1,
+   "kvarstaende_fel_ore": 0.0023451450719420563,
+   "fel_vid_vald_V_ore": 1.2757963166072699,
+   "V_vald_kw": 13.0,
+   "rest_kwh_per_timme": 16.706989247311828
+  },
+  {
+   "manad": "2026-06",
+   "V_bast_kw": 15.0,
+   "kvarstaende_fel_ore": -0.0158718286994457,
+   "fel_vid_vald_V_ore": -1.6474801794199863,
+   "V_vald_kw": 13.0,
+   "rest_kwh_per_timme": 16.32638888888889
+  },
+  {
+   "manad": "2026-07",
+   "V_bast_kw": 6.4,
+   "kvarstaende_fel_ore": -0.0028081339703902586,
+   "fel_vid_vald_V_ore": 3.343015591656055,
+   "V_vald_kw": 13.0,
+   "rest_kwh_per_timme": 15.001344086021506
+  },
+  {
+   "manad": "2026-08",
+   "V_bast_kw": 15.2,
+   "kvarstaende_fel_ore": -2.458502898935407,
+   "fel_vid_vald_V_ore": -3.4585878113284565,
+   "V_vald_kw": 13.0,
+   "rest_kwh_per_timme": 15.201612903225806
+  }
+ ]
 };

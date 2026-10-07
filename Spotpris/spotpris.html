@@ -138,6 +138,34 @@
     <p class="liten" id="tab-3-not"></p>
   </section>
 
+  <!-- UPPDATERING 2026-10-07: Analys av blindprovet: finns det systematik i avvikelserna? -->
+  <section aria-labelledby="Blindprov">
+    <h2 id="Blindprov">Blindprovet: hur gick det, och finns det systematik? <a class="ankare" href="#Blindprov" aria-label="Länk till avsnittet">#</a></h2>
+    <div id="blindprov-sammanfattning"></div>
+    <div class="tabell-wrap">
+      <table id="tab-blind">
+        <thead>
+          <tr>
+            <th>Månad</th><th>Fakturans<br>spot</th><th>M1</th><th>M2</th><th>M4b</th>
+            <th>Fel<br>M1</th><th>Fel<br>M2</th><th>Fel<br>M4b</th><th>Låg inom<br>M4b-spannet?</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot></tfoot>
+      </table>
+    </div>
+    <p class="liten">Fel = metodens värde minus fakturans spotpris, öre/kWh. Bara månader där fakturans spotpris är ifyllt i tabell 3 visas.</p>
+    <div id="blindprov-analys"></div>
+    <h3>Vilken baslast hade passat varje månad? <a class="ankare" href="#Baslast" id="Baslast" aria-label="Länk till avsnittet">#</a></h3>
+    <div class="tabell-wrap">
+      <table id="tab-v">
+        <thead><tr><th>Månad</th><th>Valt V<br>(kW)</th><th>Fel vid<br>valt V</th><th>V som hade<br>passat bäst (kW)</th><th>Kvarstående fel<br>vid bästa V</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="liten" id="tab-v-not"></p>
+  </section>
+
   <!-- ===== Diagram 1 ===== -->
   <section aria-labelledby="Diagram1">
     <h2 id="Diagram1">Diagram 1. Månadsvärden <a class="ankare" href="#Diagram1" aria-label="Länk till avsnittet">#</a></h2>
@@ -177,7 +205,7 @@
 
   <!-- ===== Noggrannhet ===== -->
   <section aria-labelledby="Noggrannhet">
-    <h2 id="Noggrannhet">Hur noggrann är uppskattningen (M4b)? <a class="ankare" href="#Noggrannhet" aria-label="Länk till avsnittet">#</a></h2>
+    <h2 id="Noggrannhet">Hur noggrann är uppskattningen (M4b)? Anpassning, leave-one-out och blindprov <a class="ankare" href="#Noggrannhet" aria-label="Länk till avsnittet">#</a></h2>
     <div id="noggrannhet-text"></div>
     <div class="tabell-wrap">
       <table id="tab-noggrannhet">

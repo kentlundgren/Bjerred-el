@@ -211,8 +211,13 @@
       c[9].textContent = fmtT(fa); c[9].className = klass(fa);
     });
     Object.keys(F.manader).forEach(function (m) {
-      var f = facit[m] || {};
-      Array.prototype.forEach.call(document.querySelectorAll('#t3-' + m + ' input'), function (i) { i.value = f[i.getAttribute('data-f')] || ''; });
+      var f = facit[m] || {}, ff = (F.facit || {})[m] || {};
+      // Inmatat värde går före; annars fakturans värde ur data/facit_jul_sep.json (UPPDATERING 2026-10-07)
+      var standard = { spot: ff.spot_ore, rorliga: ff.rorliga_ore };
+      Array.prototype.forEach.call(document.querySelectorAll('#t3-' + m + ' input'), function (i) {
+        var k = i.getAttribute('data-f');
+        i.value = f[k] || (standard[k] !== undefined ? String(standard[k]).replace('.', ',') : '');
+      });
     });
     uppdateraTabell3();
   }
@@ -221,7 +226,7 @@
     if (!F) { return; }
     var kompletta = 0, stor = 0;
     Object.keys(F.manader).forEach(function (m) {
-      var fm = facit[m] || {}, spot = tolka(fm.spot), rl = tolka(fm.rorliga), p = F.manader[m].m4b_ore;
+      var spot = tolka(document.querySelector('#t3-' + m + ' input[data-f="spot"]').value), rl = tolka(document.querySelector('#t3-' + m + ' input[data-f="rorliga"]').value), p = F.manader[m].m4b_ore;
       var cf = el('t3-fel-' + m), ca = el('t3-allt-' + m), cfa = el('t3-feliallt-' + m);
       cf.textContent = spot === null ? '–' : fmtT(p - spot); cf.className = spot === null ? '' : klass(p - spot);
       if (spot !== null) { kompletta += 1; stor = Math.max(stor, Math.abs(p - spot)); }
@@ -237,6 +242,94 @@
       'Sommarens öppettider är antagna lika som januari–juni och är inte kontrollerade. ' +
       (kompletta === 0 ? 'Fyll i fakturans spotpris för att se felen. Gräns att jämföra med: ' + fmt(grans, 1) + ' öre/kWh (leave-one-out).' :
         'Största fel i spotpriset hittills: ' + fmt(stor) + ' öre/kWh (gräns ' + fmt(grans, 1) + ').');
+    renderBlindprov();
+  }
+
+  // ---------------------------------------------------------------------------------------------------------
+  // Analys av blindprovet (UPPDATERING 2026-10-07)
+  // ---------------------------------------------------------------------------------------------------------
+  function rmsAv(l) { return l.length ? Math.sqrt(l.reduce(function (a, x) { return a + x * x; }, 0) / l.length) : null; }
+  function tecken(x) { return x > 0 ? '+' : (x < 0 ? '−' : '0'); }
+  function lag1(l) {                              // korrelation mellan varje fel och nästa månads fel (autokorrelation, fördröjning 1)
+    if (l.length < 4) { return null; }
+    var a = l.slice(0, -1), b = l.slice(1), ma = a.reduce(function (s, x) { return s + x; }, 0) / a.length, mb = b.reduce(function (s, x) { return s + x; }, 0) / b.length, sab = 0, saa = 0, sbb = 0;
+    for (var i = 0; i < a.length; i++) { sab += (a[i] - ma) * (b[i] - mb); saa += (a[i] - ma) * (a[i] - ma); sbb += (b[i] - mb) * (b[i] - mb); }
+    return (saa > 0 && sbb > 0) ? sab / Math.sqrt(saa * sbb) : null;
+  }
+
+  function renderBlindprov() {
+    if (!F) { return; }
+    var rader = [], h = '';
+    Object.keys(F.manader).sort().forEach(function (m) {
+      var spot = tolka(document.querySelector('#t3-' + m + ' input[data-f="spot"]').value), d = F.manader[m];
+      if (spot === null) { return; }
+      var r = { m: m, spot: spot, m1: d.m1_ore, m2: d.m2_ore, m4: d.m4b_ore, i: spot >= d.spann_min_ore && spot <= d.spann_max_ore };
+      rader.push(r);
+      h += '<tr>' + td(esc(lang(m))) + td(fmt(spot)) + td(fmt(r.m1)) + td(fmt(r.m2)) + td(fmt(r.m4), 'm4b') + td(fmtT(r.m1 - spot), klass(r.m1 - spot)) + td(fmtT(r.m2 - spot), klass(r.m2 - spot)) +
+           td(fmtT(r.m4 - spot), 'm4b ' + klass(r.m4 - spot)) + td(r.i ? 'ja' : 'nej') + '</tr>';
+    });
+    document.querySelector('#tab-blind tbody').innerHTML = h;
+    var e = function (g) { return rader.map(g); };
+    document.querySelector('#tab-blind tfoot').innerHTML = rader.length ?
+      '<tr>' + td('RMS') + td('') + td('') + td('') + td('') + td(fmt(rmsAv(e(function (r) { return r.m1 - r.spot; })))) + td(fmt(rmsAv(e(function (r) { return r.m2 - r.spot; })))) +
+      td(fmt(rmsAv(e(function (r) { return r.m4 - r.spot; })))) + td('') + '</tr>' : '';
+
+    // Felets tecken i tur och ordning: januari-juni (anpassningen) och sedan blindprovet
+    var felFit = MAN.map(function (m) { return D.manadsnitt[m].m4b.fel_ore; });
+    var fel = felFit.concat(e(function (r) { return r.m4 - r.spot; }));
+    var namn = MAN.map(kort).concat(e(function (r) { return kort(r.m); }));
+    var rf = lag1(fel), rmsFit = rmsAv(felFit);
+    var m2fel = MAN.map(function (m) { return D.manadsnitt[m].m2_ore - D.manadsnitt[m].faktura.spot_ore; });
+    var m1fel = MAN.map(function (m) { return D.manadsnitt[m].m1_ore - D.manadsnitt[m].faktura.spot_ore; });
+    var grans = D.m4b.primar.kriterier.leave_one_out.grans;
+    var s = '';
+    if (!rader.length) {
+      s = '<p>Fyll i fakturans spotpris i tabell 3 för att se hur blindprovet gick.</p>';
+    } else {
+      var rm4 = rmsAv(e(function (r) { return r.m4 - r.spot; })), rm2 = rmsAv(e(function (r) { return r.m2 - r.spot; })), rm1 = rmsAv(e(function (r) { return r.m1 - r.spot; }));
+      var utanfor = rader.filter(function (r) { return !r.i; }).length;
+      var inom = rader.filter(function (r) { return Math.abs(r.m4 - r.spot) <= grans; }).length;
+      s = '<div class="notis"><p><strong>Blindprovet (' + rader.length + ' månader): RMS-fel M4b ' + fmt(rm4) + ', M2 ' + fmt(rm2) + ' och M1 ' + fmt(rm1) + ' öre/kWh.</strong> På januari–juni, där M4b anpassades, var RMS-felet ' + fmt(rmsFit) +
+          ' för M4b, ' + fmt(rmsAv(m2fel)) + ' för M2 och ' + fmt(rmsAv(m1fel)) + ' för M1. M4b blev alltså sämre utanför anpassningen, och ' + inom + ' av ' + rader.length + ' månader låg inom leave-one-out-gränsen ' + fmt(grans, 1) + ' öre/kWh. ' +
+          'Spannet för M4b täckte inte utfallet i ' + utanfor + ' av ' + rader.length + ' månader, så det var för smalt.</p>' +
+          '<p>Med så få månader säger siffrorna lite. M2 hade fel på upp till ' + fmt(maxAbs(m2fel)) + ' öre/kWh på januari–juni men träffade bäst i blindprovet, så ett bra utfall under en enstaka månad bevisar inte att en metod är bättre.</p></div>';
+      s += '<h3>Går felet växelvis plus och minus?</h3><p>Felets tecken i tur och ordning (M4b): ' + namn.map(function (n, i) { return n + ' ' + tecken(fel[i]); }).join(', ') + '. ' +
+           (rf === null ? '' : 'Samband mellan ett fel och nästa månads fel (autokorrelation, fördröjning 1): ' + fmt(rf) + '. Med ' + (fel.length - 1) + ' par krävs ett värde utanför cirka ±0,75 för att skiljas från slumpen (5 %-nivå, standardtabell för korrelation). ' +
+           (Math.abs(rf) < 0.75 ? 'Det är inte uppnått, så det går inte att säga att felen växlar systematiskt. ' + (Math.abs(rf) > 0.6 ? 'Värdet ligger dock nära gränsen och talar för att det kan finnas ett växlande mönster, främst i de senaste månaderna. ' : '') : 'Det är uppnått. ') +
+           'Med så få månader går det inte att avgöra om det är ett mönster eller slump.') + '</p>';
+      var mek = rader.map(function (r) {
+        return lang(r.m) + ': dagtidspriset (M2) ligger ' + fmt(Math.abs(r.m2 - r.m1), 1) + ' öre ' + (r.m2 < r.m1 ? 'under' : 'över') + ' dygnssnittet (M1), fakturan ' + fmt(Math.abs(r.spot - r.m1), 1) + ' öre ' + (r.spot < r.m1 ? 'under' : 'över') +
+               ' och M4b ' + fmt(Math.abs(r.m4 - r.m1), 1) + ' öre ' + (r.m4 < r.m1 ? 'under' : 'över') + '.';
+      });
+      s += '<h3>En möjlig gemensam orsak: M4b följer prisformen för svagt</h3><p>' + mek.join(' ') + ' ' +
+           'Fakturan rör sig alltså åt samma håll som dagtidspriset, men mer än M4b. Därför blir felet positivt när dagtid är billigare än dygnet och negativt när dagtid är dyrare: tecknet följer månadens prisform (dagtid mot dygn) och inte kalendern. ' +
+           'Förbrukningen verkar i sommarmånaderna ligga mer på dagtid än modellen antar. Det är en tolkning av två månader och inget bevis.</p>';
+    }
+    document.getElementById('blindprov-sammanfattning').innerHTML = s;
+
+    // Förutsägelse inför september, nedskriven innan fakturan; blir ett test när september fylls i
+    var sep = F.manader['2026-09'], inpSep = document.querySelector('#t3-2026-09 input[data-f="spot"]'), spotSep = inpSep ? tolka(inpSep.value) : null;
+    var hyp = '';
+    if (sep) {
+      hyp = '<h3>Förutsägelse inför september (nedskriven 2026-10-07, före fakturan)</h3><p>September: M4b ' + fmt(sep.m4b_ore) + ', M2 ' + fmt(sep.m2_ore) + ', M1 ' + fmt(sep.m1_ore) + ' öre/kWh. ' +
+        'Om tolkningen ovan stämmer hamnar fakturans spotpris <strong>över M4b</strong>, närmare M2 (fel för M4b negativt). Är det slump blir tecknet ungefär lika ofta positivt som negativt. Ett utfall säger lite, men testet är nedskrivet innan svaret.</p>';
+      if (spotSep !== null) {
+        hyp += '<p><strong>Utfall:</strong> fakturans spotpris ' + fmt(spotSep) + ', fel för M4b ' + fmtT(sep.m4b_ore - spotSep) + ', fel för M2 ' + fmtT(sep.m2_ore - spotSep) + '. ' +
+               (spotSep > sep.m4b_ore ? 'Utfallet hamnade över M4b, som förutsagt.' : 'Utfallet hamnade inte över M4b, så tolkningen fick inget stöd.') + '</p>';
+      }
+    }
+    document.getElementById('blindprov-analys').innerHTML = hyp;
+
+    // Vilken baslast hade passat varje månad (efterhandsanalys ur data/forutsagelse_data.js)
+    var av = F.analys_v || [], t = '';
+    av.forEach(function (a) {
+      t += '<tr>' + td(esc(lang(a.manad))) + td(fmt(a.V_vald_kw, 0)) + td(fmtT(a.fel_vid_vald_V_ore), klass(a.fel_vid_vald_V_ore)) + td(fmt(a.V_bast_kw, 1)) +
+           td(Math.abs(a.kvarstaende_fel_ore) < 0.05 ? '0,00' : fmtT(a.kvarstaende_fel_ore)) + '</tr>';
+    });
+    document.querySelector('#tab-v tbody').innerHTML = t;
+    el('tab-v-not').textContent = av.length ? 'Efterhandsanalys, inte en ny anpassning: vilken jämn baslast V (ventilation och värme) som hade gett bästa träff i varje månad med övriga antaganden oförändrade. ' +
+      'Det bästa V hoppar mellan månaderna och följer inte årstiden, så en lägre baslast på sommaren förklarar inte felen. I augusti går det inte att nå fakturan ens med största möjliga V, eftersom restens energi då tar slut. ' +
+      'Uppdelningen av bad i bastu och varmvatten för juli–augusti är antagen (23 % varmvatten).' : '';
   }
 
   // ---------------------------------------------------------------------------------------------------------
@@ -364,7 +457,9 @@
       'Passning: <strong>' + ja(k.passning.uppfyllt) + '</strong> (' + fmt(k.passning.utfall) + '). Leave-one-out: <strong>' + ja(k.leave_one_out.uppfyllt) + '</strong> (' + fmt(k.leave_one_out.utfall) + '). ' +
       'Om bastun i stället slås på 0–6 timmar före öppning (känslighetskörningen) blir RMS-felet ' + fmt(k2.u1.rms) + ' och största leave-one-out-fel ' + fmt(k2.leave_one_out.storsta_absolutfel) + ' öre/kWh, och ' +
       (k2.leave_one_out.antal_saknas ? k2.leave_one_out.antal_saknas + ' månad (mars) går inte att förutsäga. ' : 'alla månader går att förutsäga. ') +
-      'Beviset kommer först när förbrukning per kvart finns och M4b kan jämföras mot det förbrukningsviktade snittet (M3).</p>';
+      'Beviset kommer först när förbrukning per kvart finns och M4b kan jämföras mot det förbrukningsviktade snittet (M3).</p>' +
+      '<p><strong>Blindprov (UPPDATERING 2026-10-07):</strong> juli och augusti förutsades innan fakturorna lästes in. Felen blev större än på de månader som anpassningen gjordes på, och spannet var för smalt. ' +
+      'Se <a href="#Blindprov">analysen av blindprovet</a>.</p>';
     var h = '';
     MAN.forEach(function (m) {
       var l = loo.fel_per_manad[m];

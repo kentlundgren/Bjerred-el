@@ -34,6 +34,34 @@ def p_av(par):
             "ordning": (0, 0, 0)}
 
 
+def analys_v(ut, p_u1, andel):
+    """Efterhandsanalys (inte en ny anpassning): för varje månad med känt facit, vilken jämn baslast V (0-25 kW, steg 0,1) hade gett
+    bäst träff om alla andra antaganden hålls som i U1? Visar om felen hänger ihop med säsong. Månader där inte ens bästa V träffar
+    (energin i driftdelen tar slut när V växer) får ett kvarstående fel."""
+    modell, kr = ut["modell"], ut["indata"]["kraftringen"]
+    facit = json.load(open("data/facit_jul_sep.json", encoding="utf-8"))["manader"]
+    manader = dict(ut["manader"])
+    for m, k in KWH.items():
+        if m in facit:
+            varm = round(k["bad"] * andel)
+            manader[m] = b.Manad(m, b.ladda_spot_manad(m), {"kwh_huvud": k["huvud"], "kwh_bastu": k["bad"] - varm, "kwh_varmvatten": varm,
+                                                           "spot_ore": facit[m]["spot_ore"], "rorliga_ore": 0.0, "paslag_ore": 0.0})
+    ut_lista = []
+    for m, mn in manader.items():
+        bast = None
+        for i in range(0, 251):
+            f = b.forbrukning(mn, modell, dict(p_u1, V=i / 10.0))
+            if f is None:
+                continue
+            fel = f["varde"] - mn.spot_ore
+            if bast is None or abs(fel) < abs(bast[1]):
+                bast = (i / 10.0, fel)
+        f0 = b.forbrukning(mn, modell, p_u1)
+        ut_lista.append({"manad": m, "V_bast_kw": bast[0], "kvarstaende_fel_ore": bast[1], "fel_vid_vald_V_ore": f0["varde"] - mn.spot_ore,
+                         "V_vald_kw": p_u1["V"], "rest_kwh_per_timme": mn.kwh_rest / mn.T})
+    return ut_lista
+
+
 def main():
     ut = b.kor_allt(kontrollera_krore=False)
     indata, modell = ut["indata"], ut["modell"]
@@ -74,6 +102,12 @@ def main():
     resultat["rorliga"] = {"snitt_ore": sum(v * w for v, w in rl) / sum(w for _, w in rl),
                            "min_ore": min(v for v, _ in rl), "max_ore": max(v for v, _ in rl),
                            "text": "Ingen modell: vägt snitt och spann av januari-juni"}
+    # UPPDATERING 2026-10-07: facit (fakturornas värden, lästa efter förutsägelsen) och en analys av vilken baslast V som hade passat varje månad
+    try:
+        resultat["facit"] = json.load(open("data/facit_jul_sep.json", encoding="utf-8"))["manader"]
+    except FileNotFoundError:
+        resultat["facit"] = {}
+    resultat["analys_v"] = analys_v(ut, p_u1, andel_medel)
     with open("data/forutsagelse_data.js", "w", encoding="utf-8") as f:
         f.write("// Skapad av forutsag_spotpris.py. Förutsägelse gjord innan fakturornas spotpris lästes in.\n")
         f.write("window.FORUTSAGELSE = " + json.dumps(resultat, ensure_ascii=False, indent=1) + ";\n")
