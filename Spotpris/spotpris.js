@@ -327,7 +327,8 @@
            td(Math.abs(a.kvarstaende_fel_ore) < 0.05 ? '0,00' : fmtT(a.kvarstaende_fel_ore)) + '</tr>';
     });
     document.querySelector('#tab-v tbody').innerHTML = t;
-    el('tab-v-not').textContent = av.length ? 'Efterhandsanalys, inte en ny anpassning: vilken jämn baslast V (ventilation och värme) som hade gett bästa träff i varje månad med övriga antaganden oförändrade. ' +
+    forklara(document.querySelector('main'));
+    el('tab-v-not').textContent = av.length ?'Efterhandsanalys, inte en ny anpassning: vilken jämn baslast V (ventilation och värme) som hade gett bästa träff i varje månad med övriga antaganden oförändrade. ' +
       'Det bästa V hoppar mellan månaderna och följer inte årstiden, så en lägre baslast på sommaren förklarar inte felen. I augusti går det inte att nå fakturan ens med största möjliga V, eftersom restens energi då tar slut. ' +
       'Uppdelningen av bad i bastu och varmvatten för juli–augusti är antagen (23 % varmvatten).' : '';
   }
@@ -539,6 +540,63 @@
   }
 
   // ---------------------------------------------------------------------------------------------------------
+  // Ordförklaringar (UPPDATERING 2026-10-07): fackord får en prickad understrykning och en förklaring vid pekning, fokus eller tryck.
+  // Regeln (Kent): förklara förkortningar och facktermer, även där de visas i löptext som skapas av skriptet.
+  // ---------------------------------------------------------------------------------------------------------
+  var ORD = [
+    { re: /RMS/, text: 'RMS (kvadratiskt medelfel, engelska root mean square): man kvadrerar varje månads fel, tar medelvärdet och drar roten ur. Det ger ett typiskt fel i öre/kWh där stora fel väger tyngre än små. RMS 1,35 betyder ungefär 1,35 öre/kWh i typiskt fel.' },
+    { re: /leave-one-out/, text: 'Leave-one-out (utelämna en i taget): en månad hålls utanför, antagandena väljs på de andra månaderna och används för att förutsäga den utelämnade. Det är ett ärligare test än passningen, där månaden själv fått styra valet.' },
+    { re: /autokorrelation/, text: 'Autokorrelation: samband mellan varje månads fel och nästa månads fel. Nära −1 betyder att felen växlar plus och minus, nära 0 betyder inget samband och nära +1 betyder att felen fortsätter åt samma håll.' },
+    { re: /[Bb]lindprov(?:et)?/, text: 'Blindprov: en förutsägelse som gjordes och sparades innan facit (fakturans värde) lästes in, så att utfallet inte kunnat påverka den.' }
+  ];
+  var ORD_RE = new RegExp(ORD.map(function (o) { return '(' + o.re.source + ')'; }).join('|'), 'g');
+
+  function forklara(rot) {
+    var noder = [], w = document.createTreeWalker(rot, NodeFilter.SHOW_TEXT, null, false), n;
+    while ((n = w.nextNode())) {
+      var f = n.parentNode;
+      if (/^(SCRIPT|STYLE|INPUT|TEXTAREA|ABBR|CODE|PRE|A)$/.test(f.nodeName) || f.closest('.modal-overlay')) { continue; }
+      ORD_RE.lastIndex = 0;
+      if (ORD_RE.test(n.nodeValue)) { noder.push(n); }
+    }
+    noder.forEach(function (nod) {
+      var frag = document.createDocumentFragment(), text = nod.nodeValue, siste = 0, m;
+      ORD_RE.lastIndex = 0;
+      while ((m = ORD_RE.exec(text))) {
+        var i = 0;
+        while (i < ORD.length && m[i + 1] === undefined) { i += 1; }
+        frag.appendChild(document.createTextNode(text.slice(siste, m.index)));
+        var a = document.createElement('abbr');
+        a.className = 'ord'; a.tabIndex = 0; a.setAttribute('data-forklaring', ORD[i].text); a.textContent = m[0];
+        frag.appendChild(a);
+        siste = m.index + m[0].length;
+      }
+      frag.appendChild(document.createTextNode(text.slice(siste)));
+      nod.parentNode.replaceChild(frag, nod);
+    });
+  }
+
+  var ruta = null;
+  function visaRuta(a) {
+    if (!ruta) { ruta = document.createElement('div'); ruta.className = 'ordruta'; ruta.setAttribute('role', 'tooltip'); document.body.appendChild(ruta); }
+    ruta.textContent = a.getAttribute('data-forklaring');
+    ruta.style.display = 'block';
+    var r = a.getBoundingClientRect(), bredd = Math.min(320, window.innerWidth - 32);
+    ruta.style.width = bredd + 'px';
+    ruta.style.left = Math.max(16, Math.min(r.left, window.innerWidth - bredd - 16)) + 'px';
+    var hojd = ruta.offsetHeight;
+    ruta.style.top = (r.bottom + 8 + hojd > window.innerHeight && r.top - 8 - hojd > 0 ? r.top - 8 - hojd : r.bottom + 8) + 'px';
+  }
+  function doljRuta() { if (ruta) { ruta.style.display = 'none'; } }
+  function ordHandelser() {
+    var rot = document.querySelector('main');
+    ['mouseover', 'focusin'].forEach(function (h) { rot.addEventListener(h, function (e) { if (e.target.classList && e.target.classList.contains('ord')) { visaRuta(e.target); } }); });
+    ['mouseout', 'focusout'].forEach(function (h) { rot.addEventListener(h, function (e) { if (e.target.classList && e.target.classList.contains('ord')) { doljRuta(); } }); });
+    rot.addEventListener('click', function (e) { if (e.target.classList && e.target.classList.contains('ord')) { visaRuta(e.target); } else { doljRuta(); } });   // tryck på pekskärm
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { doljRuta(); } });
+  }
+
+  // ---------------------------------------------------------------------------------------------------------
   // Start och händelser
   // ---------------------------------------------------------------------------------------------------------
   function start() {
@@ -574,6 +632,8 @@
       renderDiagramManad();
     });
     Array.prototype.forEach.call(document.querySelectorAll('input[name="effekt-val"]'), function (r) { r.addEventListener('change', renderEffekt); });
+    forklara(document.querySelector('main'));
+    ordHandelser();
     el('btn-kopiera').addEventListener('click', kopiera);
     el('btn-skriv').addEventListener('click', function () { window.print(); });
 

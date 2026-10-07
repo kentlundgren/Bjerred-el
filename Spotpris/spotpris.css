@@ -83,6 +83,11 @@ svg.diagram { width: 100%; height: auto; display: block; background: #fff; borde
 .val { display: flex; flex-wrap: wrap; gap: 14px; margin: 8px 0; font-size: .92rem; }
 .val label { cursor: pointer; }
 
+/* Ordförklaringar: prickad understrykning och en ruta vid pekning, fokus eller tryck */
+abbr.ord { text-decoration: underline dotted; text-underline-offset: 3px; cursor: help; }
+.ordruta { display: none; position: fixed; z-index: 40; background: #1c2a2a; color: #fff; font-size: .85rem; line-height: 1.4; padding: 8px 10px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,.3); pointer-events: none; }
+@media print { .ordruta { display: none !important; } abbr.ord { text-decoration: none; } }
+
 /* Teckenförklaring */
 .tf { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .85rem; margin: 6px 0 0; }
 .tf span::before { content: ""; display: inline-block; width: 12px; height: 12px; margin-right: 6px; vertical-align: -1px; background: var(--c); border-radius: 2px; }
