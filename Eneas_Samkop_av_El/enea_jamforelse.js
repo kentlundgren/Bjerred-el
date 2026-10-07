@@ -27,6 +27,9 @@
   mot dem. Antagandena i jämförelsen är inte avgjorda" (på sidan och i det som kopieras). Version 1.9.
   UPPDATERING 2026-10-06: Kolumnrubriken "El inkl elcert" heter nu "Allt elpris" och har en förklaring vid hovring
   (HTML/CSS). Rubriken i det som kopieras och i fältens aria-label är ändrad på samma sätt. Version 2.0.
+  UPPDATERING 2026-10-07: Tre snabba klick (trippelklick) på rubriken "Tabell 2. Med Eneas priser" fyller i Eneas pris, månadsavgift,
+  prismodell, fritext och underskrift ur Isak Cerwéns mejl (konstanten ENEAS_ISAK_MEJL). Ingen synlig ledtråd på sidan, på samma sätt
+  som dubbelklicket på "Kraftringen". Uppgifterna ligger i den här filen och går alltså att läsa i källkoden (Kent har godkänt det). Version 2.1.
 */
 (function () {
   'use strict';
@@ -39,8 +42,45 @@
   // ===================================================================
   // 1. Version
   // ===================================================================
-  var VERSION = '2.0';
-  var VERSIONSDATUM = '2026-10-06';
+  var VERSION = '2.1';
+  var VERSIONSDATUM = '2026-10-07';
+
+  // ===================================================================
+  // Uppgifter ur Isak Cerwéns mejl (Eneas Services AB), "Sv: Elhandel Kraftringen och Eneas", mottaget av Kent Lundgren och införda 2026-10-07.
+  // Isak kan inte öppna GitHub-sidan från sin arbetsdator (interna säkerhetsriktlinjer) och skickade uppgifterna i ett mejl.
+  // Visas först när man klickar tre gånger på rubriken i tabell 2. Priserna är öre/kWh exklusive moms (tabellen i mejlet anger ingen enhet,
+  // Kent har bekräftat tolkningen). Årsarvodet 4 990 kr / 12 = 415,83 kr per månad, exklusive moms.
+  // Datumet är det Kent angav ("dagens datum" när uppgifterna fördes in), inte mejlets egna datum, som inte syns i det vi har.
+  // ===================================================================
+  var ENEAS_ISAK_MEJL = {
+    ore: { '2026-01': '111,65', '2026-02': '113,62', '2026-03': '91,79', '2026-04': '69,32', '2026-05': '89,75', '2026-06': '104,15' },
+    avgift: '415,83',
+    modell: 'Prissäkrad portfölj (samköp)',
+    namn: 'Isak Cerwén, Eneas (uppgifterna ur hans mejl, införda av Kent Lundgren)',
+    datum: '2026-10-07',
+    omfattar: [
+      'Uppgifterna är hämtade ur Isak Cerwéns (Eneas Services AB) mejl till Kent Lundgren, 2026-10-07 ("Sv: Elhandel Kraftringen och Eneas"). ' +
+        'Isak kan inte öppna den här sidan från sin arbetsdator på grund av interna säkerhetsriktlinjer och har därför skickat uppgifterna i mejl.',
+      '',
+      'Priset (SE4, "Eneas pris", januari–juni 2026) är inlagt i tabell 2 som öre/kWh exklusive moms. Mejlets tabell anger ingen enhet.',
+      '',
+      'Isak skriver att priset omfattar:',
+      '- Eneas förvaltade pris (avräkningen är kvartspris, samma som Bjerreds Saltsjöbad har idag).',
+      '- Påslag: 0,5 öre/kWh.',
+      '- Elcertifikat: 1 öre/kWh.',
+      '- Årsarvode: 4 990 kr (415,83 kr per månad). Inlagt som fast månadsavgift exklusive moms.',
+      '- Riskpremie: 2,8 EUR/MWh.',
+      '- Elpriset inkluderar även 100 % CO2-fri el.',
+      '- Allt utöver årsarvodet och moms ingår i priset i tabellen.',
+      '',
+      'Isak skriver också: exemplet visar genomsnittligt fakturerat pris för ett urval av Eneas-kunder under angiven period. ' +
+        'Siffrorna är korrigerade för prisområde och genomsnittsviktning. Historiska besparingar är ingen garanti för framtida besparingar. ' +
+        'Samtliga siffror och presentationer är framtagna i bästa syfte, men avvikelser eller fel kan förekomma. ' +
+        'Mejlet beskriver alltså inte priserna som ett pris offererat till Bjerreds Saltsjöbad.',
+      '',
+      'Isak Cerwén, Eneas Services AB, 2026-10-07'
+    ].join('\n')
+  };
 
   // ===================================================================
   // UTSEENDE-VAL: ska tabell 1 (det som betalades till Kraftringen) vara synlig från start?
@@ -482,6 +522,25 @@
         // Visa tabellen i bild, eftersom den ligger en bit ned på sidan.
         document.getElementById('TabellIdag').scrollIntoView({ block: 'start' });
       }
+    });
+
+    // Trippelklick på rubriken i tabell 2 fyller i uppgifterna ur Isaks mejl (se ENEAS_ISAK_MEJL). Ingen synlig ledtråd på sidan.
+    // Är något redan ifyllt som skulle ersättas frågar sidan först.
+    document.getElementById('TabellEneas').addEventListener('click', function (e) {
+      if (e.detail !== 3) { return; }
+      var finns = tillstand.avgift || tillstand.omfattar || tillstand.namn || Object.keys(tillstand.ore).some(function (k) { return tillstand.ore[k]; });
+      if (finns && !window.confirm('Fylla i uppgifterna ur Isaks mejl? Det ersätter det som redan är ifyllt.')) { return; }
+      tillstand.ore = {};
+      Object.keys(ENEAS_ISAK_MEJL.ore).forEach(function (k) { tillstand.ore[k] = ENEAS_ISAK_MEJL.ore[k]; });
+      tillstand.avgift = ENEAS_ISAK_MEJL.avgift;
+      tillstand.modell = ENEAS_ISAK_MEJL.modell;
+      tillstand.omfattar = ENEAS_ISAK_MEJL.omfattar;
+      tillstand.namn = ENEAS_ISAK_MEJL.namn;
+      tillstand.datum = ENEAS_ISAK_MEJL.datum;
+      spara(); tillFalt(); uppdatera();
+      document.getElementById('omfattar').rows = 16;
+      if (window.getSelection) { window.getSelection().removeAllRanges(); }     // trippelklick markerar rubriken
+      visaMeddelande('Uppgifterna ur Isaks mejl är ifyllda.');
     });
 
     H.kopplaTeknikModal();
