@@ -494,19 +494,52 @@
     return o.join('');
   }
 
+  // UPPDATERING 2026-10-07: känslighetsvariant med startpuls när aggregaten slås på. Bastuns dygnsenergi flyttas så att första aktiva timmen får
+  // aggregatens full effekt (antal x kW x 1 timme, högst 90 % av dygnets bastu-kWh) och resten sprids jämnt. Samma energi, annan form.
+  // Det är en illustration av formen, inte en ny anpassning mot fakturan (se tabellen under diagrammet för vad pulsen gör med träffen).
+  var SP = window.STARTPULS;
+  function pulsData(kalla) {
+    var kw = SP.metadata.aggregat_antal * SP.metadata.aggregat_kw, ut = { markning: kalla.markning };
+    MAN.forEach(function (m) {
+      var e = kalla[m], bastu = e.delar.bastu, aktiva = [], E = 0, h;
+      for (h = 0; h < 24; h++) { E += bastu[h]; if (bastu[h] > 0) { aktiva.push(h); } }
+      var puls = Math.min(kw, 0.9 * E), rest = aktiva.length > 1 ? (E - puls) / (aktiva.length - 1) : 0;
+      var nytt = bastu.map(function (v, i) { return v > 0 ? (i === aktiva[0] ? puls : rest) : 0; });
+      var d = nytt.map(function (v, i) { return v - bastu[i]; });
+      ut[m] = { delar: { bastu: nytt, varmvatten: e.delar.varmvatten, baslast: e.delar.baslast, drift: e.delar.drift },
+                summa: e.summa.map(function (v, i) { return v + d[i]; }), lagsta: e.lagsta.map(function (v, i) { return v + d[i]; }),
+                hogsta: e.hogsta.map(function (v, i) { return v + d[i]; }), medeleffekt_kw: e.medeleffekt_kw };
+    });
+    return ut;
+  }
+
   function renderEffekt() {
     var val = document.querySelector('input[name="effekt-val"]:checked').value;
-    var data = D.effekt[val];
+    var data = val === 'puls' ? pulsData(D.effekt.primar) : D.effekt[val];
     var ymax = 0;
     MAN.forEach(function (m) { data[m].hogsta.forEach(function (v) { ymax = Math.max(ymax, v); }); });
     ymax = Math.ceil(ymax / 20) * 20;
     el('effekt-rutor').innerHTML = MAN.map(function (m) { return '<figure>' + effektRuta(m, data[m], ymax) + '</figure>'; }).join('');
     el('tf-effekt').innerHTML = teckenforklaring([['Ventilation/baslast', EFFEKT_FARGER.baslast], ['Varmvatten', EFFEKT_FARGER.varmvatten], ['Bastu', EFFEKT_FARGER.bastu],
       ['Restaurang (drift)', EFFEKT_FARGER.drift], ['Alternativa passningar (band)', '#c9cfcf'], ['Summa', '#1c2a2a']]);
-    var r = D.m4b[val];
+    var r = D.m4b[val === 'puls' ? 'primar' : val];
     el('effekt-not').textContent = D.effekt.markning + '. Bandet visar ' + r.antal_i_band + ' alternativa kombinationer som passar fakturan nästan lika bra (RMS högst 1,5 öre/kWh). ' +
       'Tidpunkten och höjden på toppen följer av antagandena (bland annat öppettiderna) och är inget som har mätts. ' +
       'Abonnemanget är 200 A, vilket för 3-fas 400 V motsvarar högst cirka 139 kW (en övre gräns, inte en uppgift om förbrukningen).';
+    var pf = el('puls-forklaring'), tp = el('tab-puls');
+    if (val === 'puls' && SP) {
+      var kw = SP.metadata.aggregat_antal * SP.metadata.aggregat_kw;
+      pf.innerHTML = '<div class="notis"><p><strong>Illustration, inte ett resultat.</strong> Bastun har ' + SP.metadata.aggregat_antal + ' aggregat (ett per bastu, Harvia Qube 360, ' + fmt(SP.metadata.aggregat_kw, 0) + ' kW vardera, alltså ' + fmt(kw, 0) + ' kW tillsammans). ' +
+        'Här antas båda gå på full effekt under den första timmen efter att bastun slagits på och därefter jämnt, med samma energi per dag som i primärkörningen. Det ger en tydlig topp på morgonen. ' +
+        'Hur länge aggregaten verkligen går på full effekt vid uppvärmningen är inte känt, och månadssummorna innehåller inte tidpunkten. Därför visas pulsen som en känslighetsvariant och inte i primärkörningen.</p>' +
+        '<p>Tabellen nedan visar vad en sådan startpuls gör med träffen mot fakturorna när övriga antaganden hålls oförändrade: ju större puls, desto sämre träff. Fakturorna kräver alltså inte en stor startpuls i modellen, men utesluter den inte, eftersom övriga antaganden då kunde ha valts om.</p></div>';
+      tp.hidden = false;
+      tp.querySelector('tbody').innerHTML = SP.rader.map(function (x) {
+        return '<tr>' + td(x.puls_kw === 0 ? 'ingen (nuvarande modell)' : fmt(x.puls_kw, 0) + ' kW' + (x.puls_kw === kw ? ' (båda aggregaten)' : (x.puls_kw === SP.metadata.aggregat_kw ? ' (ett aggregat)' : ' (överdrivet, visar riktningen)'))) +
+               td(fmt(x.rms_anpassning)) + td(fmt(x.storsta_anpassning)) + td(fmtT(x.fel_jul), klass(x.fel_jul)) + td(fmtT(x.fel_aug), klass(x.fel_aug)) + '</tr>';
+      }).join('');
+    } else { pf.innerHTML = ''; tp.hidden = true; }
+    forklara(document.querySelector('main'));
   }
 
   // ---------------------------------------------------------------------------------------------------------

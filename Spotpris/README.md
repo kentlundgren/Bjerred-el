@@ -47,7 +47,9 @@ utfallet var känt och är ett skydd mot försämring, inte ett bevis. Se [PRD.m
 | `hamta_spotpris.py` | Hämtar spotpriser per kvart (hoppar över filer som redan finns, `--om` hämtar om) |
 | `berakna_spotpris.py` | Beräknar månadsvärden, M4b och effektkurvor; skriver `data/*.json` och `data/spotpris_data.js` |
 | `test_spotpris.py` | Tester T1–T17 (skriver "OK" när alla passerar) |
-| `data/` | Indata (`kraftringen.json`, `oppettider.json`, `sokrum.json`, `spot_SE4_*.json`) och utdata |
+| `forutsag_spotpris.py` | Blindprov: förutsäger spotpriset för juli–september med antagandena från januari–juni. Skriver `data/forutsagelse_jul_sep.json` och `data/forutsagelse_data.js` |
+| `kanslighet_startpuls.py` | Känslighetsvariant: startpuls när bastuaggregaten slås på. Skriver `data/startpuls_data.js`. Ändrar inte primärkörningen |
+| `data/` | Indata (`kraftringen.json`, `oppettider.json`, `sokrum.json`, `spot_SE4_*.json`, `facit_jul_sep.json`) och utdata |
 | `forstudie/` | Förstudiernas skript och figur |
 
 ## Köra
@@ -60,6 +62,16 @@ python test_spotpris.py
 
 Öppna sedan `spotpris.html` direkt i webbläsaren. `data/spotpris_data.js` behövs eftersom webbläsare
 blockerar inläsning av JSON från `file://`.
+
+## Blindprov och känslighetsvarianter
+
+- **Blindprov (juli–augusti):** de förutsades innan fakturorna lästes in. M4b (uppskattningen) fick fel på +3,34 och −3,46 öre/kWh, alltså inom gränsen 4,5 men större än på de månader som antagandena anpassades på (RMS-fel, typiskt fel, 3,40 mot 1,35). Spannet var för smalt. September är den enda återstående rena förutsägelsen (faktura runt 10 oktober). Analys och tolkning finns på sidan under "Blindprovet" och i [PRD.md](PRD.md), avsnitt 4.6.
+- **Startpuls för bastuaggregaten:** bastun har två aggregat (ett per bastu, Harvia Qube 360, 36 kW vardera). Sidans effektkurva har en tredje knapp som visar en morgontopp. Det är en illustration: med övriga antaganden fixa blir träffen mot fakturorna sämre ju större puls, och primärkörningen är oförändrad.
+- Fakturavärdena för juli–augusti ligger i `data/facit_jul_sep.json` och inte i `kraftringen.json`, så att anpassningen på januari–juni är oförändrad tills en omanpassning beslutas.
+
+## Status
+
+Sidan är byggd och testad i webbläsare (inte på pekskärm). Testerna T1–T17 går igenom. Tvåstegsgranskning är inte gjord (beskriven i sidans teknik-modal, med en färdig promt).
 
 ## Eneas pris
 

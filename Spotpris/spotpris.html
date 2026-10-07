@@ -210,10 +210,18 @@
     <div class="val" role="radiogroup" aria-label="Vilken körning som visas">
       <label><input type="radio" name="effekt-val" value="primar" checked> Primär: bastun slås på en timme före öppning</label>
       <label><input type="radio" name="effekt-val" value="kanslighet"> Känslighet: bastun slås på 0–6 timmar före öppning</label>
+      <label><input type="radio" name="effekt-val" value="puls" id="val-puls"> Känslighet: startpuls när aggregaten slås på (illustration)</label>
     </div>
     <div class="effektrutor" id="effekt-rutor"></div>
     <div class="tf" id="tf-effekt"></div>
     <p class="liten" id="effekt-not"></p>
+    <div id="puls-forklaring"></div>
+    <div class="tabell-wrap">
+      <table id="tab-puls" hidden>
+        <thead><tr><th>Startpuls i<br>första timmen</th><th>RMS-fel<br>jan–jun</th><th>Största fel<br>jan–jun</th><th>Fel<br>juli</th><th>Fel<br>augusti</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </section>
 
   <!-- ===== Noggrannhet ===== -->
@@ -365,6 +373,7 @@ kontrolleras som "inte kontrollerat".</pre>
 
 <script src="data/spotpris_data.js"></script>
 <script src="data/forutsagelse_data.js"></script>
+<script src="data/startpuls_data.js"></script>
 <script src="spotpris.js"></script>
 </body>
 </html>
