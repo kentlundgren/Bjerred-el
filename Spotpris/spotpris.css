@@ -85,7 +85,8 @@ svg.diagram { width: 100%; height: auto; display: block; background: #fff; borde
 
 /* Ordförklaringar: prickad understrykning och en ruta vid pekning, fokus eller tryck */
 abbr.ord { text-decoration: underline dotted; text-underline-offset: 3px; cursor: help; }
-.ordruta { display: none; position: fixed; z-index: 40; background: #1c2a2a; color: #fff; font-size: .85rem; line-height: 1.4; padding: 8px 10px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,.3); pointer-events: none; }
+.ordruta { display: none; position: fixed; z-index: 40; background: #1c2a2a; color: #fff; font-size: .85rem; line-height: 1.4; padding: 8px 10px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,.3); pointer-events: none; white-space: pre-line; }
+svg .ord { cursor: help; }
 @media print { .ordruta { display: none !important; } abbr.ord { text-decoration: none; } }
 
 /* Teckenförklaring */

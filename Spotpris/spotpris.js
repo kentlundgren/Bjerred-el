@@ -339,12 +339,22 @@
   function niceMax(v) { var s = v <= 100 ? 20 : 50; return Math.ceil(v / s) * s; }
 
   /* Linjediagram. serier: [{namn, varden:[...], farg, streck, tjocklek}], etiketter: x-etiketter (en per värde). */
-  function linjediagram(etiketter, serier, ymin, ymax, ytitel) {
+  /* UPPDATERING 2026-10-07: valfri opt = {tips:true, skugga:{fran:index, text}}.
+     tips: värdet visas när man pekar på en punkt, och alla värden för månaden när man pekar i månadens kolumn.
+     skugga: markerar månader från index `fran` (t.ex. blindprovet, utanför den anpassningsperiod som används i första hand). */
+  function linjediagram(etiketter, serier, ymin, ymax, ytitel, opt) {
+    opt = opt || {};
     var W = 900, H = 340, L = 56, R = 16, T = 16, B = 40, pw = W - L - R, ph = H - T - B, n = etiketter.length;
     var o = ['<svg class="diagram" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(ytitel) + '">'];
     var X = function (i) { return L + (n === 1 ? pw / 2 : i * pw / (n - 1)); };
     var Y = function (v) { return T + ph - (v - ymin) / (ymax - ymin) * ph; };
     var steg = (ymax - ymin) / 5;
+    if (opt.skugga) {                              // grå bakgrund och streckad gräns för månader utanför anpassningsperioden
+      var halv = n > 1 ? pw / (n - 1) / 2 : 0, x0 = X(opt.skugga.fran) - halv;
+      o.push('<rect x="' + x0.toFixed(1) + '" y="' + T + '" width="' + (W - R - x0).toFixed(1) + '" height="' + ph + '" fill="#eceff1"/>' +
+             '<line x1="' + x0.toFixed(1) + '" y1="' + T + '" x2="' + x0.toFixed(1) + '" y2="' + (T + ph) + '" stroke="#5a6868" stroke-dasharray="4 3"/>' +
+             '<text x="' + (x0 + 6).toFixed(1) + '" y="' + (T + 14) + '" font-size="11" fill="#5a6868">' + esc(opt.skugga.text) + '</text>');
+    }
     for (var k = 0; k <= 5; k++) {
       var v = ymin + k * steg, y = Y(v);
       o.push('<line x1="' + L + '" y1="' + y.toFixed(1) + '" x2="' + (W - R) + '" y2="' + y.toFixed(1) + '" stroke="#e3e8e7"/><text x="' + (L - 6) + '" y="' + (y + 4).toFixed(1) + '" text-anchor="end" font-size="12" fill="#5a6868">' + fmt(v, 0) + '</text>');
@@ -360,7 +370,23 @@
       }
       if (s.punkter !== false) { pts.forEach(function (p) { o.push('<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="3.2" fill="' + s.farg + '"/>'); }); }
     });
-    o.push('<rect x="' + L + '" y="' + T + '" width="' + pw + '" height="' + ph + '" fill="none" stroke="#9aa6a5"/></svg>');
+    if (opt.tips) {
+      // Kolumn per månad: alla värden. Ritas före punkterna så att en punkt går först när man pekar rakt på den.
+      var kol = n > 1 ? pw / (n - 1) : pw;
+      etiketter.forEach(function (e, i) {
+        var rader = [e];
+        serier.forEach(function (s) { if (s.varden[i] !== null && s.varden[i] !== undefined && isFinite(s.varden[i])) { rader.push(s.namn + ': ' + fmt(s.varden[i]) + ' öre/kWh'); } });
+        o.push('<rect class="ord" x="' + (X(i) - kol / 2).toFixed(1) + '" y="' + T + '" width="' + kol.toFixed(1) + '" height="' + ph + '" fill="transparent" data-forklaring="' + esc(rader.join('\n')) + '"/>');
+      });
+      serier.forEach(function (s) {
+        s.varden.forEach(function (val, i) {
+          if (val !== null && val !== undefined && isFinite(val)) {
+            o.push('<circle class="ord" cx="' + X(i).toFixed(1) + '" cy="' + Y(val).toFixed(1) + '" r="7" fill="transparent" data-forklaring="' + esc(etiketter[i] + '\n' + s.namn + ': ' + fmt(val) + ' öre/kWh') + '"/>');
+          }
+        });
+      });
+    }
+    o.push('<rect x="' + L + '" y="' + T + '" width="' + pw + '" height="' + ph + '" fill="none" stroke="#9aa6a5" pointer-events="none"/></svg>');
     return o.join('');
   }
   function teckenforklaring(poster) {
@@ -368,19 +394,31 @@
   }
 
   function renderDiagramManad() {
-    var M = function (g) { return MAN.map(function (m) { return g(D.manadsnitt[m]); }); };
+    // UPPDATERING 2026-10-07: blindprovsmånader (juli, augusti, ...) läggs till när fakturans spotpris är ifyllt i tabell 3.
+    // De ritas på grå bakgrund, utanför de sex månader (januari-juni) som antagandena anpassades på.
+    var blind = [];
+    if (F) {
+      Object.keys(F.manader).sort().forEach(function (m) {
+        var inp = document.querySelector('#t3-' + m + ' input[data-f="spot"]'), rl = document.querySelector('#t3-' + m + ' input[data-f="rorliga"]');
+        var spot = inp ? tolka(inp.value) : null, rorl = rl ? tolka(rl.value) : null;
+        if (spot !== null) { blind.push({ m: m, d: F.manader[m], spot: spot, allt: rorl !== null ? spot + rorl + FAST : null }); }
+      });
+    }
+    var M = function (g, gb) { return MAN.map(function (m) { return g(D.manadsnitt[m]); }).concat(blind.map(gb)); };
     var serier = [
-      { namn: 'M1 dygnet runt', varden: M(function (v) { return v.m1_ore; }), farg: '#6c8ea4', streck: '5 4' },
-      { namn: 'M2 kl. 06–22', varden: M(function (v) { return v.m2_ore; }), farg: '#8e6bbf', streck: '5 4' },
-      { namn: 'M4b uppskattad', varden: M(function (v) { return v.m4b.varde_ore; }), farg: '#e76f51' },
-      { namn: 'Fakturans spotpris', varden: M(function (v) { return v.faktura.spot_ore; }), farg: '#1c2a2a', tjocklek: 3 },
-      { namn: 'Kraftringens allt elpris', varden: M(function (v) { return v.faktura.allt_elpris_ore; }), farg: '#2a9d8f' }
+      { namn: 'M1 dygnet runt', varden: M(function (v) { return v.m1_ore; }, function (b) { return b.d.m1_ore; }), farg: '#6c8ea4', streck: '5 4' },
+      { namn: 'M2 kl. 06–22', varden: M(function (v) { return v.m2_ore; }, function (b) { return b.d.m2_ore; }), farg: '#8e6bbf', streck: '5 4' },
+      { namn: 'M4b uppskattad', varden: M(function (v) { return v.m4b.varde_ore; }, function (b) { return b.d.m4b_ore; }), farg: '#e76f51' },
+      { namn: 'Fakturans spotpris', varden: M(function (v) { return v.faktura.spot_ore; }, function (b) { return b.spot; }), farg: '#1c2a2a', tjocklek: 3 },
+      { namn: 'Kraftringens allt elpris', varden: M(function (v) { return v.faktura.allt_elpris_ore; }, function (b) { return b.allt; }), farg: '#2a9d8f' }
     ];
     var harEneas = MAN.some(function (m) { return eneasVarde(m) !== null; });
-    if (harEneas) { serier.push({ namn: 'Eneas allt elpris', varden: MAN.map(function (m) { return eneasVarde(m); }), farg: '#2a7fc4', tjocklek: 2.5 }); }
+    if (harEneas) { serier.push({ namn: 'Eneas allt elpris', varden: MAN.map(function (m) { return eneasVarde(m); }).concat(blind.map(function () { return null; })), farg: '#2a7fc4', tjocklek: 2.5 }); }
     var alla = [];
     serier.forEach(function (s) { s.varden.forEach(function (v) { if (v !== null) { alla.push(v); } }); });
-    el('diagram-manad').innerHTML = linjediagram(MAN.map(lang), serier, 0, niceMax(Math.max.apply(null, alla)), 'öre/kWh');
+    var opt = { tips: true };
+    if (blind.length) { opt.skugga = { fran: MAN.length, text: 'Blindprov' }; }
+    el('diagram-manad').innerHTML = linjediagram(MAN.map(lang).concat(blind.map(function (b) { return lang(b.m); })), serier, 0, niceMax(Math.max.apply(null, alla)), 'öre/kWh', opt);
     el('tf-manad').innerHTML = teckenforklaring(serier.map(function (s) { return [s.namn, s.farg]; }));
   }
 
@@ -621,6 +659,7 @@
       facit[m][f] = e.target.value;
       sparaEneas();
       uppdateraTabell3();
+      renderDiagramManad();
     });
 
     el('tab-2').addEventListener('input', function (e) {
