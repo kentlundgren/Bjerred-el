@@ -37,6 +37,7 @@
     </div>
     <div class="tabell-wrap">
       <table class="text" id="tab-metoder">
+        <caption id="Tabell0">Tabell 0. Metoderna för månadens spotpris</caption>
         <thead><tr><th>Metod</th><th>Så räknas den</th><th>Svarar på</th></tr></thead>
         <tbody>
           <tr><td><strong>M1</strong> Enkelt snitt, dygnet runt</td><td>Medelvärdet av alla kvartar i månaden.</td><td>Vad kostade elbörsen i genomsnitt under månaden?</td></tr>
@@ -144,6 +145,7 @@
     <div id="blindprov-sammanfattning"></div>
     <div class="tabell-wrap">
       <table id="tab-blind">
+        <caption id="Tabell4">Tabell 4. Blindprovet: M1, M2 och M4b mot fakturans spotpris</caption>
         <thead>
           <tr>
             <th>Månad</th><th>Fakturans<br>spot</th><th>M1</th><th>M2</th><th>M4b</th>
@@ -161,6 +163,7 @@
     <div id="avlasning-text"></div>
     <div class="tabell-wrap">
       <table id="tab-avl">
+        <caption id="Tabell5">Tabell 5. Kan avläsningsdagen förklara felen? Känslighet per månad</caption>
         <thead><tr><th>Månad</th><th>Fel M4b<br>(öre/kWh)</th><th>Bastu<br>(kWh/dag)</th><th>Varmvatten<br>(kWh/dag)</th><th>3 dagars bastu<br>(kWh)</th><th>3 dagar flyttar<br>modellen (öre/kWh)</th><th>kWh som krävs för<br>fel noll</th><th>Motsvarar<br>(dagars bastu)</th></tr></thead>
         <tbody></tbody>
       </table>
@@ -171,6 +174,7 @@
     <p class="liten">V är den jämna effekt (kW) som modellen antar att byggnaden drar dygnet runt för ventilation, värme och belysning, oavsett om restaurangen är öppen.</p>
     <div class="tabell-wrap">
       <table id="tab-v">
+        <caption id="Tabell6">Tabell 6. Baslasten (V) som hade passat varje månad</caption>
         <thead><tr><th>Månad</th><th>Valt V<br>(baslast, kW)</th><th>Fel vid valt V<br>(öre/kWh)</th><th>V som hade<br>passat bäst (kW)</th><th>Kvarstående fel<br>vid bästa V (öre/kWh)</th></tr></thead>
         <tbody></tbody>
       </table>
@@ -202,6 +206,7 @@
     <div id="profil-forklaring"></div>
     <div class="tabell-wrap">
       <table id="tab-profil">
+        <caption id="Tabell7">Tabell 7. Dygnets form: natt-, middags- och kvällspris per månad</caption>
         <thead>
           <tr><th>Månad</th><th>Natt kl. 00–05<br>(öre/kWh)</th><th>Middag kl. 11–15<br>(öre/kWh)</th><th>Kväll kl. 18–21<br>(öre/kWh)</th><th>Middag minus natt<br>(öre/kWh)</th><th>Lägsta timmen</th><th>Dyraste timmen</th><th>Dygnets form</th></tr>
         </thead>
@@ -213,7 +218,7 @@
 
   <!-- ===== Effektkurva ===== -->
   <section aria-labelledby="Effektkurva">
-    <h2 id="Effektkurva">Uppskattad effektkurva <a class="ankare" href="#Effektkurva" aria-label="Länk till avsnittet">#</a></h2>
+    <h2 id="Effektkurva"><span id="Diagram3">Diagram 3. Uppskattad effektkurva</span> <a class="ankare" href="#Effektkurva" aria-label="Länk till avsnittet">#</a></h2>
     <div class="notis">
       <p><strong>Det här är en uppskattning ur en modell, inte en mätning.</strong> Medeleffekten per månad är säker (månadens kWh delat på timmarna). Kurvans form bygger på antagna tider
       (öppettider, uppvärmning före öppning), och toppen är ett timmedel. Verkliga toppar är kortvariga och högre. Det grå bandet visar alternativa antaganden som passar fakturan lika bra.</p>
@@ -229,6 +234,7 @@
     <div id="puls-forklaring"></div>
     <div class="tabell-wrap">
       <table id="tab-puls" hidden>
+        <caption id="Tabell10">Tabell 10. Startpuls, övriga antaganden fixa</caption>
         <thead><tr><th>Startpuls i<br>första timmen</th><th>RMS-fel jan–jun<br>(öre/kWh)</th><th>Största fel jan–jun<br>(öre/kWh)</th><th>Fel juli<br>(öre/kWh)</th><th>Fel augusti<br>(öre/kWh)</th></tr></thead>
         <tbody></tbody>
       </table>
@@ -241,6 +247,7 @@
     <div id="noggrannhet-text"></div>
     <div class="tabell-wrap">
       <table id="tab-noggrannhet">
+        <caption id="Tabell11">Tabell 11. Fel per månad: passning och leave-one-out</caption>
         <thead>
           <tr><th>Månad</th><th>Fel M4b (öre/kWh)<br>(passning: månaden ingick i anpassningen)</th><th>Fel vid leave-one-out (öre/kWh)<br>(månaden utelämnad ur anpassningen)</th></tr>
         </thead>

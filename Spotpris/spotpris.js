@@ -544,16 +544,16 @@
         '<h3>Varför blir uppskattningen sämre fast formen liknar verkligheten mer? <a class="ankare" href="#Startpuls" id="Startpuls" aria-label="Länk till avsnittet">#</a></h3>' +
         '<ol>' +
         '<li><strong>"Sämre" gäller bara ett tal per månad.</strong> Modellen prövas mot ett enda facit per månad: fakturans spotpris, alltså månadens snittpris för vår förbrukning. Den prövas inte mot en uppmätt effektkurva, för den finns inte. En kurva som liknar verkligheten mer ger därför inte automatiskt ett bättre månadstal.</li>' +
-        '<li><strong>Pulsen flyttar energi till timmen kl. 05–06.</strong> Då räknas en del av bastuns kWh med det pris som gällde just den timmen i stället för bastuns genomsnittspris. Om timmen är billigare än bastuns genomsnitt sjunker modellens månadspris, annars stiger det. Tabellen nedan visar hur mycket pulsen (72 kW) flyttar modellens värde per månad.</li>' +
+        '<li><strong>Pulsen flyttar energi till timmen kl. 05–06.</strong> Då räknas en del av bastuns kWh med det pris som gällde just den timmen i stället för bastuns genomsnittspris. Om timmen är billigare än bastuns genomsnitt sjunker modellens månadspris, annars stiger det. Tabell 8 visar hur mycket pulsen (72 kW) flyttar modellens värde per månad.</li>' +
         '<li><strong>Förskjutningen följer prisformen, inte felen.</strong> Priset kl. 05–06 jämfört med bastuns snitt skiftar från månad till månad, men modellens fel mot fakturan gör det inte på samma sätt. I ' + sämre + ' av ' + per.length + ' månader flyttar pulsen modellen längre bort från fakturan. Före pulsen låg modellen nära fakturan i januari–mars (fel kring 0), och då kan en förskjutning bara göra det sämre.</li>' +
-        '<li><strong>Det beror inte bara på att övriga antaganden var inställda på den platta formen.</strong> När hela sökningen görs om med pulsen inbyggd (tabell längre ned) blir den bästa passningen fortfarande sämre: ' + omanp.map(function (x) { return fmt(x.rms); }).join(' → ') + ' öre/kWh i RMS-fel.</li>' +
+        '<li><strong>Det beror inte bara på att övriga antaganden var inställda på den platta formen.</strong> När hela sökningen görs om med pulsen inbyggd (Tabell 9) blir den bästa passningen fortfarande sämre: ' + omanp.map(function (x) { return fmt(x.rms); }).join(' → ') + ' öre/kWh i RMS-fel.</li>' +
         '<li><strong>Vad det betyder.</strong> Fakturans månadspris innehåller inte tillräckligt med information för att visa en morgontopp. Toppen kan vara verklig och ändå inte synas i månadens snittpris, eller så är pulsens storlek och längd annorlunda (till exempel längre tid på lägre effekt). Skillnaden mellan ingen puls och ett aggregat (36 kW) är liten jämfört med modellens osäkerhet, så fakturorna säger inte emot en liten puls. Att avgöra den kräver förbrukning per kvart, där en morgontopp syns direkt (fråga 2 i PRD).</li>' +
         '</ol>' +
-        '<div class="tabell-wrap"><table><thead><tr><th>Månad</th><th>Bastuns snittpris<br>(öre/kWh)</th><th>Pris kl. 05–06<br>(öre/kWh)</th><th>Skillnad<br>(öre/kWh)</th><th>Pulsen flyttar<br>modellvärdet (öre/kWh)</th><th>Fel utan puls<br>(öre/kWh)</th><th>Fel med puls<br>(72 kW, öre/kWh)</th></tr></thead><tbody>' + rader1 + '</tbody></table></div>' +
+        '<div class="tabell-wrap"><table><caption id="Tabell8">Tabell 8. Startpuls: hur pulsen flyttar modellvärdet per månad</caption><thead><tr><th>Månad</th><th>Bastuns snittpris<br>(öre/kWh)</th><th>Pris kl. 05–06<br>(öre/kWh)</th><th>Skillnad<br>(öre/kWh)</th><th>Pulsen flyttar<br>modellvärdet (öre/kWh)</th><th>Fel utan puls<br>(öre/kWh)</th><th>Fel med puls<br>(72 kW, öre/kWh)</th></tr></thead><tbody>' + rader1 + '</tbody></table></div>' +
         '<p class="liten">Öre/kWh. Antagandena (U1 från januari–juni) är fixa. Juli och augusti är blindprov. Fel = modell minus faktura.</p>' +
-        '<div class="tabell-wrap"><table><thead><tr><th>Startpuls<br>(hela sökningen omgjord)</th><th>Bästa RMS-fel<br>(öre/kWh)</th><th>Största leave-one-out-fel<br>(öre/kWh)</th><th>Antal i<br>bandet</th><th>Fel juli<br>(öre/kWh)</th><th>Fel augusti<br>(öre/kWh)</th></tr></thead><tbody>' + rader2 + '</tbody></table></div>' +
+        '<div class="tabell-wrap"><table><caption id="Tabell9">Tabell 9. Startpuls: hela sökningen omgjord för varje puls</caption><thead><tr><th>Startpuls<br>(hela sökningen omgjord)</th><th>Bästa RMS-fel<br>(öre/kWh)</th><th>Största leave-one-out-fel<br>(öre/kWh)</th><th>Antal i<br>bandet</th><th>Fel juli<br>(öre/kWh)</th><th>Fel augusti<br>(öre/kWh)</th></tr></thead><tbody>' + rader2 + '</tbody></table></div>' +
         '<p class="liten">Här har alla 252 kombinationer av antaganden prövats på nytt för varje puls. Bandet är antalet kombinationer som passar fakturorna nästan lika bra (RMS högst 1,5).</p>' +
-        '<p>Nedan visas pulsen med övriga antaganden fixa (samma antaganden som i primärkörningen).</p>';
+        '<p>Tabell 10 nedan visar pulsen med övriga antaganden fixa (samma antaganden som i primärkörningen).</p>';
       tp.hidden = false;
       tp.querySelector('tbody').innerHTML = SP.rader.map(function (x) {
         return '<tr>' + td(x.puls_kw === 0 ? 'ingen (nuvarande modell)' : fmt(x.puls_kw, 0) + ' kW' + (x.puls_kw === kw ? ' (båda aggregaten)' : (x.puls_kw === SP.metadata.aggregat_kw ? ' (ett aggregat)' : ' (överdrivet, visar riktningen)'))) +
@@ -728,6 +728,33 @@
       }
       frag.appendChild(document.createTextNode(text.slice(siste)));
       nod.parentNode.replaceChild(frag, nod);
+    });
+    lankaReferenser(rot);
+  }
+
+  // UPPDATERING 2026-10-07: referenser i löptext ("Tabell 3", "Diagram 2") blir länkar till tabellen eller diagrammet, om målet finns på sidan.
+  // Rubriker, tabellnamn, länkar, ordförklaringar och modalen lämnas orörda.
+  function lankaReferenser(rot) {
+    var re = /\b([Tt]abell|[Dd]iagram) (\d{1,2})\b/g, noder = [], w = document.createTreeWalker(rot, NodeFilter.SHOW_TEXT, null, false), n;
+    while ((n = w.nextNode())) {
+      var f = n.parentNode;
+      if (/^(SCRIPT|STYLE|INPUT|TEXTAREA|ABBR|CODE|PRE|A|H1|H2|H3|CAPTION|TH|BUTTON|LABEL)$/.test(f.nodeName) || f.closest('.modal-overlay') || f.closest('.ankare')) { continue; }
+      re.lastIndex = 0;
+      if (re.test(n.nodeValue)) { noder.push(n); }
+    }
+    noder.forEach(function (nod) {
+      var frag = document.createDocumentFragment(), text = nod.nodeValue, siste = 0, m, andrad = false;
+      re.lastIndex = 0;
+      while ((m = re.exec(text))) {
+        var id = m[1].charAt(0).toUpperCase() + m[1].slice(1).toLowerCase() + m[2];
+        if (!document.getElementById(id)) { continue; }
+        frag.appendChild(document.createTextNode(text.slice(siste, m.index)));
+        var a = document.createElement('a');
+        a.className = 'refl'; a.href = '#' + id; a.textContent = m[0];
+        frag.appendChild(a);
+        siste = m.index + m[0].length; andrad = true;
+      }
+      if (andrad) { frag.appendChild(document.createTextNode(text.slice(siste))); nod.parentNode.replaceChild(frag, nod); }
     });
   }
 

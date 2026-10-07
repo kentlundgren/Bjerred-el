@@ -68,6 +68,10 @@ td.m4b { background: #eef6fc; font-weight: 700; }
 th.m4b { background: #eef6fc; }
 table.text th, table.text td { text-align: left; white-space: normal; vertical-align: top; }
 
+/* Tabellnamn ("Tabell 4. ...") ovanför tabellen */
+caption { caption-side: top; text-align: left; font-weight: 700; font-size: .95rem; padding: 0 0 6px; }
+a.refl { text-decoration: underline dotted; text-underline-offset: 3px; }
+
 /* Inmatningsfält: gult */
 input.gul { background: var(--gul); border: 1px solid var(--gul-kant); border-radius: 4px; padding: 5px 8px; font: inherit; color: var(--text); width: 6.5em; text-align: right; }
 input.gul:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
