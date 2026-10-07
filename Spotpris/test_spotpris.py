@@ -1,5 +1,5 @@
 # test_spotpris.py
-# Tester enligt Spotpris/SPEC.md avsnitt 12 (T1–T15) plus ett extra test (T16: timpriser).
+# Tester enligt Spotpris/SPEC.md avsnitt 12 (T1–T15) plus extra tester (T16: timpriser, T17: webbpaketet till sidan).
 # Körs från mappen Spotpris/ med:  python test_spotpris.py
 # Skriver "OK" om allt stämmer, annars en lista på fel. Referensvärdena kommer från förstudiernas skript (2026-10-07).
 # Gäller bara med data/kraftringen.json, oppettider.json och sokrum.json som de är (SPEC 12, anmärkning till T5–T10).
@@ -166,6 +166,15 @@ def main():
         b.kontrollera_mot_krore(b.ladda_indata())
     except DataFel as e:
         kolla("T15", False, f"kontrollen mot krOre: {e}")
+
+    # T17 (extra): webbpaketet som sidan läser stämmer med JSON-filerna och kan tolkas
+    b.skriv(ut)
+    txt = open(os.path.join("data", "spotpris_data.js"), encoding="utf-8").read()
+    kolla("T17", txt.count("window.SPOTPRIS = ") == 1, "spotpris_data.js ska innehålla exakt en tilldelning till window.SPOTPRIS")
+    paket = json.loads(txt[txt.index("window.SPOTPRIS = ") + len("window.SPOTPRIS = "):].rstrip().rstrip(";"))
+    kolla("T17", paket["manadsnitt"] == json.loads(json.dumps(ut["manadsnitt"]["manader"])), "webbpaketets månadsvärden ska vara lika med manadsnitt.json")
+    kolla("T17", sorted(paket["manadsnitt"].keys()) == MANADER and sorted(paket["kraftringen"].keys()) == MANADER, "alla sex månader ska finnas i webbpaketet")
+    kolla("T17", paket["m4b"]["primar"]["kriterier"]["passning"]["grans"] == 3.0, "gränserna ska följa med i webbpaketet")
 
     # Extra: energibalans för primär U1 i varje månad
     for m in MANADER:

@@ -1,0 +1,138 @@
+/*
+  spotpris.css
+  Styling för spotpris.html. Egen, fristående stilmall (delas inte med Eneas_Samkop_av_El/, så att mapparna är oberoende).
+
+  UPPDATERING 2026-10-07: Första versionen (1.0).
+*/
+
+:root {
+  color-scheme: light;
+  --bg: #ffffff;
+  --text: #1c2a2a;
+  --text-dampad: #5a6868;
+  --accent: #1f5f5b;
+  --kant: #c9d3d1;
+  --lasta: #eceff1;
+  --gul: #FFF9C4;             /* gult är reserverat för inmatningsfält */
+  --gul-kant: #d8c84a;
+  --billigare: #1b6b2e;
+  --dyrare: #a3261b;
+  --ruta: #f4f8f7;
+  --notis-bg: #e3f0fb;        /* blått för noteringar, inte gult */
+  --notis-kant: #2a7fc4;
+  --notis-text: #0b3d66;
+  --marginal: 16px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; line-height: 1.5;
+}
+
+.sida { max-width: 1100px; margin: 0 auto; padding: 52px var(--marginal) 80px; }
+
+h1 { font-size: 1.6rem; margin: 0 0 6px; line-height: 1.25; }
+h2 { font-size: 1.25rem; margin: 34px 0 10px; }
+h3 { font-size: 1.05rem; margin: 22px 0 8px; }
+.undertitel { margin: 0 0 6px; color: var(--text-dampad); }
+.status { margin: 0 0 8px; padding: 8px 12px; border-left: 4px solid var(--accent); background: var(--ruta); font-size: .92rem; }
+a { color: var(--accent); }
+.liten { font-size: .85rem; color: var(--text-dampad); margin: 6px 0; }
+code { font-size: .9em; background: var(--lasta); padding: 0 4px; border-radius: 3px; }
+
+/* Ankare (#) vid rubriker */
+.ankare { margin-left: 6px; text-decoration: none; opacity: 0; font-weight: 400; }
+h2:hover .ankare, h3:hover .ankare, .ankare:focus { opacity: .7; }
+
+/* Notisruta (blå) */
+.notis { background: var(--notis-bg); border-left: 4px solid var(--notis-kant); color: var(--notis-text); border-radius: 4px; padding: 4px 16px; margin: 12px 0; }
+.notis p { margin: 8px 0; }
+
+/* Etiketter för metod */
+.metod { display: inline-block; padding: 0 7px; border-radius: 9px; font-size: .78rem; font-weight: 700; background: var(--lasta); color: var(--text); }
+.metod.uppskattning { background: var(--notis-bg); color: var(--notis-text); }
+.metod.faktura { background: #d9efd5; color: var(--billigare); }
+
+/* Tabeller */
+.tabell-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; min-width: 640px; font-variant-numeric: tabular-nums; }
+th, td { padding: 6px 10px; text-align: right; border-bottom: 1px solid var(--kant); white-space: nowrap; }
+th { font-weight: 700; vertical-align: bottom; font-size: .9rem; }
+th:first-child, td:first-child { text-align: left; }
+tfoot td { font-weight: 700; border-top: 2px solid var(--text); border-bottom: none; }
+td.pos { color: var(--dyrare); }
+td.neg { color: var(--billigare); }
+td.m4b { background: #eef6fc; font-weight: 700; }
+th.m4b { background: #eef6fc; }
+table.text th, table.text td { text-align: left; white-space: normal; vertical-align: top; }
+
+/* Inmatningsfält: gult */
+input.gul { background: var(--gul); border: 1px solid var(--gul-kant); border-radius: 4px; padding: 5px 8px; font: inherit; color: var(--text); width: 6.5em; text-align: right; }
+input.gul:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+input.gul.ogiltig { border-color: var(--dyrare); outline: 2px solid var(--dyrare); }
+
+/* Diagram */
+figure { margin: 16px 0; }
+figcaption { font-size: .85rem; color: var(--text-dampad); margin-top: 4px; }
+svg.diagram { width: 100%; height: auto; display: block; background: #fff; border: 1px solid var(--kant); border-radius: 6px; }
+.effektrutor { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+@media (max-width: 900px) { .effektrutor { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .effektrutor { grid-template-columns: 1fr; } }
+.val { display: flex; flex-wrap: wrap; gap: 14px; margin: 8px 0; font-size: .92rem; }
+.val label { cursor: pointer; }
+
+/* Teckenförklaring */
+.tf { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .85rem; margin: 6px 0 0; }
+.tf span::before { content: ""; display: inline-block; width: 12px; height: 12px; margin-right: 6px; vertical-align: -1px; background: var(--c); border-radius: 2px; }
+
+/* Knappar */
+.knappar { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0 6px; }
+.knapp { font: inherit; padding: 9px 16px; border-radius: 6px; cursor: pointer; border: 1px solid var(--accent); background: #fff; color: var(--accent); }
+.knapp.primar { background: var(--accent); color: #fff; }
+.knapp:hover { filter: brightness(.95); }
+.meddelande { min-height: 1.4em; margin: 4px 0; font-size: .92rem; color: var(--accent); }
+
+.kallor { padding-left: 20px; font-size: .88rem; }
+.kallor li { margin-bottom: 8px; }
+.fot { margin-top: 28px; font-size: .85rem; color: var(--text-dampad); }
+
+/* Knapp-länk uppe till vänster: tillbaka till elöversikten */
+.topplank {
+  position: fixed; top: 8px; left: 10px; z-index: 20; font-size: .85rem; text-decoration: none; color: var(--accent);
+  background: rgba(255,255,255,.92); border: 1px solid var(--kant); border-radius: 6px; padding: 4px 10px;
+}
+.topplank:hover, .topplank:focus { border-color: var(--accent); }
+
+/* Hörn: GitHub och teknik */
+.corner {
+  position: fixed; bottom: 14px; z-index: 20; font: inherit; font-size: .8rem; color: var(--text); text-decoration: none;
+  background: rgba(255,255,255,.85); border: 1px solid var(--kant); border-radius: 6px; padding: 4px 9px; opacity: .55; cursor: pointer;
+}
+.corner:hover, .corner:focus { opacity: 1; }
+.corner-left { left: 14px; }
+.corner-right { right: 14px; }
+
+/* Modal */
+.modal-overlay { display: none; position: fixed; inset: 0; z-index: 30; background: rgba(0,0,0,.5); align-items: center; justify-content: center; padding: var(--marginal); }
+.modal-overlay.show { display: flex; }
+.modal { position: relative; background: #fff; border-radius: 10px; max-width: 640px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 20px 22px; }
+.modal h2 { margin-top: 0; }
+.modal-stang { position: absolute; top: 8px; right: 12px; border: 0; background: none; font-size: 1.6rem; line-height: 1; cursor: pointer; color: var(--text-dampad); }
+.tech-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 560px) { .tech-grid { grid-template-columns: 1fr; } }
+.tech-card { background: var(--ruta); border: 1px solid var(--kant); border-radius: 8px; padding: 10px 12px; }
+.tech-card h4 { margin: 0 0 4px; font-size: .95rem; }
+.tech-card p { margin: 0; font-size: .85rem; }
+
+/* Utskrift */
+@page { size: A4 landscape; margin: 12mm; }
+@media print {
+  .corner, .topplank, .knappar, .meddelande, .modal-overlay, .ankare, .val { display: none !important; }
+  .sida { max-width: none; padding: 0; }
+  input.gul { border: none; background: var(--gul); }
+  .tabell-wrap { overflow: visible; }
+  table { min-width: 0; font-size: 9.5pt; }
+  figure, section, table { break-inside: avoid; }
+}

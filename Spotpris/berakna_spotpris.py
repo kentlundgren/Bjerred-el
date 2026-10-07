@@ -450,13 +450,32 @@ def kor_allt(datamapp=DATAMAPP, kontrollera_krore=True):
               "primar": {"manader": {n: effektkurva_manad(mn, modell, u1_p, band_p) for n, mn in manader.items()}},
               "kanslighet": {"manader": {n: effektkurva_manad(mn, modell, u1_k, band_k) for n, mn in manader.items()}}}
     return {"manadsnitt": manadsnitt, "m4b_resultat": m4b, "effektkurva": effekt, "manader": manader, "modell": modell,
-            "giltiga_primar": giltiga_p}
+            "giltiga_primar": giltiga_p, "indata": indata}
+
+
+def webbpaket(utdata):
+    """Allt sidan behöver i ett objekt. Skrivs som data/spotpris_data.js, eftersom webbläsare blockerar fetch av JSON-filer
+    när en sida öppnas direkt från fil (PRD F10: sidan ska fungera från fil och utan nätverk)."""
+    ind = utdata["indata"]
+    return {
+        "metadata": metadata(),
+        "manadsnitt": utdata["manadsnitt"]["manader"],
+        "m4b": {"primar": utdata["m4b_resultat"]["primar"], "kanslighet": utdata["m4b_resultat"]["kanslighet"]},
+        "effekt": {"primar": utdata["effektkurva"]["primar"]["manader"], "kanslighet": utdata["effektkurva"]["kanslighet"]["manader"],
+                   "markning": MARKNING_EFFEKT},
+        "kraftringen": ind["kraftringen"],
+        "oppettider": ind["oppettider"],
+        "kriterier": ind["sokrum"]["kriterier"],
+    }
 
 
 def skriv(utdata, datamapp=DATAMAPP):
     for namn in ("manadsnitt", "m4b_resultat", "effektkurva"):
         with open(os.path.join(datamapp, namn + ".json"), "w", encoding="utf-8") as f:
             json.dump(utdata[namn], f, ensure_ascii=False, indent=2)
+    with open(os.path.join(datamapp, "spotpris_data.js"), "w", encoding="utf-8") as f:
+        f.write("// spotpris_data.js: skapad av berakna_spotpris.py. Redigera inte för hand. Se Spotpris/SPEC.md avsnitt 10."+chr(10))
+        f.write("window.SPOTPRIS = " + json.dumps(webbpaket(utdata), ensure_ascii=False, separators=(",", ":")) + ";"+chr(10))
 
 
 def sammanfatta(utdata):
@@ -485,7 +504,7 @@ def main():
     utdata = kor_allt()
     skriv(utdata)
     sammanfatta(utdata)
-    print("\nSkrev data/manadsnitt.json, data/m4b_resultat.json och data/effektkurva.json")
+    print("\nSkrev data/manadsnitt.json, data/m4b_resultat.json, data/effektkurva.json och data/spotpris_data.js")
 
 
 def m3(manad, forbrukning_kwh_per_intervall):
