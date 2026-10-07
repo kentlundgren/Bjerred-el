@@ -2,7 +2,7 @@
 
 Projekt: Elenergiförbrukning – Bjerreds Saltsjöbad
 Mapp: `Spotpris/`
-Status: Utkast 1, 2026-10-07 (genomläst med nya ögon, gränserna i avsnitt 6.4 beslutade av Kent)
+Status: Utkast 1, 2026-10-07 (genomläst med nya ögon, gränserna i avsnitt 6.4 beslutade av Kent). Byggd och testad 2026-10-07: se `berakna_spotpris.py`, `hamta_spotpris.py` och `test_spotpris.py` (16 tester OK).
 Hör till: [`PRD.md`](PRD.md), utkast 5 (avsnitt 3, 4, 7, 8, 9 och 11)
 Ansvarig: Kent Lundgren
 
@@ -89,7 +89,7 @@ En post per månad. Värden som ska finnas i första versionen (källor: fakturo
 | 2026-06 | 20 609 | 7 431 | 1 423 | 100,09 | 4,66 | 1,70 | 0 |
 
 Härledda värden (skriptet räknar, de skrivs inte in): `kwh_rest = kwh_huvud − kwh_bastu − kwh_varmvatten` ("restposten", PRD avsnitt 4.3), och `allt_elpris_ore = spot_ore + rorliga_ore + paslag_ore`.
-`allt_elpris_ore` ska stämma med `krOre` i `Eneas_Samkop_av_El/enea_jamforelse.js` (122,24, 121,56, 92,87, 68,29, 95,00 och 106,45) med skillnad under 0,005 öre/kWh, annars avbryts körningen.
+`allt_elpris_ore` ska stämma med `krOre` i `Eneas_Samkop_av_El/enea_jamforelse.js` (122,24, 121,56, 92,87, 68,29, 95,00 och 106,45) med skillnad under 0,005 öre/kWh, annars avbryts körningen. Saknas `Eneas_Samkop_av_El/enea_jamforelse.js` ger skriptet en varning och hoppar över kontrollen (tillägg efter bygget: utkast 1 sa ingenting om det).
 Juni: `kwh_bastu` är 7 431 (summan av de avrundade mätarställningarna). Debiteringsunderlagets bild anger 7 430. Det är en känd skillnad (granskning 2) och 7 431 gäller här.
 
 ### 3.3 `data/oppettider.json`
@@ -109,6 +109,8 @@ Bastun stänger i verkligheten 21.45, men modellen använder 22.00 (som i först
 
 - All tid är lokal tid med den förskjutning som står i `start`. **Kvartsindex** `q = timme × 4 + minut // 15` (0–95), taget från de lokala tecknen i `start`.
 - Ett dygn med sommartid har **92** (2026-03-29) eller **100** (2026-10-25) kvartar. Kvartar summeras per **verkligt intervall**, inte per klockslag, och inga intervall läggs till eller tas bort.
+- **Timupplösning före 2025-10-01:** ett vanligt dygn har 24 intervall. Vid sommartid har dygnet 23 (sista söndagen i mars) eller 25 (sista söndagen i oktober) timintervall.
+  (Tillägg 2026-10-07 efter bygget: utkast 1 angav bara 24.)
 - Antal timmar i en månad = antal intervall / 4. Det ska användas överallt där effekt (kW) ska bli energi (kWh).
 
 ## 4. Definitioner
@@ -226,14 +228,14 @@ Alla tal skrivs med full precision (inga avrundningar), UTF-8, med indrag. Alla 
   `m4a` (`parametrar`, `varde_ore`, `fel_ore`) och `m4b` (`varde_ore`, `fel_ore`).
 - **`data/m4b_resultat.json`**: `primar` och `kanslighet`, var och en med `u1` och `u2` (`parametrar`, `rms`, `fel_per_manad`, `storsta_absolutfel`), `antal_kombinationer`, `antal_giltiga`, `antal_ogiltiga` (med orsak),
   `antal_i_band`, `antal_med_storsta_fel_max_2`, `leave_one_out` (`fel_per_manad` eller `"saknas"` med orsak, `rms`, `storsta_absolutfel`, `antal_saknas`) och `kriterier` (`passning`: `{gräns: 2.0, utfall, uppfyllt}`, `leave_one_out`: samma).
-- **`data/effektkurva.json`**: `manader["2026-01"]` med `delar` (24 värden per del), `summa` (24), `lagsta` (24), `hogsta` (24), `medeleffekt_kw`, `markning`.
+- **`data/effektkurva.json`**: `primar.manader["2026-01"]` och `kanslighet.manader["2026-01"]` (tillägg efter bygget: utkast 1 hade bara en nivå) med `delar` (24 värden per del), `summa` (24), `lagsta` (24), `hogsta` (24), `medeleffekt_kw`, `markning`.
 
 ## 11. Gränsfall och felhantering
 
 | Fall | Beteende |
 |------|----------|
 | Ett dygn saknas i en månad | Avbryt med en lista på saknade dygn. Skriv inga utdata. |
-| Antal intervall per dygn är något annat än 96, 92 (sista söndagen i mars), 100 (sista söndagen i oktober) eller 24 (före 2025-10-01) | Avbryt med datum och antal. |
+| Antal intervall per dygn är något annat än 96, 92 (sista söndagen i mars), 100 (sista söndagen i oktober), eller före 2025-10-01 24, 23 och 25 | Avbryt med datum och antal. |
 | API-anrop misslyckas | Tre försök per dygn med en kort paus. Misslyckas alla: avbryt och lista dygnen. Ingen del av en månad får skrivas som komplett. |
 | Negativt pris | Tillåtet. Ingår i alla medelvärden utan avrundning till noll. Antalet räknas. |
 | `E_d < 0` för en kombination | Kombinationen är ogiltig (avsnitt 6.2). Inte ett fel i körningen. |

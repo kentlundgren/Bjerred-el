@@ -392,7 +392,7 @@ Ordning:
 
 1. Kent beslutar A–C (eller godkänner förslagen).
 2. SPEC.md för beräkningsskriptet skrivs (`Spotpris/SPEC.md`), därefter en fräscha-ögon-genomläsning av den.
-3. Datalager och skript byggs, och kontrolleras mot förstudiernas värden (acceptanskriterium 2, 3 och 4).
+3. ~~Datalager och skript byggs, och kontrolleras mot förstudiernas värden (acceptanskriterium 2, 3 och 4).~~ **Klart 2026-10-07:** `hamta_spotpris.py`, `berakna_spotpris.py`, `test_spotpris.py` och `data/` är byggda. Alla 16 tester går igenom, och resultaten stämmer med förstudierna (acceptanskriterium 2, 3 och 4 uppfyllda; 1b: passning 2,55 ≤ 3,0 och leave-one-out 4,09 ≤ 4,5). Ännu ej granskade i tvåstegsgranskningen.
 4. Sidan byggs.
 5. Tvåstegsgranskning, därefter README för `Spotpris/` (Live Page-länk överst, lokal sökväg) och länkar från `index.html`.
 
