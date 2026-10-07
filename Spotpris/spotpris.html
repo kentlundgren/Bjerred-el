@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<!--
+  spotpris.html
+  Spotpris månad för månad (elområde SE4), januari–juni 2026, och jämförelse med Kraftringens och Eneas priser.
+  Byggd enligt Spotpris/PRD.md (utkast 5) och Spotpris/SPEC.md (utkast 1). Siffrorna kommer från data/spotpris_data.js,
+  som skapas av berakna_spotpris.py. Rena HTML/CSS/JS-filer, ingen server, inga bibliotek, fungerar öppnad från fil.
+
+  UPPDATERING 2026-10-07: Första versionen (1.0).
+-->
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spotpris månad för månad</title>
+  <meta name="description" content="Spotpris för elområde SE4 månad för månad, januari–juni 2026, jämfört med Kraftringens och Eneas priser.">
+  <link rel="stylesheet" href="spotpris.css">
+</head>
+<body>
+
+<a class="topplank" href="../index.html">← Elöversikt</a>
+
+<main class="sida">
+
+  <header>
+    <h1 id="Start">Spotpris månad för månad, januari–juni 2026</h1>
+    <p class="undertitel">Elområde SE4. Bjerreds Saltsjöbad. Sammanställd av Kent Lundgren.</p>
+    <p class="status">Spotpriserna är hämtade från elprisetjustnu.se (utan moms, tillägg och skatter) och Kraftringens priser ur fakturorna. Siffrorna är inte granskade
+      i en tvåstegsgranskning. Månadens spotpris för vår förbrukning är en <strong>uppskattning</strong>, inte en mätning. Kontrollera mot källan innan något återges
+      (<a href="#Kallor">se källor</a>).</p>
+  </header>
+
+  <!-- ===== Förklaring ===== -->
+  <section aria-labelledby="Forklaring">
+    <h2 id="Forklaring">Vad är "månadens spotpris"? <a class="ankare" href="#Forklaring" aria-label="Länk till avsnittet">#</a></h2>
+    <div class="notis">
+      <p>Spotpriset ändras varje kvart (sedan 1 oktober 2025, före det varje timme). Ett pris för en hel månad måste därför räknas fram, och det finns flera sätt som ger olika svar:</p>
+    </div>
+    <div class="tabell-wrap">
+      <table class="text" id="tab-metoder">
+        <thead><tr><th>Metod</th><th>Så räknas den</th><th>Svarar på</th></tr></thead>
+        <tbody>
+          <tr><td><strong>M1</strong> Enkelt snitt, dygnet runt</td><td>Medelvärdet av alla kvartar i månaden.</td><td>Vad kostade elbörsen i genomsnitt under månaden?</td></tr>
+          <tr><td><strong>M2</strong> Enkelt snitt, kl. 06–22</td><td>Medelvärdet av kvartarna mellan 06.00 och 22.00 varje dag.</td><td>Vad kostade elbörsen under dagtid?</td></tr>
+          <tr><td><strong>M4a</strong> Antagen profil</td><td>Priset viktat mot en modellerad förbrukning utifrån öppettider, utan att titta på fakturan.</td><td>En första uppskattning utan kalibrering.</td></tr>
+          <tr><td><strong>M4b</strong> Kalibrerad profil <span class="metod uppskattning">uppskattning</span></td><td>Som M4a, men modellens okända antaganden väljs så att passningen mot fakturans spotpris blir bäst.</td><td>Vilken förbrukning som är <em>förenlig</em> med fakturan.</td></tr>
+          <tr><td><strong>Fakturan</strong> <span class="metod faktura">faktura</span></td><td>Spotpriset som Kraftringen fakturerar (viktat mot den verkliga förbrukningen).</td><td>Vad vi betalade för själva spotpriset.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p id="forklaring-slutsats" class="liten"></p>
+  </section>
+
+  <!-- ===== Tabell 1 ===== -->
+  <section aria-labelledby="Tabell1">
+    <h2 id="Tabell1">Tabell 1. Spotpris per månad, fyra sätt <a class="ankare" href="#Tabell1" aria-label="Länk till avsnittet">#</a></h2>
+    <p class="liten">Öre/kWh, utan moms. Fel = metodens värde minus fakturans spotpris (plus betyder för högt).</p>
+    <div class="tabell-wrap">
+      <table id="tab-1">
+        <thead>
+          <tr>
+            <th>Månad</th>
+            <th>Kvartar</th>
+            <th>Negativa<br>kvartar</th>
+            <th>Lägsta</th>
+            <th>Högsta</th>
+            <th>M1<br>dygnet runt</th>
+            <th>M2<br>06–22</th>
+            <th>M4a<br>antagen</th>
+            <th class="m4b">M4b<br>uppskattad</th>
+            <th>Fakturans<br>spotpris</th>
+            <th>Fel<br>M1</th>
+            <th>Fel<br>M2</th>
+            <th class="m4b">Fel<br>M4b</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot></tfoot>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== Tabell 2 ===== -->
+  <section aria-labelledby="Tabell2">
+    <h2 id="Tabell2">Tabell 2. Kraftringens och Eneas pris i förhållande till spotpriset <a class="ankare" href="#Tabell2" aria-label="Länk till avsnittet">#</a></h2>
+    <p class="liten">Öre/kWh, utan moms. Kraftringens "allt elpris" är spotpris + rörliga kostnader + fast påslag (1,70 öre/kWh) enligt fakturan.
+      Fyll i Eneas allt elpris per månad i de <span style="background:var(--gul);padding:0 4px;border-radius:3px">gula fälten</span>
+      (samma pris som på jämförelsesidan). Det du fyller i sparas bara i den här webbläsaren.</p>
+    <div class="tabell-wrap">
+      <table id="tab-2">
+        <thead>
+          <tr>
+            <th>Månad</th>
+            <th>Spotpris<br>(fakturan)</th>
+            <th>Rörliga<br>kostnader</th>
+            <th>Fast<br>påslag</th>
+            <th>Kraftringens<br>allt elpris</th>
+            <th>Kraftringens tillägg<br>över spot</th>
+            <th>Eneas<br>allt elpris</th>
+            <th>Eneas minus<br>spot</th>
+            <th>Eneas minus<br>Kraftringen</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot></tfoot>
+      </table>
+    </div>
+    <p class="liten" id="tab-2-not"></p>
+    <p class="liten">"Eneas minus spot" är Eneas implicita marginal över börsens pris. Eneas säkrar priser i förväg och beskriver sig inte som en elleverantör (Eneas, 2026),
+      så ett prissäkrat pris följer inte månadens spotpris och är inte jämförbart månad för månad.</p>
+  </section>
+
+  <!-- ===== Diagram 1 ===== -->
+  <section aria-labelledby="Diagram1">
+    <h2 id="Diagram1">Diagram 1. Månadsvärden <a class="ankare" href="#Diagram1" aria-label="Länk till avsnittet">#</a></h2>
+    <figure>
+      <div id="diagram-manad"></div>
+      <div class="tf" id="tf-manad"></div>
+      <figcaption>Öre/kWh, utan moms. M4b är en uppskattning. Eneas visas när priserna är ifyllda.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ===== Diagram 2 ===== -->
+  <section aria-labelledby="Diagram2">
+    <h2 id="Diagram2">Diagram 2. Medelpris per timme på dygnet <a class="ankare" href="#Diagram2" aria-label="Länk till avsnittet">#</a></h2>
+    <figure>
+      <div id="diagram-timme"></div>
+      <div class="tf" id="tf-timme"></div>
+      <figcaption>Medel av spotpriset (öre/kWh) för varje klockslag, per månad. Det syns varför tidpunkten för förbrukningen spelar roll: i januari är det dyrast
+        sent på eftermiddagen och billigast på natten, i maj billigast mitt på dagen och dyrast på kvällen.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ===== Effektkurva ===== -->
+  <section aria-labelledby="Effektkurva">
+    <h2 id="Effektkurva">Uppskattad effektkurva <a class="ankare" href="#Effektkurva" aria-label="Länk till avsnittet">#</a></h2>
+    <div class="notis">
+      <p><strong>Det här är en uppskattning ur en modell, inte en mätning.</strong> Medeleffekten per månad är säker (månadens kWh delat på timmarna). Kurvans form bygger på antagna tider
+      (öppettider, uppvärmning före öppning), och toppen är ett timmedel. Verkliga toppar är kortvariga och högre. Det grå bandet visar alternativa antaganden som passar fakturan lika bra.</p>
+    </div>
+    <div class="val" role="radiogroup" aria-label="Vilken körning som visas">
+      <label><input type="radio" name="effekt-val" value="primar" checked> Primär: bastun slås på en timme före öppning</label>
+      <label><input type="radio" name="effekt-val" value="kanslighet"> Känslighet: bastun slås på 0–6 timmar före öppning</label>
+    </div>
+    <div class="effektrutor" id="effekt-rutor"></div>
+    <div class="tf" id="tf-effekt"></div>
+    <p class="liten" id="effekt-not"></p>
+  </section>
+
+  <!-- ===== Noggrannhet ===== -->
+  <section aria-labelledby="Noggrannhet">
+    <h2 id="Noggrannhet">Hur noggrann är uppskattningen (M4b)? <a class="ankare" href="#Noggrannhet" aria-label="Länk till avsnittet">#</a></h2>
+    <div id="noggrannhet-text"></div>
+    <div class="tabell-wrap">
+      <table id="tab-noggrannhet">
+        <thead>
+          <tr><th>Månad</th><th>Fel M4b<br>(passning)</th><th>Fel vid leave-one-out<br>(månaden utelämnad)</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="liten" id="noggrannhet-not"></p>
+  </section>
+
+  <!-- ===== Antaganden ===== -->
+  <section aria-labelledby="Antaganden">
+    <h2 id="Antaganden">Antaganden och begränsningar <a class="ankare" href="#Antaganden" aria-label="Länk till avsnittet">#</a></h2>
+    <ul id="antaganden-lista">
+      <li><strong>Bastun</strong> är öppen 07.30–22.00 alla dagar enligt hemsidan (tidigare 06.00–22.00, och när det ändrades är okänt, så båda provas). Aggregaten slås på cirka en timme före öppning (Kent).
+        Bastuns värme är el.</li>
+      <li><strong>Restaurangen</strong> är stängd måndag–tisdag, öppen onsdag–fredag 16–22, lördag 11–22 och söndag 11–17. Tiderna antas ha gällt januari–juni.</li>
+      <li><strong>Varmvatten</strong> är kWh el, för duschar och restaurang. När vattnet värms är okänt, så dygnet runt och enligt öppettiderna provas.</li>
+      <li><strong>"Restaurangen" i förbrukningen är en restpost</strong> (huvudmätaren minus bastu minus varmvatten): ventilation, uppvärmning med el (och en antagen luft-värmepump), belysning, kylar och kök.
+        Ventilation och värme går dygnet runt. Modellen delar den i en jämn baslast (provas 0–20 kW) och en driftdel enligt öppettiderna. Väderberoende värme modelleras inte (det gav ingen förbättring).</li>
+      <li><strong>Profilen är inte entydig.</strong> Många kombinationer passar nästan lika bra, och passning mot fakturan är inte en oberoende validering. Resultatet är "förenligt med fakturan", inte "så här förbrukade vi".
+        Förbrukning per kvart eller timme skulle avgöra saken och göra M3 (det förbrukningsviktade snittet) möjligt.</li>
+      <li><strong>Priserna</strong> är spotpris för SE4, utan moms, från en sammanställning (elprisetjustnu.se), inte direkt från elbörsen. Kraftringens poster är avlästa ur fakturorna.</li>
+      <li>Sommartid hanteras per verkligt kvartsintervall (92 kvartar den 29 mars), och negativa priser ingår utan avrundning.</li>
+    </ul>
+  </section>
+
+  <!-- ===== Knappar ===== -->
+  <div class="knappar">
+    <button type="button" id="btn-kopiera" class="knapp primar">Kopiera tabellerna</button>
+    <button type="button" id="btn-skriv" class="knapp">Skriv ut / spara som PDF</button>
+  </div>
+  <p id="meddelande" class="meddelande" role="status" aria-live="polite"></p>
+
+  <!-- ===== Källor ===== -->
+  <section aria-labelledby="Kallor">
+    <h2 id="Kallor">Källor <a class="ankare" href="#Kallor" aria-label="Länk till avsnittet">#</a></h2>
+    <p class="liten">Externa länkar kontrollerades 2026-10-07. Siffrorna är hämtade ur källorna och är inte granskade i en tvåstegsgranskning. Kontrollera mot källan innan något återges.</p>
+    <ul class="kallor">
+      <li id="ref-bjerred-badet">Bjerreds Saltsjöbad (u.å.a) <em>Badet</em> [webbsida]. Tillgänglig:
+        <a href="https://bjerredskallbadhus.se/badet/" target="_blank" rel="noopener">https://bjerredskallbadhus.se/badet/</a> (hämtad 2026-10-07).
+        <em>Öppettider för badet och bastun. Beskriver nuläget, inte nödvändigtvis januari–juni 2026.</em></li>
+      <li id="ref-bjerred-restaurangen">Bjerreds Saltsjöbad (u.å.b) <em>Restaurangen</em> [webbsida]. Tillgänglig:
+        <a href="https://bjerredskallbadhus.se/restaurangen-ny/" target="_blank" rel="noopener">https://bjerredskallbadhus.se/restaurangen-ny/</a> (hämtad 2026-10-07).
+        <em>Restaurangens öppettider per veckodag.</em></li>
+      <li id="ref-elpris">Elprisetjustnu.se (u.å.) <em>Elpris-API</em>. Tillgänglig:
+        <a href="https://www.elprisetjustnu.se/elpris-api" target="_blank" rel="noopener">https://www.elprisetjustnu.se/elpris-api</a> (hämtad 2026-10-07).
+        <em>Spotpriser för SE4 per kvart och timme, utan moms, tillägg och skatter. Källa ska anges vid offentlig visning.</em></li>
+      <li id="ref-eneas">Eneas (2026) <em>Samköp av el</em> [broschyr, PDF]. Eneas. Lokalt i projektet:
+        <a href="../Eneas_Samkop_av_El/Eneas%20Samkop%20av%20El%202026.pdf" target="_blank" rel="noopener">Eneas Samkop av El 2026.pdf</a>.
+        <em>Beskriver Eneas som en aktör som prissäkrar. Ingår för att ett prissäkrat pris inte följer månadens spotpris.</em></li>
+      <li id="ref-kraftringen">Kraftringen (2026) <em>E-faktura elnät och elhandel, januari–juni 2026</em> [fakturor, PDF]. Kraftringen Nät AB och Kraftringen Energi AB.
+        <em>Spotpris, rörliga kostnader och fast påslag per månad.</em> Fakturor:
+        <a href="../Kraftringen/Fakturor/202601_Kraftringen_Januari-20265_3082197306.pdf" target="_blank" rel="noopener">januari</a>,
+        <a href="../Kraftringen/Fakturor/202602_Kraftringen_Februari_2026_3098735503.pdf" target="_blank" rel="noopener">februari</a>,
+        <a href="../Kraftringen/Fakturor/202603_Kraftringen_Mars_2026_3112109404.pdf" target="_blank" rel="noopener">mars</a>,
+        <a href="../Kraftringen/Fakturor/202604_Kraftfringen_April_3126369101.pdf" target="_blank" rel="noopener">april</a>,
+        <a href="../Kraftringen/Fakturor/202605_Kraftringen_Maj_2026_3141677009.pdf" target="_blank" rel="noopener">maj</a>,
+        <a href="../Kraftringen/Fakturor/202606_Kraftringen_Juni_2026_3154522605.pdf" target="_blank" rel="noopener">juni</a>.</li>
+      <li id="ref-varberg">Varberg Energi (2025) <em>Vilka effekter har kvartspriser fått på elmarknaden?</em>, 10 december. Tillgänglig:
+        <a href="https://www.varbergenergi.se/nyheter/vilka-effekter-har-kvartspriser-fatt-pa-elmarknaden" target="_blank" rel="noopener">https://www.varbergenergi.se/nyheter/vilka-effekter-har-kvartspriser-fatt-pa-elmarknaden</a> (hämtad 2026-10-07).
+        <em>Bekräftar att dagen före-marknaden gick från timpriser till kvartspriser den 1 oktober 2025.</em></li>
+    </ul>
+    <p class="liten">Mer: kravdokumentet <a href="PRD.md">PRD.md</a> och den tekniska specifikationen <a href="SPEC.md">SPEC.md</a> i mappen.</p>
+  </section>
+
+  <footer class="fot">
+    <p>Version <span id="version"></span> · <span id="versionsdatum"></span> · Beräkningsdata skapad <span id="datadatum"></span> · Kent Lundgren</p>
+  </footer>
+</main>
+
+<!-- Hörn: GitHub (vänster) och teknik (höger) -->
+<a class="corner corner-left" href="https://github.com/kentlundgren/Bjerred-el/tree/main/Spotpris" target="_blank" rel="noopener">{ } GitHub</a>
+<button type="button" class="corner corner-right" id="techBtn" aria-label="Tekniköversikt">&lt;/&gt; teknik</button>
+
+<div class="modal-overlay" id="techOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="techTitel">
+    <button type="button" class="modal-stang" id="techClose" aria-label="Stäng">&times;</button>
+    <h2 id="techTitel">Hur den här sidan är byggd</h2>
+    <p>Rena filer, inga externa tjänster, och siffrorna räknas av ett skript innan sidan öppnas.</p>
+
+    <h3>Tekniken</h3>
+    <div class="tech-grid">
+      <div class="tech-card">
+        <h4>Ren HTML, CSS och JavaScript</h4>
+        <p>Inga ramverk, inga bibliotek och ingen byggprocess. Diagrammen ritas som SVG av egen kod.</p>
+      </div>
+      <div class="tech-card">
+        <h4>Siffrorna räknas av ett Python-skript</h4>
+        <p><code>berakna_spotpris.py</code> läser spotpriser och Kraftringens poster, räknar M1–M4b och effektkurvan och skriver <code>data/spotpris_data.js</code>, som sidan laddar. Sidan räknar inte själv, bortsett från skillnaderna i tabell 2.</p>
+      </div>
+      <div class="tech-card">
+        <h4>Fungerar från fil och utan nätverk</h4>
+        <p>Data ligger i en skriptfil och inte i en JSON-fil som hämtas, eftersom webbläsare blockerar hämtning av filer när en sida öppnas direkt från disk.</p>
+      </div>
+      <div class="tech-card">
+        <h4>Inmatningen sparas bara hos dig</h4>
+        <p>Eneas pris sparas i den egna webbläsaren (localStorage) och skickas ingenstans. Fält som är tomma hämtas från jämförelsesidans inmatning om den finns i samma webbläsare.</p>
+      </div>
+    </div>
+
+    <h3>Metoden</h3>
+    <div class="tech-grid">
+      <div class="tech-card">
+        <h4>Krav och specifikation först</h4>
+        <p>Sidan följer <code>PRD.md</code> och <code>SPEC.md</code>. Fem förstudier gjordes innan bygget och visade att varken enkla snitt eller antagna öppettider träffar fakturans spotpris.</p>
+      </div>
+      <div class="tech-card">
+        <h4>Testat men inte granskat</h4>
+        <p>Skriptet har 17 tester med referensvärden ur förstudierna, och de går igenom. Resultaten är inte granskade i en tvåstegsgranskning, och sidan säger det.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="data/spotpris_data.js"></script>
+<script src="spotpris.js"></script>
+</body>
+</html>
