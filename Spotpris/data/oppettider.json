@@ -1,0 +1,8 @@
+{
+  "metadata": {
+    "kalla": "bjerredskallbadhus.se/badet/ och /restaurangen-ny/, lästa 2026-10-07. Tiderna antas ha gällt januari–juni 2026 (Kent). Veckodag enligt Pythons date.weekday(): 0 = måndag, 6 = söndag. null = stängt.",
+    "anmarkning": "Bastun stänger i verkligheten 21.45, men modellen använder 22.00 (som i förstudierna). Ändra inte utan att fråga Kent."
+  },
+  "restaurang": {"0": null, "1": null, "2": ["16:00", "22:00"], "3": ["16:00", "22:00"], "4": ["16:00", "22:00"], "5": ["11:00", "22:00"], "6": ["11:00", "17:00"]},
+  "bastu": {"oppnar_alternativ": ["06:00", "07:30"], "stanger": "22:00"}
+}

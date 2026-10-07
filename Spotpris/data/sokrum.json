@@ -1,0 +1,24 @@
+{
+  "metadata": {
+    "kalla": "Spotpris/SPEC.md avsnitt 6.1 och 6.4. Sökrummet godkändes av Kent 2026-10-07. Gränserna i 'kriterier' beslutades av Kent 2026-10-07 (först 2,0 och 4,0, ändrade till 3,0 och 4,5 efter att utfallet var känt, se SPEC 6.4).",
+    "anmarkning": "Sökrummet ska ligga här och inte vara inbyggt i koden."
+  },
+  "primar": {
+    "bo": ["06:00", "07:30"],
+    "pre": [1.0],
+    "prep": [0, 1, 2],
+    "varm": ["24h", "tider"],
+    "V": {"fran": 0, "till": 20, "steg": 1}
+  },
+  "kanslighet": {
+    "bo": ["06:00", "07:30"],
+    "pre": [0, 0.5, 1, 1.5, 2, 3, 4, 5, 6],
+    "prep": [0, 1, 2],
+    "varm": ["24h", "tider"],
+    "V": {"fran": 0, "till": 20, "steg": 1}
+  },
+  "band_rms_max": 1.5,
+  "ratt_info_storsta_fel_max": 2.0,
+  "kriterier": {"passning_storsta_absolutfel_max": 3.0, "leave_one_out_storsta_absolutfel_max": 4.5},
+  "m4a_standard": {"bo": "07:30", "pre": 1.0, "prep": 0, "varm": "24h", "V": 0}
+}

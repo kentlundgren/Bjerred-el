@@ -1,0 +1,15 @@
+{
+  "metadata": {
+    "kalla": "Kraftringens fakturor (Kraftringen/Fakturor/*.pdf) och Bjerreds Saltsjöbads debiteringsunderlag (Kraftringen/Intern_debitering/*.jpg)",
+    "anmarkning": "kwh_huvud, kwh_bastu och kwh_varmvatten är heltal ur debiteringsunderlagen. Juni: kwh_bastu 7431 är summan av de avrundade mätarställningarna (bilden anger 7430), en känd skillnad (granskning 2). spot_ore, rorliga_ore och paslag_ore är öre/kWh utan moms ur fakturorna.",
+    "inlagt": "2026-10-07"
+  },
+  "manader": {
+    "2026-01": {"kwh_huvud": 35422, "kwh_bastu": 14729, "kwh_varmvatten": 4107, "spot_ore": 117.38, "rorliga_ore": 3.16, "paslag_ore": 1.70, "manadsavgift_kr": 0},
+    "2026-02": {"kwh_huvud": 32002, "kwh_bastu": 11839, "kwh_varmvatten": 3821, "spot_ore": 116.68, "rorliga_ore": 3.18, "paslag_ore": 1.70, "manadsavgift_kr": 0},
+    "2026-03": {"kwh_huvud": 28074, "kwh_bastu": 12743, "kwh_varmvatten": 5029, "spot_ore": 86.59, "rorliga_ore": 4.58, "paslag_ore": 1.70, "manadsavgift_kr": 0},
+    "2026-04": {"kwh_huvud": 26671, "kwh_bastu": 11225, "kwh_varmvatten": 3864, "spot_ore": 63.12, "rorliga_ore": 3.47, "paslag_ore": 1.70, "manadsavgift_kr": 0},
+    "2026-05": {"kwh_huvud": 23941, "kwh_bastu": 9024, "kwh_varmvatten": 2487, "spot_ore": 88.19, "rorliga_ore": 5.11, "paslag_ore": 1.70, "manadsavgift_kr": 0},
+    "2026-06": {"kwh_huvud": 20609, "kwh_bastu": 7431, "kwh_varmvatten": 1423, "spot_ore": 100.09, "rorliga_ore": 4.66, "paslag_ore": 1.70, "manadsavgift_kr": 0}
+  }
+}
