@@ -393,24 +393,29 @@
     return poster.map(function (p) { return '<span style="--c:' + p[1] + '">' + esc(p[0]) + '</span>'; }).join('');
   }
 
+  // Blindprovsmånader (juli, augusti, ...) med fakturans spotpris ifyllt i tabell 3 (UPPDATERING 2026-10-07)
+  function blindManader() {
+    var ut = [];
+    if (!F) { return ut; }
+    Object.keys(F.manader).sort().forEach(function (m) {
+      var inp = document.querySelector('#t3-' + m + ' input[data-f="spot"]'), rl = document.querySelector('#t3-' + m + ' input[data-f="rorliga"]');
+      var spot = inp ? tolka(inp.value) : null, rorl = rl ? tolka(rl.value) : null;
+      if (spot !== null) { ut.push({ m: m, d: F.manader[m], spot: spot, allt: rorl !== null ? spot + rorl + FAST : null }); }
+    });
+    return ut;
+  }
+
   function renderDiagramManad() {
-    // UPPDATERING 2026-10-07: blindprovsmånader (juli, augusti, ...) läggs till när fakturans spotpris är ifyllt i tabell 3.
-    // De ritas på grå bakgrund, utanför de sex månader (januari-juni) som antagandena anpassades på.
-    var blind = [];
-    if (F) {
-      Object.keys(F.manader).sort().forEach(function (m) {
-        var inp = document.querySelector('#t3-' + m + ' input[data-f="spot"]'), rl = document.querySelector('#t3-' + m + ' input[data-f="rorliga"]');
-        var spot = inp ? tolka(inp.value) : null, rorl = rl ? tolka(rl.value) : null;
-        if (spot !== null) { blind.push({ m: m, d: F.manader[m], spot: spot, allt: rorl !== null ? spot + rorl + FAST : null }); }
-      });
-    }
+    // Blindprovsmånaderna ritas på grå bakgrund, utanför de sex månader (januari-juni) som antagandena anpassades på.
+    // M1, M2 och M4b gäller bara spotpriset; "allt elpris" är spotpris + rörliga kostnader + fast påslag.
+    var blind = blindManader();
     var M = function (g, gb) { return MAN.map(function (m) { return g(D.manadsnitt[m]); }).concat(blind.map(gb)); };
     var serier = [
-      { namn: 'M1 dygnet runt', varden: M(function (v) { return v.m1_ore; }, function (b) { return b.d.m1_ore; }), farg: '#6c8ea4', streck: '5 4' },
-      { namn: 'M2 kl. 06–22', varden: M(function (v) { return v.m2_ore; }, function (b) { return b.d.m2_ore; }), farg: '#8e6bbf', streck: '5 4' },
-      { namn: 'M4b uppskattad', varden: M(function (v) { return v.m4b.varde_ore; }, function (b) { return b.d.m4b_ore; }), farg: '#e76f51' },
+      { namn: 'M1 spotpris, dygnet runt', varden: M(function (v) { return v.m1_ore; }, function (b) { return b.d.m1_ore; }), farg: '#6c8ea4', streck: '5 4' },
+      { namn: 'M2 spotpris, kl. 06–22', varden: M(function (v) { return v.m2_ore; }, function (b) { return b.d.m2_ore; }), farg: '#8e6bbf', streck: '5 4' },
+      { namn: 'M4b spotpris, uppskattad', varden: M(function (v) { return v.m4b.varde_ore; }, function (b) { return b.d.m4b_ore; }), farg: '#e76f51' },
       { namn: 'Fakturans spotpris', varden: M(function (v) { return v.faktura.spot_ore; }, function (b) { return b.spot; }), farg: '#1c2a2a', tjocklek: 3 },
-      { namn: 'Kraftringens allt elpris', varden: M(function (v) { return v.faktura.allt_elpris_ore; }, function (b) { return b.allt; }), farg: '#2a9d8f' }
+      { namn: 'Kraftringens allt elpris (spot + rörliga + påslag)', varden: M(function (v) { return v.faktura.allt_elpris_ore; }, function (b) { return b.allt; }), farg: '#2a9d8f' }
     ];
     var harEneas = MAN.some(function (m) { return eneasVarde(m) !== null; });
     if (harEneas) { serier.push({ namn: 'Eneas allt elpris', varden: MAN.map(function (m) { return eneasVarde(m); }).concat(blind.map(function () { return null; })), farg: '#2a7fc4', tjocklek: 2.5 }); }
@@ -422,14 +427,42 @@
     el('tf-manad').innerHTML = teckenforklaring(serier.map(function (s) { return [s.namn, s.farg]; }));
   }
 
+  var FARGER_TIMME = ['#2a7fc4', '#6c8ea4', '#2a9d8f', '#e76f51', '#8e6bbf', '#a3261b', '#c77d0a', '#3f7d20'];   // en färg per månad (inte gult)
+
   function renderDiagramTimme() {
     var h = [];
     for (var i = 0; i < 24; i++) { h.push(('0' + i).slice(-2)); }
-    var serier = MAN.map(function (m, i) { return { namn: lang(m), varden: D.manadsnitt[m].timprofil_ore, farg: FARGER[i % FARGER.length], tjocklek: 2, punkter: false }; });
+    var blind = blindManader();
+    var lista = MAN.map(function (m) { return { m: m, profil: D.manadsnitt[m].timprofil_ore, blind: false }; })
+      .concat(blind.filter(function (b) { return b.d.timprofil_ore; }).map(function (b) { return { m: b.m, profil: b.d.timprofil_ore, blind: true }; }));   // hoppar över om en gammal cachad datafil saknar timprofilen
+    var serier = lista.map(function (x, i) {
+      return { namn: lang(x.m) + (x.blind ? ' (blindprov)' : ''), varden: x.profil, farg: FARGER_TIMME[i % FARGER_TIMME.length], tjocklek: 2, punkter: false, streck: x.blind ? '6 4' : null };
+    });
     var alla = [];
     serier.forEach(function (s) { s.varden.forEach(function (v) { alla.push(v); }); });
-    el('diagram-timme').innerHTML = linjediagram(h, serier, 0, niceMax(Math.max.apply(null, alla)), 'öre/kWh (klockslag, lokal tid)');
+    el('diagram-timme').innerHTML = linjediagram(h.map(function (x) { return 'kl. ' + x; }), serier, 0, niceMax(Math.max.apply(null, alla)), 'öre/kWh (klockslag, lokal tid)', { tips: true });
     el('tf-timme').innerHTML = teckenforklaring(serier.map(function (s) { return [s.namn, s.farg]; }));
+
+    // Tabell över dygnets form: natt, middag, kväll
+    var medel = function (p, a, b2) { var s = 0; for (var k = a; k <= b2; k++) { s += p[k]; } return s / (b2 - a + 1); };
+    var rader = '', dipp = [], utanDipp = [];
+    lista.forEach(function (x) {
+      var natt = medel(x.profil, 0, 5), midd = medel(x.profil, 11, 14), kvall = medel(x.profil, 18, 21);
+      var lagst = 0, hogst = 0;
+      for (var k = 1; k < 24; k++) { if (x.profil[k] < x.profil[lagst]) { lagst = k; } if (x.profil[k] > x.profil[hogst]) { hogst = k; } }
+      var harDipp = midd < natt;
+      (harDipp ? dipp : utanDipp).push(lang(x.m).toLowerCase());
+      rader += '<tr>' + td(esc(lang(x.m)) + (x.blind ? ' <span class="metod uppskattning">blindprov</span>' : '')) + td(fmt(natt, 0)) + td(fmt(midd, 0)) + td(fmt(kvall, 0)) +
+               td(fmtT(midd - natt, 0), klass(midd - natt)) + td('kl. ' + ('0' + lagst).slice(-2)) + td('kl. ' + ('0' + hogst).slice(-2)) + td(harDipp ? 'middagsdipp' : 'ingen middagsdipp') + '</tr>';
+    });
+    document.querySelector('#tab-profil tbody').innerHTML = rader;
+    el('profil-forklaring').innerHTML = '<div class="notis"><p><strong>Varför skiljer sig ' + utanDipp.join(' och ') + ' från de andra?</strong> ' +
+      'I ' + utanDipp.join(' och ') + ' är priset <em>inte</em> lägre mitt på dagen: det är högst på dagen (två toppar, en på förmiddagen och en på eftermiddagen) och lägst på natten. ' +
+      'I ' + dipp.join(', ') + ' har priset en tydlig dipp mitt på dagen (lägst kring kl. 13–14) och är dyrast på kvällen. Tabellen nedan visar skillnaden i siffror.</p>' +
+      '<p>Det som syns i vår data är mönstret, inte orsaken. En trolig förklaring är solkraft: i södra Sverige (elområde 4) kan solen sommartid ge låga eller till och med negativa priser mitt på dagen och höga priser på kvällen när solen gått ned (<a href="#ref-habbe">Habbe, 2025</a>). ' +
+      'På vintern är solen svag och dagen kort, så den dippen uteblir. Vi har inte solkraftens produktion i datan, så förklaringen är inte bevisad här.</p>' +
+      '<p>För oss betyder det att <strong>tidpunkten för förbrukningen påverkar månadens pris mycket i månaderna med middagsdipp (' + dipp.join(', ') + ') och lite i ' + utanDipp.join(' och ') + '</strong>. ' +
+      'Det är också skälet till att dagtidsmedlet (M2) och dygnsmedlet (M1) skiljer sig så mycket olika månader.</p></div>';
   }
 
   // Effektkurva: en ruta per månad, staplade delar (trappsteg), grått band och en linje för summan.
@@ -660,6 +693,7 @@
       sparaEneas();
       uppdateraTabell3();
       renderDiagramManad();
+      renderDiagramTimme();
     });
 
     el('tab-2').addEventListener('input', function (e) {

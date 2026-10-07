@@ -92,7 +92,8 @@ def main():
                     varden.append(f["varde"])
         mn = manad(andel_medel)
         resultat["manader"][m] = {"m4b_ore": punkt["varde"], "spann_min_ore": min(varden), "spann_max_ore": max(varden),
-                                  "m1_ore": mn.m1(), "m2_ore": mn.m2(), "kwh": k}
+                                  "m1_ore": mn.m1(), "m2_ore": mn.m2(), "kwh": k,
+                                  "timprofil_ore": mn.timprofil()}      # UPPDATERING 2026-10-07: för Diagram 2 (medelpris per timme)
         print(f"{m}: M4b {punkt['varde']:.2f} öre/kWh (spann {min(varden):.2f}-{max(varden):.2f}), M1 {mn.m1():.2f}, M2 {mn.m2():.2f}")
     with open("data/forutsagelse_jul_sep.json", "w", encoding="utf-8") as f:
         json.dump(resultat, f, ensure_ascii=False, indent=2)

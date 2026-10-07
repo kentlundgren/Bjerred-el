@@ -173,7 +173,9 @@
     <figure>
       <div id="diagram-manad"></div>
       <div class="tf" id="tf-manad"></div>
-      <figcaption>Öre/kWh, utan moms. M4b är en uppskattning. Eneas visas när priserna är ifyllda. Peka på en punkt för att se värdet, eller i en månads kolumn för att se alla värden den månaden. Januari–juni är de sex månader som antagandena anpassades på. Juli och augusti (grå bakgrund) är blindprov: förutsagda innan fakturorna lästes in.</figcaption>
+      <figcaption><strong>M1, M2 och M4b gäller bara spotpriset</strong> (börspriset, utan rörliga kostnader och fast påslag) och jämförs därför med <em>Fakturans spotpris</em>.
+        <em>Kraftringens allt elpris</em> är däremot spotpris + rörliga kostnader + fast påslag (1,70 öre/kWh), alltså det som debiteras för själva elen, och ligger därför några öre högre.
+        Öre/kWh, utan moms. M4b är en uppskattning. Eneas visas när priserna är ifyllda. Peka på en punkt för att se värdet, eller i en månads kolumn för att se alla värden den månaden. Januari–juni är de sex månader som antagandena anpassades på. Juli och augusti (grå bakgrund) är blindprov: förutsagda innan fakturorna lästes in.</figcaption>
     </figure>
   </section>
 
@@ -183,9 +185,19 @@
     <figure>
       <div id="diagram-timme"></div>
       <div class="tf" id="tf-timme"></div>
-      <figcaption>Medel av spotpriset (öre/kWh) för varje klockslag, per månad. Det syns varför tidpunkten för förbrukningen spelar roll: i januari är det dyrast
-        sent på eftermiddagen och billigast på natten, i maj billigast mitt på dagen och dyrast på kvällen.</figcaption>
+      <figcaption>Medel av spotpriset (öre/kWh, utan moms) för varje klockslag, per månad. Det syns varför tidpunkten för förbrukningen spelar roll.
+        Peka på en punkt eller i en timmes kolumn för att se värdena. Juli och augusti är med när fakturornas spotpris är ifyllt i tabell 3 (streckade linjer).</figcaption>
     </figure>
+    <div id="profil-forklaring"></div>
+    <div class="tabell-wrap">
+      <table id="tab-profil">
+        <thead>
+          <tr><th>Månad</th><th>Natt<br>kl. 00–05</th><th>Middag<br>kl. 11–15</th><th>Kväll<br>kl. 18–21</th><th>Middag minus<br>natt</th><th>Lägsta timmen</th><th>Dyraste timmen</th><th>Dygnets form</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="liten">Medelpris per period, öre/kWh. "Middagsdipp" betyder att priset mitt på dagen ligger under nattpriset.</p>
   </section>
 
   <!-- ===== Effektkurva ===== -->
@@ -260,6 +272,9 @@
       <li id="ref-eneas">Eneas (2026) <em>Samköp av el</em> [broschyr, PDF]. Eneas. Lokalt i projektet:
         <a href="../Eneas_Samkop_av_El/Eneas%20Samkop%20av%20El%202026.pdf" target="_blank" rel="noopener">Eneas Samkop av El 2026.pdf</a>.
         <em>Beskriver Eneas som en aktör som prissäkrar. Ingår för att ett prissäkrat pris inte följer månadens spotpris.</em></li>
+      <li id="ref-habbe">Habbe, M. (2025) 'Svajigt: Då kan elpriset rusa', <em>Dagens PS</em>, 26 maj. Tillgänglig:
+        <a href="https://www.dagensps.se/privatekonomi/svajigt-da-kan-elpriset-rusa/" target="_blank" rel="noopener">https://www.dagensps.se/privatekonomi/svajigt-da-kan-elpriset-rusa/</a> (hämtad 2026-10-07).
+        <em>Nyhetsartikel som beskriver att solkraft ger låga eller negativa priser mitt på dagen och höga priser på kvällen i elområde 4. Ger en möjlig förklaring till dippen i diagram 2, men visar inte orsaken i våra data.</em></li>
       <li id="ref-kraftringen">Kraftringen (2026) <em>E-faktura elnät och elhandel, januari–juni 2026</em> [fakturor, PDF]. Kraftringen Nät AB och Kraftringen Energi AB.
         <em>Spotpris, rörliga kostnader och fast påslag per månad.</em> Fakturor:
         <a href="../Kraftringen/Fakturor/202601_Kraftringen_Januari-20265_3082197306.pdf" target="_blank" rel="noopener">januari</a>,
