@@ -83,7 +83,7 @@ Kent ser månaden som två deluppgifter, och steg 0–2 nedan hör ihop så här
 | Del | När | Vad | Steg |
 |-----|-----|-----|------|
 | **A. Gissa** | De första dagarna i nästa månad (t.ex. 1–5 november), **innan fakturan** (kommer cirka den 10:e) | Månadens kWh är fastställd. M4b används för att förutsäga fakturans spotpris (och därmed allt elpris), och förutsägelsen **skrivs ned med datum innan fakturan öppnas** | 1 (kWh-facit) + **1b** (förutsägelsen) |
-| **B. Facit och analys** | Cirka den 10:e, när fakturan kommit | Fakturan läses och läggs in överallt. Sedan analyseras hur väl M4b gissade, och det beskrivs på Spotpris | 2a–2h, framför allt 2c och **2i** (analysen) |
+| **B. Facit och analys** | Cirka den 10:e, när fakturan kommit | Fakturan läses och läggs in överallt. Sedan analyseras hur väl M4b gissade, och det beskrivs på Spotpris | 2a–2h, framför allt 2c och **2i** (analysen), samt **2j** (mail till ekonomiansvarig) |
 
 Steg 0 (Kents egen kWh-prognos före månadsskiftet, cirka den 27:e) är ett tredje, tidigare tillfälle och en annan sak:
 den gäller kWh, inte priset. Ordningen i tid är alltså 0 → 1 + 1b → 2.
@@ -271,6 +271,19 @@ Målet är en kort, ärlig beskrivning av hur gissningen från steg 1b stämde m
 6. Skriv det som inte kunde kontrolleras som "inte kontrollerat".
 7. Lägg månadens nyckeltal i loggen nedan (rad 1b och 2i) och ta bort `__pycache__`.
 
+#### 2j. Mail till föreningens ekonomiansvarig (skickas med fakturan, cirka den 10:e)
+Varje månad skickar Kent debiteringsunderlaget för el till föreningens ekonomiansvarig. Mailet har tre bilagor:
+(1) debiteringsunderlaget som sammanfattande PDF, (2) underlaget i Excel (hela underlagsfilen) och (3) Kraftringens faktura.
+Det avslutas med en jämförelse av månadens kWh mot månaden före, och en länk till `index.html`.
+
+**Utkasten skrivs med den lokala skillen `bjerred-ekonommail`.** Den ligger bara på Kents dator (den är medvetet utesluten
+ur git, eftersom repot är publikt) och innehåller mallen, händelserna som gör att en längre variant behövs, och en logg över
+skickade mail. Säg "mail till ekonomiansvarig" (eller "mail till Minna") när fakturan är inlagd, så får Kent två förslag:
+ett kort och ett längre. Gör steg 2a–2d först, så att månadens kWh, kostnad och spotpris är kända och kontrollerade.
+Saknas skillen på datorn (t.ex. i en ny kopia av repot): fråga Kent om mallen, skriv inte om den från minnet.
+
+Skicka inte mailet innan Kent har tittat på det. Notera i skillens logg när det skickats.
+
 ### Steg 3 – Avslut varje månad
 1. Verifiera alla berörda sidor på en lokal server (Spotpris, intern debitering, `index.html`).
 2. Stoppa servern. Ta bort `__pycache__`.
@@ -295,6 +308,7 @@ Förklaring: ✓ klart och verifierat, ✗ inte gjort, – gäller inte. Datum =
 | 2f. Eneas jämförelsesida, tabell 1 (forts.) | ✓ 2026-10-08 (v2.3) | ✓ 2026-10-08 (v2.3) | ✓ 2026-10-08 (v2.3) |
 | 1b. Del A: M4b-gissning nedskriven före fakturan (från oktober: `forutsag_manad.py`) | ✓ 2026-10-07 (blindprov) | ✓ 2026-10-07 (blindprov) | ✓ 2026-10-07 (blindprov) |
 | 2i. Del B: analys av hur väl M4b gissade | ✓ 2026-10-07 | ✓ 2026-10-07 | ✓ 2026-10-08 |
+| 2j. Mail till ekonomiansvarig (lokal skill `bjerred-ekonommail`) | okänt (före loggen) | ✓ (skickat före skillen) | ✓ 2026-10-09 (längre variant) |
 | 2g. Fakturalänkar i källistan på Spotpris | ✓ 2026-10-08 | ✓ 2026-10-08 | ✓ 2026-10-08 |
 | 2h. Känslighetsanalyser (`kanslighet_*.py`, tabell 9 och 10, avläsning) med månaden | ✓ 2026-10-08 | ✓ 2026-10-08 | ✓ 2026-10-08 |
 | 0. Prognos i `prognoser.md`/`prognoser.js` | ✗ (ingen loggad) | ✓ (avräknad 2026-09-01) | ✗ (ingen loggad, fråga Kent) |
