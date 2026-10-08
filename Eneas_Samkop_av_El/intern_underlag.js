@@ -21,6 +21,7 @@
   avvikelser på någon krona mot tidigare debiterade belopp. Kent godtog det 2026-10-06.
 
   UPPDATERING 2026-10-06: Första versionen (1.0).
+  UPPDATERING 2026-10-08: Juli, augusti och september 2026 inlagda som fasta månader (se STANDARD).
   UPPDATERING 2026-10-06: Raden "El inkl Elcert (1,7 öre/kWh)" heter nu "El (spot + rörliga + påslag)",
   eftersom fakturan inte säger att elcertifikat ingår (granskning 2, avsnitt 5a).
 */
@@ -67,7 +68,25 @@
     { key: '2026-06', faktura: '53134', nr: '3154522605', kwhFaktura: '20609,34', facit: 24017,
       s: {},
       e: { huvud: '343630', herr: '61254', dam: '53688', varm: '690588' },
-      p: { rorlig: '20,99', el: '106,45', skatt: '36,00' } }
+      p: { rorlig: '20,99', el: '106,45', skatt: '36,00' } },
+    // UPPDATERING 2026-10-08: juli, augusti och september 2026 inlagda som fasta månader.
+    //   Mätarställningar och belopp avlästa ur Kraftringen/Intern_debitering/202607..202609_Intern_debitering.jpg.
+    //   Fakturanummer, fakturabelopp, öre/kWh och kWh är kontrollerade mot fakturorna (PDF) i Kraftringen/Fakturor/.
+    //   facit = "Totalt" i Kents debiteringsunderlag (Excel) för månaden.
+    //   Juli och augusti låg tidigare bara i Kents webbläsare (localStorage); de behövs här så att
+    //   ingående mätarställning för september (= augusti utgående) blir rätt även i en ren webbläsare.
+    { key: '2026-07', faktura: '48277', nr: '3165925102', kwhFaktura: '21584,28', facit: 19804,
+      s: {},
+      e: { huvud: '365214', herr: '65896', dam: '57817', varm: '692241' },
+      p: { rorlig: '19,95', el: '86,01', skatt: '36,00' } },
+    { key: '2026-08', faktura: '49876', nr: '3185333204', kwhFaktura: '21835,32', facit: 20667,
+      s: {},
+      e: { huvud: '387050', herr: '70572', dam: '61947', varm: '693960' },
+      p: { rorlig: '20,17', el: '90,02', skatt: '36,00' } },
+    { key: '2026-09', faktura: '62294', nr: '3199122106', kwhFaktura: '21688,74', facit: 24849,
+      s: {},
+      e: { huvud: '408739', herr: '75815', dam: '66805', varm: '695247' },
+      p: { rorlig: '22,39', el: '134,59', skatt: '36,00' } }
   ];
 
   function kopia(o) { return JSON.parse(JSON.stringify(o)); }
@@ -76,7 +95,7 @@
   // 2. Tillstånd: data per månad (nyckel "ÅÅÅÅ-MM") och vald månad
   // ===================================================================
   var data = {};
-  var valt = '2026-06';
+  var valt = '2026-09';   // UPPDATERING 2026-10-08: senaste fasta månad (var 2026-06)
 
   function laddaStandard() {
     data = {};
@@ -92,7 +111,15 @@
       if (!s) { return; }
       var o = JSON.parse(s);
       if (o && o.data && typeof o.data === 'object') {
-        Object.keys(o.data).forEach(function (k) { data[k] = o.data[k]; });
+        Object.keys(o.data).forEach(function (k) {
+          var sparad = o.data[k];
+          // UPPDATERING 2026-10-08: en månad som tidigare lades till för hand (extra) och som nu finns som fast månad,
+          // men där ingen utgående huvudmätare fyllts i, ersätts av de fasta värdena. Annars skulle en tom, sparad
+          // månad dölja de nyinlagda värdena. Har användaren fyllt i något behålls det.
+          var tomExtra = sparad && sparad.extra && (!sparad.e || !sparad.e.huvud);
+          if (tomExtra && data[k]) { return; }
+          data[k] = sparad;
+        });
       }
       if (o && o.valt && data[o.valt]) { valt = o.valt; }
     } catch (e) { /* ignoreras */ }
@@ -201,7 +228,7 @@
     el('p-el').value = d.p.el || '';
     el('p-skatt').value = d.p.skatt || '';
     // "Ta bort månaden" visas bara för en tillagd månad och bara för den sista (annars skulle
-    // kedjan av ingående mätarställningar brytas). Januari–juni 2026 kan aldrig tas bort.
+    // kedjan av ingående mätarställningar brytas). Januari–september 2026 kan aldrig tas bort.
     var k = nycklar();
     var arSista = k[k.length - 1] === valt;
     el('btn-u-ta-bort').hidden = !(d.extra && arSista);
@@ -215,7 +242,7 @@
     if (!d.extra) {
       h += '<li><b>Återställ månaden:</b> sätter tillbaka de fasta värdena för ' + htmlEscape(namn) +
            ' (hämtade ur fakturan och dagens underlag). Det du själv har ändrat för månaden försvinner.</li>';
-      h += '<li>Januari–juni 2026 är fasta månader och <b>kan inte tas bort</b>.</li>';
+      h += '<li>Januari–september 2026 är fasta månader och <b>kan inte tas bort</b>.</li>';
     } else {
       h += '<li><b>Återställ månaden:</b> tömmer alla fält för ' + htmlEscape(namn) + ' (månaden finns kvar).</li>';
       h += arSista
