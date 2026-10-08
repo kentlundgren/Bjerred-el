@@ -1,10 +1,11 @@
 {
   "metadata": {
-    "kalla": "Kraftringens fakturor Kraftringen/Fakturor/202607_Kraftringen_Juli_2026_3165925102.pdf och 202608_Kraftringen_Aug_2026_3185333204.pdf, lästa 2026-10-07 efter att förutsägelsen var gjord. Öre/kWh utan moms.",
-    "anmarkning": "Läggs inte i kraftringen.json eftersom bastu- och varmvattenmätarna för juli-augusti saknas och anpassningen på januari-juni ska vara oförändrad tills Kent beslutar om en omanpassning. September fylls i när fakturan kommit (cirka 10 oktober)."
+    "kalla": "Kraftringens fakturor Kraftringen/Fakturor/202607_Kraftringen_Juli_2026_3165925102.pdf 202608_Kraftringen_Aug_2026_3185333204.pdf och 202609_Kraftringen_Sept_2026_3199122106.pdf, lästa efter att förutsägelsen var gjord (juli–augusti 2026-10-07, september 2026-10-08). Öre/kWh utan moms.",
+    "anmarkning": "Läggs inte i kraftringen.json eftersom bastu- och varmvattenmätarna för juli-augusti saknas och anpassningen på januari-juni ska vara oförändrad tills Kent beslutar om en omanpassning. September lades in 2026-10-08 efter att fakturan kommit."
   },
   "manader": {
     "2026-07": {"spot_ore": 79.21, "rorliga_ore": 5.10, "paslag_ore": 1.70, "kwh_faktura": 21584.28},
-    "2026-08": {"spot_ore": 83.72, "rorliga_ore": 4.60, "paslag_ore": 1.70, "kwh_faktura": 21835.32}
+    "2026-08": {"spot_ore": 83.72, "rorliga_ore": 4.60, "paslag_ore": 1.70, "kwh_faktura": 21835.32},
+    "2026-09": {"spot_ore": 128.09, "rorliga_ore": 4.80, "paslag_ore": 1.70, "kwh_faktura": 21688.74}
   }
 }

@@ -148,6 +148,12 @@ window.FORUTSAGELSE = {
    "rorliga_ore": 4.6,
    "paslag_ore": 1.7,
    "kwh_faktura": 21835.32
+  },
+  "2026-09": {
+   "spot_ore": 128.09,
+   "rorliga_ore": 4.8,
+   "paslag_ore": 1.7,
+   "kwh_faktura": 21688.74
   }
  },
  "analys_v": [
@@ -214,6 +220,14 @@ window.FORUTSAGELSE = {
    "fel_vid_vald_V_ore": -3.4585878113284565,
    "V_vald_kw": 13.0,
    "rest_kwh_per_timme": 15.201612903225806
+  },
+  {
+   "manad": "2026-09",
+   "V_bast_kw": 14.3,
+   "kvarstaende_fel_ore": -3.6186262873430763,
+   "fel_vid_vald_V_ore": -4.412470625217054,
+   "V_vald_kw": 13.0,
+   "rest_kwh_per_timme": 14.306944444444444
   }
  ]
 };
