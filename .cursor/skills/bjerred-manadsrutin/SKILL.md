@@ -77,6 +77,13 @@ Det man behöver: fakturans **totalbelopp** (rubriken "Avser <månad> N kr"), **
 **kWh enligt fakturan**, och öre/kWh för **spotpris**, **rörliga kostnader**, **fast påslag (1,70)**,
 **elöverföring (rörlig nätavgift)** och **energiskatt (36,00)**.
 
+- **Fast nätavgift** (raden "Fast avgift (1.00 mån à N kr/mån)"). Den var 8 824 kr/mån januari–juni men
+  7 980 kr/mån juli–september. Läs den varje månad, anta den inte (behövs i `enea_jamforelse.js`, steg 2f).
+- **Avtalsraderna** (rubriken "Avtal": elnät och "Elhandel Rörligt kvartspris med bindningstid, Gäller t.o.m. …").
+  Elhandelsavtalet gällde **t.o.m. 2026-09-30**, så oktoberfakturan (kommer cirka 10 november) kan ha nya villkor:
+  fast påslag (nu 1,70 öre/kWh), rörliga kostnader, månadsavgift (nu 0 kr), eller en annan leverantör. Jämför
+  raderna med föregående månad. Avviker något: stanna och fråga Kent, eftersom Spotpris tabell 2, intern
+  debitering och Eneas-jämförelsen bygger på dagens villkor.
 - *Allt elpris* (Kraftringens "El inkl elcert" / "El (spot + rörliga + påslag)") = spot + rörliga + påslag.
 - Kontrollera att kWh enligt fakturan stämmer med månadens kWh i `index.html` (±1 kWh).
 
@@ -162,6 +169,13 @@ fortsätta göra. Månader efter juni visas ändå under tabell 1 i en egen tabe
 3. Verifiera lokalt (dubbelklicka på ordet "Kraftringen" för att visa tabell 1) att kolumnerna ligger rakt under
    januari–juni-tabellen och att summaraden stämmer.
 
+#### 2g. Källistor och fakturalänkar på sidorna (kontrollera efter 2c–2f)
+Fakturalänkarna ska finnas i källistan på **alla** sidor som använder fakturan:
+- `Eneas_Samkop_av_El/enea_jamforelse.html` (klart jul–sep, steg 2f) och `intern_debitering.html` (klart, steg 2e).
+- `Spotpris/spotpris.html`, källan "Kraftringen (2026) E-faktura … januari–juni 2026": **saknar fakturorna för
+  juli–september** (konstaterat 2026-10-08, inte åtgärdat). Fakturornas spotpris och rörliga kostnader används ju i tabell 3.
+- `Eneas_Samkop_av_El/kvalitetsgranskning.html` gäller bara januari–juni och ska inte ändras.
+
 ### Steg 3 – Avslut varje månad
 1. Verifiera alla berörda sidor på en lokal server (Spotpris, intern debitering, `index.html`).
 2. Stoppa servern. Ta bort `__pycache__`.
@@ -184,6 +198,8 @@ Förklaring: ✓ klart och verifierat, ✗ inte gjort, – gäller inte. Datum =
 | 2d. Intern debitering (`STANDARD`) | ✓ 2026-10-08 | ✓ 2026-10-08 | ✓ 2026-10-08 |
 | 2e. Källlänkar och version (intern debitering) | ✓ 2026-10-08 (v1.4) | ✓ 2026-10-08 (v1.4) | ✓ 2026-10-08 (v1.4) |
 | 2f. Eneas jämförelsesida, tabell 1 (forts.) | ✓ 2026-10-08 (v2.3) | ✓ 2026-10-08 (v2.3) | ✓ 2026-10-08 (v2.3) |
+| 2g. Fakturalänkar i källistan på Spotpris | ✗ | ✗ | ✗ |
+| 0. Prognos i `prognoser.md`/`prognoser.js` | ✗ (ingen loggad) | ✓ (avräknad 2026-09-01) | ✗ (ingen loggad, fråga Kent) |
 
 Januari–juni 2026 lades in vid bygget av Eneas-sidorna och Spotpris-sidan (2026-10-06 och 2026-10-07)
 och hanteras i `kraftringen.json` (Spotpris) och `STANDARD` (intern debitering).
