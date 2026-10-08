@@ -1,7 +1,7 @@
 /* manadens_flash.js
    "Månadens flash": en kort nyhet om månadens elanvändning på index.html.
 
-   SKAPAD 2026-10-09 (version 1.0). Ingen ES2023-funktionalitet används (vanlig ES5/ES2015: var, function, addEventListener).
+   SKAPAD 2026-10-09 (version 1.0, direktlänk #flash tillagd i 1.1). Ingen ES2023-funktionalitet används (vanlig ES5/ES2015: var, function, addEventListener).
 
    Vad som händer:
      1. En liten ruta (toast) visas uppe i högra hörnet med rubrik och nyckelsiffra, cirka 0,7 sekunder efter att sidan öppnats.
@@ -11,6 +11,8 @@
         (index.html?flash=1) för att visa den igen, t.ex. vid test.
      3. En knapp "Månadens flash" i menyraden öppnar ett fönster med hela texten och ett arkiv över tidigare månader.
         Knappen har en "Ny"-markering tills besökaren har öppnat den senaste flashen.
+     3b. Direktlänk: index.html#flash öppnar fönstret direkt med den senaste flashen (ingen liten ruta), t.ex. för att skicka
+        en länk till någon. Samma adress sätts i adressfältet när fönstret öppnas från knappen.
      4. Texterna ligger i manadens_flash_data.js (window.MANADENS_FLASH, nyaste först).
 
    Tillgänglighet: rutan har role="status" (läses upp utan att ta fokus), kan stängas med kryss, pausas av musen eller fokus,
@@ -103,14 +105,31 @@
     document.body.appendChild(modal);
   }
 
+  // UPPDATERING 2026-10-09 (version 1.1): direktlänk. Adressen index.html#flash öppnar fönstret direkt (utan den lilla rutan),
+  // så att Kent eller någon annan kan skicka en länk till den senaste sammanfattningen.
+  // När fönstret öppnas sätts #flash i adressfältet (så att den går att kopiera), och när det stängs tas den bort igen.
+  function ar_flash_hash() {
+    var h = window.location.hash;
+    return h === '#flash' || h === '#manadens-flash';
+  }
+  function satt_hash(pa) {
+    try {
+      var url = window.location.pathname + window.location.search + (pa ? '#flash' : '');
+      window.history.replaceState(null, '', url);        // ändrar adressfältet utan att lägga till en post i historiken
+    } catch (e) { /* t.ex. file:// i vissa webbläsare: ignoreras */ }
+  }
+
   function visa_modal() {
+    if (modalOppen) { return; }
     dolj_toast();
     fokusFore = document.activeElement;
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden';           // samma som openModal() i index.html
     modalOppen = true;
     skrivLagring(NYCKEL_OPPNAD, NYASTE.id);
+    skrivLagring(NYCKEL_SETT, NYASTE.id);              // den lilla rutan behövs inte efter att fönstret visats
     if (badge && badge.parentNode) { badge.parentNode.removeChild(badge); }
+    satt_hash(true);
     stangModal.focus();
   }
 
@@ -118,6 +137,7 @@
     modal.style.display = 'none';
     document.body.style.overflow = 'auto';
     modalOppen = false;
+    if (ar_flash_hash()) { satt_hash(false); }
     if (fokusFore && fokusFore.focus) { fokusFore.focus(); }
   }
 
@@ -126,7 +146,7 @@
     var lankar = document.querySelector('.nav-links');
     if (!lankar) { return; }
     knapp = ny('a', null, '💡 Månadens flash');         // ".nav-bar a" i index.html ger samma utseende som övriga länkar
-    knapp.href = '#manadens-flash';
+    knapp.href = '#flash';                             // samma adress som direktlänken (högerklick > kopiera länk fungerar)
     knapp.setAttribute('role', 'button');
     if (lasLagring(NYCKEL_OPPNAD) !== NYASTE.id) {
       badge = ny('span', 'flash-ny', 'Ny');
@@ -182,9 +202,13 @@
     byggModal();
     byggKnapp();
     var tvinga = window.location.search.indexOf('flash=1') !== -1;       // ?flash=1 visar rutan igen
-    if (tvinga || lasLagring(NYCKEL_SETT) !== NYASTE.id) {
+    if (ar_flash_hash()) {
+      visa_modal();                                                       // UPPDATERING 2026-10-09: direktlänk #flash
+    } else if (tvinga || lasLagring(NYCKEL_SETT) !== NYASTE.id) {
       setTimeout(visa_toast, DROJSMAL);
     }
+    // Om adressen ändras till #flash medan sidan är öppen (t.ex. klick på en länk #flash) öppnas fönstret
+    window.addEventListener('hashchange', function () { if (ar_flash_hash()) { visa_modal(); } });
     // Escape: index.html stänger redan alla ".modal", men fokus ska också tillbaka dit besökaren var
     document.addEventListener('keydown', function (ev) {
       if (ev.key === 'Escape' && modalOppen) { dolj_modal(); }

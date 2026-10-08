@@ -286,7 +286,8 @@ Skicka inte mailet innan Kent har tittat på det. Notera i skillens logg när de
 
 #### 2k. Månadens flash på `index.html` (när fakturan är inlagd)
 `index.html` visar en kort nyhet i ett hörn när sidan öppnas (cirka 8 sekunder, en gång per besökare och nyhet).
-Den kan hämtas igen via knappen "Månadens flash" i menyn, där också tidigare månader finns. Nyheterna ligger i
+Den kan hämtas igen via knappen "Månadens flash" i menyn, där också tidigare månader finns. Direktlänken
+`https://kentlundgren.github.io/Bjerred-el/index.html#flash` öppnar fönstret med senaste flashen direkt (att skicka vidare). Nyheterna ligger i
 `manadens_flash_data.js` (UPPDATERING 2026-10-09: infört, första inlägget är september 2026).
 1. Lägg ett nytt inlägg **först** i listan `window.MANADENS_FLASH`. `id` är unikt och på formen `ÅÅÅÅ-MM`. Ett nytt `id`
    gör att besökare som redan sett förra månadens flash får se den nya, och "Ny"-märket tänds igen.
