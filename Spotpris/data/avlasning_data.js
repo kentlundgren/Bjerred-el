@@ -1,10 +1,10 @@
 // Skapad av kanslighet_avlasning.py
 window.AVLASNING = {
  "metadata": {
-  "gjord": "2026-10-07",
+  "gjord": "2026-10-08",
   "sokgrans_kwh": 4000,
   "dagar_tankta": 3,
-  "huvudmatare": "Kraftringens fakturor läser av huvudmätaren den 1:a varje månad (januari-augusti 2026)."
+  "huvudmatare": "Kraftringens fakturor läser av huvudmätaren den 1:a varje månad (januari-september 2026)."
  },
  "rader": [
   {
@@ -94,6 +94,17 @@ window.AVLASNING = {
    "dagar_som_kravs": 5.737481548768025,
    "vid_grans": false,
    "effekt_av_tre_dagar_ore": 0.605934471699382
+  },
+  {
+   "manad": "2026-09",
+   "fel_nu_ore": -3.753938348517053,
+   "bastu_kwh_per_dag": 336.7,
+   "varmvatten_kwh_per_dag": 42.9,
+   "kanslighet_ore_per_100kwh": 0.13440070310794283,
+   "kwh_som_kravs": 940,
+   "dagar_som_kravs": 2.791802791802792,
+   "vid_grans": false,
+   "effekt_av_tre_dagar_ore": 1.3575815020933306
   }
  ]
 };

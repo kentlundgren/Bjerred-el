@@ -15,6 +15,7 @@
 # Skriver data/avlasning_data.js (window.AVLASNING).
 #
 # UPPDATERING 2026-10-07: Första versionen.
+# UPPDATERING 2026-10-08: September 2026 tillagd (blindprovet omfattar nu juli-september).
 
 import datetime
 import json
@@ -22,7 +23,9 @@ import json
 import berakna_spotpris as b
 from forutsag_spotpris import p_av
 
-FACIT_JUL_AUG = {"2026-07": (21585, 8771, 1653), "2026-08": (21836, 8807, 1719)}     # huvud, bastu, varmvatten (debiteringsunderlag)
+# UPPDATERING 2026-10-08: september tillagd (huvud 21689, bastu 10101, varmvatten 1287 ur mätarställningarna i data/omanpassning_indata.json;
+# bad 11388 och restaurang 10301 stämmer med index.html). Juli och augusti är oförändrade.
+FACIT_JUL_AUG = {"2026-07": (21585, 8771, 1653), "2026-08": (21836, 8807, 1719), "2026-09": (21689, 10101, 1287)}     # huvud, bastu, varmvatten (debiteringsunderlag); namnet är historiskt, nu jul-sep
 SOK_GRANS_KWH = 4000                                                                    # sökintervall för delta: -4000..+4000 kWh
 TRE_DAGAR = 3
 
@@ -67,7 +70,7 @@ def main():
         r = rader[-1]
         print(f"{m}: fel {r['fel_nu_ore']:+.2f} | känslighet {kans:+.3f} öre/100 kWh | krävs {r['kwh_som_kravs']:+d} kWh = {r['dagar_som_kravs']:+.1f} dagar{' (vid sökgränsen)' if r['vid_grans'] else ''} | 3 dagar ger {r['effekt_av_tre_dagar_ore']:+.2f} öre/kWh")
     res = {"metadata": {"gjord": datetime.date.today().isoformat(), "sokgrans_kwh": SOK_GRANS_KWH, "dagar_tankta": TRE_DAGAR,
-                        "huvudmatare": "Kraftringens fakturor läser av huvudmätaren den 1:a varje månad (januari-augusti 2026)."}, "rader": rader}
+                        "huvudmatare": "Kraftringens fakturor läser av huvudmätaren den 1:a varje månad (januari-september 2026)."}, "rader": rader}
     with open("data/avlasning_data.js", "w", encoding="utf-8") as f:
         f.write("// Skapad av kanslighet_avlasning.py\nwindow.AVLASNING = " + json.dumps(res, ensure_ascii=False, indent=1) + ";\n")
 

@@ -1,7 +1,7 @@
 // Skapad av kanslighet_startpuls.py
 window.STARTPULS = {
  "metadata": {
-  "gjord": "2026-10-07",
+  "gjord": "2026-10-08",
   "aggregat_antal": 2,
   "aggregat_kw": 36.0,
   "text": "Efterhandsanalys. Primärkörningen är oförändrad."
@@ -12,28 +12,32 @@ window.STARTPULS = {
    "rms_anpassning": 1.3528777661548568,
    "storsta_anpassning": 2.545032615882384,
    "fel_jul": 3.0740282965188612,
-   "fel_aug": -3.388823851058433
+   "fel_aug": -3.388823851058433,
+   "fel_sep": -3.753938348517053
   },
   {
    "puls_kw": 36.0,
    "rms_anpassning": 1.480742905581056,
    "storsta_anpassning": 2.696586595788254,
    "fel_jul": 3.4428028745682724,
-   "fel_aug": -3.6263563783709287
+   "fel_aug": -3.6263563783709287,
+   "fel_sep": -4.563648792442038
   },
   {
    "puls_kw": 72.0,
    "rms_anpassning": 1.9647863326311568,
    "storsta_anpassning": 3.0865699274030973,
    "fel_jul": 4.128656349203467,
-   "fel_aug": -4.069688115525167
+   "fel_aug": -4.069688115525167,
+   "fel_sep": -6.363658932951054
   },
   {
    "puls_kw": 144.0,
    "rms_anpassning": 3.3654169923811366,
    "storsta_anpassning": 4.932461684315854,
    "fel_jul": 5.500363298473815,
-   "fel_aug": -4.9563515898336306
+   "fel_aug": -4.9563515898336306,
+   "fel_sep": -9.963679213969115
   }
  ],
  "omanpassning": [
@@ -46,7 +50,8 @@ window.STARTPULS = {
    "loo_storsta": 4.09489270550084,
    "antal_i_band": 7,
    "fel_jul": 3.0740282965188612,
-   "fel_aug": -3.388823851058433
+   "fel_aug": -3.388823851058433,
+   "fel_sep": -3.753938348517053
   },
   {
    "puls_kw": 36.0,
@@ -57,7 +62,8 @@ window.STARTPULS = {
    "loo_storsta": 4.8287972965980686,
    "antal_i_band": 2,
    "fel_jul": 3.4428028745682724,
-   "fel_aug": -3.6263563783709287
+   "fel_aug": -3.6263563783709287,
+   "fel_sep": -4.563648792442038
   },
   {
    "puls_kw": 72.0,
@@ -68,7 +74,8 @@ window.STARTPULS = {
    "loo_storsta": 5.245988999685423,
    "antal_i_band": 0,
    "fel_jul": 3.5630485610205795,
-   "fel_aug": -4.027188624413398
+   "fel_aug": -4.027188624413398,
+   "fel_sep": -5.881035156077289
   }
  ],
  "per_manad": [
@@ -135,6 +142,14 @@ window.STARTPULS = {
    "forskjutning": -0.6808642644667344,
    "fel_utan_puls": -3.388823851058433,
    "fel_med_puls": -4.069688115525167
+  },
+  {
+   "manad": "2026-09",
+   "bastu_snittpris": 130.88043578431356,
+   "pris_forsta_timmen": 96.85828333333333,
+   "forskjutning": -2.609720584434001,
+   "fel_utan_puls": -3.753938348517053,
+   "fel_med_puls": -6.363658932951054
   }
  ]
 };

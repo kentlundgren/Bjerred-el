@@ -21,6 +21,32 @@ Den **ersätter inte** de andra skillarna, den samlar dem:
 
 Projektfakta (dataformat, konstanter, länkar) finns i `CLAUDE.md`.
 
+## PÅMINNELSE: oktoberfakturan granskas extra noga (Kent, 2026-10-08)
+
+Kraftringens elhandelsavtal ("Rörligt kvartspris med bindningstid") gällde **t.o.m. 2026-09-30**. Kent vet inte vad som
+händer från 1 oktober och antar att leverantören fortfarande är Kraftringen, utan nytt avtal på plats. Oktoberfakturan
+(fakturadatum cirka 10 november 2026, avser oktober) ska därför läsas och kontrolleras **extra noga**, i två steg,
+innan något läggs in. **Säg detta till Kent så fort fakturan eller "ny månad" nämns, och stanna vid avvikelse.**
+
+Kontrollera i ordning:
+1. **Avtalsraderna** på sida 1–2: elnätsavtal, elhandelsavtal, "Gäller t.o.m." för elhandeln, avtalsform. Ny
+   bindningstid? Annat avtalsnamn? Ny leverantör (Eneas eller annan) på fakturan?
+2. **Alla prisrader mot septemberfakturan** (3199122106): spotpris, rörliga kostnader (sep 4,80 öre/kWh), fast påslag
+   (1,70), månadsavgift elhandel (0 kr), elöverföring (sep 22,39 öre/kWh), energiskatt (36,00 öre/kWh), fast nätavgift
+   (7 980 kr/mån). Avviker något ska det anges och förklaras, inte bara läggas in.
+3. **Räkna om fakturan med kod** (inte för hand): kWh × (öre) + fasta avgifter, moms 25 %, och att summa exkl. moms +
+   moms = totalbeloppet (öresutjämning högst ±1 kr). Jämför med fakturans egna delsummor.
+4. **kWh och mätarställningar:** avläsning 2026-10-01 ska vara 408 737,96 (septemberfakturans slutställning) och
+   användningen ska stämma med elmätaren i `index.html` (±1 kWh). Mätarnummer och anläggnings-id ska vara samma
+   (3838826777640425, 735 999 133 000 151 451).
+5. **Mottagare och uppgifter:** septemberfakturan hade ändrad mottagare ("Föreningen Bjerreds Saltsjöbad, Kerstin Gosse,
+   Apotekarevägen 50") mot juli och augusti ("Bjärreds Saltsjöbad, Box 22"). Notera om den ändras igen. Kontrollera även
+   fakturadatum, förfallodatum och att beloppet inte är dubbelfakturerat.
+6. **Andra steget:** läs PDF:en en gång till som text (inte bara med kod) och jämför varje belopp med steg 3. Skriv
+   det som inte kunde kontrolleras som "inte kontrollerat".
+7. **Om villkoren har ändrats:** stanna och fråga Kent innan Spotpris tabell 2/3, intern debitering, Eneas-jämförelsen
+   och prognosernas kostnad uppdateras. Alla bygger på dagens villkor (se steg 2a ovan).
+
 ## Så är den här filen tänkt att användas
 
 - **Börja alltid med att läsa "Läge per månad" nedan.** Då syns vilka steg som redan är gjorda
@@ -172,8 +198,8 @@ fortsätta göra. Månader efter juni visas ändå under tabell 1 i en egen tabe
 #### 2g. Källistor och fakturalänkar på sidorna (kontrollera efter 2c–2f)
 Fakturalänkarna ska finnas i källistan på **alla** sidor som använder fakturan:
 - `Eneas_Samkop_av_El/enea_jamforelse.html` (klart jul–sep, steg 2f) och `intern_debitering.html` (klart, steg 2e).
-- `Spotpris/spotpris.html`, källan "Kraftringen (2026) E-faktura … januari–juni 2026": **saknar fakturorna för
-  juli–september** (konstaterat 2026-10-08, inte åtgärdat). Fakturornas spotpris och rörliga kostnader används ju i tabell 3.
+- `Spotpris/spotpris.html`, källan "Kraftringen (2026) E-faktura … januari–september 2026": fakturorna för
+  juli–september inlagda 2026-10-08 (de används i tabell 3). **Nästa månad: lägg till fakturan här också.**
 - `Eneas_Samkop_av_El/kvalitetsgranskning.html` gäller bara januari–juni och ska inte ändras.
 
 ### Steg 3 – Avslut varje månad
@@ -198,7 +224,8 @@ Förklaring: ✓ klart och verifierat, ✗ inte gjort, – gäller inte. Datum =
 | 2d. Intern debitering (`STANDARD`) | ✓ 2026-10-08 | ✓ 2026-10-08 | ✓ 2026-10-08 |
 | 2e. Källlänkar och version (intern debitering) | ✓ 2026-10-08 (v1.4) | ✓ 2026-10-08 (v1.4) | ✓ 2026-10-08 (v1.4) |
 | 2f. Eneas jämförelsesida, tabell 1 (forts.) | ✓ 2026-10-08 (v2.3) | ✓ 2026-10-08 (v2.3) | ✓ 2026-10-08 (v2.3) |
-| 2g. Fakturalänkar i källistan på Spotpris | ✗ | ✗ | ✗ |
+| 2g. Fakturalänkar i källistan på Spotpris | ✓ 2026-10-08 | ✓ 2026-10-08 | ✓ 2026-10-08 |
+| 2h. Känslighetsanalyser (`kanslighet_*.py`, tabell 9 och 10, avläsning) med månaden | ✓ 2026-10-08 | ✓ 2026-10-08 | ✓ 2026-10-08 |
 | 0. Prognos i `prognoser.md`/`prognoser.js` | ✗ (ingen loggad) | ✓ (avräknad 2026-09-01) | ✗ (ingen loggad, fråga Kent) |
 
 Januari–juni 2026 lades in vid bygget av Eneas-sidorna och Spotpris-sidan (2026-10-06 och 2026-10-07)
@@ -249,9 +276,16 @@ Stryk eller flytta upp till rutinen när det är avgjort.
   Juli–september ligger bara i `facit_jul_sep.json` (tabell 3, 4 och 6).
 - **Oktober och senare på Spotpris:** blindprovet gällde juli–september. Det är inte bestämt om nya
   månader ska in i samma tabell 3, i en ny tabell, eller vänta på omanpassningen. Fråga Kent.
-- **Texter på Spotpris som fortfarande säger "juli och augusti":** tabell 9 och 10, diagram 1,
-  blindprovstexten och `startpuls_data.js` / `avlasning_data.js` (skapas av `kanslighet_*.py`).
-  Körs inte om automatiskt när tabell 3 får en ny månad.
+- **Känslighetsanalyserna (`kanslighet_avlasning.py`, `kanslighet_startpuls.py`) är hårdkodade på månader.**
+  September lades in 2026-10-08 (tabell 9 och 10, avläsningsanalysen, baslastanalysen; Spotpris v1.2).
+  Körs inte om automatiskt när tabell 3 får en ny månad. För oktober: lägg månadens mätardifferenser
+  (huvud, bastu, varmvatten) i `FACIT_JUL_AUG` i båda skripten (namnet är historiskt, det är jul–sep och senare), kör dem,
+  lägg en kolumn i tabell 9 och 10 (`spotpris.html`, `spotpris.js`) och läs igenom texterna som nämner
+  "juli, augusti och september". Kontrollera att gamla månader är oförändrade i de nya datafilerna.
+  **Obs, `forutsag_spotpris.py` ska inte köras om:** det skriver över blindprovets frusna förutsägelse.
+- **September förändrar bilden för avläsningsdagen:** där räcker 2,8 dagars felläsning av bastun för att
+  nollställa felet (−3,75). Sidan säger det nu som ett undantag. Det är en hypotes att kontrollera mot det
+  verkliga avläsningsdatumet, inte ett resultat.
 - **Eneas jämförelsesida** (`enea_jamforelse.*`): jämförelsen med Eneas (tabell 2) gäller fortfarande bara
   januari–juni. Juli–september visas sedan 2026-10-08 under tabell 1 (se steg 2f), utan att ingå i jämförelsen.
 - **Granskning:** juli–september på intern debitering är inte tvåstegsgranskade.

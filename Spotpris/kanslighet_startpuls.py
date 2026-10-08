@@ -16,6 +16,7 @@
 # Körning (från mappen Spotpris/):  python kanslighet_startpuls.py
 #
 # UPPDATERING 2026-10-07: Första versionen. Utökad samma dag med omanpassning och per_manad.
+# UPPDATERING 2026-10-08: September 2026 tillagd (fel_sep, och en rad till i per_manad). Övriga värden är oförändrade.
 
 import json
 import math
@@ -27,7 +28,8 @@ from forutsag_spotpris import p_av
 AGGREGAT_ANTAL = 2
 AGGREGAT_KW = 36.0
 PULSER_KW = [0.0, AGGREGAT_KW, AGGREGAT_KW * AGGREGAT_ANTAL, 144.0]
-FACIT_JUL_AUG = {"2026-07": (21585, 8771, 1653), "2026-08": (21836, 8807, 1719)}     # huvud, bastu, varmvatten (debiteringsunderlag)
+# UPPDATERING 2026-10-08: september tillagd (huvud 21689, bastu 10101, varmvatten 1287, se data/omanpassning_indata.json). Juli och augusti oförändrade.
+FACIT_JUL_AUG = {"2026-07": (21585, 8771, 1653), "2026-08": (21836, 8807, 1719), "2026-09": (21689, 10101, 1287)}     # huvud, bastu, varmvatten; namnet är historiskt, nu jul-sep
 NPULS = 4                                                                               # pulsen varar en timme = 4 kvartar
 
 _aktuell = {"mn": None, "puls": 0.0}
@@ -79,8 +81,8 @@ def main():
         fel = {m: forbrukning_med_puls(mn, modell, p)["varde"] - mn.spot_ore for m, mn in alla.items()}
         anp = [fel[m] for m in sorted(fel) if m <= "2026-06"]
         rader.append({"puls_kw": pkw, "rms_anpassning": rms(anp), "storsta_anpassning": max(abs(x) for x in anp),
-                      "fel_jul": fel["2026-07"], "fel_aug": fel["2026-08"]})
-        print(f"[fixerad U1] puls {pkw:5.0f} kW: RMS jan-jun {rader[-1]['rms_anpassning']:.2f}, jul {fel['2026-07']:+.2f}, aug {fel['2026-08']:+.2f}")
+                      "fel_jul": fel["2026-07"], "fel_aug": fel["2026-08"], "fel_sep": fel["2026-09"]})
+        print(f"[fixerad U1] puls {pkw:5.0f} kW: RMS jan-jun {rader[-1]['rms_anpassning']:.2f}, jul {fel['2026-07']:+.2f}, aug {fel['2026-08']:+.2f}, sep {fel['2026-09']:+.2f}")
 
     # 2. hela sökningen körs om för varje puls
     omanp = []
@@ -92,8 +94,8 @@ def main():
         fel = {m: forbrukning_med_puls(mn, modell, v["p"])["varde"] - mn.spot_ore for m, mn in blind.items()}
         omanp.append({"puls_kw": pkw, "rms": v["rms"], "storsta": v["storsta"], "V_kw": v["p"]["V"], "varm": v["p"]["varm"],
                       "loo_storsta": loo["storsta_absolutfel"], "antal_i_band": sum(1 for g in giltiga if g["rms"] <= 1.5),
-                      "fel_jul": fel["2026-07"], "fel_aug": fel["2026-08"]})
-        print(f"[omanpassad] puls {pkw:5.0f} kW: bästa RMS {v['rms']:.2f}, LOO {loo['storsta_absolutfel']:.2f}, band {omanp[-1]['antal_i_band']}, jul/aug {fel['2026-07']:+.2f}/{fel['2026-08']:+.2f}")
+                      "fel_jul": fel["2026-07"], "fel_aug": fel["2026-08"], "fel_sep": fel["2026-09"]})
+        print(f"[omanpassad] puls {pkw:5.0f} kW: bästa RMS {v['rms']:.2f}, LOO {loo['storsta_absolutfel']:.2f}, band {omanp[-1]['antal_i_band']}, jul/aug/sep {fel['2026-07']:+.2f}/{fel['2026-08']:+.2f}/{fel['2026-09']:+.2f}")
 
     # 3. per månad: pris kl. 05-06 mot bastuns snittpris, och hur mycket 72 kW-pulsen flyttar modellvärdet (U1 fixerad)
     per = []

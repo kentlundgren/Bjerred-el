@@ -66,6 +66,11 @@ version, samt en logg över vad som är gjort per månad och vad som återstår)
 säger "ny månad" eller bifogar en Kraftringen-faktura eller ett debiteringsunderlag. Den är en
 levande minnesfil: uppdatera dess logg när något läggs in.
 
+**PÅMINNELSE (Kent, 2026-10-08): oktoberfakturan granskas extra noga.** Elhandelsavtalet med Kraftringen
+gällde t.o.m. 2026-09-30 och Kent vet inte vad som gäller från 1 oktober. När oktoberfakturan kommer (cirka
+10 november 2026), eller när Kent säger "ny månad": påminn honom, läs avtalsraderna och alla priser mot
+septemberfakturan, och stanna vid avvikelser. Checklistan finns överst i skillen `bjerred-manadsrutin`.
+
 **Viktigt:** tills fakturan finns ska `cost` vara `null`, inte `0`. kWh-LÅT
 inkluderar månaden så fort förbrukningen är fastställd; kostnads-LÅT och
 genomsnittspriset väntar tills `cost != null` (så att årskostnaden inte blir 0 kr
