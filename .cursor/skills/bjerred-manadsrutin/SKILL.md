@@ -284,6 +284,20 @@ Saknas skillen på datorn (t.ex. i en ny kopia av repot): fråga Kent om mallen,
 
 Skicka inte mailet innan Kent har tittat på det. Notera i skillens logg när det skickats.
 
+#### 2k. Månadens flash på `index.html` (när fakturan är inlagd)
+`index.html` visar en kort nyhet i ett hörn när sidan öppnas (cirka 8 sekunder, en gång per besökare och nyhet).
+Den kan hämtas igen via knappen "Månadens flash" i menyn, där också tidigare månader finns. Nyheterna ligger i
+`manadens_flash_data.js` (UPPDATERING 2026-10-09: infört, första inlägget är september 2026).
+1. Lägg ett nytt inlägg **först** i listan `window.MANADENS_FLASH`. `id` är unikt och på formen `ÅÅÅÅ-MM`. Ett nytt `id`
+   gör att besökare som redan sett förra månadens flash får se den nya, och "Ny"-märket tänds igen.
+2. Skriv utkastet av samma kontrollerade siffror som mailet i 2j (kWh, kostnad, spotpris). Rubrik som säger vad som hände,
+   en nyckelrad (visas i den korta rutan), två korta stycken, en "Bra att veta"-ruta som lär ut ett begrepp, och en länk.
+3. Texten är offentlig och läses av alla i föreningen: följ regeln `offentlig-text`, inga personnamn och ingen Eneas-pris
+   (Eneas hör bara hemma på jämförelsesidorna). Skriv inga orsaker som inte går att belägga.
+4. Visa utkastet för Kent innan det läggs in. Kontrollräkna varje siffra mot `data.md` och `facit_jul_sep.json`.
+5. Testa på lokal server med `?flash=1` (tvingar fram rutan) och rensa `localStorage` (`bjerredFlashSett`, `bjerredFlashOppnad`)
+   efteråt. Stoppa servern.
+
 ### Steg 3 – Avslut varje månad
 1. Verifiera alla berörda sidor på en lokal server (Spotpris, intern debitering, `index.html`).
 2. Stoppa servern. Ta bort `__pycache__`.
@@ -309,6 +323,7 @@ Förklaring: ✓ klart och verifierat, ✗ inte gjort, – gäller inte. Datum =
 | 1b. Del A: M4b-gissning nedskriven före fakturan (från oktober: `forutsag_manad.py`) | ✓ 2026-10-07 (blindprov) | ✓ 2026-10-07 (blindprov) | ✓ 2026-10-07 (blindprov) |
 | 2i. Del B: analys av hur väl M4b gissade | ✓ 2026-10-07 | ✓ 2026-10-07 | ✓ 2026-10-08 |
 | 2j. Mail till ekonomiansvarig (lokal skill `bjerred-ekonommail`) | okänt (före loggen) | ✓ (skickat före skillen) | ✓ 2026-10-09 (längre variant) |
+| 2k. Månadens flash på `index.html` (`manadens_flash_data.js`) | – | – | ✓ 2026-10-09 (första inlägget, testat i webbläsare) |
 | 2g. Fakturalänkar i källistan på Spotpris | ✓ 2026-10-08 | ✓ 2026-10-08 | ✓ 2026-10-08 |
 | 2h. Känslighetsanalyser (`kanslighet_*.py`, tabell 9 och 10, avläsning) med månaden | ✓ 2026-10-08 | ✓ 2026-10-08 | ✓ 2026-10-08 |
 | 0. Prognos i `prognoser.md`/`prognoser.js` | ✗ (ingen loggad) | ✓ (avräknad 2026-09-01) | ✗ (ingen loggad, fråga Kent) |

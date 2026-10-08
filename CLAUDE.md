@@ -23,6 +23,8 @@ Alla filer är fristående – öppnas direkt i webbläsaren.
 | `prognoser.css` | Styling för prognossidan. |
 | `prognoser.js` | Logik + inline `prognosData` för prognossidan. |
 | `prognoser.md` | **Backup och referens** – logg över prognoser, utfall och avvikelser. |
+| `manadens_flash_data.js` | Månadens flash: nyheterna (nyast först). Ett nytt inlägg per månad, se steg 2k i skillen `bjerred-manadsrutin`. |
+| `manadens_flash.js` / `manadens_flash.css` | Logik och stil för flashen (ruta i hörnet ~8 s, menyknapp, arkiv). `?flash=1` visar rutan igen. |
 
 ## Prognosuppföljning
 
