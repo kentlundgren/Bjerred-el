@@ -88,9 +88,10 @@ Kent ser månaden som två deluppgifter, och steg 0–2 nedan hör ihop så här
 Steg 0 (Kents egen kWh-prognos före månadsskiftet, cirka den 27:e) är ett tredje, tidigare tillfälle och en annan sak:
 den gäller kWh, inte priset. Ordningen i tid är alltså 0 → 1 + 1b → 2.
 
-**Status på verktygen:** del B finns i stort sett (steg 2a–2h, och Spotpris räknar fram felen i tabell 3 och 4 när
-fakturans värden fylls i). Del A finns som *rutin* sedan blindprovet för juli–september, men skriptet är **inte
-byggt för nya månader**: `forutsag_spotpris.py` har juli–september hårdkodat. Se steg 1b.
+**Verktyg:** båda delarna hanteras av ett skript som körs **varje månad**: `Spotpris/forutsag_manad.py`
+(byggt 2026-10-08). Del A: `python forutsag_manad.py ÅÅÅÅ-MM --huvud … --bastu … --varm …`. Del B: samma skript med
+`--facit`. Se steg 1b och 2i. (`forutsag_spotpris.py` är det gamla engångsskriptet för blindprovet juli–september och
+ska inte köras om.) Spotpris-sidan (`spotpris.html`) visar än så länge bara juli–september, inte de nya månaderna.
 
 ### Steg 0 – Före månadsskiftet: prognos
 Skillen `bjerred-elprognos`, läge 1. Inget annat i den här filen berörs.
@@ -99,28 +100,37 @@ Skillen `bjerred-elprognos`, läge 1. Inget annat i den här filen berörs.
 Skillen `bjerred-elprognos`, läge 2a, som i sin tur följer `bjerred-manadsdata`.
 `cost` och `costPerKwh` är `null` (inte 0) tills fakturan finns.
 
-### Steg 1b – Del A: gissa fakturans pris med M4b, före fakturan (**skript ej byggt för nya månader**)
+### Steg 1b – Del A: gissa fakturan med M4b, före fakturan (skript: `Spotpris/forutsag_manad.py`)
 Görs de första dagarna i nästa månad, när steg 1 är klart och **innan fakturan har lästs**. Det som gör det ett
-blindprov är att förutsägelsen är nedskriven och daterad före facit. Läs aldrig fakturan först.
+blindprov är att gissningen är nedskriven och daterad före facit. Läs aldrig fakturan först. **Körs varje månad.**
 
-Underlag som behövs:
-- Månadens spotpriser per kvart: `hamta_spotpris.py` → `data/spot_SE4_ÅÅÅÅ-MM.json` (hela månaden, t.o.m. sista dygnet).
-- Månadens kWh: huvudmätare, och uppdelningen i bastu, varmvatten och rest från mätarställningarna
-  (hämtas för månadsskiftet, samma som i steg 1/2d). Saknas uppdelningen antas varmvattenandelen (Jan–Jun-snitt 23 %,
-  men verkligt var den 11–16 % i jul–sep, så använd verkliga mätare om de finns).
-- Antagandena ska vara **frusna**: ver. 1 (`data/m4b_resultat.json`, U1) och ver. 2 (`data/omanpassning_resultat.json`).
-  Beslutet i `data/omanpassning_kriterier.json` är att oktober förutsägs med **båda** versionerna.
+Gör så här (PowerShell, från mappen `Spotpris/`, **decimaltal med punkt**, annars kan PowerShell tappa siffror):
+1. `python hamta_spotpris.py ÅÅÅÅ-MM` (hela månaden måste finnas, t.o.m. sista dygnet).
+2. `python forutsag_manad.py ÅÅÅÅ-MM --huvud 21000 --bastu 8800 --varm 1500`
+   Mätarställningarna (bastu = herr + dam, varmvatten) är bäst. Saknas de: `--bad 10300` (bastu + varmvatten) i stället,
+   då antas andelen varmvatten ur tidigare månader (varningen står i filen). Fakturans villkor, om Kent känner till andra:
+   `--paslag`, `--skatt`, `--fast`.
+3. Läs resultatet och lämna det som det är. Skriptet skriver `data/forutsagelse_ÅÅÅÅ-MM.json` och `.md` (daterade) och vägrar
+   skriva över dem eller köra om månaden har facit (`--retrospektivt` och `--skriv-over` finns men markeras/flyttar den gamla).
+4. Committa gissningen **före** fakturan öppnas (Kent säger till när), så att datumet går att styrka.
 
-Vad som förutsägs och skrivs ned (föreslaget, Kent har inte valt ännu):
-1. M4b-värde och spann för **spotpriset** (öre/kWh), per version.
-2. **Allt elpris** = förutsagt spot + rörliga kostnader (snitt/spann av tidigare månader, ingen modell) + 1,70 påslag.
-3. Eventuellt **fakturabelopp** i kr: kWh × (allt elpris + föregående månads elöverföring + 36,00 energiskatt)/100 + fast nätavgift,
-   × 1,25. Visar vad "gissningen" blir i kronor, men nätavgiften är en extra osäkerhet.
+**Vad som gissas** (båda modellversionerna sida vid sida, punkt och spann):
+1. **Spotpriset** (öre/kWh), M4b. Jämförs också med M1 och M2.
+2. **Allt elpris** (öre/kWh) = spot + rörliga kostnader + påslag. Rörliga kostnader är ingen modell: kWh-vägt snitt och spann av tidigare månader.
+3. **Elöverföring** (rörlig nätavgift, öre/kWh) ur sambandet `a + b × allt elpris`, anpassat på tidigare månader
+   (januari–september: `15,66 + 0,0503 × allt elpris`, största avvikelse 0,06 öre). Ett empiriskt samband i Kents data,
+   inte kontrollerat mot Kraftringens prislista.
+4. **Fakturabeloppet** (kr inkl moms) = (fast nätavgift + kWh × (allt elpris + elöverföring + skatt)/100) × 1,25.
+   Formeln återger Kents fakturor för januari–september inom 1 kr när alla poster är kända.
 
-Spara förutsägelsen i en daterad fil (mönster: `data/forutsagelse_jul_sep.json`, men med månad och version) och
-ändra **inte** de frusna antagandena efteråt. **Bygg skriptet innan första användningen** (generalisera
-`forutsag_spotpris.py` så att månader och version är parametrar, utan att skriva över `forutsagelse_jul_sep.json`
-eller `forutsagelse_data.js`).
+**Vad ver. 1 och ver. 2 är:** båda är M4b-modellen med olika antaganden om när bastun öppnar.
+Ver. 1 (referensen) är anpassad på januari–juni: bastun öppnar 06.00. Ver. 2 (försök) är anpassad på januari–september: bastun öppnar 07.30.
+Allt annat är lika (förvärmning 1 h, restaurangens förberedelse 2 h, varmvatten dygnet runt, jämn baslast 13 kW).
+Oktober förutsägs med båda (`data/omanpassning_kriterier.json`); bedömningen görs först efter oktober, november och december.
+
+**Osäkra antaganden, redan flaggade av skriptet:** påslag 1,70, skatt 36,00 och fast nätavgift antas oförändrade från senaste fakturan,
+men elhandelsavtalet gällde bara t.o.m. 2026-09-30. Därför kan gissningen för oktober bli fel av skäl som M4b inte
+rår för. Skriv det i analysen (steg 2i) i stället för att skylla på modellen.
 
 ### Steg 2 – När fakturan har kommit (Del B)
 Gör 2a först, eftersom de andra stegen hämtar siffror därifrån.
@@ -165,7 +175,8 @@ mot spotpriset) är något annat, se "Ännu inte gjort / öppna beslut".
 1. Lägg till månaden i `Spotpris/data/facit_jul_sep.json` under `manader`, med nyckeln `"ÅÅÅÅ-MM"`:
    `{"spot_ore": 128.09, "rorliga_ore": 4.80, "paslag_ore": 1.70, "kwh_faktura": 21688.74}`.
    Uppdatera också `metadata.kalla` (vilken faktura, och att den lästes efter förutsägelsen).
-2. Kör om `forutsag_spotpris.py` **från mappen `Spotpris/`** (`python forutsag_spotpris.py`).
+2. (Gäller bara blindprovet juli–september och dess sida; för oktober och senare används `forutsag_manad.py`, steg 1b och 2i,
+   och punkt 2–3 här hoppas över.) Kör om `forutsag_spotpris.py` **från mappen `Spotpris/`** (`python forutsag_spotpris.py`).
    Det skriver om `data/forutsagelse_data.js` och `data/forutsagelse_jul_sep.json`. Förutsägelserna ska
    vara **oförändrade** (kontrollera med `git diff`); det som tillkommer är `facit`-blocket och en rad i `analys_v`.
 3. **Skriptet stämplar om `"gjord"` till dagens datum.** Sätt tillbaka till datumet förutsägelsen
@@ -242,15 +253,23 @@ Fakturalänkarna ska finnas i källistan på **alla** sidor som använder faktur
 - `Eneas_Samkop_av_El/kvalitetsgranskning.html` gäller bara januari–juni och ska inte ändras.
 
 #### 2i. Analys: hur väl gissade M4b? (Del B, direkt efter att fakturan lagts in)
-Målet är en kort, ärlig beskrivning av hur förutsägelsen från steg 1b stämde med fakturan. Gör så här:
-1. Fakturans spotpris och rörliga kostnader in i Spotpris tabell 3 (steg 2c). Felen per månad räknas på sidan.
-2. Jämför mot den **nedskrivna** förutsägelsen (steg 1b), inte mot en ny körning: fel (modell − faktura) för ver. 1 och ver. 2,
-   om fakturan låg inom spannet, tecknet på felet, och hur det står sig mot M1 och M2.
-3. Uppdatera "Blindprovet: hur gick det" på `spotpris.html` (numera räknas mycket ur datan) och de statiska texter som
+Målet är en kort, ärlig beskrivning av hur gissningen från steg 1b stämde med fakturan. Gör så här:
+1. Kör (PowerShell, `Spotpris/`, decimaltal med punkt):
+   `python forutsag_manad.py ÅÅÅÅ-MM --facit --spot 95.12 --rorliga 4.80 --natoverf 20.45 --fast 7980 --faktura 51234 --kwh-faktura 21000.12`
+   Värdena kommer från fakturan (steg 2a). Skriptet läser den **frusna** gissningen, skriver `data/utfall_ÅÅÅÅ-MM.json` och `.md`
+   (gissat, facit, fel och om fakturan låg inom spannet, för spot, allt elpris, elöverföring och fakturabelopp, båda versionerna)
+   och kontrollräknar fakturan ur posterna. Stor avvikelse i kontrollräkningen betyder att en post ändrats (t.ex. nytt påslag).
+   Utfallsfilen används sedan som underlag för nästa månads rörliga kostnader.
+2. Jämför mot den **nedskrivna** gissningen, inte mot en ny körning: tecknet på felet, om fakturan låg inom spannet,
+   och hur det står sig mot M1 och M2. Skilj på fel som beror på M4b (spotpriset) och fel som beror på antaganden om
+   avtal och nätavgift (allt elpris, elöverföring, fakturabelopp).
+3. Spotpris-sidans tabell 3 (steg 2c) fylls i som förut med fakturans värden, om månaden ska visas där.
+4. Uppdatera "Blindprovet: hur gick det" på `spotpris.html` (numera räknas mycket ur datan) och de statiska texter som
    räknar månader (se "Ännu inte gjort": känslighetsanalyserna, steg 2h).
-4. **Bedöm inte efter en enda månad.** Kriterierna i `data/omanpassning_kriterier.json` säger att ver. 1 och ver. 2 först
+5. **Bedöm inte efter en enda månad.** Kriterierna i `data/omanpassning_kriterier.json` säger att ver. 1 och ver. 2 först
    jämförs efter oktober, november och december. Skriv "en månad säger lite" och peka på antalet månader.
-5. Skriv det som inte kunde kontrolleras som "inte kontrollerat".
+6. Skriv det som inte kunde kontrolleras som "inte kontrollerat".
+7. Lägg månadens nyckeltal i loggen nedan (rad 1b och 2i) och ta bort `__pycache__`.
 
 ### Steg 3 – Avslut varje månad
 1. Verifiera alla berörda sidor på en lokal server (Spotpris, intern debitering, `index.html`).
@@ -274,7 +293,7 @@ Förklaring: ✓ klart och verifierat, ✗ inte gjort, – gäller inte. Datum =
 | 2d. Intern debitering (`STANDARD`) | ✓ 2026-10-08 | ✓ 2026-10-08 | ✓ 2026-10-08 |
 | 2e. Källlänkar och version (intern debitering) | ✓ 2026-10-08 (v1.4) | ✓ 2026-10-08 (v1.4) | ✓ 2026-10-08 (v1.4) |
 | 2f. Eneas jämförelsesida, tabell 1 (forts.) | ✓ 2026-10-08 (v2.3) | ✓ 2026-10-08 (v2.3) | ✓ 2026-10-08 (v2.3) |
-| 1b. Del A: M4b-förutsägelse nedskriven före fakturan | ✓ 2026-10-07 (blindprov) | ✓ 2026-10-07 (blindprov) | ✓ 2026-10-07 (blindprov) |
+| 1b. Del A: M4b-gissning nedskriven före fakturan (från oktober: `forutsag_manad.py`) | ✓ 2026-10-07 (blindprov) | ✓ 2026-10-07 (blindprov) | ✓ 2026-10-07 (blindprov) |
 | 2i. Del B: analys av hur väl M4b gissade | ✓ 2026-10-07 | ✓ 2026-10-07 | ✓ 2026-10-08 |
 | 2g. Fakturalänkar i källistan på Spotpris | ✓ 2026-10-08 | ✓ 2026-10-08 | ✓ 2026-10-08 |
 | 2h. Känslighetsanalyser (`kanslighet_*.py`, tabell 9 och 10, avläsning) med månaden | ✓ 2026-10-08 | ✓ 2026-10-08 | ✓ 2026-10-08 |
@@ -313,11 +332,15 @@ Stryk eller flytta upp till rutinen när det är avgjort.
   (största fel ≤ 3,0) missades med 3,23 i augusti. **Ver. 1 är fortsatt referens.** Flytta *inte*
   juli–september till `kraftringen.json` utan ett nytt beslut av Kent: det skulle ändra tabell 1, 2, 4 och 6
   och göra blindprovet obrukbart.
-- **Oktober: förutsägelse med både ver. 1 och ver. 2, före fakturan.** Det är bestämt i
-  `data/omanpassning_kriterier.json` (beslutsregeln), men **inte byggt**: `forutsag_spotpris.py` har
-  juli–september hårdkodat och stöder bara ver. 1. Bygg ut det (eller ett nytt skript) innan oktoberfakturan
-  läses, skriv ned förutsägelsen med datum, och bedöm först efter oktober, november och december
+- **Oktober: gissning med både ver. 1 och ver. 2, före fakturan.** Bestämt i `data/omanpassning_kriterier.json`
+  (beslutsregeln) och **byggt 2026-10-08**: `Spotpris/forutsag_manad.py` (steg 1b och 2i). Provkört bakåt på september
+  (värdena för M4b stämde med `omanpassning_resultat.json`: ver. 1 124,34 och ver. 2 125,48 öre/kWh, kontrollräkningen av fakturan −0,34 kr).
+  Det har **inte** körts på oktober, eftersom oktobers spotfil och kWh saknas. Bedöm först efter oktober, november och december
   (tre månader). En månad räcker inte. Samma kriterier-före-körning-princip gäller för varje ny omanpassning.
+- **Gissningarna syns inte på Spotpris-sidan än.** De ligger som filer i `data/forutsagelse_*` och `data/utfall_*`
+  (json och md). Om Kent vill visa dem på sidan (t.ex. en tabell "Gissning mot facit, per månad") är det ett separat uppdrag.
+- **Skriptet kan ha en oprövad kant:** `--bad` (uppdelningen antagen) är provkört bara indirekt. Prova det en gång på en gammal månad
+  med `--retrospektivt --utmapp <tillfällig mapp>` innan det behövs på riktigt.
 - **Fråga till Kent (underlag saknas):** när började bastun öppna 07.30? Om det kan beläggas kan öppettiden
   anges per månad i stället för att anpassas (se `omanpassning.html`, "Tolkning").
 - **Nya månader och omanpassningssidan:** `omanpassning.html` visar Jan–Sep. När fler månader kommit och
