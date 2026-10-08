@@ -3,7 +3,8 @@
 # mellan plus och minus från månad till månad?
 #
 # Tanken (Kent, 2026-10-07): om en mätare läses av den 1:a en månad och den 3:e nästa månad hamnar några dagars kWh i fel månad. Månaden före får
-# för lite och månaden efter för mycket. Det syns som svängningar mellan månaderna, till exempel i fördelningen bad/restaurang i elöversikten.
+# för mycket (de första dagarna av nästa månad räknas med) och månaden efter för lite (den börjar några dagar för sent).
+# UPPDATERING 2026-10-09: rättat, det stod tvärtom. Det syns som svängningar mellan månaderna, till exempel i fördelningen bad/restaurang i elöversikten.
 #
 # Beräkning, med antaganden U1 från januari-juni fixa: för varje månad flyttas delta kWh från restposten ("restaurang") till bastun, och vi
 # tar reda på hur många kWh som hade behövts för att modellens fel ska bli noll. Delat med bastuns kWh per dag blir det ett antal dagar.

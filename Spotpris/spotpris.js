@@ -15,6 +15,7 @@
   UPPDATERING 2026-10-08: Diagram 2 och tabell 7 visar juli–september som vanliga månader (heldragna linjer, ingen "blindprov"-märkning,
   alltid med, nio färger), eftersom diagrammet visar verkliga spotpriser och inte modellens gissning. Version 1.3.
   UPPDATERING 2026-10-08: Tabell 11 har juli, augusti och september som rader och en tredje kolumn med blindprovets fel. Version 1.4.
+  UPPDATERING 2026-10-09: texten under avläsningsanalysen hade "för lite/för mycket" tvärtom (månaden före får för mycket, månaden efter för lite). Rättat, versionen oförändrad.
 */
 (function () {
   'use strict';
@@ -725,7 +726,7 @@
       'Den förklarar inte varför felen i spotpriset byter tecken i de flesta månader. ' +
       (rimliga.length ? 'Undantaget är ' + rimliga.join(' och ') + ': där räcker en felläsning på högst tre dagar för att nollställa felet, så för den månaden kan avläsningsdagen inte uteslutas. ' : '') +
       'Förklaringen för de övriga ligger troligare i att modellen följer prisformen över dygnet (skillnaden mellan dagtidspriset och dygnssnittet) för svagt, se <a href="#Blindprov">analysen av blindprovet</a>. Det är en tolkning som bygger på tre månader och inget bevis.</p></div>' +
-      '<p>Idén: om bastu- och varmvattenmätarna inte läses av exakt vid månadsskiftet, utan till exempel den 2:a eller 3:e, hamnar några dagars kWh i fel månad. Månaden före får då för lite och månaden efter för mycket, och det kan se ut som svängningar. ' +
+      '<p>Idén: om bastu- och varmvattenmätarna inte läses av exakt vid månadsskiftet, utan till exempel den 2:a eller 3:e, hamnar några dagars kWh i fel månad. Månaden före får då för mycket (den får med de första dagarna av nästa månad) och månaden efter för lite (den börjar några dagar för sent), och det kan se ut som svängningar. ' +
       'Så ser det ut i fördelningen mellan bad och restaurang i elöversikten. Därför har jag prövat om det också kan förklara att modellens fel växlar mellan plus och minus.</p>' +
       '<p><strong>Huvudmätaren är inte ett problem:</strong> Kraftringens fakturor läser av den den 1:a varje månad (kontrollerat på alla ' + A.rader.length + ' fakturor, januari–september), så månadens totala kWh är exakt en kalendermånad. Det som kan vara fel är uppdelningen i bastu, varmvatten och rest, eftersom de mätarna läses av manuellt och avläsningsdagen inte är känd (underlagen visar bara 1:a och sista dagen).</p>' +
       '<p><strong>Resultat:</strong> tre dagars felläsning av bastun flyttar modellens värde med högst ' + fmt(maxTre) + ' öre/kWh i någon månad, medan felen mot fakturan är upp till ' + fmt(maxFel) + ' öre/kWh. ' +
