@@ -60,6 +60,12 @@ Så här kommer uppgifterna i praktiken, och så ska de läggas in:
 3. **Kring den 10:e i månaden efter** – elfakturan kommer (t.ex. augusti-fakturan
    runt **10 september**). Då fylls `cost` och `costPerKwh` i.
 
+**Allt annat som hör till en ny månad** (Spotpris tabell 3, intern debitering, källlänkar och
+version, samt en logg över vad som är gjort per månad och vad som återstår) samlas i skillen
+**`bjerred-manadsrutin`** (`.cursor/skills/bjerred-manadsrutin/SKILL.md`). Läs den först när Kent
+säger "ny månad" eller bifogar en Kraftringen-faktura eller ett debiteringsunderlag. Den är en
+levande minnesfil: uppdatera dess logg när något läggs in.
+
 **Viktigt:** tills fakturan finns ska `cost` vara `null`, inte `0`. kWh-LÅT
 inkluderar månaden så fort förbrukningen är fastställd; kostnads-LÅT och
 genomsnittspriset väntar tills `cost != null` (så att årskostnaden inte blir 0 kr
