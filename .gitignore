@@ -31,3 +31,6 @@ $RECYCLE.BIN/
 *.rar
 *.7z
 *.tar.gz
+
+# Local skill with mail drafts to the treasurer. Must not be committed (the repo is public). Added 2026-10-08.
+.cursor/skills/bjerred-ekonommail/
