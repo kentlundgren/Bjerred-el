@@ -48,6 +48,9 @@ utfallet var känt och är ett skydd mot försämring, inte ett bevis. Se [PRD.m
 | `berakna_spotpris.py` | Beräknar månadsvärden, M4b och effektkurvor; skriver `data/*.json` och `data/spotpris_data.js` |
 | `test_spotpris.py` | Tester T1–T17 (skriver "OK" när alla passerar) |
 | `forutsag_spotpris.py` | Blindprov: förutsäger spotpriset för juli–september med antagandena från januari–juni. Skriver `data/forutsagelse_jul_sep.json` och `data/forutsagelse_data.js` |
+| `omanpassning.html`, `.css`, `.js` | Extrasida: hur M4b anpassades om på januari–september (ver. 2), teori, kriterier och resultat. Länkas från `spotpris.html` |
+| `omanpassa_m4b.py` | Omanpassningen. Skriver bara `data/omanpassning_resultat.json` och `data/omanpassning_data.js`, rör inte de frusna filerna |
+| `test_omanpassning.py` | Tester för omanpassningen (skriver inga filer) |
 | `kanslighet_startpuls.py` | Känslighetsvariant: startpuls när bastuaggregaten slås på. Skriver `data/startpuls_data.js`. Ändrar inte primärkörningen |
 | `data/` | Indata (`kraftringen.json`, `oppettider.json`, `sokrum.json`, `spot_SE4_*.json`, `facit_jul_sep.json`) och utdata |
 | `forstudie/` | Förstudiernas skript och figur |
@@ -67,7 +70,8 @@ blockerar inläsning av JSON från `file://`.
 
 - **Blindprov (juli–september):** de förutsades innan fakturorna lästes in. M4b (uppskattningen) fick fel på +3,34, −3,46 och −4,41 öre/kWh, alltså inom gränsen 4,5 (september knappt) men större än på de månader som antagandena anpassades på (RMS-fel, typiskt fel, 3,77 mot 1,35). Spannet var för smalt och täckte inte utfallet i någon av månaderna. Alla tre fakturor är nu lästa, så det finns ingen ren förutsägelse kvar att vänta på. Analys och tolkning finns på sidan under "Blindprovet" och i [PRD.md](PRD.md), avsnitt 4.6.
 - **Startpuls för bastuaggregaten:** bastun har två aggregat (ett per bastu, Harvia Qube 360, 36 kW vardera). Sidans effektkurva har en tredje knapp som visar en morgontopp. Det är en illustration: med övriga antaganden fixa blir träffen mot fakturorna sämre ju större puls, och primärkörningen är oförändrad.
-- Fakturavärdena för juli–september ligger i `data/facit_jul_sep.json` och inte i `kraftringen.json`, så att anpassningen på januari–juni är oförändrad tills en omanpassning beslutas.
+- Fakturavärdena för juli–september ligger i `data/facit_jul_sep.json` och inte i `kraftringen.json`, så att anpassningen på januari–juni (ver. 1) och blindprovet förblir orörda. Omanpassningen på januari–september (ver. 2) görs av `omanpassa_m4b.py` utan att ändra dem.
+- **Omanpassning (2026-10-08):** M4b anpassades om på nio månader, med kriterier skrivna före körningen. Ver. 2 skiljer sig från ver. 1 bara i att bastun öppnar 07.30 i stället för 06.00. RMS-felet på januari–september är 1,99 mot 2,26 (ver. 1). Passningskriteriet (största fel ≤ 3,0) uppfylldes inte (3,23 i augusti), leave-one-out (3,51) och framåtprovet (RMS 2,98) uppfylldes. Därför är ver. 2 ett försök och ver. 1 fortsatt referens; oktober–december avgör. Teori, tabeller och diagram finns på [omanpassning.html](omanpassning.html) och i [PRD.md](PRD.md), avsnitt 4.7. Körning: `python omanpassa_m4b.py` och `python test_omanpassning.py`.
 
 ## Status
 

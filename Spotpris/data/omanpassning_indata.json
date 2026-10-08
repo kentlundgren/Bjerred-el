@@ -1,0 +1,17 @@
+{
+  "metadata": {
+    "kalla": "Mätarställningar i Eneas_Samkop_av_El/intern_underlag.js (STANDARD), ur debiteringsunderlagen Kraftringen/Intern_debitering/202607..202609_Intern_debitering.jpg. Spotpris, rörliga kostnader och påslag ur data/facit_jul_sep.json (fakturorna).",
+    "anmarkning": "kwh_huvud = utgående minus ingående huvudmätare. kwh_bastu = herr + dam. kwh_varmvatten = utgående minus ingående varmvattenmätare. Samma konvention som januari–juni i data/kraftringen.json. Det blinda förutsägelseskriptet (forutsag_spotpris.py) använde kWh ur index.html och låg i juli 1 kWh högre (21 585 mot 21 584) och i augusti 1 kWh högre för bastu (8 807 mot 8 806). Effekten på modellens värde är under 0,01 öre/kWh.",
+    "inlagt": "2026-10-08"
+  },
+  "manader": {
+    "2026-07": {"kwh_huvud": 21584, "kwh_bastu": 8771, "kwh_varmvatten": 1653},
+    "2026-08": {"kwh_huvud": 21836, "kwh_bastu": 8806, "kwh_varmvatten": 1719},
+    "2026-09": {"kwh_huvud": 21689, "kwh_bastu": 10101, "kwh_varmvatten": 1287}
+  },
+  "hardkodade_differenser": {
+    "2026-07": "huvud 365214-343630; bastu (65896-61254)+(57817-53688); varm 692241-690588",
+    "2026-08": "huvud 387050-365214; bastu (70572-65896)+(61947-57817); varm 693960-692241",
+    "2026-09": "huvud 408739-387050; bastu (75815-70572)+(66805-61947); varm 695247-693960"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "metadata": {
+    "skriven": "2026-10-08",
+    "text": "Kriterier för omanpassningen av M4b på januari–september 2026. Filen skrevs INNAN omanpassningen kördes första gången, och ändras inte efter att utfallet är känt. Ändras något i efterhand ska det stå i 'andringar' nedan, med datum och skäl.",
+    "ursprung": "Gränserna 3,0 och 4,5 öre/kWh är Kents från 2026-10-07 (SPEC 6.4) och är oförändrade. Förslaget till övriga kriterier är skrivet av AI-assistenten 2026-10-08 på Kents uppdrag. De är inte oberoende av vad vi redan vet: felen i det frusna blindprovet för juli–september (+3,34, −3,46, −4,41) var kända när kriterierna skrevs. Därför är gränserna inte strängare än tidigare, och det är oktober och framåt som ger ett rent test.",
+    "andringar": []
+  },
+  "sokrum": "Samma som primär körning i data/sokrum.json (bo 06:00 och 07:30, pre 1,0, prep 0/1/2, varm 24h/tider, V 0–20 kW i heltalssteg). Sökregler som i SPEC 6.2: U1 = lägst RMS över de månader som ingår i anpassningen. Ingenting i sökrummet eller urvalet ändras för att nå kriterierna.",
+  "kriterier": {
+    "K1_passning": {
+      "namn": "Passning på alla nio månader (januari–september)",
+      "regel": "Största absolutfel för U1 på de nio månaderna ≤ 3,0 öre/kWh.",
+      "grans_ore": 3.0,
+      "betydelse": "Visar bara att en kombination finns som passar alla månader. Månaderna ingår i anpassningen, så det är inget bevis på att modellen förutsäger bra."
+    },
+    "K2_leave_one_out": {
+      "namn": "Leave-one-out på nio månader",
+      "regel": "För varje månad: välj U1 på de övriga åtta och räkna den utelämnade. Största absolutfel ≤ 4,5 öre/kWh.",
+      "grans_ore": 4.5,
+      "betydelse": "Månaden ingår inte i den anpassning som förutsäger den. Bättre än passningen, men sökrummet och urvalsregeln är fortfarande valda med alla månader i sikte."
+    },
+    "K3_framatprov": {
+      "namn": "Framåtprov (expanderande fönster)",
+      "regel": "Anpassa på januari–juni och förutsäg juli (samma som det frusna blindprovet). Anpassa på januari–juli och förutsäg augusti. Anpassa på januari–augusti och förutsäg september. Största absolutfel ≤ 4,5 öre/kWh, och RMS-felet över de tre förutsägelserna ska vara lägre än det frusna blindprovets 3,77 öre/kWh.",
+      "grans_max_ore": 4.5,
+      "grans_rms_ore": 3.77,
+      "betydelse": "Efterliknar hur modellen används: anpassad på det som hänt, förutsäger nästa månad. Juli är identisk med blindprovet, så skillnaden mot det frusna blindprovet kommer bara från augusti och september."
+    }
+  },
+  "beslutsregel": {
+    "alla_uppfyllda": "Den omanpassade modellen kallas M4b ver. 2 och är kandidat för att ersätta ver. 1 i förutsägelser. Ver. 1 och dess blindprov ligger kvar oförändrade på Spotpris-sidan.",
+    "nagon_ej_uppfylld": "Ver. 2 redovisas som ett försök, ver. 1 är fortsatt referensen, och orsaken till att kriteriet inte uppfylldes beskrivs.",
+    "oavsett_utfall": "Parametrarna för ver. 2 frysas med datum. Oktober 2026 förutsägs med både ver. 1 och ver. 2 innan fakturan läses, och först efter oktober, november och december (tre månader) bedöms vilken som är bäst. En månad räcker inte."
+  },
+  "redovisas_utan_kriterium": [
+    "Vilken kombination som väljs (ver. 2) och hur den skiljer sig från ver. 1 (bo 06:00, prep 2, varm 24h, V 13 kW).",
+    "Hur stabil kombinationen är: vilken som väljs när varje månad utelämnas, och när fönstret växer.",
+    "RMS och fel per månad för ver. 1 (frusna parametrar) och ver. 2 på alla nio månader, sida vid sida.",
+    "Känslighetskörningen (pre 0–6 timmar) på nio månader, bredvid den primära, och räknas inte mot kriterierna.",
+    "Antal kombinationer i bandet (RMS ≤ 1,5) och hur många som har största absolutfel ≤ 2,0."
+  ]
+}

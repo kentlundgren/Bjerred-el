@@ -1,0 +1,54 @@
+/*
+  omanpassning.css
+  Tillägg till spotpris.css för omanpassning.html. Grundstilen (färger, tabeller, noteringar, hörnlänkar) kommer från spotpris.css.
+  Gult används inte här: gult är reserverat för inmatningsfält, och den här sidan har inga.
+
+  UPPDATERING 2026-10-08: Första versionen (1.0).
+*/
+
+/* Numrerad stege med steg i kort */
+.stegrad { counter-reset: steg; list-style: none; padding-left: 0; margin: 12px 0; }
+.stegrad > li {
+  counter-increment: steg; position: relative; margin: 0 0 8px; padding: 8px 12px 8px 46px;
+  background: var(--ruta); border: 1px solid var(--kant); border-radius: 8px;
+}
+.stegrad > li::before {
+  content: counter(steg); position: absolute; left: 12px; top: 8px; width: 24px; height: 24px; line-height: 24px; text-align: center;
+  border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; font-size: .85rem;
+}
+
+/* Ruta med utfallet: blå notering, lite tätare listor */
+.notis ul { margin: 6px 0 10px; padding-left: 20px; }
+.notis li { margin-bottom: 4px; }
+
+/* Tolkningsdelen: mätt (grönt) och tolkning (blått) */
+.mattbox, .tolkbox { border-radius: 6px; padding: 4px 16px; margin: 12px 0; }
+.mattbox { background: #e6f2e6; border-left: 4px solid var(--billigare); }
+.tolkbox { background: var(--notis-bg); border-left: 4px solid var(--notis-kant); color: var(--notis-text); }
+.mattbox h3, .tolkbox h3 { margin: 10px 0 4px; font-size: 1rem; }
+.mattbox ul, .tolkbox ul { margin: 6px 0 10px; padding-left: 20px; }
+.mattbox li, .tolkbox li { margin-bottom: 4px; }
+
+/* Tabellceller: stora fel och markerade rader */
+td.stort { background: #fdecea; font-weight: 700; }
+tr.blind td { background: #f1f7fc; }
+tr.blind td.stort { background: #fdecea; }
+td.ok { color: var(--billigare); font-weight: 700; }
+td.ejok { color: var(--dyrare); font-weight: 700; }
+td.vansterjust, th.vansterjust { text-align: left; white-space: normal; }
+/* Rubrikceller ovanför vänsterjusterad text ska också vara vänsterjusterade */
+#tab-kriterier th:nth-child(2), #tab-framat th:nth-child(2), #tab-framat th:nth-child(3), #tab-loo th:nth-child(2), #tab-modeller th:nth-child(2) { text-align: left; }
+td.m4b, th.m4b { background: #eef6fc; }
+td.stort.m4b { background: #fdecea; }
+
+/* Diagram */
+svg.diagram text { font-family: inherit; fill: #1c2a2a; }
+svg.diagram .axel { stroke: #8a9896; stroke-width: 1; }
+svg.diagram .rutnat { stroke: #e3e8e7; stroke-width: 1; }
+svg.diagram .liten-text { font-size: 11px; fill: #5a6868; }
+svg.diagram .mellan-text { font-size: 12px; }
+
+/* Utskrift */
+@media print {
+  .stegrad > li { break-inside: avoid; }
+}

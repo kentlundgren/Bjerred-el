@@ -1,0 +1,918 @@
+{
+  "metadata": {
+    "genererad": "2026-10-08",
+    "skript_version": "1.0",
+    "text": "Omanpassning av M4b på januari–september 2026 (ver. 2). Ver. 1 (januari–juni) är oförändrad och redovisas bredvid.",
+    "teckenkonvention": "fel = modellens värde minus fakturans spot_ore (öre/kWh); plus betyder att modellen räknar för högt"
+  },
+  "manader": [
+    "2026-01",
+    "2026-02",
+    "2026-03",
+    "2026-04",
+    "2026-05",
+    "2026-06",
+    "2026-07",
+    "2026-08",
+    "2026-09"
+  ],
+  "anpassningsmanader_ver1": [
+    "2026-01",
+    "2026-02",
+    "2026-03",
+    "2026-04",
+    "2026-05",
+    "2026-06"
+  ],
+  "ver1": {
+    "parametrar": {
+      "bo": "06:00",
+      "pre_timmar": 1.0,
+      "prep_timmar": 2.0,
+      "varm": "24h",
+      "V_kw": 13.0
+    },
+    "rms_pa_jan_jun": 1.3528777661548568
+  },
+  "ver2": {
+    "parametrar": {
+      "bo": "07:30",
+      "pre_timmar": 1.0,
+      "prep_timmar": 2.0,
+      "varm": "24h",
+      "V_kw": 13.0
+    },
+    "rms": 1.9866446770464359,
+    "storsta_absolutfel": 3.226463588652649,
+    "fel_per_manad": {
+      "2026-01": 1.912937231979143,
+      "2026-02": 1.119792973472272,
+      "2026-03": -0.013863484760662459,
+      "2026-04": 1.9578201029951927,
+      "2026-05": 0.42466812863106895,
+      "2026-06": -1.845318895257094,
+      "2026-07": 2.4478530568322725,
+      "2026-08": -3.226463588652649,
+      "2026-09": -2.605129560173239
+    }
+  },
+  "samma_kombination": false,
+  "u2": {
+    "parametrar": {
+      "bo": "07:30",
+      "pre_timmar": 1.0,
+      "prep_timmar": 1.0,
+      "varm": "24h",
+      "V_kw": 13.0
+    },
+    "rms": 1.9982248093780401,
+    "fel_per_manad": {
+      "2026-01": 2.06552899178493,
+      "2026-02": 1.3282549493405469,
+      "2026-03": 0.1007438056610539,
+      "2026-04": 2.2709141454697104,
+      "2026-05": 0.955781667054211,
+      "2026-06": -1.1558734511735338,
+      "2026-07": 2.779939176502154,
+      "2026-08": -2.990804877557977,
+      "2026-09": -2.41157878403736
+    },
+    "storsta_absolutfel": 2.990804877557977
+  },
+  "antal_kombinationer": 252,
+  "antal_giltiga": 168,
+  "antal_ogiltiga": 84,
+  "ogiltiga_per_manad": {
+    "2026-03": 84,
+    "2026-09": 72,
+    "2026-07": 60,
+    "2026-08": 60,
+    "2026-04": 48,
+    "2026-05": 48,
+    "2026-06": 48
+  },
+  "antal_i_band": 0,
+  "antal_med_storsta_fel_max_2": 0,
+  "topp5": [
+    {
+      "parametrar": {
+        "bo": "07:30",
+        "pre_timmar": 1.0,
+        "prep_timmar": 2.0,
+        "varm": "24h",
+        "V_kw": 13.0
+      },
+      "rms": 1.9866446770464359,
+      "storsta": 3.226463588652649
+    },
+    {
+      "parametrar": {
+        "bo": "07:30",
+        "pre_timmar": 1.0,
+        "prep_timmar": 1.0,
+        "varm": "24h",
+        "V_kw": 13.0
+      },
+      "rms": 1.9982248093780401,
+      "storsta": 2.990804877557977
+    },
+    {
+      "parametrar": {
+        "bo": "07:30",
+        "pre_timmar": 1.0,
+        "prep_timmar": 0.0,
+        "varm": "24h",
+        "V_kw": 13.0
+      },
+      "rms": 2.0756432331104087,
+      "storsta": 3.2188182268004226
+    },
+    {
+      "parametrar": {
+        "bo": "07:30",
+        "pre_timmar": 1.0,
+        "prep_timmar": 1.0,
+        "varm": "24h",
+        "V_kw": 12.0
+      },
+      "rms": 2.1010507126570297,
+      "storsta": 3.338415114701604
+    },
+    {
+      "parametrar": {
+        "bo": "07:30",
+        "pre_timmar": 1.0,
+        "prep_timmar": 0.0,
+        "varm": "24h",
+        "V_kw": 12.0
+      },
+      "rms": 2.1202499562875596,
+      "storsta": 3.097334336072649
+    }
+  ],
+  "leave_one_out": {
+    "2026-01": {
+      "fel_ore": 3.51157078287423,
+      "saknas": null,
+      "parametrar": {
+        "bo": "07:30",
+        "pre_timmar": 1.0,
+        "prep_timmar": 0.0,
+        "varm": "tider",
+        "V_kw": 13.0
+      }
+    },
+    "2026-02": {
+      "fel_ore": 1.3282549493405469,
+      "saknas": null,
+      "parametrar": {
+        "bo": "07:30",
+        "pre_timmar": 1.0,
+        "prep_timmar": 1.0,
+        "varm": "24h",
+        "V_kw": 13.0
+      }
+    },
+    "2026-03": {
+      "fel_ore": null,
+      "saknas": "vald kombination ogiltig för 2026-03",
+      "parametrar": {
+        "bo": "07:30",
+        "pre_timmar": 1.0,
+        "prep_timmar": 2.0,
+        "varm": "24h",
+        "V_kw": 14.0
+      }
+    },
+    "2026-04": {
+      "fel_ore": 2.2709141454697104,
+      "saknas": null,
+      "parametrar": {
+        "bo": "07:30",
+        "pre_timmar": 1.0,
+        "prep_timmar": 1.0,
+        "varm": "24h",
+        "V_kw": 13.0
+      }
+    },
+    "2026-05": {
+      "fel_ore": 0.955781667054211,
+      "saknas": null,
+      "parametrar": {
+        "bo": "07:30",
+        "pre_timmar": 1.0,
+        "prep_timmar": 1.0,
+        "varm": "24h",
+        "V_kw": 13.0
+      }
+    },
+    "2026-06": {
+      "fel_ore": -1.845318895257094,
+      "saknas": null,
+      "parametrar": {
+        "bo": "07:30",
+        "pre_timmar": 1.0,
+        "prep_timmar": 2.0,
+        "varm": "24h",
+        "V_kw": 13.0
+      }
+    },
+    "2026-07": {
+      "fel_ore": 2.779939176502154,
+      "saknas": null,
+      "parametrar": {
+        "bo": "07:30",
+        "pre_timmar": 1.0,
+        "prep_timmar": 1.0,
+        "varm": "24h",
+        "V_kw": 13.0
+      }
+    },
+    "2026-08": {
+      "fel_ore": -3.226463588652649,
+      "saknas": null,
+      "parametrar": {
+        "bo": "07:30",
+        "pre_timmar": 1.0,
+        "prep_timmar": 2.0,
+        "varm": "24h",
+        "V_kw": 13.0
+      }
+    },
+    "2026-09": {
+      "fel_ore": -2.605129560173239,
+      "saknas": null,
+      "parametrar": {
+        "bo": "07:30",
+        "pre_timmar": 1.0,
+        "prep_timmar": 2.0,
+        "varm": "24h",
+        "V_kw": 13.0
+      }
+    }
+  },
+  "framatprov": {
+    "2026-07": {
+      "tranad_pa": "2026-01 till 2026-06",
+      "antal_tranings_manader": 6,
+      "parametrar": {
+        "bo": "06:00",
+        "pre_timmar": 1.0,
+        "prep_timmar": 2.0,
+        "varm": "24h",
+        "V_kw": 13.0
+      },
+      "rms_pa_traningen": 1.3528777661548568,
+      "forutsagt_ore": 82.28451518439206,
+      "faktura_ore": 79.21,
+      "fel_ore": 3.0745151843920695
+    },
+    "2026-08": {
+      "tranad_pa": "2026-01 till 2026-07",
+      "antal_tranings_manader": 7,
+      "parametrar": {
+        "bo": "07:30",
+        "pre_timmar": 1.0,
+        "prep_timmar": 2.0,
+        "varm": "24h",
+        "V_kw": 13.0
+      },
+      "rms_pa_traningen": 1.6179372379378931,
+      "forutsagt_ore": 80.49353641134735,
+      "faktura_ore": 83.72,
+      "fel_ore": -3.226463588652649
+    },
+    "2026-09": {
+      "tranad_pa": "2026-01 till 2026-08",
+      "antal_tranings_manader": 8,
+      "parametrar": {
+        "bo": "07:30",
+        "pre_timmar": 1.0,
+        "prep_timmar": 2.0,
+        "varm": "24h",
+        "V_kw": 13.0
+      },
+      "rms_pa_traningen": 1.8951950305392062,
+      "forutsagt_ore": 125.48487043982676,
+      "faktura_ore": 128.09,
+      "fel_ore": -2.605129560173239
+    }
+  },
+  "kriterier": {
+    "K1_passning": {
+      "grans": 3.0,
+      "utfall": 3.226463588652649,
+      "uppfyllt": false
+    },
+    "K2_leave_one_out": {
+      "grans": 4.5,
+      "utfall": 3.51157078287423,
+      "uppfyllt": true,
+      "antal_saknas": 1,
+      "saknas_manader": [
+        "2026-03"
+      ]
+    },
+    "K3_framatprov": {
+      "grans_max": 4.5,
+      "grans_rms": 3.77,
+      "utfall_max": 3.226463588652649,
+      "utfall_rms": 2.9804591890762486,
+      "uppfyllt_max": true,
+      "uppfyllt_rms": true,
+      "uppfyllt": true
+    },
+    "alla_uppfyllda": false
+  },
+  "kriterier_text": {
+    "K1_passning": {
+      "namn": "Passning på alla nio månader (januari–september)",
+      "regel": "Största absolutfel för U1 på de nio månaderna ≤ 3,0 öre/kWh.",
+      "grans_ore": 3.0,
+      "betydelse": "Visar bara att en kombination finns som passar alla månader. Månaderna ingår i anpassningen, så det är inget bevis på att modellen förutsäger bra."
+    },
+    "K2_leave_one_out": {
+      "namn": "Leave-one-out på nio månader",
+      "regel": "För varje månad: välj U1 på de övriga åtta och räkna den utelämnade. Största absolutfel ≤ 4,5 öre/kWh.",
+      "grans_ore": 4.5,
+      "betydelse": "Månaden ingår inte i den anpassning som förutsäger den. Bättre än passningen, men sökrummet och urvalsregeln är fortfarande valda med alla månader i sikte."
+    },
+    "K3_framatprov": {
+      "namn": "Framåtprov (expanderande fönster)",
+      "regel": "Anpassa på januari–juni och förutsäg juli (samma som det frusna blindprovet). Anpassa på januari–juli och förutsäg augusti. Anpassa på januari–augusti och förutsäg september. Största absolutfel ≤ 4,5 öre/kWh, och RMS-felet över de tre förutsägelserna ska vara lägre än det frusna blindprovets 3,77 öre/kWh.",
+      "grans_max_ore": 4.5,
+      "grans_rms_ore": 3.77,
+      "betydelse": "Efterliknar hur modellen används: anpassad på det som hänt, förutsäger nästa månad. Juli är identisk med blindprovet, så skillnaden mot det frusna blindprovet kommer bara från augusti och september."
+    }
+  },
+  "beslutsregel": {
+    "alla_uppfyllda": "Den omanpassade modellen kallas M4b ver. 2 och är kandidat för att ersätta ver. 1 i förutsägelser. Ver. 1 och dess blindprov ligger kvar oförändrade på Spotpris-sidan.",
+    "nagon_ej_uppfylld": "Ver. 2 redovisas som ett försök, ver. 1 är fortsatt referensen, och orsaken till att kriteriet inte uppfylldes beskrivs.",
+    "oavsett_utfall": "Parametrarna för ver. 2 frysas med datum. Oktober 2026 förutsägs med både ver. 1 och ver. 2 innan fakturan läses, och först efter oktober, november och december (tre månader) bedöms vilken som är bäst. En månad räcker inte."
+  },
+  "per_manad": {
+    "2026-01": {
+      "faktura_ore": 117.38,
+      "m1_ore": 112.99280208333334,
+      "m2_ore": 125.76465776209676,
+      "m4a_ore": 120.38735928533252,
+      "ver1_ore": 117.78046753100509,
+      "ver2_ore": 119.29293723197914,
+      "fel_m1": -4.387197916666651,
+      "fel_m2": 8.384657762096765,
+      "fel_m4a": 3.0073592853325266,
+      "fel_ver1": 0.40046753100509136,
+      "fel_ver2": 1.912937231979143,
+      "i_anpassningen_ver1": true,
+      "i_anpassningen_ver2": true,
+      "kwh": {
+        "huvud": 35422.0,
+        "bastu": 14729.0,
+        "varmvatten": 4107.0,
+        "rest": 16586.0
+      }
+    },
+    "2026-02": {
+      "faktura_ore": 116.68,
+      "m1_ore": 113.28722991071429,
+      "m2_ore": 125.15700055803579,
+      "m4a_ore": 118.21575992387616,
+      "ver1_ore": 116.7026458300465,
+      "ver2_ore": 117.79979297347228,
+      "fel_m1": -3.392770089285719,
+      "fel_m2": 8.477000558035783,
+      "fel_m4a": 1.5357599238761566,
+      "fel_ver1": 0.022645830046499782,
+      "fel_ver2": 1.119792973472272,
+      "i_anpassningen_ver1": true,
+      "i_anpassningen_ver2": true,
+      "kwh": {
+        "huvud": 32002.0,
+        "bastu": 11839.0,
+        "varmvatten": 3821.0,
+        "rest": 16342.0
+      }
+    },
+    "2026-03": {
+      "faktura_ore": 86.59,
+      "m1_ore": 84.5874969717362,
+      "m2_ore": 89.20285987903229,
+      "m4a_ore": 90.87859736121145,
+      "ver1_ore": 86.54823608048083,
+      "ver2_ore": 86.57613651523934,
+      "fel_m1": -2.0025030282638028,
+      "fel_m2": 2.6128598790322854,
+      "fel_m4a": 4.288597361211444,
+      "fel_ver1": -0.04176391951916969,
+      "fel_ver2": -0.013863484760662459,
+      "i_anpassningen_ver1": true,
+      "i_anpassningen_ver2": true,
+      "kwh": {
+        "huvud": 28074.0,
+        "bastu": 12743.0,
+        "varmvatten": 5029.0,
+        "rest": 10302.0
+      }
+    },
+    "2026-04": {
+      "faktura_ore": 63.12,
+      "m1_ore": 66.54068680555557,
+      "m2_ore": 65.40810885416668,
+      "m4a_ore": 66.19640649857257,
+      "ver1_ore": 65.66503261588238,
+      "ver2_ore": 65.07782010299519,
+      "fel_m1": 3.420686805555569,
+      "fel_m2": 2.288108854166687,
+      "fel_m4a": 3.076406498572574,
+      "fel_ver1": 2.545032615882384,
+      "fel_ver2": 1.9578201029951927,
+      "i_anpassningen_ver1": true,
+      "i_anpassningen_ver2": true,
+      "kwh": {
+        "huvud": 26671.0,
+        "bastu": 11225.0,
+        "varmvatten": 3864.0,
+        "rest": 11582.0
+      }
+    },
+    "2026-05": {
+      "faktura_ore": 88.19,
+      "m1_ore": 94.61288272849463,
+      "m2_ore": 86.23982358870968,
+      "m4a_ore": 85.47803148605925,
+      "ver1_ore": 89.46579631660727,
+      "ver2_ore": 88.61466812863107,
+      "fel_m1": 6.422882728494628,
+      "fel_m2": -1.9501764112903146,
+      "fel_m4a": -2.7119685139407466,
+      "fel_ver1": 1.2757963166072699,
+      "fel_ver2": 0.42466812863106895,
+      "i_anpassningen_ver1": true,
+      "i_anpassningen_ver2": true,
+      "kwh": {
+        "huvud": 23941.0,
+        "bastu": 9024.0,
+        "varmvatten": 2487.0,
+        "rest": 12430.0
+      }
+    },
+    "2026-06": {
+      "faktura_ore": 100.09,
+      "m1_ore": 103.71528090277778,
+      "m2_ore": 96.46353802083348,
+      "m4a_ore": 94.84430907900784,
+      "ver1_ore": 98.44251982058002,
+      "ver2_ore": 98.24468110474291,
+      "fel_m1": 3.6252809027777744,
+      "fel_m2": -3.626461979166521,
+      "fel_m4a": -5.2456909209921605,
+      "fel_ver1": -1.6474801794199863,
+      "fel_ver2": -1.845318895257094,
+      "i_anpassningen_ver1": true,
+      "i_anpassningen_ver2": true,
+      "kwh": {
+        "huvud": 20609.0,
+        "bastu": 7431.0,
+        "varmvatten": 1423.0,
+        "rest": 11755.0
+      }
+    },
+    "2026-07": {
+      "faktura_ore": 79.21,
+      "m1_ore": 86.48251948924731,
+      "m2_ore": 77.86672379032245,
+      "m4a_ore": 80.84952764733933,
+      "ver1_ore": 82.28451518439206,
+      "ver2_ore": 81.65785305683227,
+      "fel_m1": 7.2725194892473155,
+      "fel_m2": -1.3432762096775406,
+      "fel_m4a": 1.6395276473393352,
+      "fel_ver1": 3.0745151843920695,
+      "fel_ver2": 2.4478530568322725,
+      "i_anpassningen_ver1": false,
+      "i_anpassningen_ver2": true,
+      "kwh": {
+        "huvud": 21584.0,
+        "bastu": 8771.0,
+        "varmvatten": 1653.0,
+        "rest": 11160.0
+      }
+    },
+    "2026-08": {
+      "faktura_ore": 83.72,
+      "m1_ore": 80.45174899193549,
+      "m2_ore": 83.14447832661277,
+      "m4a_ore": 78.25148981663548,
+      "ver1_ore": 80.33046520050576,
+      "ver2_ore": 80.49353641134735,
+      "fel_m1": -3.26825100806451,
+      "fel_m2": -0.5755216733872288,
+      "fel_m4a": -5.468510183364515,
+      "fel_ver1": -3.3895347994942426,
+      "fel_ver2": -3.226463588652649,
+      "i_anpassningen_ver1": false,
+      "i_anpassningen_ver2": true,
+      "kwh": {
+        "huvud": 21836.0,
+        "bastu": 8806.0,
+        "varmvatten": 1719.0,
+        "rest": 11311.0
+      }
+    },
+    "2026-09": {
+      "faktura_ore": 128.09,
+      "m1_ore": 120.12523506944446,
+      "m2_ore": 133.00682031249985,
+      "m4a_ore": 122.73169284277019,
+      "ver1_ore": 124.33606165148295,
+      "ver2_ore": 125.48487043982676,
+      "fel_m1": -7.964764930555546,
+      "fel_m2": 4.916820312499851,
+      "fel_m4a": -5.358307157229817,
+      "fel_ver1": -3.753938348517053,
+      "fel_ver2": -2.605129560173239,
+      "i_anpassningen_ver1": false,
+      "i_anpassningen_ver2": true,
+      "kwh": {
+        "huvud": 21689.0,
+        "bastu": 10101.0,
+        "varmvatten": 1287.0,
+        "rest": 10301.0
+      }
+    }
+  },
+  "sammanfattning": {
+    "jan_jun": {
+      "fel_m1": {
+        "rms": 4.100113722136324,
+        "storsta": 6.422882728494628
+      },
+      "fel_m2": {
+        "rms": 5.341331257996372,
+        "storsta": 8.477000558035783
+      },
+      "fel_m4a": {
+        "rms": 3.5149954752245596,
+        "storsta": 5.2456909209921605
+      },
+      "fel_ver1": {
+        "rms": 1.3528777661548568,
+        "storsta": 2.545032615882384
+      },
+      "fel_ver2": {
+        "rms": 1.43364696685874,
+        "storsta": 1.9578201029951927
+      }
+    },
+    "jul_sep": {
+      "fel_m1": {
+        "rms": 6.506624439041702,
+        "storsta": 7.964764930555546
+      },
+      "fel_m2": {
+        "rms": 2.9614601217099668,
+        "storsta": 4.916820312499851
+      },
+      "fel_m4a": {
+        "rms": 4.520476011925135,
+        "storsta": 5.468510183364515
+      },
+      "fel_ver1": {
+        "rms": 3.4172914664739396,
+        "storsta": 3.753938348517053
+      },
+      "fel_ver2": {
+        "rms": 2.780212935611998,
+        "storsta": 3.226463588652649
+      }
+    },
+    "jan_sep": {
+      "fel_m1": {
+        "rms": 5.031832888707517,
+        "storsta": 7.964764930555546
+      },
+      "fel_m2": {
+        "rms": 4.684367095911557,
+        "storsta": 8.477000558035783
+      },
+      "fel_m4a": {
+        "rms": 3.879221990558108,
+        "storsta": 5.468510183364515
+      },
+      "fel_ver1": {
+        "rms": 2.2611529114700106,
+        "storsta": 3.753938348517053
+      },
+      "fel_ver2": {
+        "rms": 1.9866446770464359,
+        "storsta": 3.226463588652649
+      }
+    }
+  },
+  "bast_v_ver1": {
+    "2026-01": {
+      "V_bast_kw": 20.7,
+      "kvarstaende_fel_ore": -0.002168867835635524,
+      "rest_kwh_per_timme": 22.293010752688172
+    },
+    "2026-02": {
+      "V_bast_kw": 11.9,
+      "kvarstaende_fel_ore": -0.000846349296466542,
+      "rest_kwh_per_timme": 24.31845238095238
+    },
+    "2026-03": {
+      "V_bast_kw": 12.0,
+      "kvarstaende_fel_ore": 0.0007416638440815859,
+      "rest_kwh_per_timme": 13.865410497981157
+    },
+    "2026-04": {
+      "V_bast_kw": 0.7,
+      "kvarstaende_fel_ore": 0.004546457523417757,
+      "rest_kwh_per_timme": 16.086111111111112
+    },
+    "2026-05": {
+      "V_bast_kw": 11.1,
+      "kvarstaende_fel_ore": 0.0023451450719420563,
+      "rest_kwh_per_timme": 16.706989247311828
+    },
+    "2026-06": {
+      "V_bast_kw": 15.0,
+      "kvarstaende_fel_ore": -0.0158718286994457,
+      "rest_kwh_per_timme": 16.32638888888889
+    },
+    "2026-07": {
+      "V_bast_kw": 6.9,
+      "kvarstaende_fel_ore": -0.017980317450238203,
+      "rest_kwh_per_timme": 15.0
+    },
+    "2026-08": {
+      "V_bast_kw": 15.2,
+      "kvarstaende_fel_ore": -2.389449887101179,
+      "rest_kwh_per_timme": 15.202956989247312
+    },
+    "2026-09": {
+      "V_bast_kw": 14.3,
+      "kvarstaende_fel_ore": -2.9600940106430755,
+      "rest_kwh_per_timme": 14.306944444444444
+    }
+  },
+  "bast_v_ver2": {
+    "2026-01": {
+      "V_bast_kw": 22.2,
+      "kvarstaende_fel_ore": 1.4318651710265868,
+      "rest_kwh_per_timme": 22.293010752688172
+    },
+    "2026-02": {
+      "V_bast_kw": 0.0,
+      "kvarstaende_fel_ore": 0.8421581266918565,
+      "rest_kwh_per_timme": 24.31845238095238
+    },
+    "2026-03": {
+      "V_bast_kw": 12.7,
+      "kvarstaende_fel_ore": -0.0011118097516771286,
+      "rest_kwh_per_timme": 13.865410497981157
+    },
+    "2026-04": {
+      "V_bast_kw": 3.5,
+      "kvarstaende_fel_ore": -0.004344003054413292,
+      "rest_kwh_per_timme": 16.086111111111112
+    },
+    "2026-05": {
+      "V_bast_kw": 12.4,
+      "kvarstaende_fel_ore": 0.022525653409388724,
+      "rest_kwh_per_timme": 16.706989247311828
+    },
+    "2026-06": {
+      "V_bast_kw": 15.3,
+      "kvarstaende_fel_ore": 0.031030708071540403,
+      "rest_kwh_per_timme": 16.32638888888889
+    },
+    "2026-07": {
+      "V_bast_kw": 8.2,
+      "kvarstaende_fel_ore": 0.014413973415372539,
+      "rest_kwh_per_timme": 15.0
+    },
+    "2026-08": {
+      "V_bast_kw": 15.2,
+      "kvarstaende_fel_ore": -2.2263786762595856,
+      "rest_kwh_per_timme": 15.202956989247312
+    },
+    "2026-09": {
+      "V_bast_kw": 14.3,
+      "kvarstaende_fel_ore": -1.811285222299233,
+      "rest_kwh_per_timme": 14.306944444444444
+    }
+  },
+  "rms_mot_v": {
+    "jan_jun": [
+      {
+        "V_kw": 0,
+        "rms_ore": 3.2389879387610434
+      },
+      {
+        "V_kw": 1,
+        "rms_ore": 3.032229103872322
+      },
+      {
+        "V_kw": 2,
+        "rms_ore": 2.8314136403371366
+      },
+      {
+        "V_kw": 3,
+        "rms_ore": 2.6378992513722173
+      },
+      {
+        "V_kw": 4,
+        "rms_ore": 2.453414174467711
+      },
+      {
+        "V_kw": 5,
+        "rms_ore": 2.280151125683139
+      },
+      {
+        "V_kw": 6,
+        "rms_ore": 2.1208622288624026
+      },
+      {
+        "V_kw": 7,
+        "rms_ore": 1.978924815414249
+      },
+      {
+        "V_kw": 8,
+        "rms_ore": 1.8583190387270672
+      },
+      {
+        "V_kw": 9,
+        "rms_ore": 1.7634271370586148
+      },
+      {
+        "V_kw": 10,
+        "rms_ore": 1.594201785093762
+      },
+      {
+        "V_kw": 11,
+        "rms_ore": 1.4728593279348574
+      },
+      {
+        "V_kw": 12,
+        "rms_ore": 1.4205629318747492
+      },
+      {
+        "V_kw": 13,
+        "rms_ore": 1.3528777661548568
+      },
+      {
+        "V_kw": 14,
+        "rms_ore": null
+      },
+      {
+        "V_kw": 15,
+        "rms_ore": null
+      },
+      {
+        "V_kw": 16,
+        "rms_ore": null
+      },
+      {
+        "V_kw": 17,
+        "rms_ore": null
+      },
+      {
+        "V_kw": 18,
+        "rms_ore": null
+      },
+      {
+        "V_kw": 19,
+        "rms_ore": null
+      },
+      {
+        "V_kw": 20,
+        "rms_ore": null
+      }
+    ],
+    "jan_sep": [
+      {
+        "V_kw": 0,
+        "rms_ore": 3.879221990558108
+      },
+      {
+        "V_kw": 1,
+        "rms_ore": 3.6855406766733925
+      },
+      {
+        "V_kw": 2,
+        "rms_ore": 3.4963632416200268
+      },
+      {
+        "V_kw": 3,
+        "rms_ore": 3.312461436129054
+      },
+      {
+        "V_kw": 4,
+        "rms_ore": 3.134763886624548
+      },
+      {
+        "V_kw": 5,
+        "rms_ore": 2.9643865291965077
+      },
+      {
+        "V_kw": 6,
+        "rms_ore": 2.8026646917943916
+      },
+      {
+        "V_kw": 7,
+        "rms_ore": 2.6511828049632977
+      },
+      {
+        "V_kw": 8,
+        "rms_ore": 2.5117942126273145
+      },
+      {
+        "V_kw": 9,
+        "rms_ore": 2.386618754304095
+      },
+      {
+        "V_kw": 10,
+        "rms_ore": 2.278000658638383
+      },
+      {
+        "V_kw": 11,
+        "rms_ore": 2.1884067112103915
+      },
+      {
+        "V_kw": 12,
+        "rms_ore": 2.1010507126570297
+      },
+      {
+        "V_kw": 13,
+        "rms_ore": 1.9866446770464359
+      },
+      {
+        "V_kw": 14,
+        "rms_ore": null
+      },
+      {
+        "V_kw": 15,
+        "rms_ore": null
+      },
+      {
+        "V_kw": 16,
+        "rms_ore": null
+      },
+      {
+        "V_kw": 17,
+        "rms_ore": null
+      },
+      {
+        "V_kw": 18,
+        "rms_ore": null
+      },
+      {
+        "V_kw": 19,
+        "rms_ore": null
+      },
+      {
+        "V_kw": 20,
+        "rms_ore": null
+      }
+    ]
+  },
+  "kanslighet": {
+    "antal_giltiga": 1512,
+    "u1": {
+      "parametrar": {
+        "bo": "07:30",
+        "pre_timmar": 1.0,
+        "prep_timmar": 2.0,
+        "varm": "24h",
+        "V_kw": 13.0
+      },
+      "rms": 1.9866446770464359,
+      "fel_per_manad": {
+        "2026-01": 1.912937231979143,
+        "2026-02": 1.119792973472272,
+        "2026-03": -0.013863484760662459,
+        "2026-04": 1.9578201029951927,
+        "2026-05": 0.42466812863106895,
+        "2026-06": -1.845318895257094,
+        "2026-07": 2.4478530568322725,
+        "2026-08": -3.226463588652649,
+        "2026-09": -2.605129560173239
+      },
+      "storsta_absolutfel": 3.226463588652649
+    },
+    "antal_i_band": 0,
+    "text": "Bastun slås på 0–6 timmar före öppning. Redovisas bredvid och räknas inte mot kriterierna."
+  },
+  "frusen_ver2": {
+    "datum": "2026-10-08",
+    "parametrar": {
+      "bo": "07:30",
+      "pre_timmar": 1.0,
+      "prep_timmar": 2.0,
+      "varm": "24h",
+      "V_kw": 13.0
+    },
+    "text": "Parametrarna för M4b ver. 2 frusna. Oktober 2026 ska förutsägas med både ver. 1 och ver. 2 innan fakturan läses."
+  }
+}

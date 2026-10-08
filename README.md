@@ -108,7 +108,7 @@ En preliminär prognos visas i diagram och tabell på elöversikten (markerad so
 
 ## Spotpris och elhandlarjämförelse
 
-- **[Spotpris/](Spotpris/README.md)** – ett månadsvärde för spotpriset i elområde SE4 enligt fem metoder (enkelt medel, medel 06–22, förbrukningsviktat m.fl.), jämfört med spotpriset, de rörliga kostnaderna och det fasta påslaget på Kraftringens fakturor. Förbrukning per kvart saknas, så förbrukningsprofilen uppskattas baklänges ur fakturorna. Modellen har prövats med blindprov på juli–augusti 2026. Skripten är skrivna i Python, och sidan är ren HTML/CSS/JS som fungerar direkt från fil.
+- **[Spotpris/](Spotpris/README.md)** – ett månadsvärde för spotpriset i elområde SE4 enligt fem metoder (enkelt medel, medel 06–22, förbrukningsviktat m.fl.), jämfört med spotpriset, de rörliga kostnaderna och det fasta påslaget på Kraftringens fakturor. Förbrukning per kvart saknas, så förbrukningsprofilen uppskattas baklänges ur fakturorna. Modellen har prövats med blindprov på juli–september 2026 och anpassats om på nio månader (se [Spotpris/omanpassning.html](Spotpris/omanpassning.html), en extrasida om hur modellen provas och förbättras). Skripten är skrivna i Python, och sidan är ren HTML/CSS/JS som fungerar direkt från fil.
 - **[Eneas_Samkop_av_El/](Eneas_Samkop_av_El/README.md)** – en jämförelse av vad badet betalade till Kraftringen januari–juni 2026 och vad det hade blivit med Eneas priser (tjänsten Samköp av el). Kraftringens belopp är kontrollräknade mot fakturorna i en tvåstegsgranskning, och redovisningen finns på en egen sida.
 
 ## Om bastusystemet
@@ -144,6 +144,7 @@ Systemet använder LÅT för att alltid visa de senaste 12 månadernas förbrukn
 
 ## Uppdateringshistorik
 
+- **2026-10-08** – September 2026: kostnad (62 294 kr) inlagd i elöversikten, fakturans spotpris i Spotpris tabell 3, och juli–september som fasta månader i intern debitering. Ny extrasida `Spotpris/omanpassning.html` om omanpassningen av M4b på januari–september (teori, kriterier, resultat). Månadsrutinen samlad i en egen skill
 - **2026-10-07** – Spotpris månad för månad (`Spotpris/`) med Python-skript, tester, blindprov för juli–september och känslighetsvarianter. Fakturor för juli och augusti 2026 inlagda
 - **2026-10-06** – Jämförelsen Kraftringen och Eneas (`Eneas_Samkop_av_El/`) med kvalitetsgranskning. Kraftringens fakturor och underlag för intern debitering januari–juni 2026 inlagda
 - **2026-10-04** – September 2026 inlagd (bad: 11 388 kWh, restaurang: 10 301 kWh). Kostnad inväntar fakturan. `data.html` fick automatisk månadshantering

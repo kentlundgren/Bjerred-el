@@ -182,6 +182,12 @@ och hanteras i `kraftringen.json` (Spotpris) och `STANDARD` (intern debitering).
   den sidan (de hör hemma på Eneas-sidan och förvillade). Version 1.4.
 - Kostnaden för september (62 294 kr, 2,87 kr/kWh) inlagd i `index.html`, `data.html`, `data.md` och
   `fore_och_efter_ombyggnad.js` (`prognoser.*` berörs inte, de gäller kWh).
+- **Omanpassning av M4b** (Kent bad om den): nytt skript `omanpassa_m4b.py` med tester `test_omanpassning.py`,
+  kriterier skrivna före körningen (`data/omanpassning_kriterier.json`), indata ur debiteringsunderlagen
+  (`data/omanpassning_indata.json`) och en extrasida `Spotpris/omanpassning.html` (länkad från `spotpris.html`).
+  Resultat: ver. 2 = bastun öppnar 07.30, RMS 1,99 mot 2,26 på nio månader; K1 ej uppfyllt (3,23 > 3,0),
+  K2 och K3 uppfyllda. Ver. 1 med verklig bastu/varmvatten-fördelning ger i september −3,75, inte −4,41
+  (blindprovet antog 23 % varmvatten, verkligt är 11 %).
 - Texterna som beskrev september som "återstående" uppdaterades i `Spotpris/README.md` och `Spotpris/PRD.md`
   (avsnitt 4.6, steg 7). Autokorrelationen räknades om med samma metod som tidigare (korrelationen mellan
   på varandra följande fel): −0,74 med åtta månader, −0,00 med nio.
@@ -191,15 +197,26 @@ och hanteras i `kraftringen.json` (Spotpris) och `STANDARD` (intern debitering).
 Här samlas sådant som Kent har sagt ska göras men som inte är gjort, eller som inte är avgjort.
 Stryk eller flytta upp till rutinen när det är avgjort.
 
-- **Spotpris, tabell 2** (Kraftringens och Eneas pris mot spotpriset) och **tabell 1** bygger på
-  `data/kraftringen.json` (januari–juni) och den modell som anpassades på dessa månader.
-  Juli–september ligger bara i `facit_jul_sep.json` (tabell 3, 4 och 6). Beslut saknas om en
-  **omanpassning**, det vill säga att räkna om modellens antaganden (baslast V m.m.) på alla nio
-  månader, januari–september, i stället för bara januari–juni. Det kräver att juli–september flyttas
-  till `kraftringen.json` med bastu- och varmvattenmätarna, som nu finns i intern debitering.
-  Avvägning: modellen kan bli bättre, men juli–september är då inte längre ett blindprov. Det blir
-  ett rent test först med oktober och framåt. Kriterier för att godkänna ska sättas **före** omkörningen.
-  Förklaringen med figur finns i chatten 2026-10-08; skriv in utfallet här när Kent beslutat.
+- **Omanpassningen av M4b är gjord 2026-10-08** (se `Spotpris/omanpassning.html`, `omanpassa_m4b.py`,
+  `Spotpris/PRD.md` avsnitt 4.7). Den gjordes **separat**: `kraftringen.json`, `m4b_resultat.json`,
+  `forutsagelse_*` och Spotpris-sidans tabell 1–6 är oförändrade, så att blindprovet förblir orört.
+  Utfall: ver. 2 (bastun öppnar 07.30, övrigt som ver. 1) är ett **försök**, eftersom kriterium K1
+  (största fel ≤ 3,0) missades med 3,23 i augusti. **Ver. 1 är fortsatt referens.** Flytta *inte*
+  juli–september till `kraftringen.json` utan ett nytt beslut av Kent: det skulle ändra tabell 1, 2, 4 och 6
+  och göra blindprovet obrukbart.
+- **Oktober: förutsägelse med både ver. 1 och ver. 2, före fakturan.** Det är bestämt i
+  `data/omanpassning_kriterier.json` (beslutsregeln), men **inte byggt**: `forutsag_spotpris.py` har
+  juli–september hårdkodat och stöder bara ver. 1. Bygg ut det (eller ett nytt skript) innan oktoberfakturan
+  läses, skriv ned förutsägelsen med datum, och bedöm först efter oktober, november och december
+  (tre månader). En månad räcker inte. Samma kriterier-före-körning-princip gäller för varje ny omanpassning.
+- **Fråga till Kent (underlag saknas):** när började bastun öppna 07.30? Om det kan beläggas kan öppettiden
+  anges per månad i stället för att anpassas (se `omanpassning.html`, "Tolkning").
+- **Nya månader och omanpassningssidan:** `omanpassning.html` visar Jan–Sep. När fler månader kommit och
+  en ny omanpassning görs: kör om `omanpassa_m4b.py` med de nya månaderna (kräver att skriptet byggs ut från
+  nio månader, där Jul–Sep läses ur `omanpassning_indata.json` och `facit_jul_sep.json`), behåll gamla
+  resultat som versioner, och skriv kriterierna först.
+- **Spotpris, tabell 1 och 2** bygger på `data/kraftringen.json` (januari–juni) och modellen ver. 1.
+  Juli–september ligger bara i `facit_jul_sep.json` (tabell 3, 4 och 6).
 - **Oktober och senare på Spotpris:** blindprovet gällde juli–september. Det är inte bestämt om nya
   månader ska in i samma tabell 3, i en ny tabell, eller vänta på omanpassningen. Fråga Kent.
 - **Texter på Spotpris som fortfarande säger "juli och augusti":** tabell 9 och 10, diagram 1,

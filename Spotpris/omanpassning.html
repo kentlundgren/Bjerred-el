@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<!--
+  omanpassning.html
+  Extrainformation till Spotpris/spotpris.html: hur M4b-modellen anpassades om på januari–september 2026 (ver. 2), varför, och vad det gav.
+  Siffrorna kommer från data/omanpassning_data.js, som skapas av omanpassa_m4b.py. Kriterierna står i data/omanpassning_kriterier.json
+  och skrevs före första körningen. Rena HTML/CSS/JS-filer, inga bibliotek, fungerar öppnad från fil.
+
+  UPPDATERING 2026-10-08: Första versionen (1.0).
+-->
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Så förbättras modellen: omanpassningen av M4b</title>
+  <meta name="description" content="Hur modellen för månadens spotpris (M4b) anpassades om på nio månader i stället för sex: teori, vad som gjordes och vad det gav.">
+  <link rel="stylesheet" href="spotpris.css">
+  <link rel="stylesheet" href="omanpassning.css">
+</head>
+<body>
+
+<a class="topplank" href="spotpris.html">← Spotpris</a>
+
+<main class="sida">
+
+  <header>
+    <h1 id="Start">Så förbättras modellen: omanpassningen av M4b</h1>
+    <p class="undertitel">Extrainformation till <a href="spotpris.html">Spotpris månad för månad</a>. Bjerreds Saltsjöbad, elområde SE4. Sammanställd av Kent Lundgren.</p>
+    <p class="status">Den här sidan är för den som vill se hur en modell för månadens spotpris provas, justeras och bedöms när fler månader kommit. Resultaten är
+      <strong>uppskattningar ur en modell</strong>, inte mätningar, och siffrorna är inte granskade i en tvåstegsgranskning. Själva Spotpris-sidan är oförändrad:
+      dess tabeller och blindprov visar fortfarande modellen så som den var innan omanpassningen.</p>
+  </header>
+
+  <noscript><p class="status">Sidan ritar tabeller och diagram med JavaScript. Slå på JavaScript för att se dem.</p></noscript>
+
+  <!-- ===== Kort ===== -->
+  <section aria-labelledby="Kort">
+    <h2 id="Kort">Det viktigaste i korthet <a class="ankare" href="#Kort" aria-label="Länk till avsnittet">#</a></h2>
+    <div class="notis" id="kort"></div>
+  </section>
+
+  <!-- ===== Modellerna ===== -->
+  <section aria-labelledby="Modellerna">
+    <h2 id="Modellerna">Modellerna M1 till M4b i korthet <a class="ankare" href="#Modellerna" aria-label="Länk till avsnittet">#</a></h2>
+    <p>Alla modeller svarar på samma fråga: <em>vilket spotpris betalar Bjerreds Saltsjöbad i genomsnitt för sin el en viss månad?</em> Fakturan visar svaret i efterhand.
+      Modellerna försöker komma så nära fakturan som möjligt utan att titta på den. Spotpriset ändras varje kvart, så svaret beror på <em>när</em> på dygnet elen används.</p>
+    <div class="tabell-wrap">
+      <table id="tab-modeller">
+        <caption id="TabellA">Tabell A. Modellerna och deras fel mot fakturan (öre/kWh, RMS)</caption>
+        <thead>
+          <tr>
+            <th>Modell</th><th>Så räknas den</th><th>Antal inställningar<br>som väljs mot fakturan</th>
+            <th>RMS<br>jan–jun</th><th>RMS<br>jul–sep</th><th>RMS<br>jan–sep</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="liten">RMS är rotmedelvärdet av felen (kvadratiskt medelfel): ett typiskt fel där stora fel väger tyngre. Fel = modellens värde minus fakturans spotpris, i öre/kWh utan moms.
+      Markeringen ● betyder att månaderna ingick när modellens inställningar valdes, så den siffran visar passning och inte förmåga att förutsäga.
+      M3 (spotpriset viktat mot verklig förbrukning per kvart) är inte byggd, eftersom förbrukning per kvart saknas. Den skulle bli facit för M4b.</p>
+  </section>
+
+  <!-- ===== Teorin ===== -->
+  <section aria-labelledby="Teori">
+    <h2 id="Teori">Teorin: vad är en anpassning, och hur vet man att den är bra? <a class="ankare" href="#Teori" aria-label="Länk till avsnittet">#</a></h2>
+
+    <h3>Vad modellen väljer</h3>
+    <p>M4b delar månadens elförbrukning i bastu, varmvatten och en restpost (huvudmätaren minus de två). Sedan fördelar den förbrukningen över månadens kvartar med hjälp av öppettider
+      och räknar fram vilket spotpris förbrukningen "såg". Fyra saker kan inte mätas direkt, och de är modellens <strong>inställningar</strong>:</p>
+    <ul>
+      <li>när bastun öppnar (06.00 eller 07.30; bastun slås på en timme före, enligt Kent Lundgren),</li>
+      <li>hur lång tid restaurangen förbereder sig före öppning (0, 1 eller 2 timmar),</li>
+      <li>om varmvattnet värms dygnet runt eller bara under öppettiderna,</li>
+      <li>den jämna <strong>baslasten V</strong> (kW): ventilation, värme, belysning och kylar som går hela dygnet, oavsett om någon är där (0 till 20 kW).</li>
+    </ul>
+    <p><strong>Anpassning</strong> betyder att alla kombinationer provas (2 × 3 × 2 × 21 = 252, varav 168 är fysiskt möjliga) och att den kombination väljs vars spotpris ligger närmast fakturans.
+      "Närmast" mäts som RMS-fel över de månader som ingår. En kombination är omöjlig om baslasten ensam skulle ta mer energi än restposten innehåller, och då hoppas den över.</p>
+
+    <h3>Varför räcker det inte att modellen passar bra?</h3>
+    <p>Med få månader och flera inställningar kan en modell passa just de månader den har sett, utan att därför förutsäga nästa. Det är samma sak som att repetera inför ett prov med facit framför sig.
+      Läroboken i prognosmetoder beskriver det så: felen mot de data som modellen anpassats på är regelmässigt mindre än felen på riktiga förutsägelser (Hyndman och Athanasopoulos, 2021, avsnitt 5.10; se källor).
+      Därför används flera prov med olika stränghet:</p>
+    <div class="tabell-wrap">
+      <table class="text" id="tab-prov-stege">
+        <caption id="TabellB">Tabell B. Fyra sorters prov, från snällast till strängast</caption>
+        <thead><tr><th>Prov</th><th>Så går det till</th><th>Vad det visar, och vad det inte visar</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Passning</strong></td><td>Modellen räknar de månader den anpassades på.</td><td>Att en kombination finns som passar. Inget om förmåga att förutsäga, eftersom månaderna redan sågs.</td></tr>
+          <tr><td><strong>Leave-one-out</strong></td><td>En månad lämnas utanför, modellen anpassas på de övriga och räknar den utelämnade.</td><td>Månaden påverkar inte sin egen förutsägelse. Men sökrummet och regeln för urvalet är fortfarande valda med alla månader i sikte, och framtida månader används ibland för att förutsäga tidigare.</td></tr>
+          <tr><td><strong>Framåtprov</strong></td><td>Modellen anpassas på månaderna före, och räknar nästa. Fönstret växer månad för månad.</td><td>Efterliknar hur modellen används: bara det som hänt före. Antalet prov är litet.</td></tr>
+          <tr><td><strong>Blindprov</strong></td><td>Förutsägelsen skrivs ned och inställningarna fryses <em>innan</em> fakturan läses.</td><td>Det enda prov där resultatet inte kan ha påverkat valet. Det kräver nya månader.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figure>
+      <div id="fig1"></div>
+      <figcaption id="Figur1">Figur 1. Vilka månader som används för att anpassa (A) och vilka som används för att prova (T), i de olika proven. Grå månader används inte. Oktober–december för ver. 2 är kommande blindprov.</figcaption>
+    </figure>
+
+    <h3>Så förbättras en modell i omgångar</h3>
+    <ol class="stegrad">
+      <li><strong>Bygg</strong> modellen av det som är känt (öppettider, mätarställningar, spotpriser).</li>
+      <li><strong>Anpassa</strong> inställningarna på de månader där facit finns.</li>
+      <li><strong>Förutsäg</strong> nya månader utan att titta på facit, och skriv ned förutsägelsen (blindprov).</li>
+      <li><strong>Titta på felen.</strong> Är de slumpmässiga, eller går de åt samma håll? Systematiska fel visar vad modellen saknar.</li>
+      <li><strong>Omanpassa eller bygg om,</strong> frys resultatet med datum, och börja om med nya månader.</li>
+    </ol>
+    <p>Den här sidan beskriver steg 5 för <em>inställningarna</em>: samma modell, fler månader. Att ändra modellens <em>form</em> (till exempel låta något skilja mellan sommar och vinter) är en större åtgärd som kräver fler månader för att kunna provas ärligt.</p>
+  </section>
+
+  <!-- ===== Vad som gjordes ===== -->
+  <section aria-labelledby="Gjort">
+    <h2 id="Gjort">Vad som gjordes, och varför <a class="ankare" href="#Gjort" aria-label="Länk till avsnittet">#</a></h2>
+    <ol class="stegrad" id="gjort-lista"></ol>
+  </section>
+
+  <!-- ===== Resultat ===== -->
+  <section aria-labelledby="Resultat">
+    <h2 id="Resultat">Resultat <a class="ankare" href="#Resultat" aria-label="Länk till avsnittet">#</a></h2>
+
+    <h3>Vilka inställningar valdes</h3>
+    <div class="tabell-wrap">
+      <table id="tab-val">
+        <caption id="TabellC">Tabell C. Inställningarna i ver. 1 (anpassad på januari–juni) och ver. 2 (anpassad på januari–september)</caption>
+        <thead><tr><th>Version</th><th>Bastun öppnar</th><th>Restaurangens<br>förberedelse</th><th>Varmvatten</th><th>Baslast V</th><th>RMS<br>(sina egna månader)</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <h3>Fel per månad</h3>
+    <div class="tabell-wrap">
+      <table id="tab-fel">
+        <caption id="TabellD">Tabell D. Fel per månad (öre/kWh). Fel över 3,0 i absolut tal är markerade.</caption>
+        <thead>
+          <tr>
+            <th>Månad</th><th>Fakturans<br>spotpris</th><th>Fel M1</th><th>Fel M2</th><th>Fel M4a</th>
+            <th class="m4b">Fel M4b<br>ver. 1</th><th class="m4b">Fel M4b<br>ver. 2</th><th>Fel ver. 1 i<br>blindprovet<sup>1</sup></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot></tfoot>
+      </table>
+    </div>
+    <p class="liten" id="fel-not"></p>
+    <figure>
+      <div id="fig2"></div>
+      <figcaption id="Figur2">Figur 2. Fel per månad för ver. 1 och ver. 2 (öre/kWh). De streckade linjerna är gränsen ±3,0 för passningen (kriterium K1). Blå bakgrund: månader som inte ingick i ver. 1:s anpassning.</figcaption>
+    </figure>
+
+    <h3>Kriterierna</h3>
+    <p>Kriterierna skrevs ned innan omanpassningen kördes (se <a href="data/omanpassning_kriterier.json">data/omanpassning_kriterier.json</a>) och har inte ändrats. Gränserna 3,0 och 4,5 öre/kWh beslutades av Kent Lundgren 2026-10-07 för ver. 1 och är desamma här.</p>
+    <div class="tabell-wrap">
+      <table id="tab-kriterier">
+        <caption id="TabellE">Tabell E. Kriterierna och utfallet</caption>
+        <thead><tr><th>Kriterium</th><th>Regel</th><th>Gräns</th><th>Utfall</th><th>Resultat</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="liten" id="kriterier-not"></p>
+
+    <h3>Framåtprov och leave-one-out i detalj</h3>
+    <div class="tabell-wrap">
+      <table id="tab-framat">
+        <caption id="TabellF">Tabell F. Framåtprov: anpassa på månaderna före, förutsäg nästa</caption>
+        <thead><tr><th>Förutsagd månad</th><th>Anpassad på</th><th>Vald kombination</th><th>Förutsagt<br>(öre/kWh)</th><th>Faktura<br>(öre/kWh)</th><th>Fel</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="tabell-wrap">
+      <table id="tab-loo">
+        <caption id="TabellG">Tabell G. Leave-one-out: en månad utelämnas, modellen anpassas på de övriga åtta</caption>
+        <thead><tr><th>Utelämnad månad</th><th>Vald kombination på de övriga</th><th>Fel</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="liten" id="loo-not"></p>
+
+    <h3>Baslasten: varför just 13 kW?</h3>
+    <figure>
+      <div id="fig3"></div>
+      <figcaption id="Figur3">Figur 3. Lägsta RMS-fel för varje baslast V (de övriga inställningarna väljs fritt), på januari–juni och på januari–september.</figcaption>
+    </figure>
+    <p id="fig3-text"></p>
+  </section>
+
+  <!-- ===== Tolkning ===== -->
+  <section aria-labelledby="Tolkning">
+    <h2 id="Tolkning">Vad säger resultatet? Det som är mätt, och det som är tolkning <a class="ankare" href="#Tolkning" aria-label="Länk till avsnittet">#</a></h2>
+    <div id="tolkning"></div>
+  </section>
+
+  <!-- ===== Nästa steg ===== -->
+  <section aria-labelledby="Nasta">
+    <h2 id="Nasta">Vad händer härnäst, och hur blir modellen bättre? <a class="ankare" href="#Nasta" aria-label="Länk till avsnittet">#</a></h2>
+    <div id="nasta"></div>
+  </section>
+
+  <!-- ===== Begränsningar ===== -->
+  <section aria-labelledby="Begransningar">
+    <h2 id="Begransningar">Begränsningar <a class="ankare" href="#Begransningar" aria-label="Länk till avsnittet">#</a></h2>
+    <ul>
+      <li><strong>Nio månader är få.</strong> Fyra inställningar anpassade mot nio värden lämnar litet utrymme. Skillnader på någon tiondels öre/kWh mellan två kombinationer är inte meningsfulla.</li>
+      <li><strong>Kriterierna är inte helt oberoende av utfallet.</strong> Felen i det frusna blindprovet för juli–september var kända när kriterierna för omanpassningen skrevs. Det enda ärliga provet av ver. 2 är oktober och månaderna efter.</li>
+      <li><strong>Passning och leave-one-out är inte oberoende prov för juli–september</strong>, eftersom dessa månader ingår i anpassningen av ver. 2. Framåtprovet är det strängaste av de tre, men har bara tre månader.</li>
+      <li><strong>Sökrummet är grovt:</strong> baslasten provas i hela kilowatt och öppettiderna i två alternativ. Ett finare sökrum skulle ge andra siffror, men skulle också vara ännu lättare att över-anpassa.</li>
+      <li><strong>Öppettiderna</strong> hämtades från hemsidan 2026-10-07 och antas ha gällt hela perioden. När bastun började öppna 07.30 är okänt.</li>
+      <li><strong>Spotpriserna</strong> kommer från en sammanställning (elprisetjustnu.se), inte direkt från elbörsen. Fakturornas värden är avlästa ur Kraftringens fakturor.</li>
+      <li><strong>Uppdelningen</strong> av "bad" i bastu och varmvatten kommer ur Kents debiteringsunderlag (mätarställningar). Mätarna läses av manuellt och avläsningsdagen är okänd.</li>
+      <li>Sidans siffror är <strong>inte tvåstegsgranskade</strong>. Skriptet har egna tester (<code>test_omanpassning.py</code>), och anpassningen på januari–juni kontrolleras mot ver. 1 vid varje körning.</li>
+    </ul>
+  </section>
+
+  <!-- ===== Filer ===== -->
+  <section aria-labelledby="Filer">
+    <h2 id="Filer">Filer <a class="ankare" href="#Filer" aria-label="Länk till avsnittet">#</a></h2>
+    <ul>
+      <li><code>omanpassa_m4b.py</code>: kör omanpassningen. Skriver bara nya filer och rör inte de frusna.</li>
+      <li><code>test_omanpassning.py</code>: tester för skriptet.</li>
+      <li><code>data/omanpassning_kriterier.json</code>: kriterierna, skrivna före första körningen.</li>
+      <li><code>data/omanpassning_indata.json</code>: kWh för juli–september ur debiteringsunderlagen, med källa.</li>
+      <li><code>data/omanpassning_resultat.json</code> och <code>data/omanpassning_data.js</code>: resultatet (samma innehåll; skriptfilen läser den här sidan).</li>
+    </ul>
+  </section>
+
+  <!-- ===== Källor ===== -->
+  <section aria-labelledby="Kallor">
+    <h2 id="Kallor">Källor <a class="ankare" href="#Kallor" aria-label="Länk till avsnittet">#</a></h2>
+    <ul class="kallor">
+      <li id="ref-hyndman">Hyndman, R.J. och Athanasopoulos, G. (2021) <em>Forecasting: Principles and Practice</em>. 3:e uppl. Melbourne: OTexts. Avsnitt 5.10 <em>Time series cross-validation</em>. Tillgänglig:
+        <a href="https://otexts.com/fpp3/tscv.html" target="_blank" rel="noopener">https://otexts.com/fpp3/tscv.html</a> (hämtad 2026-10-08).
+        <em>Beskriver att anpassningsfelet är mindre än felet på riktiga förutsägelser, och förutsägelseprov där träningsmängden växer, vilket är det som här kallas framåtprov.</em></li>
+      <li id="ref-kraftringen">Kraftringen (2026) <em>E-faktura elnät och elhandel, januari–september 2026</em> [fakturor, PDF]. Kraftringen Nät AB och Kraftringen Energi AB.
+        <em>Fakturans spotpris per månad (facit).</em> Fakturor juli–september:
+        <a href="../Kraftringen/Fakturor/202607_Kraftringen_Juli_2026_3165925102.pdf" target="_blank" rel="noopener">juli</a>,
+        <a href="../Kraftringen/Fakturor/202608_Kraftringen_Aug_2026_3185333204.pdf" target="_blank" rel="noopener">augusti</a>,
+        <a href="../Kraftringen/Fakturor/202609_Kraftringen_Sept_2026_3199122106.pdf" target="_blank" rel="noopener">september</a>. Fakturor januari–juni finns under Källor på <a href="spotpris.html#Kallor">Spotpris-sidan</a>.</li>
+      <li id="ref-intern">Bjerreds Saltsjöbad (2026) <em>Intern debitering juli–september 2026</em> [debiteringsunderlag, bild]. Lokalt i projektet:
+        <a href="../Kraftringen/Intern_debitering/202607_Intern_debitering.jpg" target="_blank" rel="noopener">juli</a>,
+        <a href="../Kraftringen/Intern_debitering/202608_Intern_debitering.jpg" target="_blank" rel="noopener">augusti</a>,
+        <a href="../Kraftringen/Intern_debitering/202609_Intern_debitering.jpg" target="_blank" rel="noopener">september</a>.
+        <em>Mätarställningar för huvudmätare, bastu och varmvatten, som ger kWh för bastu och varmvatten.</em></li>
+    </ul>
+    <p class="liten">Övriga källor (spotpriser, öppettider) finns under <a href="spotpris.html#Kallor">Källor på Spotpris-sidan</a>. Mer: <a href="PRD.md">PRD.md</a> avsnitt 4.7 och <a href="SPEC.md">SPEC.md</a>.
+      Sidan och skriptet har tagits fram med hjälp av en AI-assistent (Claude) på uppdrag av Kent Lundgren.</p>
+  </section>
+
+  <footer class="fot">
+    <p>Version <span id="version"></span> · <span id="versionsdatum"></span> · Beräkningsdata skapad <span id="datadatum"></span> · Kent Lundgren</p>
+  </footer>
+</main>
+
+<a class="corner corner-left" href="https://github.com/kentlundgren/Bjerred-el/tree/main/Spotpris" target="_blank" rel="noopener">{ } GitHub</a>
+
+<script src="data/omanpassning_data.js"></script>
+<script src="data/forutsagelse_data.js"></script>
+<script src="omanpassning.js"></script>
+</body>
+</html>
