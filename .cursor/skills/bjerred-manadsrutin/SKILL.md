@@ -149,6 +149,19 @@ På `intern_debitering.html`, avsnittet "Källor", och i sidfoten:
 4. Granskningsmeningen i sidans topp gäller bara januari–juni (tvåstegsgranskade). Ändra inte den till
    att gälla senare månader utan att granskningen gjorts.
 
+#### 2f. Eneas jämförelsesida, tabell 1 (forts.) (Kents önskemål 2026-10-08)
+Sidan `Eneas_Samkop_av_El/enea_jamforelse.html` jämför bara januari–juni med Eneas, och det ska den
+fortsätta göra. Månader efter juni visas ändå under tabell 1 i en egen tabell ("Tabell 1 (forts.)").
+
+1. Lägg ett objekt sist i `MANADER_JUL_SEP` i `enea_jamforelse.js` (**inte** i `MANADER`, annars hamnar månaden i
+   tabell 2, summorna och det som kopieras). Fälten: `kwh`, `fakturaKr`, `krOre` (spot + rörliga + 1,70 påslag),
+   `natOre`, `skattOre`, `fastNatKr`. Läs **fast nätavgift ur fakturan**: den var 8 824 kr/mån januari–juni men
+   7 980 kr/mån från juli.
+2. Lägg en fakturalänk i källistan i `enea_jamforelse.html`, uppdatera rubriken/perioden i den nya tabellen vid behov
+   (ändra rubrik och text om fler än tre månader), och höj `VERSION`/`VERSIONSDATUM`.
+3. Verifiera lokalt (dubbelklicka på ordet "Kraftringen" för att visa tabell 1) att kolumnerna ligger rakt under
+   januari–juni-tabellen och att summaraden stämmer.
+
 ### Steg 3 – Avslut varje månad
 1. Verifiera alla berörda sidor på en lokal server (Spotpris, intern debitering, `index.html`).
 2. Stoppa servern. Ta bort `__pycache__`.
@@ -170,6 +183,7 @@ Förklaring: ✓ klart och verifierat, ✗ inte gjort, – gäller inte. Datum =
 | 2c-doc. Blindprovstexter i `Spotpris/README.md` och `PRD.md` | ✓ 2026-10-08 | ✓ 2026-10-08 | ✓ 2026-10-08 |
 | 2d. Intern debitering (`STANDARD`) | ✓ 2026-10-08 | ✓ 2026-10-08 | ✓ 2026-10-08 |
 | 2e. Källlänkar och version (intern debitering) | ✓ 2026-10-08 (v1.4) | ✓ 2026-10-08 (v1.4) | ✓ 2026-10-08 (v1.4) |
+| 2f. Eneas jämförelsesida, tabell 1 (forts.) | ✓ 2026-10-08 (v2.3) | ✓ 2026-10-08 (v2.3) | ✓ 2026-10-08 (v2.3) |
 
 Januari–juni 2026 lades in vid bygget av Eneas-sidorna och Spotpris-sidan (2026-10-06 och 2026-10-07)
 och hanteras i `kraftringen.json` (Spotpris) och `STANDARD` (intern debitering).
@@ -222,7 +236,8 @@ Stryk eller flytta upp till rutinen när det är avgjort.
 - **Texter på Spotpris som fortfarande säger "juli och augusti":** tabell 9 och 10, diagram 1,
   blindprovstexten och `startpuls_data.js` / `avlasning_data.js` (skapas av `kanslighet_*.py`).
   Körs inte om automatiskt när tabell 3 får en ny månad.
-- **Eneas jämförelsesida** (`enea_jamforelse.*`) gäller fortfarande bara januari–juni.
+- **Eneas jämförelsesida** (`enea_jamforelse.*`): jämförelsen med Eneas (tabell 2) gäller fortfarande bara
+  januari–juni. Juli–september visas sedan 2026-10-08 under tabell 1 (se steg 2f), utan att ingå i jämförelsen.
 - **Granskning:** juli–september på intern debitering är inte tvåstegsgranskade.
 - **Fler månadsmoment kommer.** Kent har sagt att fler saker ska göras varje månad. Lägg dem som nya steg
   under "Rutin per ny månad".

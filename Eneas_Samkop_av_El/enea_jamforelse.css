@@ -52,7 +52,8 @@ a { color: var(--accent); }
 .ankare {
   margin-left: 6px; text-decoration: none; opacity: 0; font-weight: 400;
 }
-h2:hover .ankare, h2:focus-within .ankare, .ankare:focus { opacity: .7; }
+/* UPPDATERING 2026-10-08: ankaret visas också vid h3 (rubriken för juli–september i tabell 1) */
+h2:hover .ankare, h2:focus-within .ankare, h3:hover .ankare, h3:focus-within .ankare, .ankare:focus { opacity: .7; }
 
 /* ---------- Rutor ---------- */
 .ruta {
@@ -69,6 +70,11 @@ th, td { padding: 6px 10px; text-align: right; border-bottom: 1px solid var(--ka
 th { font-weight: 700; vertical-align: bottom; font-size: .9rem; }
 th:first-child, td:first-child { text-align: left; }
 tfoot td { font-weight: 700; border-top: 2px solid var(--text); border-bottom: none; }
+/* UPPDATERING 2026-10-08: tabell 1 (jan–jun) och dess fortsättning (jul–sep) får samma kolumnbredder,
+   så att kolumnerna ligger rakt under varandra. */
+#tab-idag, #tab-idag-jul-sep { table-layout: fixed; }
+#tab-idag th:first-child, #tab-idag-jul-sep th:first-child { width: 17%; }
+#tab-idag th:not(:first-child), #tab-idag-jul-sep th:not(:first-child) { width: 13.8%; }
 td.last { background: var(--lasta); }
 /* Kraftringens pris i tabell 1 markeras när Eneas pris för samma månad är ifyllt */
 td.markerad { font-weight: 700; background: #d9efd5; }

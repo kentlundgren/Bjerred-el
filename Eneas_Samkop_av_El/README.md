@@ -43,7 +43,7 @@ kostnader + 1,70 öre/kWh fast påslag).
 |-----|----------|
 | `enea_jamforelse.html` | Sidan (tabeller, gula fält, knappar, källor). |
 | `enea_jamforelse.css` | Utseende och utskriftsformat. |
-| `enea_jamforelse.js` | Kraftringens utfall, beräkning, sparande i webbläsaren och kopiering. |
+| `enea_jamforelse.js` | Kraftringens utfall, beräkning, sparande i webbläsaren och kopiering. Juli–september (`MANADER_JUL_SEP`, sedan v2.3) visas under tabell 1 men ingår inte i jämförelsen med Eneas. |
 | `enea_hjalp.js` | Gemensamma hjälpfunktioner (tolkning av tal, talformat). |
 | `intern_debitering.html` | Intern sida: mall för debiteringsunderlag (som dagens underlag), januari–september 2026. Tabellen med restaurangens andel med Eneas priser togs bort 2026-10-08. |
 | `intern_underlag.js` | Debiteringsunderlaget: månadsval, mätarställningar, beräkning, kontroller, kopiering och utskrift. |

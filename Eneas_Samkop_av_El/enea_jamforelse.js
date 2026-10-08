@@ -32,6 +32,9 @@
   UPPDATERING 2026-10-07: Tre snabba klick (trippelklick) på rubriken "Tabell 2. Med Eneas priser" fyller i Eneas pris, månadsavgift,
   prismodell, fritext och underskrift ur Isak Cerwéns mejl (konstanten ENEAS_ISAK_MEJL). Ingen synlig ledtråd på sidan, på samma sätt
   som dubbelklicket på "Kraftringen". Uppgifterna ligger i den här filen och går alltså att läsa i källkoden (Kent har godkänt det). Version 2.1.
+  UPPDATERING 2026-10-08: Under tabell 1 (januari–juni) visas juli–september 2026 i en egen tabell (konstanten MANADER_JUL_SEP).
+  De tre månaderna ligger medvetet UTANFÖR MANADER, så jämförelsen med Eneas (tabell 2, summor, kopiering) gäller fortfarande bara
+  januari–juni. Tabellen visas och döljs tillsammans med tabell 1. Version 2.3.
 */
 (function () {
   'use strict';
@@ -44,8 +47,8 @@
   // ===================================================================
   // 1. Version
   // ===================================================================
-  var VERSION = '2.2';
-  var VERSIONSDATUM = '2026-10-07';
+  var VERSION = '2.3';              // UPPDATERING 2026-10-08: juli–september under tabell 1 (var 2.2)
+  var VERSIONSDATUM = '2026-10-08';
 
   // ===================================================================
   // Uppgifter ur Isak Cerwéns mejl (Eneas Services AB), "Sv: Elhandel Kraftringen och Eneas", mottaget av Kent Lundgren och införda 2026-10-07.
@@ -118,6 +121,19 @@
     { key: '2026-04', namn: 'Apr', kwh: 26671.14, fakturaKr: 52186, krOre: 68.29,  natOre: 19.16, skattOre: 36.00, fastNatKr: 8824 },
     { key: '2026-05', namn: 'Maj', kwh: 23941.02, fakturaKr: 56338, krOre: 95.00,  natOre: 20.39, skattOre: 36.00, fastNatKr: 8824 },
     { key: '2026-06', namn: 'Jun', kwh: 20609.34, fakturaKr: 53134, krOre: 106.45, natOre: 20.99, skattOre: 36.00, fastNatKr: 8824 }
+  ];
+
+  // UPPDATERING 2026-10-08: Juli–september 2026, för visning under tabell 1.
+  //   Ingår INTE i MANADER och därmed inte i jämförelsen med Eneas, som bara gäller januari–juni.
+  //   Källa: Kraftringens fakturor för juli (3165925102), augusti (3185333204) och september (3199122106) 2026,
+  //   kontrollräknade: (fast + kWh × (nät + el + skatt)) × 1,25 ger fakturabeloppet (augusti och september exakt, juli 1 kr lägre
+  //   eftersom öre-priserna på fakturan är avrundade; fakturabeloppet är det som står på fakturan).
+  //   krOre = spot + rörliga kostnader + fast påslag 1,70 öre/kWh (t.ex. juli 79,21 + 5,10 + 1,70 = 86,01).
+  //   OBS: fast nätavgift är 7 980 kr/mån från juli (8 824 kr/mån januari–juni, enligt fakturorna).
+  var MANADER_JUL_SEP = [
+    { key: '2026-07', namn: 'Jul', kwh: 21584.28, fakturaKr: 48277, krOre: 86.01,  natOre: 19.95, skattOre: 36.00, fastNatKr: 7980 },
+    { key: '2026-08', namn: 'Aug', kwh: 21835.32, fakturaKr: 49876, krOre: 90.02,  natOre: 20.17, skattOre: 36.00, fastNatKr: 7980 },
+    { key: '2026-09', namn: 'Sep', kwh: 21688.74, fakturaKr: 62294, krOre: 134.59, natOre: 22.39, skattOre: 36.00, fastNatKr: 7980 }
   ];
 
   // ===================================================================
@@ -204,6 +220,19 @@
             td(fmt(m.natOre, 2)) + td(fmt(m.skattOre, 2)) + td(fmt(m.fastNatKr)) + '</tr>';
     });
     document.querySelector('#tab-idag tbody').innerHTML = r1;
+
+    // --- Tabell 1 (forts.): juli–september. Samma kolumner, egen summarad. Inte med i jämförelsen. ---
+    // UPPDATERING 2026-10-08
+    var r1b = '';
+    MANADER_JUL_SEP.forEach(function (m) {
+      r1b += '<tr>' + td(m.namn) + td(fmt(m.kwh)) + td(fmt(m.fakturaKr)) + td(fmt(m.krOre, 2)) +
+             td(fmt(m.natOre, 2)) + td(fmt(m.skattOre, 2)) + td(fmt(m.fastNatKr)) + '</tr>';
+    });
+    document.querySelector('#tab-idag-jul-sep tbody').innerHTML = r1b;
+    var kwhJS = 0, fakJS = 0, kwhOreJS = 0;
+    MANADER_JUL_SEP.forEach(function (m) { kwhJS += m.kwh; fakJS += m.fakturaKr; kwhOreJS += m.kwh * m.krOre; });
+    document.querySelector('#tab-idag-jul-sep tfoot').innerHTML =
+      '<tr>' + td('Summa / vägt snitt') + td(fmt(kwhJS)) + td(fmt(fakJS)) + td(fmt(kwhOreJS / kwhJS, 2)) + td('') + td('') + td('') + '</tr>';
 
     // --- Tabell 2: med Eneas. Inmatningsfältet skapas här en gång så att fokus inte tappas. ---
     var r2 = '';

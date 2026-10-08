@@ -109,6 +109,29 @@
     </div>
     <p class="liten">I summaraden är kWh och faktura summor. &quot;Allt elpris&quot; är ett kWh-vägt snitt:
       varje månads pris väger lika tungt som månadens förbrukning. Det är vad som i genomsnitt betalades per kWh.</p>
+
+    <!-- UPPDATERING 2026-10-08: Juli–september direkt under januari–juni. Egen tabell och egen summarad, eftersom
+         jämförelsen med Eneas (tabell 2) bara gäller januari–juni. Fylls av enea_jamforelse.js (MANADER_JUL_SEP). -->
+    <h3 id="TabellIdagJulSep">Tabell 1 (forts.). Juli–september 2026 <a class="ankare" href="#TabellIdagJulSep" aria-label="Länk till avsnittet">#</a></h3>
+    <div class="tabell-wrap">
+      <table id="tab-idag-jul-sep">
+        <thead>
+          <tr>
+            <th>Månad</th>
+            <th>Totalt<br>kWh</th>
+            <th>Faktura inkl moms<br>(kr)</th>
+            <th>Allt elpris<br>(öre/kWh)</th>
+            <th>Rörlig nätavgift<br>(öre/kWh)</th>
+            <th>Energiskatt<br>(öre/kWh)</th>
+            <th>Fast avgift<br>(kr/månad)</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot></tfoot>
+      </table>
+    </div>
+    <p class="liten">Juli–september ingår inte i jämförelsen med Eneas, som gäller januari–juni. Fast nätavgift är 7 980 kr per månad
+      från juli (8 824 kr per månad januari–juni), enligt fakturorna. Summaraden gäller bara juli–september.</p>
     </div><!-- /tabell1-innehall -->
   </section>
 
@@ -210,6 +233,11 @@
         <a href="../Kraftringen/Fakturor/202604_Kraftfringen_April_3126369101.pdf" target="_blank" rel="noopener">april</a>,
         <a href="../Kraftringen/Fakturor/202605_Kraftringen_Maj_2026_3141677009.pdf" target="_blank" rel="noopener">maj</a>,
         <a href="../Kraftringen/Fakturor/202606_Kraftringen_Juni_2026_3154522605.pdf" target="_blank" rel="noopener">juni</a>.
+        <!-- UPPDATERING 2026-10-08: fakturor för juli–september, som visas under tabell 1 men inte ingår i jämförelsen. -->
+        Fakturor juli–september 2026 (visas under tabell 1, ingår inte i jämförelsen):
+        <a href="../Kraftringen/Fakturor/202607_Kraftringen_Juli_2026_3165925102.pdf" target="_blank" rel="noopener">juli</a>,
+        <a href="../Kraftringen/Fakturor/202608_Kraftringen_Aug_2026_3185333204.pdf" target="_blank" rel="noopener">augusti</a>,
+        <a href="../Kraftringen/Fakturor/202609_Kraftringen_Sept_2026_3199122106.pdf" target="_blank" rel="noopener">september</a>.
       </li>
       <li id="ref-eneas"><a href="https://www.eneas.se/portfoljforvaltning-el/" target="_blank" rel="noopener">Eneas</a> (2026) <em>Samköp av el</em> [broschyr, PDF]. Eneas.
         <em>Beskriver tjänsten Samköp av el. Innehåller inga priser.</em>
@@ -247,7 +275,7 @@
       </div>
       <div class="tech-card">
         <h4>Kraftringens belopp är fasta</h4>
-        <p>kWh, fakturabelopp och priser per månad ligger inbakade i JavaScript och är hämtade ur de sex fakturorna.</p>
+        <p>kWh, fakturabelopp och priser per månad ligger inbakade i JavaScript och är hämtade ur de sex fakturorna för januari–juni. Juli–september under tabell 1 är hämtade ur de tre fakturorna för de månaderna.</p>
       </div>
       <div class="tech-card">
         <h4>Beräkning från fakturans belopp</h4>
