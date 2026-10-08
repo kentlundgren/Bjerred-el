@@ -61,6 +61,12 @@ table { border-collapse: collapse; width: 100%; min-width: 640px; font-variant-n
 th, td { padding: 6px 10px; text-align: right; border-bottom: 1px solid var(--kant); white-space: nowrap; }
 th { font-weight: 700; vertical-align: bottom; font-size: .9rem; }
 th:first-child, td:first-child { text-align: left; }
+/* UPPDATERING 2026-10-08: Tabell 11 har tre fel-kolumner med långa rubriker. Rubrikerna får radbrytas och tabellen får bli smalare än 640 px,
+   så att alla kolumner syns utan sidscroll. */
+#tab-noggrannhet { min-width: 0; }
+#tab-noggrannhet th { white-space: normal; padding-left: 8px; padding-right: 8px; }
+#tab-noggrannhet td { padding-left: 8px; padding-right: 8px; }
+#tab-noggrannhet th:first-child, #tab-noggrannhet td:first-child { width: 14%; }
 tfoot td { font-weight: 700; border-top: 2px solid var(--text); border-bottom: none; }
 td.pos { color: var(--dyrare); }
 td.neg { color: var(--billigare); }

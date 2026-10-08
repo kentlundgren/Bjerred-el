@@ -14,11 +14,12 @@
   nämnde bara juli och augusti är rättade (en del räknas nu ur datan). Avläsningsanalysen nämner september som undantag. Version 1.2.
   UPPDATERING 2026-10-08: Diagram 2 och tabell 7 visar juli–september som vanliga månader (heldragna linjer, ingen "blindprov"-märkning,
   alltid med, nio färger), eftersom diagrammet visar verkliga spotpriser och inte modellens gissning. Version 1.3.
+  UPPDATERING 2026-10-08: Tabell 11 har juli, augusti och september som rader och en tredje kolumn med blindprovets fel. Version 1.4.
 */
 (function () {
   'use strict';
 
-  var VERSION = '1.3';
+  var VERSION = '1.4';
   var VERSIONSDATUM = '2026-10-08';
   var LAGRING = 'spotpris_v1';                    // egen lagringsnyckel för Eneas pris (bara i den här webbläsaren)
   var LAGRING_JAMFORELSE = 'enea_jamforelse_v1';  // jämförelsesidans nyckel; läses (aldrig skrivs) om fältet här är tomt
@@ -255,6 +256,7 @@
       (kompletta === 0 ? 'Fyll i fakturans spotpris för att se felen. Gräns att jämföra med: ' + fmt(grans, 1) + ' öre/kWh (leave-one-out).' :
         'Största fel i spotpriset hittills: ' + fmt(stor) + ' öre/kWh (gräns ' + fmt(grans, 1) + ').');
     renderBlindprov();
+    renderTabell11();          // UPPDATERING 2026-10-08: tabell 11 visar blindprovets fel för juli–september
   }
 
   // ---------------------------------------------------------------------------------------------------------
@@ -603,13 +605,30 @@
       'Beviset kommer först när förbrukning per kvart finns och M4b kan jämföras mot det förbrukningsviktade snittet (M3).</p>' +
       '<p><strong>Blindprov (UPPDATERING 2026-10-07, utökat 2026-10-08):</strong> juli, augusti och september förutsades innan fakturorna lästes in. Felen blev större än på de månader som anpassningen gjordes på, och spannet var för smalt. ' +
       'Se <a href="#Blindprov">analysen av blindprovet</a>.</p>';
-    var h = '';
+    renderTabell11();
+    el('noggrannhet-not').textContent = 'Fel i öre/kWh = modellens värde minus fakturans spotpris. Leave-one-out: antagandena väljs på de andra månaderna och används för att förutsäga den utelämnade. ' +
+      'Blindprov: månaden förutsades med antagandena från januari–juni innan fakturan lästes in, så den ingick aldrig i anpassningen (därför "–" i de två första kolumnerna). Samma värden som tabell 4.';
+  }
+
+  // UPPDATERING 2026-10-08: Tabell 11 har fått juli–september och en tredje kolumn, "blindprov". Raderna för juli–september följer
+  // fakturans spotpris i tabell 3 (inmatat värde eller värdet ur facit), så tabellen anropas också från uppdateraTabell3().
+  function renderTabell11() {
+    var tb = document.querySelector('#tab-noggrannhet tbody');
+    if (!tb || !D.m4b) { return; }
+    var u = D.m4b.primar.u1, loo = D.m4b.primar.leave_one_out, h = '';
     MAN.forEach(function (m) {
       var l = loo.fel_per_manad[m];
-      h += '<tr>' + td(esc(lang(m))) + td(fmtT(u.fel_per_manad[m]), klass(u.fel_per_manad[m])) + td(typeof l === 'number' ? fmtT(l) : 'saknas', typeof l === 'number' ? klass(l) : '') + '</tr>';
+      h += '<tr>' + td(esc(lang(m))) + td(fmtT(u.fel_per_manad[m]), klass(u.fel_per_manad[m])) + td(typeof l === 'number' ? fmtT(l) : 'saknas', typeof l === 'number' ? klass(l) : '') + td('–') + '</tr>';
     });
-    document.querySelector('#tab-noggrannhet tbody').innerHTML = h;
-    el('noggrannhet-not').textContent = 'Fel i öre/kWh = modellens värde minus fakturans spotpris. Leave-one-out: antagandena väljs på de andra månaderna och används för att förutsäga den utelämnade.';
+    if (F) {
+      Object.keys(F.manader).sort().forEach(function (m) {
+        var inp = document.querySelector('#t3-' + m + ' input[data-f="spot"]');
+        var spot = inp ? tolka(inp.value) : null;                // fakturans spotpris enligt tabell 3
+        var fel = spot === null ? null : F.manader[m].m4b_ore - spot;
+        h += '<tr>' + td(esc(lang(m))) + td('–') + td('–') + (fel === null ? td('–') : td(fmtT(fel), klass(fel))) + '</tr>';
+      });
+    }
+    tb.innerHTML = h;
   }
 
   // ---------------------------------------------------------------------------------------------------------
