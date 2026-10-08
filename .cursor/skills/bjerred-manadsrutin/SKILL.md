@@ -339,8 +339,8 @@ Stryk eller flytta upp till rutinen när det är avgjort.
   (tre månader). En månad räcker inte. Samma kriterier-före-körning-princip gäller för varje ny omanpassning.
 - **Gissningarna syns inte på Spotpris-sidan än.** De ligger som filer i `data/forutsagelse_*` och `data/utfall_*`
   (json och md). Om Kent vill visa dem på sidan (t.ex. en tabell "Gissning mot facit, per månad") är det ett separat uppdrag.
-- **Skriptet kan ha en oprövad kant:** `--bad` (uppdelningen antagen) är provkört bara indirekt. Prova det en gång på en gammal månad
-  med `--retrospektivt --utmapp <tillfällig mapp>` innan det behövs på riktigt.
+- **`--bad` är provkört** (2026-10-08, augusti med `--retrospektivt --utmapp <tillfällig mapp>`): M4b ver. 1 gav 80,27 öre/kWh
+  mot 80,26 i det ursprungliga blindprovet. Det används bara om bastu- och varmvattenmätarna inte kunnat läsas av.
 - **Fråga till Kent (underlag saknas):** när började bastun öppna 07.30? Om det kan beläggas kan öppettiden
   anges per månad i stället för att anpassas (se `omanpassning.html`, "Tolkning").
 - **Nya månader och omanpassningssidan:** `omanpassning.html` visar Jan–Sep. När fler månader kommit och
