@@ -2,7 +2,7 @@
 
 Projekt: Elenergiförbrukning – Bjerreds Saltsjöbad
 Mapp: `Spotpris/` (all utveckling sker inom denna mapp)
-Status: Utkast 6, 2026-10-07 (sidan `spotpris.html` är byggd; blindprov för juli–augusti och en känslighetsvariant med startpuls har tillkommit, avsnitt 4.6; förstudie 1–5 i avsnitt 4; beslut efter Kents svar 2026-10-07: förbrukningen uppskattas baklänges, sidan är öppen; verkliga öppettider inlagda; luft-värmepump till restaurangen antas; genomläst med nya ögon; `SPEC.md` för beräkningsskriptet är skriven, se avsnitt 11–12)
+Status: Utkast 6, 2026-10-07 (sidan `spotpris.html` är byggd; blindprov för juli–september (september avstämd 2026-10-08) och en känslighetsvariant med startpuls har tillkommit, avsnitt 4.6; förstudie 1–5 i avsnitt 4; beslut efter Kents svar 2026-10-07: förbrukningen uppskattas baklänges, sidan är öppen; verkliga öppettider inlagda; luft-värmepump till restaurangen antas; genomläst med nya ögon; `SPEC.md` för beräkningsskriptet är skriven, se avsnitt 11–12)
 Ansvarig: Kent Lundgren
 
 > OBS! Siffrorna i förstudien (avsnitt 4) är framräknade ur spotpriser från elprisetjustnu.se och spotpriset på
@@ -218,7 +218,7 @@ ett grått band för 66 alternativa lika bra passningar (RMS högst 1,5 öre/kWh
 6. **Användning:** kurvan kan visa var i dygnet effekten ligger (till exempel om toppen sammanfaller med dyra timmar) och hur stor spridningen mellan lika bra antaganden är. Den ska märkas som en uppskattning
    överallt där den visas.
 
-### 4.6 Blindprov juli–augusti och startpuls (2026-10-07, efter bygget)
+### 4.6 Blindprov juli–september och startpuls (2026-10-07, efter bygget; september avstämd 2026-10-08)
 
 **Blindprov.** Med de antaganden som valdes på januari–juni (U1: bastun öppnar 06.00 och slås på en timme före, restaurangens förberedelse 2 timmar, varmvatten dygnet runt, baslast V 13 kW, där V är den jämna effekt som antas gå dygnet runt för ventilation och värme) förutsades fakturans spotpris för juli, augusti och september **innan** fakturorna lästes in (`forutsag_spotpris.py`, `data/forutsagelse_jul_sep.json`). Indata var månadens kWh på huvudmätaren och "bad" (bastu + varmvatten) ur `index.html`. Uppdelningen i bastu och varmvatten antogs (23 % varmvatten); debiteringsunderlagen visade senare 16 %.
 
@@ -226,17 +226,18 @@ ett grått band för 66 alternativa lika bra passningar (RMS högst 1,5 öre/kWh
 |-------|--------------:|-------------------:|--------:|-------:|-------:|
 | Juli | 82,55 | 79,21 | +3,34 | −1,34 | +7,27 |
 | Augusti | 80,26 | 83,72 | −3,46 | −0,58 | −3,27 |
+| September | 123,68 | 128,09 | −4,41 | +4,92 | −7,96 |
 
-- Båda månaderna ligger inom leave-one-out-gränsen 4,5 öre/kWh, men RMS-felet (typiskt fel, där stora fel väger tyngre) är 3,40 mot 1,35 på januari–juni. Det största felet är större än det största anpassningsfelet (2,55).
-- Spannet för M4b (osäkerheten i uppdelningen och de alternativa antagandena) **täckte inte utfallet** i någon av månaderna och var för smalt.
-- M2 träffade bäst, men hade fel på upp till 8,5 öre/kWh på januari–juni. Två månader säger lite.
-- Felens tecken i tur och ordning är + + − + + − + −. Autokorrelationen (fördröjning 1) är −0,74, precis under det cirka ±0,75 som krävs med sju par för att skilja från slumpen. Det går inte att avgöra om det är ett mönster.
+- Alla tre månaderna ligger inom leave-one-out-gränsen 4,5 öre/kWh (september knappt, −4,41), men RMS-felet (typiskt fel, där stora fel väger tyngre) är 3,77 mot 1,35 på januari–juni (3,40 för bara juli–augusti). Det största felet är större än det största anpassningsfelet (2,55).
+- Spannet för M4b (osäkerheten i uppdelningen och de alternativa antagandena) **täckte inte utfallet** i någon av de tre månaderna och var för smalt (september: fakturan 128,09, spannet 122,64–125,35).
+- M2 träffade bäst i juli och augusti, men inte i september (+4,92 mot −4,41 för M4b), och hade fel på upp till 8,5 öre/kWh på januari–juni. Tre månader säger lite.
+- Felens tecken i tur och ordning är + + − + + − + − −. Autokorrelationen (fördröjning 1, korrelationen mellan på varandra följande fel) var −0,74 med åtta månader, precis under det cirka ±0,76 som krävs med sju par för att skilja från slumpen. Med september (två minus i rad) är den −0,00 med åtta par, så inget mönster i tecknens växling kan längre påvisas.
 - **Möjlig gemensam orsak (tolkning, inte bevis):** fakturan rör sig åt samma håll som dagtidspriset (M2 minus M1) men mer än M4b gör. Felets tecken följer alltså månadens prisform och inte kalendern. Förbrukningen verkar vara mer dagtidsbunden på sommaren än modellen antar.
 - Den jämna baslasten V som hade passat varje månad hoppar mellan 0,7 och 20,7 kW utan samband med årstiden, så en lägre sommarbaslast förklarar inte felen. Augusti går inte att nå ens med största V.
-- **Förutsägelse inför september, nedskriven före fakturan:** M4b 123,7, M2 133,0, M1 120,1. Om tolkningen stämmer hamnar fakturan över M4b. Septemberfakturan väntas runt 10 oktober och är den enda återstående rena förutsägelsen.
-- Rörliga kostnader förutsägs inte av någon modell (vägt snitt av januari–juni, 3,92 öre/kWh, spann 3,16–5,11). Faktiska värden: 5,10 i juli och 4,60 i augusti, båda inom spannet.
-- Debiteringsunderlagen för juli och augusti (bastu 8 771 och 8 807 kWh, varmvatten 1 653 och 1 719 kWh) ändrade felen med 0,1–0,3 öre/kWh (+3,07 och −3,39), så uppdelningen var inte orsaken.
-- Fakturavärdena ligger i `data/facit_jul_sep.json`, inte i `kraftringen.json`. Anpassningen på januari–juni är därmed oförändrad. En omanpassning på åtta månader är inte gjord och är Kents beslut. Då bör bedömningskriterier sättas i förväg så att september förblir ett rent test.
+- **Förutsägelse inför september, nedskriven före fakturan (2026-10-07):** M4b 123,7, M2 133,0, M1 120,1. Om tolkningen ovan stämmer hamnar fakturan över M4b. **Utfall (2026-10-08):** fakturans spotpris blev 128,09, alltså över M4b (fel −4,41) som förutsagt, men också under M2 (fel +4,92), alltså mitt emellan. Tecknet stämde, storleken inte: tolkningen förklarar åt vilket håll felet går men inte hur mycket. Ett utfall säger lite, eftersom tecknet träffar av slump hälften av gångerna. September var den sista rena förutsägelsen.
+- Rörliga kostnader förutsägs inte av någon modell (vägt snitt av januari–juni, 3,92 öre/kWh, spann 3,16–5,11). Faktiska värden: 5,10 i juli, 4,60 i augusti och 4,80 i september, alla inom spannet.
+- Debiteringsunderlagen för juli och augusti (bastu 8 771 och 8 807 kWh, varmvatten 1 653 och 1 719 kWh) ändrade felen med 0,1–0,3 öre/kWh (+3,07 och −3,39), så uppdelningen var inte orsaken. För september visar underlaget bastu 10 101 kWh och varmvatten 1 287 kWh (11 % av "bad"); hur det påverkar felet är inte räknat.
+- Fakturavärdena ligger i `data/facit_jul_sep.json`, inte i `kraftringen.json`. Anpassningen på januari–juni är därmed oförändrad. En omanpassning på nio månader (januari–september) är inte gjord och är Kents beslut. Efter en omanpassning finns inget rent test kvar för juli–september, eftersom de då ingått i anpassningen; ett nytt rent test kräver nya månader (oktober och framåt), och bedömningskriterier bör sättas i förväg.
 
 **Avläsningstidpunkten förklarar inte växlingen (2026-10-07).** Huvudmätaren läses av den 1:a varje månad (alla åtta fakturor), men bastu- och varmvattenmätarna läses av manuellt och dagen är okänd. Ett fel på tre dagar flyttar 700–1 400 kWh mellan bastun och restposten men ändrar M4b med högst 0,6 öre/kWh (`kanslighet_avlasning.py`), medan felen är upp till 3,4 öre/kWh. Avläsningsdagen kan förklara svängningarna i kWh-fördelningen mellan bad och restaurang men inte att felen i spotpriset byter tecken. Den troligare förklaringen är att M4b följer prisformen över dygnet för svagt (en tolkning av två månader). Avläsningsdatum för bastu- och varmvattenmätarna bör antecknas framöver. Varmvatten i mars (162 kWh/dag mot 136 och 129) är värt att kontrollera.
 
@@ -424,7 +425,7 @@ Ordning:
 4. ~~Sidan byggs.~~ **Klart 2026-10-07:** `spotpris.html`, `.css` och `.js` är byggda och testade i webbläsare (inte på pekskärm). Tabell 1–3, diagram 1–2, effektkurva (med startpuls som känslighetsvariant), noggrannhet och blindprov finns på sidan. Tester T1–T17 körda efter bygget, utan att sidans JavaScript testas av dem.
 5. ~~README för `Spotpris/` och länkar från `index.html`.~~ **Klart 2026-10-07** (fråga 14).
 6. Tvåstegsgranskning (uppskjuten av Kent 2026-10-07 och beskriven som en möjlighet i sidans teknik-modal, med en färdig promt).
-7. Fyll i septemberfakturan i tabell 3 (runt 10 oktober) och bedöm förutsägelsen. Besluta därefter om en omanpassning på åtta månader (se avsnitt 4.6).
+7. ~~Fyll i septemberfakturan i tabell 3 (runt 10 oktober) och bedöm förutsägelsen.~~ **Klart 2026-10-08:** fakturans spotpris 128,09 och rörliga 4,80 inlagda i `data/facit_jul_sep.json`; fel för M4b −4,41 (inom gränsen 4,5, utanför spannet). Besluta därefter om en omanpassning på nio månader (se avsnitt 4.6). Det beslutet är Kents och är inte fattat.
 
 **Pågår parallellt, utan att blockera:** Kent undersöker om och hur förbrukning per kvart eller timme kan fås ut (fråga 2), och besvarar resten av fråga 17–19. Beslut om Nord Pool eller ENTSO-E ska vara facit för stickprov
 av spotpriserna (fråga 5) behövs före granskningen.

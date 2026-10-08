@@ -3,8 +3,8 @@
 Denna fil är en **backup och referens** för all månadsdata kring elförbrukning och elkostnad.
 Filen ska uppdateras varje gång ny månadsdata läggs till i `index.html`.
 
-Senast uppdaterad: **2026-10-04**  
-Dataperiod: **Augusti 2024 – September 2026** (26 månader kWh; september 2026 saknar ännu kostnad)
+Senast uppdaterad: **2026-10-08**  
+Dataperiod: **Augusti 2024 – September 2026** (26 månader, alla med kWh och kostnad)
 
 ---
 
@@ -37,7 +37,7 @@ Dataperiod: **Augusti 2024 – September 2026** (26 månader kWh; september 2026
 | Jun 2026 | Bad + restaurang | 8 853 | 11 756 | 20 609 | 687 | 53 134 | 2,58 |
 | Jul 2026 | Bad + restaurang | 10 424 | 11 161 | 21 585 | 696 | 48 277 | 2,24 |
 | Aug 2026 | Bad + restaurang | 10 526 | 11 310 | 21 836 | 704 | 49 876 | 2,28 |
-| Sep 2026 | Bad + restaurang | 11 388 | 10 301 | 21 689 | 723 | – (faktura ~10 okt) | – |
+| Sep 2026 | Bad + restaurang | 11 388 | 10 301 | 21 689 | 723 | 62 294 | 2,87 |
 
 ---
 
@@ -62,7 +62,7 @@ faktiska kWh-värden när mätarställningen är klar. Full uppföljning i `prog
 - **Jan 2026:** Ovanligt hög total (35 422 kWh) och hög kostnad (90 779 kr) – troligen orsakat av kall vinter och hög elprisstopp.
 - **Kostnad (kr):** Avser total fakturerad elkostnad för månaden (bad + restaurang gemensamt). Elfakturan kommer kring den **10:e i månaden efter** (t.ex. augusti ~10 september). kWh kan läggas in tidigare; tills fakturan finns skrivs kostnaden som `null` i koden (visas som –), inte som 0.
 - **Aug 2026:** kWh-facit 2026-09-01, kostnad (49 876 kr, 2,28 kr/kWh) tillagd 2026-10-04. Prognosavvikelse: se `prognoser.md`.
-- **Sep 2026:** kWh från elmätaren, inlagd 2026-10-04. Kostnad fylls i när fakturan kommer (~10 okt).
+- **Sep 2026:** kWh från elmätaren, inlagd 2026-10-04. Kostnad (62 294 kr, 2,87 kr/kWh) tillagd 2026-10-08 ur Kraftringens faktura 3199122106.
 - **Bad kWh:** Elförbrukning för bastudelen (uppvärmning, ventilation m.m.).
 - **Rest. kWh:** Elförbrukning för restaurangdelen.
 - **Bad + Rest. = Totalt** för månader med bad öppet. Under stängningstiden = enbart restaurang.

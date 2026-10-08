@@ -65,9 +65,9 @@ blockerar inläsning av JSON från `file://`.
 
 ## Blindprov och känslighetsvarianter
 
-- **Blindprov (juli–augusti):** de förutsades innan fakturorna lästes in. M4b (uppskattningen) fick fel på +3,34 och −3,46 öre/kWh, alltså inom gränsen 4,5 men större än på de månader som antagandena anpassades på (RMS-fel, typiskt fel, 3,40 mot 1,35). Spannet var för smalt. September är den enda återstående rena förutsägelsen (faktura runt 10 oktober). Analys och tolkning finns på sidan under "Blindprovet" och i [PRD.md](PRD.md), avsnitt 4.6.
+- **Blindprov (juli–september):** de förutsades innan fakturorna lästes in. M4b (uppskattningen) fick fel på +3,34, −3,46 och −4,41 öre/kWh, alltså inom gränsen 4,5 (september knappt) men större än på de månader som antagandena anpassades på (RMS-fel, typiskt fel, 3,77 mot 1,35). Spannet var för smalt och täckte inte utfallet i någon av månaderna. Alla tre fakturor är nu lästa, så det finns ingen ren förutsägelse kvar att vänta på. Analys och tolkning finns på sidan under "Blindprovet" och i [PRD.md](PRD.md), avsnitt 4.6.
 - **Startpuls för bastuaggregaten:** bastun har två aggregat (ett per bastu, Harvia Qube 360, 36 kW vardera). Sidans effektkurva har en tredje knapp som visar en morgontopp. Det är en illustration: med övriga antaganden fixa blir träffen mot fakturorna sämre ju större puls, och primärkörningen är oförändrad.
-- Fakturavärdena för juli–augusti ligger i `data/facit_jul_sep.json` och inte i `kraftringen.json`, så att anpassningen på januari–juni är oförändrad tills en omanpassning beslutas.
+- Fakturavärdena för juli–september ligger i `data/facit_jul_sep.json` och inte i `kraftringen.json`, så att anpassningen på januari–juni är oförändrad tills en omanpassning beslutas.
 
 ## Status
 

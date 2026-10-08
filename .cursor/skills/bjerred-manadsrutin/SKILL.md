@@ -101,6 +101,15 @@ mot spotpriset) är något annat, se "Ännu inte gjort / öppna beslut".
 4. Verifiera på sidan (lokal server): rätt värden i de två rutorna, felen räknas ut, tabell 4 och 6
    har fått en rad, och sidans text om september (blindprovet) visar utfallet.
 5. Ta bort `Spotpris/__pycache__/` om den skapats.
+6. **Synka beskrivande texter** (annars blir de föråldrade, vilket hände med september):
+   - `Spotpris/README.md`, avsnittet "Blindprov": vilka månader, felen, RMS, och om någon ren förutsägelse återstår.
+   - `Spotpris/PRD.md`: statusraden överst, rubriken och tabellen i avsnitt 4.6 (en ny rad per månad), punkterna
+     under tabellen (RMS, spann, tecken, rörliga, debiteringsunderlag) och stegen i listan i slutet.
+   - Räkna om RMS och autokorrelation med **samma metod** som förut. RMS = rotmedelvärdet av felen för
+     M4b. Autokorrelationen = Pearson-korrelationen mellan fel *t* och fel *t+1* (reproducerar −0,74 för åtta
+     månader). Citera inte en siffra som inte går att reproducera.
+   - Skriv det som mäts (siffrorna) skilt från tolkningen, och påstå inte mer än vad några få månader ger.
+   - `grep` efter "återstående", "juli–augusti", "åtta månader" för att hitta sådant som blivit gammalt.
 
 Obs: filnamnet `facit_jul_sep.json` och texterna "juli–september" är historiska. Blindprovet gällde
 bara juli–september 2026. Hur oktober och senare ska hanteras är inte beslutat (se öppna beslut).
@@ -156,8 +165,9 @@ Förklaring: ✓ klart och verifierat, ✗ inte gjort, – gäller inte. Datum =
 |------|----------|----------|----------|
 | 1. kWh i de fyra ordinarie filerna | ✓ | ✓ | ✓ 2026-10-04 |
 | 2a. Faktura läst (PDF → siffror) | ✓ 2026-10-07 | ✓ 2026-10-07 | ✓ 2026-10-08 |
-| 2b. Kostnad i de fyra ordinarie filerna | ✓ | ✓ | ✗ (faktura 62 294 kr ≈ 2,87 kr/kWh, inte inlagd) |
+| 2b. Kostnad i de fyra ordinarie filerna | ✓ | ✓ | ✓ 2026-10-08 (62 294 kr, 2,87 kr/kWh) |
 | 2c. Spotpris, tabell 3 (`facit_jul_sep.json`) | ✓ 2026-10-07 | ✓ 2026-10-07 | ✓ 2026-10-08 |
+| 2c-doc. Blindprovstexter i `Spotpris/README.md` och `PRD.md` | ✓ 2026-10-08 | ✓ 2026-10-08 | ✓ 2026-10-08 |
 | 2d. Intern debitering (`STANDARD`) | ✓ 2026-10-08 | ✓ 2026-10-08 | ✓ 2026-10-08 |
 | 2e. Källlänkar och version (intern debitering) | ✓ 2026-10-08 (v1.4) | ✓ 2026-10-08 (v1.4) | ✓ 2026-10-08 (v1.4) |
 
@@ -170,28 +180,31 @@ och hanteras i `kraftringen.json` (Spotpris) och `STANDARD` (intern debitering).
 - Intern debitering: juli, augusti och september inlagda som fasta månader (september 24 849 kr).
   Tabellen "Restaurangens andel januari–juni 2026" och jämförelsen med Eneas priser togs bort från
   den sidan (de hör hemma på Eneas-sidan och förvillade). Version 1.4.
-- Texter som beskriver september som "återstående" är **inte** uppdaterade (se nästa avsnitt).
+- Kostnaden för september (62 294 kr, 2,87 kr/kWh) inlagd i `index.html`, `data.html`, `data.md` och
+  `fore_och_efter_ombyggnad.js` (`prognoser.*` berörs inte, de gäller kWh).
+- Texterna som beskrev september som "återstående" uppdaterades i `Spotpris/README.md` och `Spotpris/PRD.md`
+  (avsnitt 4.6, steg 7). Autokorrelationen räknades om med samma metod som tidigare (korrelationen mellan
+  på varandra följande fel): −0,74 med åtta månader, −0,00 med nio.
 
 ## Ännu inte gjort / öppna beslut
 
 Här samlas sådant som Kent har sagt ska göras men som inte är gjort, eller som inte är avgjort.
 Stryk eller flytta upp till rutinen när det är avgjort.
 
-- **September, steg 2b:** kostnaden 62 294 kr (≈ 2,87 kr/kWh) är inte inlagd i `index.html`, `data.html`,
-  `data.md`, `fore_och_efter_ombyggnad.js` och `prognoser.*`. Väntar på Kents besked.
 - **Spotpris, tabell 2** (Kraftringens och Eneas pris mot spotpriset) och **tabell 1** bygger på
   `data/kraftringen.json` (januari–juni) och den modell som anpassades på dessa månader.
   Juli–september ligger bara i `facit_jul_sep.json` (tabell 3, 4 och 6). Beslut saknas om en
-  **omanpassning** (flytta juli–september till `kraftringen.json`). Intern debitering har nu bastu- och
-  varmvattenmätarna för juli–september, vilket är det som saknades för en omanpassning.
+  **omanpassning**, det vill säga att räkna om modellens antaganden (baslast V m.m.) på alla nio
+  månader, januari–september, i stället för bara januari–juni. Det kräver att juli–september flyttas
+  till `kraftringen.json` med bastu- och varmvattenmätarna, som nu finns i intern debitering.
+  Avvägning: modellen kan bli bättre, men juli–september är då inte längre ett blindprov. Det blir
+  ett rent test först med oktober och framåt. Kriterier för att godkänna ska sättas **före** omkörningen.
+  Förklaringen med figur finns i chatten 2026-10-08; skriv in utfallet här när Kent beslutat.
 - **Oktober och senare på Spotpris:** blindprovet gällde juli–september. Det är inte bestämt om nya
   månader ska in i samma tabell 3, i en ny tabell, eller vänta på omanpassningen. Fråga Kent.
 - **Texter på Spotpris som fortfarande säger "juli och augusti":** tabell 9 och 10, diagram 1,
   blindprovstexten och `startpuls_data.js` / `avlasning_data.js` (skapas av `kanslighet_*.py`).
   Körs inte om automatiskt när tabell 3 får en ny månad.
-- **Föråldrade meningar om september:** `Spotpris/README.md` (avsnittet Blindprov, "juli–augusti" och
-  "September är den enda återstående rena förutsägelsen") och `Spotpris/PRD.md` rad ~236 säger att
-  septemberfakturan återstår. Den är nu läst (fel −4,41 öre/kWh, utanför spannet). Uppdatera när Kent vill.
 - **Eneas jämförelsesida** (`enea_jamforelse.*`) gäller fortfarande bara januari–juni.
 - **Granskning:** juli–september på intern debitering är inte tvåstegsgranskade.
 - **Fler månadsmoment kommer.** Kent har sagt att fler saker ska göras varje månad. Lägg dem som nya steg
