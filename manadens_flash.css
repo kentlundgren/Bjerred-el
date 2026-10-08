@@ -1,0 +1,65 @@
+/* manadens_flash.css
+   Utseende för "Månadens flash": den lilla rutan (toast) uppe i högra hörnet, knappen i menyraden och arkivfönstret.
+   SKAPAD 2026-10-09 (version 1.0). Färgerna följer index.html (blått är sidans sekundärfärg). Gult används inte, eftersom det är reserverat för inmatningsfält. */
+
+/* ---- Den lilla rutan ---- */
+.flash-toast {
+    position: fixed;
+    top: 2.6rem;               /* under den lilla "Workspace-guide"-länken uppe i hörnet */
+    right: 1rem;
+    width: 340px;
+    max-width: calc(100vw - 2rem);
+    background: #ffffff;
+    color: #2c3e50;
+    border-left: 6px solid #3498db;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    padding: 14px 40px 14px 16px;
+    z-index: 1500;
+    opacity: 0;
+    transform: translateY(-12px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    line-height: 1.4;
+}
+.flash-toast.flash-synlig { opacity: 1; transform: translateY(0); }
+.flash-toast .flash-etikett { display: block; font-size: 0.78rem; font-weight: 600; color: #2980b9; margin-bottom: 4px; }
+.flash-toast .flash-rubrik { display: block; font-size: 1.02rem; margin-bottom: 4px; }
+.flash-toast .flash-nyckel { margin: 0 0 10px 0; font-size: 0.92rem; }
+.flash-toast .flash-lasmer {
+    background: #3498db; color: #ffffff; border: none; border-radius: 6px;
+    padding: 6px 12px; font-size: 0.9rem; font-weight: 600; cursor: pointer;
+}
+.flash-toast .flash-lasmer:hover, .flash-toast .flash-lasmer:focus { background: #2980b9; }
+.flash-toast .flash-stang {
+    position: absolute; top: 6px; right: 8px;
+    background: none; border: none; font-size: 1.5rem; line-height: 1; color: #7f8c8d; cursor: pointer; padding: 2px 6px;
+}
+.flash-toast .flash-stang:hover, .flash-toast .flash-stang:focus { color: #e74c3c; }
+
+/* ---- Knappen i menyraden (ärver utseendet från ".nav-bar a" i index.html) ---- */
+.flash-ny {
+    background: #e74c3c; color: #ffffff; font-size: 0.7rem; font-weight: 700;
+    border-radius: 10px; padding: 1px 7px; margin-left: 2px;
+}
+
+/* ---- Arkivfönstret (använder sidans ".modal" och ".modal-content") ---- */
+.flash-modal .close { background: none; border: none; padding: 0; }
+.flash-kort { margin-bottom: 8px; }
+.flash-modal .flash-manad { font-size: 0.85rem; font-weight: 600; color: #2980b9; }
+.flash-modal .flash-nyckel { font-weight: 600; }
+.flash-modal .flash-lar { background: #eaf4fb; border-left: 4px solid #3498db; padding: 10px 14px; border-radius: 6px; margin: 12px 0; }
+.flash-modal .flash-kalla { font-size: 0.85rem; color: #7f8c8d; }
+.flash-modal .flash-tidigare { margin-top: 24px; border-top: 1px solid #bdc3c7; padding-top: 12px; }
+.flash-modal details { border-bottom: 1px solid #ecf0f1; padding: 8px 0; }
+.flash-modal summary { cursor: pointer; font-weight: 600; }
+.flash-modal summary:focus { outline: 2px solid #3498db; outline-offset: 2px; }
+
+/* ---- Små skärmar: rutan över hela bredden ---- */
+@media (max-width: 560px) {
+    .flash-toast { left: 10px; right: 10px; width: auto; max-width: none; }
+}
+
+/* ---- Besökare som valt "minska rörelse": ingen animation ---- */
+@media (prefers-reduced-motion: reduce) {
+    .flash-toast { transition: none; transform: none; }
+}

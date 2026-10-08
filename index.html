@@ -641,6 +641,8 @@
             font-size: 1.1em;
         }
     </style>
+    <!-- UPPDATERING 2026-10-09: "Månadens flash" (liten ruta + arkiv). Utseendet ligger i en egen CSS-fil. -->
+    <link rel="stylesheet" href="manadens_flash.css">
 </head>
 <body>
     <div class="container">
@@ -2017,6 +2019,10 @@
             // Tabellen är dold som standard, så vi fyller den inte förrän användaren klickar på knappen
         });
     </script>
+
+    <!-- UPPDATERING 2026-10-09: Månadens flash. Texterna ligger i manadens_flash_data.js (ändras varje månad), logiken i manadens_flash.js. -->
+    <script src="manadens_flash_data.js"></script>
+    <script src="manadens_flash.js"></script>
 
 <!-- ================================================================
      UPPDATERING 2026-06-05: Diskret länk till workspace-guide – övre högra hörnet.
