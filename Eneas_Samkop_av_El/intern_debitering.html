@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <!--
   intern_debitering.html
-  INTERN sida för Kent: hur elkostnaden delas upp internt och vad restaurangen (hyresgästen)
-  hade betalat med Eneas priser. Visas inte för Eneas och är inte länkad från Isaks sida
+  INTERN sida för Kent: hur elkostnaden delas upp internt (debiteringsunderlag för restaurangen,
+  hyresgästen). Visas inte för Eneas och är inte länkad från Isaks sida
   annat än med en nästan osynlig cirkel uppe till höger i enea_jamforelse.html.
 
   Det här är grunden för Del 2 i PRD.md (mall för internt debiteringsunderlag).
@@ -10,6 +10,9 @@
 
   UPPDATERING 2026-10-06: Första versionen (1.0). Tabellen "Restaurangens andel" lyft hit
   från enea_jamforelse.html.
+  UPPDATERING 2026-10-08: Avsnitten "Jämförelse med Eneas priser" och tabellen "Restaurangens andel
+  januari–juni 2026" (med kopiera- och utskriftsknappar) borttagna. De hörde inte till
+  debiteringsunderlaget och förvillade. Jämförelsen med Eneas finns kvar på enea_jamforelse.html.
 -->
 <html lang="sv">
 <head>
@@ -38,7 +41,7 @@
       <a href="../Spotpris/spotpris.html">Spotpris månad för månad</a>.</p>
     <p class="status">Siffrorna är hämtade ur Kraftringens fakturor och Bjerreds Saltsjöbads debiteringsunderlag
       och kontrollräknade mot dem i en tvåstegsgranskning (egenkontroll och oberoende granskning, se
-      <a href="kvalitetsgranskning.html">kvalitetsgranskningen</a>). Antagandena i jämförelsen är inte avgjorda.
+      <a href="kvalitetsgranskning.html">kvalitetsgranskningen</a>).
       Kontrollera mot källan (<a href="#Kallor">se källor</a>).</p>
   </header>
 
@@ -174,49 +177,6 @@
     <p id="meddelande-u" class="meddelande" role="status" aria-live="polite"></p>
   </section>
 
-  <section class="ruta ej-underlag" aria-labelledby="Anvisning">
-    <h2 id="Anvisning">Jämförelse med Eneas priser <a class="ankare" href="#Anvisning" aria-label="Länk till avsnittet">#</a></h2>
-    <p>Restaurangen (hyresgästen) debiteras för sin förbrukning: total förbrukning minus bastu minus varmvatten.
-      Den betalar ingen fast nätavgift. Kostnaden är rörlig nätavgift + el inkl elcert + energiskatt, plus 25 % moms,
-      avrundat till hela kronor.</p>
-    <p>Fyll i de <span class="gulmarkering">gula fälten</span> med de priser som Isak på <a href="https://www.eneas.se/portfoljforvaltning-el/" target="_blank" rel="noopener">Eneas</a> har skickat
-      (samma som i tabell 2 på jämförelsesidan). Fälten delar lagring med jämförelsesidan i samma
-      webbläsare, så det räcker att fylla i dem på en av sidorna.</p>
-    <p><strong>Beslut:</strong> Eneas fasta månadsavgift fördelas <em>inte</em> på restaurangen. Jämförelsen här räknar
-      bara prisskillnaden per kWh (Eneas pris minus Kraftringens pris) × restaurangens kWh, plus 25 % moms. Månadsavgiften
-      ingår bara i jämförelsen av hela fakturan på Eneas-sidan.</p>
-  </section>
-
-  <section class="ej-underlag" aria-labelledby="TabellRestaurang">
-    <h2 id="TabellRestaurang">Restaurangens andel januari–juni 2026 <a class="ankare" href="#TabellRestaurang" aria-label="Länk till avsnittet">#</a></h2>
-    <div class="tabell-wrap">
-      <table id="tab-hg">
-        <thead>
-          <tr>
-            <th>Månad</th>
-            <th>Restaurangens<br>kWh</th>
-            <th>Idag<br>(kr inkl moms)</th>
-            <th>El inkl elcert<br>Kraftringen<br>(öre/kWh)</th>
-            <th>El inkl elcert<br>Eneas<br>(öre/kWh)</th>
-            <th>Med Eneas<br>(kr inkl moms)</th>
-            <th>Skillnad<br>(kr)</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-        <tfoot></tfoot>
-      </table>
-    </div>
-    <p class="liten" id="tab-hg-not"></p>
-    <p class="liten">Minustecken betyder att det hade blivit billigare med Eneas.
-      Restaurangens belopp med Eneas = belopp idag + (Eneas pris − Kraftringens pris) × restaurangens kWh / 100 × 1,25.</p>
-  </section>
-
-  <div class="knappar ej-underlag">
-    <button type="button" id="btn-kopiera" class="knapp primar">Kopiera tabellen</button>
-    <button type="button" id="btn-skriv" class="knapp">Skriv ut / spara som PDF</button>
-  </div>
-  <p id="meddelande" class="meddelande" role="status" aria-live="polite"></p>
-
   <section class="ej-underlag" aria-labelledby="Kallor">
     <h2 id="Kallor">Källor <a class="ankare" href="#Kallor" aria-label="Länk till avsnittet">#</a></h2>
     <ul class="kallor">
@@ -267,8 +227,8 @@
         <p>Inga ramverk, inga bibliotek, ingen server och ingen databas. Inget skickas från sidan.</p>
       </div>
       <div class="tech-card">
-        <h4>Egen data, delad lagring</h4>
-        <p>Restaurangens kWh och belopp ligger bara i den här sidans JavaScript, inte i jämförelsesidan. Eneas priser läses och skrivs i webbläsarens localStorage med samma nyckel som jämförelsesidan.</p>
+        <h4>Egen data</h4>
+        <p>Månadernas mätarställningar och priser ligger i den här sidans JavaScript (fasta månader) och i webbläsarens localStorage (det du själv fyller i eller ändrar). Inget skickas från sidan.</p>
       </div>
       <div class="tech-card">
         <h4>Ingen riktig åtkomstkontroll</h4>
@@ -281,10 +241,6 @@
       <div class="tech-card">
         <h4>Underlag som liknar dagens</h4>
         <p>Debiteringsunderlaget följer uppställningen i dagens underlag (huvudmätare, bastu, varmvatten, hyresgästens andel). Ingående mätarställning hämtas från föregående månads utgående. Januari–september är förifyllda från underlagens heltal, och avvikelser på någon krona godtas.</p>
-      </div>
-      <div class="tech-card">
-        <h4>Utlyft ur Eneas-sidan</h4>
-        <p>Restaurangens tabell låg först i jämförelsen för Eneas. Kent bad om att den skulle lyftas ur filen som Isak får.</p>
       </div>
       <div class="tech-card">
         <h4>Rättade belopp</h4>

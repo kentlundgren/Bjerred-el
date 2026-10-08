@@ -2,7 +2,7 @@
 
 - **Live:** [https://kentlundgren.github.io/Bjerred-el/Eneas_Samkop_av_El/enea_jamforelse.html](https://kentlundgren.github.io/Bjerred-el/Eneas_Samkop_av_El/enea_jamforelse.html)
 - **Kvalitetsgranskning:** [https://kentlundgren.github.io/Bjerred-el/Eneas_Samkop_av_El/kvalitetsgranskning.html](https://kentlundgren.github.io/Bjerred-el/Eneas_Samkop_av_El/kvalitetsgranskning.html)
-- **Intern sida:** [https://kentlundgren.github.io/Bjerred-el/Eneas_Samkop_av_El/intern_debitering.html](https://kentlundgren.github.io/Bjerred-el/Eneas_Samkop_av_El/intern_debitering.html) (restaurangens andel, internt för Kent Lundgren)
+- **Intern sida:** [https://kentlundgren.github.io/Bjerred-el/Eneas_Samkop_av_El/intern_debitering.html](https://kentlundgren.github.io/Bjerred-el/Eneas_Samkop_av_El/intern_debitering.html) (debiteringsunderlag för restaurangen, internt för Kent Lundgren)
 - **Lokal sökväg:** `D:\VåraFiler_primära_på_SSD\Kent_dokument\Data\HTML\kentlundgren_se\program\Bjerred\El\Eneas_Samkop_av_El\`
 - **Repo:** [github.com/kentlundgren/Bjerred-el](https://github.com/kentlundgren/Bjerred-el)
 
@@ -45,9 +45,9 @@ kostnader + 1,70 öre/kWh fast påslag).
 | `enea_jamforelse.css` | Utseende och utskriftsformat. |
 | `enea_jamforelse.js` | Kraftringens utfall, beräkning, sparande i webbläsaren och kopiering. |
 | `enea_hjalp.js` | Gemensamma hjälpfunktioner (tolkning av tal, talformat). |
-| `intern_debitering.html` | Intern sida: mall för debiteringsunderlag (som dagens underlag) och restaurangens andel idag och med Eneas priser. |
+| `intern_debitering.html` | Intern sida: mall för debiteringsunderlag (som dagens underlag), januari–september 2026. Tabellen med restaurangens andel med Eneas priser togs bort 2026-10-08. |
 | `intern_underlag.js` | Debiteringsunderlaget: månadsval, mätarställningar, beräkning, kontroller, kopiering och utskrift. |
-| `intern_debitering.js` | Restaurangens data och jämförelse med Eneas priser. |
+| `intern_debitering.js` | Liten startfil: version och teknikruta. |
 | `intern_debitering.css` | Utseendet på debiteringsunderlaget (liknar dagens underlag). |
 | `PRD.md` | Kravdokument med bakgrund, beslut och kontrollräkning mot fakturorna. |
 | `kvalitetsgranskning.html` | Redovisning av kvalitetsgranskningen: omfattning, metod och resultat (kort sammanfattning överst, fullständig redovisning nedan). Egen sida som går att länka till. |
