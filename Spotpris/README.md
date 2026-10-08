@@ -42,7 +42,7 @@ utfallet var känt och är ett skydd mot försämring, inte ett bevis. Se [PRD.m
 
 | Fil | Innehåll |
 |---|---|
-| `spotpris.html`, `.css`, `.js` | Sidan. Fungerar från fil och offline. |
+| `spotpris.html`, `.css`, `.js` | Sidan. Fungerar från fil och offline. Eneas pris i tabell 2 är dolt: tre snabba klick på rubriken "Tabell 2" fyller i det, och tre klick till tar bort det (v1.1, konstanten `ENEAS_PRIS_ORE`). |
 | `PRD.md`, `SPEC.md` | Krav och exakt specifikation |
 | `hamta_spotpris.py` | Hämtar spotpriser per kvart (hoppar över filer som redan finns, `--om` hämtar om) |
 | `berakna_spotpris.py` | Beräknar månadsvärden, M4b och effektkurvor; skriver `data/*.json` och `data/spotpris_data.js` |

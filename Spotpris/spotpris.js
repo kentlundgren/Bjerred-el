@@ -7,14 +7,22 @@
   Ingen kod med ES2023+ används (vanlig ES2015). Inget nätverksanrop görs.
 
   UPPDATERING 2026-10-07: Första versionen (1.0).
+  UPPDATERING 2026-10-08: Eneas pris i tabell 2 fylls i (och tas bort igen) med tre snabba klick på rubriken "Tabell 2"
+  (konstanten ENEAS_PRIS_ORE). Ingen synlig ledtråd på sidan, på samma sätt som på jämförelsesidan. Priserna är inte
+  hemliga i källkoden, bara dolda på sidan (Kent har godkänt det för jämförelsesidan). Version 1.1.
 */
 (function () {
   'use strict';
 
-  var VERSION = '1.0';
-  var VERSIONSDATUM = '2026-10-07';
+  var VERSION = '1.1';
+  var VERSIONSDATUM = '2026-10-08';
   var LAGRING = 'spotpris_v1';                    // egen lagringsnyckel för Eneas pris (bara i den här webbläsaren)
   var LAGRING_JAMFORELSE = 'enea_jamforelse_v1';  // jämförelsesidans nyckel; läses (aldrig skrivs) om fältet här är tomt
+
+  // UPPDATERING 2026-10-08: Eneas allt elpris (öre/kWh, exklusive moms) januari–juni 2026, ur Isak Cerwéns (Eneas Services AB)
+  // mejl till Kent Lundgren 2026-10-07. Samma värden som ENEAS_ISAK_MEJL.ore i Eneas_Samkop_av_El/enea_jamforelse.js.
+  // Visas bara när man klickar tre gånger på rubriken "Tabell 2" (se start()), och försvinner vid tre klick till.
+  var ENEAS_PRIS_ORE = { '2026-01': '111,65', '2026-02': '113,62', '2026-03': '91,79', '2026-04': '69,32', '2026-05': '89,75', '2026-06': '104,15' };
 
   var D = window.SPOTPRIS;
   if (!D) {
@@ -811,6 +819,28 @@
       var m = e.target && e.target.getAttribute && e.target.getAttribute('data-m');
       if (!m) { return; }
       eneas[m] = e.target.value;
+      sparaEneas();
+      uppdateraTabell2();
+      renderDiagramManad();
+    });
+    // UPPDATERING 2026-10-08: tre snabba klick på rubriken "Tabell 2" fyller i Eneas pris (ENEAS_PRIS_ORE); tre klick till
+    // tar bort dem igen, om det som står är precis det som trippelklicket fyllde i. Är något annat redan ifyllt frågar sidan först.
+    // Ingen synlig ledtråd på sidan (samma sätt som på jämförelsesidan). e.detail räknar snabba klick i följd.
+    el('Tabell2').addEventListener('click', function (e) {
+      if (e.detail !== 3) { return; }
+      var arIfyllt = MAN.every(function (m) { return !ENEAS_PRIS_ORE[m] || eneas[m] === ENEAS_PRIS_ORE[m]; }) &&
+        Object.keys(ENEAS_PRIS_ORE).some(function (m) { return eneas[m] === ENEAS_PRIS_ORE[m]; });
+      if (window.getSelection) { window.getSelection().removeAllRanges(); }   // trippelklick markerar rubriken
+      if (arIfyllt) {
+        // Ta bort: bara de månader som trippelklicket fyllde i töms.
+        Object.keys(ENEAS_PRIS_ORE).forEach(function (m) { if (eneas[m] === ENEAS_PRIS_ORE[m]) { eneas[m] = ''; } });
+      } else {
+        var finns = MAN.some(function (m) { return eneas[m] !== undefined && eneas[m] !== ''; });
+        if (finns && !window.confirm('Fylla i Eneas pris? Det ersätter det som redan är ifyllt.')) { return; }
+        Object.keys(ENEAS_PRIS_ORE).forEach(function (m) { eneas[m] = ENEAS_PRIS_ORE[m]; });
+      }
+      hamtatFranJamforelse = false;
+      MAN.forEach(function (m) { el('eneas-' + m).value = eneas[m] || ''; });
       sparaEneas();
       uppdateraTabell2();
       renderDiagramManad();
