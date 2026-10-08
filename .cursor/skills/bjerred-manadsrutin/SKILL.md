@@ -76,6 +76,22 @@ Fakturan och bilden ger tillsammans nästan allt. Ta aldrig siffror ur minnet; l
 
 ## Rutin per ny månad
 
+### Överblick: två delar med cirka en veckas mellanrum (Kent, 2026-10-08)
+
+Kent ser månaden som två deluppgifter, och steg 0–2 nedan hör ihop så här:
+
+| Del | När | Vad | Steg |
+|-----|-----|-----|------|
+| **A. Gissa** | De första dagarna i nästa månad (t.ex. 1–5 november), **innan fakturan** (kommer cirka den 10:e) | Månadens kWh är fastställd. M4b används för att förutsäga fakturans spotpris (och därmed allt elpris), och förutsägelsen **skrivs ned med datum innan fakturan öppnas** | 1 (kWh-facit) + **1b** (förutsägelsen) |
+| **B. Facit och analys** | Cirka den 10:e, när fakturan kommit | Fakturan läses och läggs in överallt. Sedan analyseras hur väl M4b gissade, och det beskrivs på Spotpris | 2a–2h, framför allt 2c och **2i** (analysen) |
+
+Steg 0 (Kents egen kWh-prognos före månadsskiftet, cirka den 27:e) är ett tredje, tidigare tillfälle och en annan sak:
+den gäller kWh, inte priset. Ordningen i tid är alltså 0 → 1 + 1b → 2.
+
+**Status på verktygen:** del B finns i stort sett (steg 2a–2h, och Spotpris räknar fram felen i tabell 3 och 4 när
+fakturans värden fylls i). Del A finns som *rutin* sedan blindprovet för juli–september, men skriptet är **inte
+byggt för nya månader**: `forutsag_spotpris.py` har juli–september hårdkodat. Se steg 1b.
+
 ### Steg 0 – Före månadsskiftet: prognos
 Skillen `bjerred-elprognos`, läge 1. Inget annat i den här filen berörs.
 
@@ -83,7 +99,30 @@ Skillen `bjerred-elprognos`, läge 1. Inget annat i den här filen berörs.
 Skillen `bjerred-elprognos`, läge 2a, som i sin tur följer `bjerred-manadsdata`.
 `cost` och `costPerKwh` är `null` (inte 0) tills fakturan finns.
 
-### Steg 2 – När fakturan har kommit
+### Steg 1b – Del A: gissa fakturans pris med M4b, före fakturan (**skript ej byggt för nya månader**)
+Görs de första dagarna i nästa månad, när steg 1 är klart och **innan fakturan har lästs**. Det som gör det ett
+blindprov är att förutsägelsen är nedskriven och daterad före facit. Läs aldrig fakturan först.
+
+Underlag som behövs:
+- Månadens spotpriser per kvart: `hamta_spotpris.py` → `data/spot_SE4_ÅÅÅÅ-MM.json` (hela månaden, t.o.m. sista dygnet).
+- Månadens kWh: huvudmätare, och uppdelningen i bastu, varmvatten och rest från mätarställningarna
+  (hämtas för månadsskiftet, samma som i steg 1/2d). Saknas uppdelningen antas varmvattenandelen (Jan–Jun-snitt 23 %,
+  men verkligt var den 11–16 % i jul–sep, så använd verkliga mätare om de finns).
+- Antagandena ska vara **frusna**: ver. 1 (`data/m4b_resultat.json`, U1) och ver. 2 (`data/omanpassning_resultat.json`).
+  Beslutet i `data/omanpassning_kriterier.json` är att oktober förutsägs med **båda** versionerna.
+
+Vad som förutsägs och skrivs ned (föreslaget, Kent har inte valt ännu):
+1. M4b-värde och spann för **spotpriset** (öre/kWh), per version.
+2. **Allt elpris** = förutsagt spot + rörliga kostnader (snitt/spann av tidigare månader, ingen modell) + 1,70 påslag.
+3. Eventuellt **fakturabelopp** i kr: kWh × (allt elpris + föregående månads elöverföring + 36,00 energiskatt)/100 + fast nätavgift,
+   × 1,25. Visar vad "gissningen" blir i kronor, men nätavgiften är en extra osäkerhet.
+
+Spara förutsägelsen i en daterad fil (mönster: `data/forutsagelse_jul_sep.json`, men med månad och version) och
+ändra **inte** de frusna antagandena efteråt. **Bygg skriptet innan första användningen** (generalisera
+`forutsag_spotpris.py` så att månader och version är parametrar, utan att skriva över `forutsagelse_jul_sep.json`
+eller `forutsagelse_data.js`).
+
+### Steg 2 – När fakturan har kommit (Del B)
 Gör 2a först, eftersom de andra stegen hämtar siffror därifrån.
 
 #### 2a. Läs fakturan med kod (inte för hand)
@@ -202,6 +241,17 @@ Fakturalänkarna ska finnas i källistan på **alla** sidor som använder faktur
   juli–september inlagda 2026-10-08 (de används i tabell 3). **Nästa månad: lägg till fakturan här också.**
 - `Eneas_Samkop_av_El/kvalitetsgranskning.html` gäller bara januari–juni och ska inte ändras.
 
+#### 2i. Analys: hur väl gissade M4b? (Del B, direkt efter att fakturan lagts in)
+Målet är en kort, ärlig beskrivning av hur förutsägelsen från steg 1b stämde med fakturan. Gör så här:
+1. Fakturans spotpris och rörliga kostnader in i Spotpris tabell 3 (steg 2c). Felen per månad räknas på sidan.
+2. Jämför mot den **nedskrivna** förutsägelsen (steg 1b), inte mot en ny körning: fel (modell − faktura) för ver. 1 och ver. 2,
+   om fakturan låg inom spannet, tecknet på felet, och hur det står sig mot M1 och M2.
+3. Uppdatera "Blindprovet: hur gick det" på `spotpris.html` (numera räknas mycket ur datan) och de statiska texter som
+   räknar månader (se "Ännu inte gjort": känslighetsanalyserna, steg 2h).
+4. **Bedöm inte efter en enda månad.** Kriterierna i `data/omanpassning_kriterier.json` säger att ver. 1 och ver. 2 först
+   jämförs efter oktober, november och december. Skriv "en månad säger lite" och peka på antalet månader.
+5. Skriv det som inte kunde kontrolleras som "inte kontrollerat".
+
 ### Steg 3 – Avslut varje månad
 1. Verifiera alla berörda sidor på en lokal server (Spotpris, intern debitering, `index.html`).
 2. Stoppa servern. Ta bort `__pycache__`.
@@ -224,6 +274,8 @@ Förklaring: ✓ klart och verifierat, ✗ inte gjort, – gäller inte. Datum =
 | 2d. Intern debitering (`STANDARD`) | ✓ 2026-10-08 | ✓ 2026-10-08 | ✓ 2026-10-08 |
 | 2e. Källlänkar och version (intern debitering) | ✓ 2026-10-08 (v1.4) | ✓ 2026-10-08 (v1.4) | ✓ 2026-10-08 (v1.4) |
 | 2f. Eneas jämförelsesida, tabell 1 (forts.) | ✓ 2026-10-08 (v2.3) | ✓ 2026-10-08 (v2.3) | ✓ 2026-10-08 (v2.3) |
+| 1b. Del A: M4b-förutsägelse nedskriven före fakturan | ✓ 2026-10-07 (blindprov) | ✓ 2026-10-07 (blindprov) | ✓ 2026-10-07 (blindprov) |
+| 2i. Del B: analys av hur väl M4b gissade | ✓ 2026-10-07 | ✓ 2026-10-07 | ✓ 2026-10-08 |
 | 2g. Fakturalänkar i källistan på Spotpris | ✓ 2026-10-08 | ✓ 2026-10-08 | ✓ 2026-10-08 |
 | 2h. Känslighetsanalyser (`kanslighet_*.py`, tabell 9 och 10, avläsning) med månaden | ✓ 2026-10-08 | ✓ 2026-10-08 | ✓ 2026-10-08 |
 | 0. Prognos i `prognoser.md`/`prognoser.js` | ✗ (ingen loggad) | ✓ (avräknad 2026-09-01) | ✗ (ingen loggad, fråga Kent) |

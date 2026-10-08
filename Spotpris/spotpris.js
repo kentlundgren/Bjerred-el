@@ -12,11 +12,13 @@
   hemliga i källkoden, bara dolda på sidan (Kent har godkänt det för jämförelsesidan). Version 1.1.
   UPPDATERING 2026-10-08: September i tabell 9 och 10 (kolumnen "Fel september"), i avläsningsanalysen och i baslastanalysen; texterna som
   nämnde bara juli och augusti är rättade (en del räknas nu ur datan). Avläsningsanalysen nämner september som undantag. Version 1.2.
+  UPPDATERING 2026-10-08: Diagram 2 och tabell 7 visar juli–september som vanliga månader (heldragna linjer, ingen "blindprov"-märkning,
+  alltid med, nio färger), eftersom diagrammet visar verkliga spotpriser och inte modellens gissning. Version 1.3.
 */
 (function () {
   'use strict';
 
-  var VERSION = '1.2';
+  var VERSION = '1.3';
   var VERSIONSDATUM = '2026-10-08';
   var LAGRING = 'spotpris_v1';                    // egen lagringsnyckel för Eneas pris (bara i den här webbläsaren)
   var LAGRING_JAMFORELSE = 'enea_jamforelse_v1';  // jämförelsesidans nyckel; läses (aldrig skrivs) om fältet här är tomt
@@ -440,16 +442,18 @@
     el('tf-manad').innerHTML = teckenforklaring(serier.map(function (s) { return [s.namn, s.farg]; }));
   }
 
-  var FARGER_TIMME = ['#2a7fc4', '#6c8ea4', '#2a9d8f', '#e76f51', '#8e6bbf', '#a3261b', '#c77d0a', '#3f7d20'];   // en färg per månad (inte gult)
+  var FARGER_TIMME = ['#2a7fc4', '#6c8ea4', '#2a9d8f', '#e76f51', '#8e6bbf', '#a3261b', '#c77d0a', '#3f7d20', '#d6336c'];   // en färg per månad (inte gult). UPPDATERING 2026-10-08: nio färger så att september inte får samma färg som januari
 
   function renderDiagramTimme() {
     var h = [];
     for (var i = 0; i < 24; i++) { h.push(('0' + i).slice(-2)); }
-    var blind = blindManader();
-    var lista = MAN.map(function (m) { return { m: m, profil: D.manadsnitt[m].timprofil_ore, blind: false }; })
-      .concat(blind.filter(function (b) { return b.d.timprofil_ore; }).map(function (b) { return { m: b.m, profil: b.d.timprofil_ore, blind: true }; }));   // hoppar över om en gammal cachad datafil saknar timprofilen
+    // UPPDATERING 2026-10-08: Diagram 2 visar verkliga spotpriser per klockslag, inte modellens gissning. Juli–september ritas därför
+    // som vanliga månader (heldragna linjer, ingen "blindprov"-märkning) och alltid, oberoende av om fakturans spotpris är ifyllt i tabell 3.
+    var fler = F ? Object.keys(F.manader).sort().filter(function (m) { return F.manader[m].timprofil_ore; }) : [];   // hoppar över om en gammal cachad datafil saknar timprofilen
+    var lista = MAN.map(function (m) { return { m: m, profil: D.manadsnitt[m].timprofil_ore }; })
+      .concat(fler.map(function (m) { return { m: m, profil: F.manader[m].timprofil_ore }; }));
     var serier = lista.map(function (x, i) {
-      return { namn: lang(x.m) + (x.blind ? ' (blindprov)' : ''), varden: x.profil, farg: FARGER_TIMME[i % FARGER_TIMME.length], tjocklek: 2, punkter: false, streck: x.blind ? '6 4' : null };
+      return { namn: lang(x.m), varden: x.profil, farg: FARGER_TIMME[i % FARGER_TIMME.length], tjocklek: 2, punkter: false, streck: null };
     });
     var alla = [];
     serier.forEach(function (s) { s.varden.forEach(function (v) { alla.push(v); }); });
@@ -465,7 +469,7 @@
       for (var k = 1; k < 24; k++) { if (x.profil[k] < x.profil[lagst]) { lagst = k; } if (x.profil[k] > x.profil[hogst]) { hogst = k; } }
       var harDipp = midd < natt;
       (harDipp ? dipp : utanDipp).push(lang(x.m).toLowerCase());
-      rader += '<tr>' + td(esc(lang(x.m)) + (x.blind ? ' <span class="metod uppskattning">blindprov</span>' : '')) + td(fmt(natt, 0)) + td(fmt(midd, 0)) + td(fmt(kvall, 0)) +
+      rader += '<tr>' + td(esc(lang(x.m))) + td(fmt(natt, 0)) + td(fmt(midd, 0)) + td(fmt(kvall, 0)) +
                td(fmtT(midd - natt, 0), klass(midd - natt)) + td('kl. ' + ('0' + lagst).slice(-2)) + td('kl. ' + ('0' + hogst).slice(-2)) + td(harDipp ? 'middagsdipp' : 'ingen middagsdipp') + '</tr>';
     });
     document.querySelector('#tab-profil tbody').innerHTML = rader;
