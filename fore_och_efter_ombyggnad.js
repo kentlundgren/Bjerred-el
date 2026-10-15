@@ -31,6 +31,21 @@ const KAPACITET_EFTER = 54;   // 27 badare per bastu × 2 bastuer (ny efter omby
    Bastun öppnar 06:00, stänger 22:00 → 16 öppettimmar minus 2 tim städning = 14 tim/dag. */
 const TIMMAR_PER_DAG  = 14;   /* fallback-default om DOM-elementet saknas */
 
+/* UPPDATERING 2026-10-15: Ändrade öppettider från och med 2026-05-01.
+   Före: öppet 06:00–22:00 = 16 tim, minus 2 tim städning under dagen = 14 tim/dag.
+   Från 2026-05-01: öppet 07:30–22:00 = 14,5 tim. Städningen sker före 07:30,
+   så inget avdrag görs = 14,5 tim/dag.
+   Källa: https://bjerredskallbadhus.se/badet/ (läst 2026-10-15).
+   Alla 6 jämförbara månadspar (aug 2024 – jan 2026) ligger före gränsen,
+   så nuvarande diagram påverkas inte. Hjälpfunktionen används för månader från maj 2026. */
+const TIMMAR_PER_DAG_FRAN_2026_05 = 14.5;
+
+/* Standardvärde för drifttimmar per dag för en given månad (manIdx 0 = januari). */
+function standardTimmarPerDag(ar, manIdx) {
+    const fran2026Maj = (ar > 2026) || (ar === 2026 && manIdx >= 4);
+    return fran2026Maj ? TIMMAR_PER_DAG_FRAN_2026_05 : TIMMAR_PER_DAG;
+}
+
 /* Hämta aktuellt antal drifttimmar per dag från dropdown-väljaren (default 14 timmar) */
 function getTimmarPerDag() {
     const el = document.getElementById('timmar-per-dag');
@@ -1089,7 +1104,7 @@ function byggAnalysBelagg() {
             </div>
         </div>
         <p style="margin-top:12px; font-style:italic; color:#7f8c8d; font-size:0.85em">
-            Antaganden: bastun i drift ${getTimmarPerDag()} tim/dag (öppen 06–22, städning 2 tim),
+            Antaganden: bastun i drift ${getTimmarPerDag()} tim/dag (öppen 06–22, städning 2 tim; från 1 maj 2026 öppen 07:30–22 utan avdrag = 14,5 tim),
             50 % herrar / 50 % damer. Faktiska dagantal per månad används.
             Aktuell vistelsetid: <strong>${fmt(vistelse, 1)} timmar</strong>.
         </p>

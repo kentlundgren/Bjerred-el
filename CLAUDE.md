@@ -100,7 +100,11 @@ Huvuddatan finns i `monthlyData`-arrayen i `index.html` (~rad 965):
 KAPACITET_FORE  = 36   // 18 badare/bastu × 2 bastuer (gammal)
 KAPACITET_EFTER = 54   // 27 badare/bastu × 2 bastuer (ny, efter ombyggnad 2025)
 TIMMAR_PER_DAG  = 14   // 16 öppettimmar (öppen 06–22) − 2 städtimmar
+TIMMAR_PER_DAG_FRAN_2026_05 = 14.5 // från 2026-05-01: öppen 07:30–22:00, städning före öppning (inget avdrag)
 ```
+
+`standardTimmarPerDag(ar, manIdx)` ger rätt värde per månad. Källa: https://bjerredskallbadhus.se/badet/
+(läst 2026-10-15). Alla 6 jämförbara par ligger före 2026-05, så nuvarande diagram är oförändrade.
 
 ## Analyssidan – inpasseringsdata
 
