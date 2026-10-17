@@ -62,6 +62,10 @@ Rena HTML-, CSS- och JavaScript-filer utan ramverk och utan byggprocess. Öppnas
 Version 2.0 (2026-10-06). Kraftringens belopp är kontrollräknade månad för månad mot de sex
 fakturorna (se `PRD.md`, avsnitt 13). Eneas priser är ännu inte inlagda.
 
+## Logg
+
+- 2026-10-17: mejl till Hans (ordförande) och Minna (ekonom) om ett eventuellt byte till Eneas utformat. Slutsatser och öppna frågor: se `PRD.md`, avsnitt 6, fråga 7–8. Mejlet skickades. Samma dag kom Eneas avtalsutkast (fråga 9) och Kent svarade Hans och Minna: information saknas från Eneas, vänta in oktoberfakturan och förhandla med Kraftringen först. Styrelsens beslut är inte noterat. Nästa steg: oktoberfakturan runt 10 november 2026.
+
 ## Källor
 
 Kraftringen (2026) *E-faktura elnät och elhandel, januari–juni 2026* [fakturor, PDF]. Kraftringen Nät AB och
