@@ -34,3 +34,6 @@ $RECYCLE.BIN/
 
 # Local skill with mail drafts to the treasurer. Must not be committed (the repo is public). Added 2026-10-08.
 .cursor/skills/bjerred-ekonommail/
+
+# Eneas avtalsutkast (sekretess, bilaga D §13; repot är publikt). Får inte checkas in. Lagt till 2026-10-17.
+Eneas_Samkop_av_El/Avtal*.pdf
