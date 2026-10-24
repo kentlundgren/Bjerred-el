@@ -29,6 +29,7 @@ function updateCalc() {
     const kgPerLada = readNumber('in-lada');
     const extraLador = readNumber('in-extra');
     const prisPerLada = readNumber('in-pris');
+    const stenarPerLada = readNumber('in-stenar');
     const result = document.getElementById('calc-result');
 
     if (kgPerLada === 0) {
@@ -42,6 +43,21 @@ function updateCalc() {
     const ladorTotalt = ladorFyllning + extraLador;
     const kgTotalt = ladorTotalt * kgPerLada;
     const kostnad = ladorTotalt * prisPerLada;
+    const kgPerSten = (stenarPerLada > 0 && kgPerLada > 0) ? kgPerLada / stenarPerLada : 0;
+    const stenarFyllning = (stenarPerLada > 0) ? ladorFyllning * stenarPerLada : 0;
+    const stenarTotalt = (stenarPerLada > 0) ? ladorTotalt * stenarPerLada : 0;
+
+    var stenRad = '';
+    if (stenarPerLada > 0) {
+        stenRad =
+            'Ungefär <strong>' + formatNumber(stenarFyllning) + ' stenar</strong> för fyllning' +
+            (extraLador > 0 ? ' och <strong>' + formatNumber(stenarTotalt) + ' st</strong> med reserv' : '') +
+            ' (utgår från ' + formatNumber(stenarPerLada) + ' st per låda';
+        if (kgPerSten > 0) {
+            stenRad += ', cirka ' + kgPerSten.toLocaleString('sv-SE', { minimumFractionDigits: 1, maximumFractionDigits: 2 }) + ' kg/st';
+        }
+        stenRad += ')<br>';
+    }
 
     result.innerHTML =
         '<strong>' + formatNumber(ladorPerAggregat) + ' lådor per aggregat</strong> · ' +
@@ -49,11 +65,12 @@ function updateCalc() {
         ' aggregat<br>' +
         'Med ' + formatNumber(extraLador) + ' i reserv: <strong>' + formatNumber(ladorTotalt) +
         ' lådor = ' + formatNumber(kgTotalt) + ' kg</strong><br>' +
+        stenRad +
         'Kostnad: <strong>cirka ' + formatNumber(kostnad) + ' kr</strong>';
 }
 
 function initCalc() {
-    ['in-aggregat', 'in-kg', 'in-lada', 'in-extra', 'in-pris'].forEach(function (id) {
+    ['in-aggregat', 'in-kg', 'in-lada', 'in-extra', 'in-pris', 'in-stenar'].forEach(function (id) {
         document.getElementById(id).addEventListener('input', updateCalc);
     });
     updateCalc();
@@ -61,7 +78,51 @@ function initCalc() {
 
 
 /* ================================================================
-   2. TEKNIK-MODAL
+   2. VÄXLANDE STENBILDER (samma låda → 29 stenar)
+   UPPDATERING 2026-10-24
+   ================================================================ */
+function initStoneSwap() {
+    const root = document.getElementById('stone-swap');
+    const hint = document.getElementById('stone-swap-hint');
+    if (!root || !hint) return;
+
+    const imgs = root.querySelectorAll('.stone-swap-img');
+    if (imgs.length < 2) return;
+
+    const hints = [
+        'Bild 1 av 2: öppen låda à 20 kg (etikett 10–15 cm).',
+        'Bild 2 av 2: alla 29 stenar från samma låda, utlagda och räknade.'
+    ];
+    var index = 0;
+
+    function show(i) {
+        for (var j = 0; j < imgs.length; j++) {
+            imgs[j].classList.toggle('is-active', j === i);
+        }
+        hint.textContent = hints[i];
+    }
+
+    /* Vid reducerad rörelse: ingen växling; CSS visar båda bilderna under varandra */
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        for (var k = 0; k < imgs.length; k++) {
+            imgs[k].classList.add('is-active');
+        }
+        return;
+    }
+
+    var ms = parseInt(root.getAttribute('data-interval'), 10);
+    if (isNaN(ms) || ms < 2000) ms = 5000;
+
+    show(0);
+    setInterval(function () {
+        index = (index + 1) % imgs.length;
+        show(index);
+    }, ms);
+}
+
+
+/* ================================================================
+   3. TEKNIK-MODAL
    ================================================================ */
 function initModal() {
     const modal = document.getElementById('techModal');
@@ -87,5 +148,6 @@ function initModal() {
    ================================================================ */
 document.addEventListener('DOMContentLoaded', function () {
     initCalc();
+    initStoneSwap();
     initModal();
 });

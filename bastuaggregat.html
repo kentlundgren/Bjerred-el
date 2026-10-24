@@ -47,6 +47,7 @@
         <a href="#vilken-sten">Vilken sten?</a>
         <a href="#var-bryts-stenen">Var bryts stenen?</a>
         <a href="#stenmangd">Stenmängd</a>
+        <a href="#lada-i-praktiken">Lådan i praktiken</a>
         <a href="#stenkalkyl">Stenkalkyl</a>
         <a href="#sten-fran-bauhaus-bra">Är stenen från Bauhaus bra?</a>
         <a href="#inkopsstallen">Var köper man?</a>
@@ -115,6 +116,7 @@
             Harvia säljer också rundade stenar i samma storlek, men rekommenderar kantiga
             stenar i bottenlagren. De rundade passar i så fall bara som översta lager
             (<a href="https://www.harvia.com/sv/produkter/R-995/bastustenar-rundade-1015-cm-20-kg" target="_blank" rel="noopener">Harvia, u.å.c</a>).
+            <a href="#lada-i-praktiken">Foton från en inköpt låda och stenräkning (29 st)</a> finns längre ner på sidan.
         </p>
     </section>
 
@@ -176,6 +178,64 @@
             <div class="value">≥ 1 gång/år</div>
             <div class="unit">oftare vid flitig användning</div>
         </div>
+        <div class="summary-card">
+            <h3>Stenar per låda</h3>
+            <div class="value">29 st</div>
+            <div class="unit">räknade i en 20 kg-låda (okt 2026)</div>
+        </div>
+        <div class="summary-card">
+            <h3>Medelvikt per sten</h3>
+            <div class="value">0,69 kg</div>
+            <div class="unit">20 ÷ 29 (≈ 0,7 kg avrundat)</div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         LÅDAN I PRAKTIKEN – egna foton
+         UPPDATERING 2026-10-24: Foton från inköpt Harvia-låda vid Bjerred
+    ============================================================ -->
+    <section class="info-card" id="lada-i-praktiken" aria-label="Lådan i praktiken">
+        <h2><a class="heading-link" href="#lada-i-praktiken">Så ser Harvia-lådan ut i praktiken <span aria-hidden="true">#</span></a></h2>
+        <p>
+            På förpackningen står <strong>Olivine diabase</strong>, storleken <strong>10–15 cm</strong>
+            och vikten <strong>20 kg</strong>. Det är samma produkt som Bauhaus och Harvia säljer som
+            AC3020 (Harvia, u.å.a; Bauhaus, u.å.a).
+        </p>
+        <!-- UPPDATERING 2026-10-24: Växlande bilder (samma låda → utlagda stenar). Komprimerade JPG i images/. -->
+        <figure class="stone-photo stone-swap-figure">
+            <div class="stone-swap" id="stone-swap" data-interval="5000">
+                <img class="stone-swap-img is-active"
+                     src="images/olivindiabas-lada-20kg.jpg"
+                     alt="Öppen Harvia-låda med olivindiabas: förpackningen visar Olivine diabase, 20 kg och storleken 10–15 cm."
+                     width="1200" height="824"
+                     loading="lazy">
+                <img class="stone-swap-img"
+                     src="images/olivindiabas-29-stenar.jpg"
+                     alt="Tjugonio kantiga olivindiabasstenar utlagda på bastubänk – hela innehållet i samma 20 kg-låda."
+                     width="1200" height="675"
+                     loading="lazy">
+            </div>
+            <p class="stone-swap-hint" id="stone-swap-hint" aria-live="polite">
+                Bild 1 av 2: öppen låda à 20 kg (etikett 10–15 cm).
+            </p>
+            <figcaption>
+                <strong>Samma låda.</strong> Bilderna växlar automatiskt: först förpackningen, sedan alla
+                <strong>29 stenar</strong> utlagda och räknade från just den lådan.
+            </figcaption>
+        </figure>
+        <p>
+            När innehållet i en låda räknades sten för sten blev det <strong>29 stenar</strong>.
+            Med 20 kg i lådan ger det en medelvikt på
+            <strong>0,69 kg per sten</strong> (20 ÷ 29 = 0,690 kg; ungefär <strong>0,7 kg</strong> om man avrundar).
+            Antalet kan skilja något mellan lådor eftersom stenarna är naturligt brutna,
+            men siffran är bra att ha när man planerar stapling och reserv.
+        </p>
+        <p>
+            Ungefärlig stenmängd vid standardfyllning:
+            <strong>5 lådor à 20 kg per aggregat</strong> motsvarar ungefär
+            <strong>145 stenar</strong> (5 × 29), och <strong>10 lådor</strong> till båda aggregaten
+            ungefär <strong>290 stenar</strong>, plus det man vill ha i reserv.
+        </p>
     </section>
 
     <!-- ============================================================
@@ -188,6 +248,8 @@
             lådor à 20 kg och Bauhaus pris 139 kr per låda, hämtat 2026-09-28 (Bauhaus, u.å.a).
             Enligt manualen ska trasiga stenar bytas ut när stenarna staplas om (Harvia, 2024),
             så det är praktiskt att ha några extra lådor i reserv.
+            Fältet <em>Stenar per låda</em> utgår från räkningen 29 st i en 20 kg-låda (oktober 2026);
+            justera om ni räknar om en annan låda.
         </p>
         <div class="calc-grid">
             <label>Antal aggregat
@@ -204,6 +266,9 @@
             </label>
             <label>Pris per låda (kr)
                 <input type="number" id="in-pris" class="input-yellow" min="0" step="1" value="139">
+            </label>
+            <label>Stenar per låda (räknat)
+                <input type="number" id="in-stenar" class="input-yellow" min="1" step="1" value="29">
             </label>
         </div>
         <div class="calc-result" id="calc-result" aria-live="polite">–</div>
@@ -354,6 +419,9 @@
         <p>Sauna-Eurox (u.å.) <em>Sauna stones</em>. Tillgänglig på:
             <a href="https://www.saunagranit.com/en/sauna-stones.html" target="_blank" rel="noopener">https://www.saunagranit.com/en/sauna-stones.html</a>
             (Hämtad: 28 september 2026). <span class="note">(Tillverkaren av Harvias stenar anger Satakunta i Finland som källa för olivindiabasen.)</span></p>
+
+        <p>Bjerreds Saltsjöbad (2026) <em>Fotodokumentation: Harvia-låda olivindiabas 20 kg och stenräkning</em> [Egna fotografier].
+            <span class="note">(Förpackning och 29 utlagda stenar från en låda, oktober 2026. Används för antal stenar per låda och medelvikt på denna sida.)</span></p>
     </section>
 
     <!-- ============================================================
@@ -361,7 +429,7 @@
     ============================================================ -->
     <footer class="page-footer">
         <a href="index.html">← Tillbaka till elöversikten</a>
-        <span>Sammanställt 2026-09-28 · Bjerreds Saltsjöbad</span>
+        <span>Sammanställt 2026-09-28 · Foton låda/stenar 2026-10-24 · Bjerreds Saltsjöbad</span>
     </footer>
 
 </div><!-- /container -->

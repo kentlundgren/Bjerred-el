@@ -157,6 +157,70 @@ section[id] { scroll-margin-top: 16px; }
     margin-top: 6px;
 }
 
+/* Växlande foton: samma låda ↔ 29 utlagda stenar. UPPDATERING 2026-10-24 */
+.stone-swap-figure {
+    max-width: 640px;
+    margin: 14px auto 16px;
+}
+
+.stone-swap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1200 / 824;
+    max-height: min(72vh, 640px);
+    background: #eef1f3;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.stone-swap-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0;
+    transition: opacity 0.9s ease-in-out;
+    z-index: 0;
+}
+
+.stone-swap-img.is-active {
+    opacity: 1;
+    z-index: 1;
+}
+
+.stone-swap-hint {
+    font-size: 0.82em;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 10px 0 4px;
+    text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .stone-swap {
+        aspect-ratio: auto;
+        max-height: none;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        background: transparent;
+        overflow: visible;
+    }
+    .stone-swap-img {
+        position: static;
+        width: 100%;
+        height: auto;
+        opacity: 1;
+        transition: none;
+        border-radius: 8px;
+        background: #eef1f3;
+    }
+    .stone-swap-hint {
+        display: none;
+    }
+}
+
 .info-card h3 {
     color: var(--accent);
     font-size: 1em;
