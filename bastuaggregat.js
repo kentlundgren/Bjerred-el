@@ -78,7 +78,45 @@ function initCalc() {
 
 
 /* ================================================================
-   2. VÄXLANDE STENBILDER (samma låda → 29 stenar)
+   2. YOUTUBE – klicka för att ladda spelaren (undviker fel 153)
+   UPPDATERING 2026-10-24
+   ================================================================ */
+function initYoutubeFacade() {
+    var root = document.getElementById('sauna-eurox-video');
+    if (!root) return;
+
+    var videoId = root.getAttribute('data-youtube-id');
+    var btn = root.querySelector('.video-facade');
+    if (!videoId || !btn) return;
+
+    function openOnYouTube() {
+        window.open('https://www.youtube.com/watch?v=' + videoId, '_blank', 'noopener');
+    }
+
+    function embedPlayer() {
+        var iframe = document.createElement('iframe');
+        iframe.src = 'https://www.youtube.com/embed/' + videoId + '?autoplay=1&rel=0';
+        iframe.title = 'Sauna-Eurox – tillverkning av bastustenar (YouTube)';
+        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+        root.innerHTML = '';
+        root.appendChild(iframe);
+    }
+
+    btn.addEventListener('click', function () {
+        /* file:// och vissa lokala öppningar saknar Referer – då fungerar inte inbäddning */
+        if (location.protocol === 'http:' || location.protocol === 'https:') {
+            embedPlayer();
+        } else {
+            openOnYouTube();
+        }
+    });
+}
+
+
+/* ================================================================
+   3. VÄXLANDE STENBILDER (samma låda → 29 stenar)
    UPPDATERING 2026-10-24
    ================================================================ */
 function initStoneSwap() {
@@ -122,7 +160,7 @@ function initStoneSwap() {
 
 
 /* ================================================================
-   3. TEKNIK-MODAL
+   4. TEKNIK-MODAL
    ================================================================ */
 function initModal() {
     const modal = document.getElementById('techModal');
@@ -148,6 +186,7 @@ function initModal() {
    ================================================================ */
 document.addEventListener('DOMContentLoaded', function () {
     initCalc();
+    initYoutubeFacade();
     initStoneSwap();
     initModal();
 });
