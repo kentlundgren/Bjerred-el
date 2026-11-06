@@ -70,6 +70,7 @@ fakturorna (se `PRD.md`, avsnitt 13). Eneas priser är ännu inte inlagda.
 ## Logg
 
 - 2026-10-17: mejl till Hans (ordförande) och Minna (ekonom) om ett eventuellt byte till Eneas utformat. Slutsatser och öppna frågor: se `PRD.md`, avsnitt 6, fråga 7–8. Mejlet skickades. Samma dag kom Eneas avtalsutkast (fråga 9) och Kent svarade Hans och Minna: information saknas från Eneas, vänta in oktoberfakturan och förhandla med Kraftringen först. Styrelsens beslut är inte noterat. Nästa steg: oktoberfakturan runt 10 november 2026.
+- 2026-11-06: Eneas avtal (version 20260609, daterat 2026-11-06) ligger i `avtal/`. Alternativen Kraftringen eller Eneas är sammanställda i `sammanfattning.html` (kort) och `alternativ.html` (utförlig, tabell 1–5 och 18 öppna frågor), med brödsmulor mellan sidorna. Kraftringens rörliga kostnader januari–september 2026 är utlästa ur fakturorna (tabell 5). Mejl till ordföranden är skickat. Avtalet är inte undertecknat. Nästa steg: ordförandens besked, svar från Eneas på frågorna och oktoberfakturan runt 10 november 2026.
 
 ## Källor
 
