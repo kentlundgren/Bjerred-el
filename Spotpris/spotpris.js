@@ -240,12 +240,12 @@
       function stat(l) {
         var s = 0, w = 0, mn = Infinity, mx = -Infinity;
         l.forEach(function (x) { s += x.r * x.k; w += x.k; mn = Math.min(mn, x.r); mx = Math.max(mx, x.r); });
-        return { snitt: s / w, min: mn, max: mx };
+        return { snitt: s / w, min: mn, max: mx, enkel: l.reduce(function (t, x) { return t + x.r; }, 0) / l.length };
       }
       var a = stat(jj);
       var tx = 'Raden "Rörliga kostnader" på Kraftringens faktura, öre/kWh utan moms. Fakturan anger inte vad posten innehåller.\n' +
-        'Januari–juni 2026: ' + fmt(a.min) + '–' + fmt(a.max) + ', i snitt ' + fmt(a.snitt) + ' (viktat med förbrukningen).\n' +
-        'Med det fasta påslaget på ' + fmt(FAST) + ' blir påslaget över spotpriset i snitt ' + fmt(a.snitt + FAST) + ' öre/kWh under januari–juni.';
+        'Januari–juni 2026: ' + fmt(a.min) + '–' + fmt(a.max) + '. Snittet är ' + fmt(a.snitt) + ' öre/kWh när varje månad väger efter sin förbrukning (enkelt medel av de sex värdena: ' + fmt(a.enkel) + ').\n' +
+        'Lägger man till det fasta påslaget på ' + fmt(FAST) + ' blir det totala påslaget över spotpriset ' + fmt(a.snitt + FAST) + ' öre/kWh i snitt. Det är alltså summan av de två och inte de rörliga kostnaderna ensamma.';
       th.innerHTML = 'Fakturans<br><abbr class="ord" tabindex="0" data-forklaring="' + esc(tx) + '">rörliga kostnader</abbr>';
     })();
     // Januari-juni: värdena finns redan (modellen anpassades på dem), inga inmatningsfält
