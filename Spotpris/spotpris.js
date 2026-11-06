@@ -472,14 +472,22 @@
     opt = opt || {};
     var W = 900, H = 340, L = 56, R = 16, T = 16, B = 40, pw = W - L - R, ph = H - T - B, n = etiketter.length;
     var o = ['<svg class="diagram" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(ytitel) + '">'];
-    var X = function (i) { return L + (n === 1 ? pw / 2 : i * pw / (n - 1)); };
+    // UPPDATERING 2026-11-06: opt.inset flyttar första och sista punkten en halv kolumn från kanten, så att sista etiketten inte klipps och sista skuggade månaden får plats.
+    var ins = opt.inset && n > 1 ? pw / (2 * n) : 0, stepX = n > 1 ? (pw - 2 * ins) / (n - 1) : 0;
+    var X = function (i) { return L + (n === 1 ? pw / 2 : ins + i * stepX); };
     var Y = function (v) { return T + ph - (v - ymin) / (ymax - ymin) * ph; };
     var steg = (ymax - ymin) / 5;
     if (opt.skugga) {                              // grå bakgrund och streckad gräns för månader utanför anpassningsperioden
-      var halv = n > 1 ? pw / (n - 1) / 2 : 0, x0 = X(opt.skugga.fran) - halv;
+      var halv = stepX / 2, x0 = X(opt.skugga.fran) - halv;
       o.push('<rect x="' + x0.toFixed(1) + '" y="' + T + '" width="' + (W - R - x0).toFixed(1) + '" height="' + ph + '" fill="#eceff1"/>' +
              '<line x1="' + x0.toFixed(1) + '" y1="' + T + '" x2="' + x0.toFixed(1) + '" y2="' + (T + ph) + '" stroke="#5a6868" stroke-dasharray="4 3"/>' +
              '<text x="' + (x0 + 6).toFixed(1) + '" y="' + (T + 14) + '" font-size="11" fill="#5a6868">' + esc(opt.skugga.text) + '</text>');
+    }
+    if (opt.skugga2) {                             // UPPDATERING 2026-11-06: egen skuggning för gissningar före faktura (oktober), ljusorange så att den skiljs från blindprovet
+      var halv2 = stepX / 2, x2 = X(opt.skugga2.fran) - halv2;
+      o.push('<rect x="' + x2.toFixed(1) + '" y="' + T + '" width="' + (W - R - x2).toFixed(1) + '" height="' + ph + '" fill="#fdf1e7"/>' +
+             '<line x1="' + x2.toFixed(1) + '" y1="' + T + '" x2="' + x2.toFixed(1) + '" y2="' + (T + ph) + '" stroke="#d9822b" stroke-dasharray="4 3"/>' +
+             '<text x="' + (x2 + 6).toFixed(1) + '" y="' + (T + 14) + '" font-size="11" fill="#a35a12">' + esc(opt.skugga2.text) + '</text>');
     }
     for (var k = 0; k <= 5; k++) {
       var v = ymin + k * steg, y = Y(v);
@@ -498,7 +506,7 @@
     });
     if (opt.tips) {
       // Kolumn per månad: alla värden. Ritas före punkterna så att en punkt går först när man pekar rakt på den.
-      var kol = n > 1 ? pw / (n - 1) : pw;
+      var kol = n > 1 ? stepX : pw;
       etiketter.forEach(function (e, i) {
         var rader = [e];
         serier.forEach(function (s) { if (s.varden[i] !== null && s.varden[i] !== undefined && isFinite(s.varden[i])) { rader.push(s.namn + ': ' + fmt(s.varden[i]) + ' öre/kWh'); } });
@@ -535,21 +543,38 @@
     // Blindprovsmånaderna ritas på grå bakgrund, utanför de sex månader (januari-juni) som antagandena anpassades på.
     // M1, M2 och M4b gäller bara spotpriset; "allt elpris" är spotpris + rörliga kostnader + fast påslag.
     var blind = blindManader();
-    var M = function (g, gb) { return MAN.map(function (m) { return g(D.manadsnitt[m]); }).concat(blind.map(gb)); };
+    // UPPDATERING 2026-11-06: månader med gissning före faktura (oktober 2026 och senare), ur data/gissningar_data.js. M1 och M2 är
+    // verkliga medelvärden av månadens spotpriser och ritas i sina vanliga serier. M4b och allt elpris är förutsägelser och ritas som egna streckade serier.
+    var G = window.GISSNINGAR, gm = G ? Object.keys(G.manader).sort() : [], gg = gm.map(function (m) { return G.manader[m]; });
+    var tom = function () { return gg.map(function () { return null; }); };
+    var M = function (g, gb, gny) { return MAN.map(function (m) { return g(D.manadsnitt[m]); }).concat(blind.map(gb)).concat(gny ? gg.map(gny) : tom()); };
     var serier = [
-      { namn: 'M1 spotpris, dygnet runt', varden: M(function (v) { return v.m1_ore; }, function (b) { return b.d.m1_ore; }), farg: '#6c8ea4', streck: '5 4' },
-      { namn: 'M2 spotpris, kl. 06–22', varden: M(function (v) { return v.m2_ore; }, function (b) { return b.d.m2_ore; }), farg: '#8e6bbf', streck: '5 4' },
+      { namn: 'M1 spotpris, dygnet runt', varden: M(function (v) { return v.m1_ore; }, function (b) { return b.d.m1_ore; }, function (x) { return x.m1_ore; }), farg: '#6c8ea4', streck: '5 4' },
+      { namn: 'M2 spotpris, kl. 06–22', varden: M(function (v) { return v.m2_ore; }, function (b) { return b.d.m2_ore; }, function (x) { return x.m2_ore; }), farg: '#8e6bbf', streck: '5 4' },
       { namn: 'M4b spotpris, uppskattad', varden: M(function (v) { return v.m4b.varde_ore; }, function (b) { return b.d.m4b_ore; }), farg: '#e76f51' },
       { namn: 'Fakturans spotpris', varden: M(function (v) { return v.faktura.spot_ore; }, function (b) { return b.spot; }), farg: '#1c2a2a', tjocklek: 3 },
       { namn: 'Kraftringens allt elpris (spot + rörliga + påslag)', varden: M(function (v) { return v.faktura.allt_elpris_ore; }, function (b) { return b.allt; }), farg: '#2a9d8f' }
     ];
+    var antalFore = MAN.length + blind.length;
+    if (gg.length && antalFore > 0) {
+      // Förutsägelserna börjar i sista faktura-månaden så att den streckade linjen hakar i de heldragna.
+      var prog = function (basserie, gny) {
+        var v = serier[basserie].varden.map(function () { return null; });
+        v[antalFore - 1] = serier[basserie].varden[antalFore - 1];
+        gg.forEach(function (x, k) { v[antalFore + k] = gny(x); });
+        return v;
+      };
+      serier.push({ namn: 'M4b spotpris, förutsagd (före faktura)', varden: prog(2, function (x) { return x.ver1.spot_ore; }), farg: '#e76f51', streck: '3 3', tjocklek: 2.5 });
+      serier.push({ namn: 'Kraftringens allt elpris, förutsagt (före faktura)', varden: prog(4, function (x) { return x.ver1.allt_elpris_ore; }), farg: '#2a9d8f', streck: '3 3', tjocklek: 3 });
+    }
     var harEneas = MAN.some(function (m) { return eneasVarde(m) !== null; });
-    if (harEneas) { serier.push({ namn: 'Eneas allt elpris', varden: MAN.map(function (m) { return eneasVarde(m); }).concat(blind.map(function () { return null; })), farg: '#2a7fc4', tjocklek: 2.5 }); }
+    if (harEneas) { serier.push({ namn: 'Eneas allt elpris', varden: MAN.map(function (m) { return eneasVarde(m); }).concat(blind.map(function () { return null; })).concat(tom()), farg: '#2a7fc4', tjocklek: 2.5 }); }
     var alla = [];
     serier.forEach(function (s) { s.varden.forEach(function (v) { if (v !== null) { alla.push(v); } }); });
-    var opt = { tips: true };
+    var opt = { tips: true, inset: gg.length > 0 };
     if (blind.length) { opt.skugga = { fran: MAN.length, text: 'Blindprov' }; }
-    el('diagram-manad').innerHTML = linjediagram(MAN.map(lang).concat(blind.map(function (b) { return lang(b.m); })), serier, 0, niceMax(Math.max.apply(null, alla)), 'öre/kWh', opt);
+    if (gg.length) { opt.skugga2 = { fran: antalFore, text: 'Gissning' }; }
+    el('diagram-manad').innerHTML = linjediagram(MAN.map(lang).concat(blind.map(function (b) { return lang(b.m); })).concat(gm.map(lang)), serier, 0, niceMax(Math.max.apply(null, alla)), 'öre/kWh', opt);
     el('tf-manad').innerHTML = teckenforklaring(serier.map(function (s) { return [s.namn, s.farg]; }));
   }
 
