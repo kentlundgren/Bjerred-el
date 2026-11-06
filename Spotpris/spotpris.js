@@ -314,6 +314,35 @@
     renderTabell11();          // UPPDATERING 2026-10-08: tabell 11 visar blindprovets fel för juli–september
   }
 
+  // UPPDATERING 2026-11-06: blänkare överst på sidan. Förutsägelsen för den senaste gissade månaden (ur data/gissningar_data.js, ver. 1)
+  // jämförd med månaden före (fakturans spot och rörliga kostnader ur data/facit_jul_sep.json plus fast påslag). Alla tal räknas, inget är inskrivet för hand.
+  function renderBlanka() {
+    var sek = el('sektion-blanka'), G = window.GISSNINGAR;
+    if (!G || !F || !F.facit) { sek.style.display = 'none'; return; }
+    var m = Object.keys(G.manader).sort().pop(), g = G.manader[m];
+    var d = new Date(Number(m.slice(0, 4)), Number(m.slice(5, 7)) - 2, 1);
+    var fm = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2), ff = F.facit[fm];
+    if (!ff) { sek.style.display = 'none'; return; }
+    var spot = g.ver1.spot_ore, tot = g.ver1.allt_elpris_ore, pas = tot - spot;
+    var fspot = ff.spot_ore, fpas = ff.rorliga_ore + FAST, ftot = fspot + fpas;
+    var skala = Math.max(tot, ftot);
+    function kort(rubrik, s, p, t) {
+      return '<div class="blanka-kort"><h3>' + rubrik + '</h3>' +
+        '<p class="blanka-tal">' + fmt(t) + ' <small>öre/kWh allt elpris</small></p>' +
+        '<p class="blanka-delar">spotpris <strong>' + fmt(s) + '</strong> + påslag <strong>' + fmt(p) + '</strong></p>' +
+        '<div class="stapel" role="img" aria-label="Spotpris ' + fmt(s) + ' och påslag ' + fmt(p) + ' öre/kWh"><div class="s-spot" style="width:' + (s / skala * 100).toFixed(2) + '%"></div><div class="s-pas" style="width:' + (p / skala * 100).toFixed(2) + '%"></div></div></div>';
+    }
+    var dt = tot - ftot, ds = spot - fspot, dp = pas - fpas;
+    el('blanka').innerHTML =
+      '<p class="liten">Förutsägelse för ' + esc(lang(m).toLowerCase()) + ', gjord ' + esc(g.gjord.replace('T', ' kl ')) + ' innan fakturan lästes. Öre/kWh utan moms, bara elhandeln (inte elnät eller skatt). Påslaget är fakturans rörliga kostnader plus det fasta påslaget på ' + fmt(FAST) + '.</p>' +
+      '<div class="blanka-grid">' + kort(esc(lang(m)) + ' 2026, förutsagt', spot, pas, tot) + kort(esc(lang(fm)) + ' 2026, faktura', fspot, fpas, ftot) + '</div>' +
+      '<p class="blanka-tf"><i style="background:#1f5f5b"></i>spotpris<i style="background:#2a7fc4"></i>påslag (rörliga kostnader + fast). Staplarna är i samma skala.</p>' +
+      '<div class="notis"><p><strong>' + esc(lang(m)) + ' förutses bli ' + fmt(Math.abs(dt)) + ' öre/kWh ' + (dt >= 0 ? 'dyrare' : 'billigare') + ' än ' + esc(lang(fm).toLowerCase()) + '</strong> (' + (dt >= 0 ? '+' : '−') + fmt(Math.abs(dt / ftot * 100), 0) + ' %). ' +
+      'Spotpriset ' + (ds >= 0 ? 'stiger' : 'sjunker') + ' ' + fmt(Math.abs(ds)) + ' öre/kWh, medan påslaget ' + (dp >= 0 ? 'ökar' : 'minskar') + ' ' + fmt(Math.abs(dp)) + '. ' +
+      'Spotpriset är ' + fmt(spot / tot * 100, 1) + ' % av elpriset, så det är spotpriset som avgör.</p>' +
+      '<p class="liten">M4b ver. 2 gissar spotpriset till ' + fmt(g.ver2.spot_ore) + ' och allt elpris till ' + fmt(g.ver2.allt_elpris_ore) + '. Elhandelsavtalet med Kraftringen gällde bara till och med 2026-09-30, så fakturan kan avvika. Se <a href="#Tabell3">Tabell 3</a>.</p></div>';
+  }
+
   // UPPDATERING 2026-11-06: felen för gissningarna efter blindprovet (ver. 1 i tabellen, ver. 2 i texten under tabellen).
   function uppdateraGissningar() {
     var G = window.GISSNINGAR, notis = el('tab-3-gissning-not');
@@ -913,6 +942,7 @@
     byggTabell2();
     uppdateraTabell2();
     byggTabell3();
+    renderBlanka();            // UPPDATERING 2026-11-06: blänkaren överst (oktober mot september)
     renderDiagramManad();
     renderDiagramTimme();
     renderEffekt();

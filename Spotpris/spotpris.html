@@ -7,6 +7,8 @@
 
   UPPDATERING 2026-10-07: Första versionen (1.0).
   UPPDATERING 2026-10-08: Länk till omanpassning.html tillagd (avsnittet om noggrannhet och källavsnittet). Inget annat ändrat.
+  UPPDATERING 2026-11-06: Oktober som egen rad i tabell 3 (data/gissningar_data.js), kolumnen "Fakturans totala påslag över spot" med summarad,
+                          förklaring vid rubriken "rörliga kostnader över spot" och blänkaren "Oktober i korthet" överst.
 -->
 <html lang="sv">
 <head>
@@ -14,6 +16,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Spotpris månad för månad</title>
   <meta name="description" content="Spotpris för elområde SE4 månad för månad, januari–juni 2026, jämfört med Kraftringens och Eneas priser.">
+  <!-- Delningsbild och förhandsvisning (Open Graph och Twitter Card). Bilden byggs av bygg_og_bild_spotpris.py ur samma data som blänkaren. -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="sv_SE">
+  <meta property="og:title" content="Elpriset: oktober mot september">
+  <meta property="og:description" content="Förutsägelse för oktober: spotpris 162,58 öre/kWh och allt elpris 168,45 för elhandeln, mot 134,59 i september. Spotpris månad för månad i elområde SE4, för kallbadhuset i Bjärred.">
+  <meta property="og:url" content="https://kentlundgren.github.io/Bjerred-el/Spotpris/spotpris.html">
+  <meta property="og:image" content="https://kentlundgren.github.io/Bjerred-el/Spotpris/og-spotpris.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Två staplar för elpriset i öre per kWh: september (faktura) 134,59 och oktober (förutsagt) 168,45, uppdelat i spotpris och påslag. Skillnaden är 33,86 öre, 25 procent.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Elpriset: oktober mot september">
+  <meta name="twitter:description" content="Förutsägelse för oktober: allt elpris 168,45 öre/kWh mot 134,59 i september, för kallbadhuset i Bjärred.">
+  <meta name="twitter:image" content="https://kentlundgren.github.io/Bjerred-el/Spotpris/og-spotpris.jpg">
   <link rel="stylesheet" href="spotpris.css">
 </head>
 <body>
@@ -29,6 +45,12 @@
       i en tvåstegsgranskning. Månadens spotpris för vår förbrukning är en <strong>uppskattning</strong>, inte en mätning. Kontrollera mot källan innan något återges
       (<a href="#Kallor">se källor</a>).</p>
   </header>
+
+  <!-- UPPDATERING 2026-11-06: blänkare överst: förutsägelsen för oktober jämförd med september (fylls av renderBlanka() i spotpris.js) -->
+  <section aria-labelledby="Oktober" id="sektion-blanka">
+    <h2 id="Oktober">Oktober i korthet <a class="ankare" href="#Oktober" aria-label="Länk till avsnittet">#</a></h2>
+    <div id="blanka"></div>
+  </section>
 
   <!-- ===== Förklaring ===== -->
   <section aria-labelledby="Forklaring">
