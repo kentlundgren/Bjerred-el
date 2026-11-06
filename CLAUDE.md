@@ -163,6 +163,9 @@ automatiskt när du säger t.ex. "lägg in data för [månad]".
   (använd t.ex. blått för en notering, grönt för en markering, grått för låsta eller beräknade värden).
   Se regel 12 i skillen `kent-bygg-sidor`.
 - Kommentera tydligt – särskilt vid uppdateringar: `// UPPDATERING ÅÅÅÅ-MM-DD: ...`
+- **Version och datum höjs med varje ändring av en sida** (regel 19 i skillen `kent-bygg-sidor`): `VERSION` och `VERSIONSDATUM` ligger i sidans JS
+  (`Spotpris/spotpris.js`, `Spotpris/omanpassning.js`, `Eneas_Samkop_av_El/enea_jamforelse.js`, `Eneas_Samkop_av_El/alternativ.js` som även gäller
+  `sammanfattning.html`, `Eneas_Samkop_av_El/intern_debitering.js`). Kontrollera med `grep -n "VERSION"` innan en sida kallas klar.
 - Fråga alltid om befintlig fil ska uppdateras eller om ny fil (`_verX`) ska skapas
 - PowerShell används – undvik `&&` i terminalen, dela upp kommandon
 - Ingen ES2023+ utan att kommentera det i koden

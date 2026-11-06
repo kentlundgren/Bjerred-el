@@ -16,12 +16,15 @@
   alltid med, nio färger), eftersom diagrammet visar verkliga spotpriser och inte modellens gissning. Version 1.3.
   UPPDATERING 2026-10-08: Tabell 11 har juli, augusti och september som rader och en tredje kolumn med blindprovets fel. Version 1.4.
   UPPDATERING 2026-10-09: texten under avläsningsanalysen hade "för lite/för mycket" tvärtom (månaden före får för mycket, månaden efter för lite). Rättat, versionen oförändrad.
+  UPPDATERING 2026-11-06: Oktober 2026 som gissning före faktura: egen rad i tabell 3 (data/gissningar_data.js), ny kolumn "Fakturans totala påslag över spot"
+  med summarad, förklaring vid "rörliga kostnader över spot", blänkaren "Oktober i korthet" överst, oktober i diagram 1 (egen skuggning),
+  brödsmulor och delningsbild (og). Version 1.5.
 */
 (function () {
   'use strict';
 
-  var VERSION = '1.4';
-  var VERSIONSDATUM = '2026-10-08';
+  var VERSION = '1.5';
+  var VERSIONSDATUM = '2026-11-06';
   var LAGRING = 'spotpris_v1';                    // egen lagringsnyckel för Eneas pris (bara i den här webbläsaren)
   var LAGRING_JAMFORELSE = 'enea_jamforelse_v1';  // jämförelsesidans nyckel; läses (aldrig skrivs) om fältet här är tomt
 

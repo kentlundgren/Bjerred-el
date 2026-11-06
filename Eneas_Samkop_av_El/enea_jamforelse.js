@@ -47,8 +47,8 @@
   // ===================================================================
   // 1. Version
   // ===================================================================
-  var VERSION = '2.3';              // UPPDATERING 2026-10-08: juli–september under tabell 1 (var 2.2)
-  var VERSIONSDATUM = '2026-10-08';
+  var VERSION = '2.4';              // UPPDATERING 2026-11-06: länkar till avtalet och sammanställningen i statusraden, brödsmulor i stället för knappen "← Elöversikt" (2.3: juli–september under tabell 1)
+  var VERSIONSDATUM = '2026-11-06';
 
   // ===================================================================
   // Uppgifter ur Isak Cerwéns mejl (Eneas Services AB), "Sv: Elhandel Kraftringen och Eneas", mottaget av Kent Lundgren och införda 2026-10-07.

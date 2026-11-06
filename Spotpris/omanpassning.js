@@ -7,12 +7,13 @@
   ES-nivå: ES2015 (const/let, mallsträngar, pilfunktioner). Inget ES2023 används.
 
   UPPDATERING 2026-10-08: Första versionen (1.0).
+  UPPDATERING 2026-11-06: brödsmulor (dokument.json) i stället för knappen "← Spotpris". Version 1.1.
 */
 (function () {
   'use strict';
 
-  var VERSION = '1.0';
-  var VERSIONSDATUM = '2026-10-08';
+  var VERSION = '1.1';
+  var VERSIONSDATUM = '2026-11-06';
   var D = window.OMANPASSNING;
   if (!D) {
     document.getElementById('kort').textContent = 'Data saknas (data/omanpassning_data.js kunde inte läsas).';
