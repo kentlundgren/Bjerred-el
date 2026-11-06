@@ -4,5 +4,10 @@
   "dokument": [
     {"fil": "spotpris.html", "namn": "Spotpris månad för månad", "roll": "huvud"},
     {"fil": "omanpassning.html", "namn": "Omanpassningen av M4b", "roll": "sida"}
+  ],
+  "se_ocksa": [
+    {"namn": "Elavtalet: sammanfattning (Kraftringen eller Eneas)", "href": "../Eneas_Samkop_av_El/sammanfattning.html"},
+    {"namn": "Alternativen utförligt", "href": "../Eneas_Samkop_av_El/alternativ.html"},
+    {"namn": "Jämförelse jan–jun 2026", "href": "../Eneas_Samkop_av_El/enea_jamforelse.html"}
   ]
 }

@@ -5,5 +5,8 @@
     {"fil": "enea_jamforelse.html", "namn": "Jämförelse bakåt, jan–jun 2026", "roll": "huvud"},
     {"fil": "sammanfattning.html", "namn": "Sammanfattning av alternativen", "roll": "sida"},
     {"fil": "alternativ.html", "namn": "Alternativen utförligt", "roll": "sida"}
+  ],
+  "se_ocksa": [
+    {"namn": "Spotpris månad för månad (oktober i korthet)", "href": "../Spotpris/spotpris.html#Oktober"}
   ]
 }

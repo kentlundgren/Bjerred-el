@@ -8,11 +8,12 @@
 
   UPPDATERING 2026-10-08: Första versionen (1.0).
   UPPDATERING 2026-11-06: brödsmulor (dokument.json) i stället för knappen "← Spotpris". Version 1.1.
+  UPPDATERING 2026-11-06: korsreferenser ("Se också") till Eneas-sidorna i brödsmulorna. Version 1.2.
 */
 (function () {
   'use strict';
 
-  var VERSION = '1.1';
+  var VERSION = '1.2';
   var VERSIONSDATUM = '2026-11-06';
   var D = window.OMANPASSNING;
   if (!D) {

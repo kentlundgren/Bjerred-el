@@ -47,7 +47,7 @@
   // ===================================================================
   // 1. Version
   // ===================================================================
-  var VERSION = '2.4';              // UPPDATERING 2026-11-06: länkar till avtalet och sammanställningen i statusraden, brödsmulor i stället för knappen "← Elöversikt" (2.3: juli–september under tabell 1)
+  var VERSION = '2.5';              // UPPDATERING 2026-11-06: korsreferens "Se också" till Spotpris-sidan i brödsmulorna (2.4: länkar till avtalet och sammanställningen, brödsmulor i stället för knappen "← Elöversikt"; 2.3: juli–september under tabell 1)
   var VERSIONSDATUM = '2026-11-06';
 
   // ===================================================================

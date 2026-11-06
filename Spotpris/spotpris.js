@@ -19,11 +19,13 @@
   UPPDATERING 2026-11-06: Oktober 2026 som gissning före faktura: egen rad i tabell 3 (data/gissningar_data.js), ny kolumn "Fakturans totala påslag över spot"
   med summarad, förklaring vid "rörliga kostnader över spot", blänkaren "Oktober i korthet" överst, oktober i diagram 1 (egen skuggning),
   brödsmulor och delningsbild (og). Version 1.5.
+  UPPDATERING 2026-11-06: länk från blänkaren till Eneas-sammanfattningen och jämförelsen. Version 1.6.
+  UPPDATERING 2026-11-06: korsreferenser ("Se också") till Eneas-sidorna i brödsmulorna (dokument.json, nyckeln se_ocksa). Version 1.7.
 */
 (function () {
   'use strict';
 
-  var VERSION = '1.5';
+  var VERSION = '1.7';
   var VERSIONSDATUM = '2026-11-06';
   var LAGRING = 'spotpris_v1';                    // egen lagringsnyckel för Eneas pris (bara i den här webbläsaren)
   var LAGRING_JAMFORELSE = 'enea_jamforelse_v1';  // jämförelsesidans nyckel; läses (aldrig skrivs) om fältet här är tomt
