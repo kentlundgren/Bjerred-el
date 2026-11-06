@@ -35,7 +35,7 @@ body {
 .sida {
   max-width: 1000px;
   margin: 0 auto;
-  padding: 12px var(--marginal) 80px;   /* UPPDATERING 2026-11-06: mindre topp (var 52px), knappen uppe till vänster ligger nu i flödet */
+  padding: 24px var(--marginal) 80px;   /* UPPDATERING 2026-11-06: mindre topp, brödsmulorna ligger överst */
 }
 
 h1 { font-size: 1.6rem; margin: 0 0 6px; line-height: 1.25; }
@@ -138,16 +138,7 @@ th.tipp:hover .tipp-text, th.tipp:focus .tipp-text, th.tipp:focus-within .tipp-t
 /* Ruta med den viktigaste upplysningen (blå, inte gul: gult är reserverat för inmatning) */
 .notis { background: #e3f0fb; border-left: 4px solid #2a7fc4; color: #0b3d66; border-radius: 4px; padding: 2px 14px; margin: 10px 0; }
 
-/* ---------- Knapp-länk uppe i vänstra hörnet: tillbaka till elöversikten ---------- */
-/* UPPDATERING 2026-11-06: knappen ligger under brödsmulorna (static) i stället för fast i hörnet, så de inte överlappar. */
-.topplank {
-  display: inline-block; margin: 10px 0 0 16px;
-  font-size: .85rem; text-decoration: none; color: var(--accent);
-  background: #fff; border: 1px solid var(--kant); border-radius: 6px;
-  padding: 4px 10px;
-}
-.topplank:hover, .topplank:focus { border-color: var(--accent); }
-@media print { .topplank { display: none !important; } }
+/* UPPDATERING 2026-11-06: knappen "← Elöversikt" uppe till vänster är borttagen, brödsmulorna ersätter den. */
 
 /* ---------- Omkopplare för tabell 1 ("···") ----------
    Medvetet nästan osynlig: man måste veta var man ska klicka. Syns tydligare vid hover/fokus.

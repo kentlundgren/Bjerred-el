@@ -27,7 +27,7 @@ body {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; line-height: 1.5;
 }
 
-.sida { max-width: 1000px; margin: 0 auto; padding: 12px var(--marginal) 80px; }
+.sida { max-width: 1000px; margin: 0 auto; padding: 24px var(--marginal) 80px; }
 
 h1 { font-size: 1.6rem; margin: 0 0 6px; line-height: 1.25; }
 h2 { font-size: 1.2rem; margin: 30px 0 10px; }
@@ -88,14 +88,6 @@ table.rt td.stor { min-width: 14em; }
 .kallor li { margin-bottom: 8px; }
 .fot { margin-top: 28px; font-size: .85rem; color: var(--text-dampad); }
 
-/* ---------- Knapp-länk till elöversikten: ligger under brödsmulorna uppe till vänster ---------- */
-.topplank {
-  display: inline-block; margin: 10px 0 0 16px;
-  font-size: .85rem; text-decoration: none; color: var(--accent);
-  background: #fff; border: 1px solid var(--kant); border-radius: 6px; padding: 4px 10px;
-}
-.topplank:hover, .topplank:focus { border-color: var(--accent); }
-
 /* ---------- Växla mellan sammanfattning och utförlig beskrivning ---------- */
 .vaxla { display: inline-flex; margin: 8px 0 10px; border: 1px solid var(--accent); border-radius: 6px; overflow: hidden; }
 .vaxla a { padding: 6px 16px; text-decoration: none; color: var(--accent); background: #fff; font-size: .92rem; }
@@ -136,7 +128,7 @@ table.rt td.stor { min-width: 14em; }
 /* ---------- Utskrift: A4 liggande ---------- */
 @page { size: A4 landscape; margin: 12mm; }
 @media print {
-  .corner, .topplank, .vaxla, .modal-overlay, .ankare, .term-text { display: none !important; }
+  .corner, .vaxla, .modal-overlay, .ankare, .term-text { display: none !important; }
   .sida { max-width: none; padding: 0; }
   table.rt { font-size: 9.5pt; }
   table.rt tr { break-inside: avoid; }
