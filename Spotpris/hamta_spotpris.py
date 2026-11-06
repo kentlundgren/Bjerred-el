@@ -79,7 +79,9 @@ def kontrollera_dygn(datum, intervall):
         raise DataFel(f"Upplösningen {u} min stämmer inte med datumet {datum} (kvartsövergång {KVARTSOVERGANG})")
     if len(intervall) not in tillatna_antal(datum, u):
         raise DataFel(f"{datum}: {len(intervall)} intervall, tillåtet {sorted(tillatna_antal(datum, u))}")
-    starter = [i["start"] for i in intervall]
+    # UPPDATERING 2026-11-06: jämförelsen görs på verkliga tidpunkter (med tidszon). Som text sorteras "+01:00" före "+02:00",
+    # så dygnet då sommartiden slutar (sista söndagen i oktober, 100 kvartar) avvisades felaktigt som osorterat.
+    starter = [datetime.datetime.fromisoformat(i["start"]) for i in intervall]
     if starter != sorted(starter) or len(set(starter)) != len(starter):
         raise DataFel(f"{datum}: intervallen är inte sorterade eller har dubbletter")
     if any(i["start"][:10] != datum.isoformat() for i in intervall):

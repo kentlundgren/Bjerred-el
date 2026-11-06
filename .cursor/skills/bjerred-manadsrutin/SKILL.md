@@ -350,6 +350,20 @@ och hanteras i `kraftringen.json` (Spotpris) och `STANDARD` (intern debitering).
   (avsnitt 4.6, steg 7). Autokorrelationen räknades om med samma metod som tidigare (korrelationen mellan
   på varandra följande fel): −0,74 med åtta månader, −0,00 med nio.
 
+### Det som gjordes den 2026-11-06, kort (oktober 2026)
+- **Steg 1, kWh-facit:** oktober 2026 inlagd i `data.md`, `index.html`, `data.html` och `fore_och_efter_ombyggnad.js`:
+  totalt 21 818 kWh (huvudmätare 408 739 → 430 557), bad 12 088 (bastu 10 716 plus varmvatten 1 372 enligt debiteringsunderlaget), restaurang 9 730,
+  704 kWh/dag. Kostnad är `null` tills fakturan kommit (cirka 10 november). Mätardifferensen för varmvatten är 1 371 (696 618 − 695 247) men
+  underlaget anger 1 372, och 1 372 är använt. Syntaxkontroll med `node --check` av de tre kodfilerna gick igenom.
+- **Steg 1b, Del A:** `python hamta_spotpris.py 2026-10` och `python forutsag_manad.py 2026-10 --huvud 21818 --bastu 10716 --varm 1372`.
+  Frusen gissning (`Spotpris/data/forutsagelse_2026-10.json` och `.md`, kl 14:13, innan fakturan lästes): faktura inkl moms
+  72 317 kr (ver. 1) och 72 785 kr (ver. 2), spot 162,58 respektive 164,21 öre/kWh, allt elpris 168,45 respektive 170,08.
+  Antar oförändrat påslag, skatt och fast nätavgift trots att elhandelsavtalet gällde till och med 2026-09-30.
+- **Fel rättat i `hamta_spotpris.py`:** dygnet då sommartiden slutar (2026-10-25, 100 kvartar) avvisades som osorterat eftersom tidpunkterna
+  jämfördes som text (`+01:00` sorteras före `+02:00`). Jämförelsen görs nu på verkliga tidpunkter. `test_spotpris.py` skriver OK.
+- **Kvar för oktober:** läs fakturan extra noga (avtalsraderna, alla priser mot septemberfakturan), kostnaden i de fyra filerna (steg 2b),
+  Del B (`forutsag_manad.py 2026-10 --facit ...`), spot tabell 3 om Kent vill, intern debitering, mail till ekonomiansvarig, månadens flash.
+
 ## Ännu inte gjort / öppna beslut
 
 Här samlas sådant som Kent har sagt ska göras men som inte är gjort, eller som inte är avgjort.
@@ -365,7 +379,7 @@ Stryk eller flytta upp till rutinen när det är avgjort.
 - **Oktober: gissning med både ver. 1 och ver. 2, före fakturan.** Bestämt i `data/omanpassning_kriterier.json`
   (beslutsregeln) och **byggt 2026-10-08**: `Spotpris/forutsag_manad.py` (steg 1b och 2i). Provkört bakåt på september
   (värdena för M4b stämde med `omanpassning_resultat.json`: ver. 1 124,34 och ver. 2 125,48 öre/kWh, kontrollräkningen av fakturan −0,34 kr).
-  Det har **inte** körts på oktober, eftersom oktobers spotfil och kWh saknas. Bedöm först efter oktober, november och december
+  Körd på oktober 2026-11-06 kl 14:13 (Del A, se "Det som gjordes den 2026-11-06"); facit (Del B) återstår tills fakturan kommit. Bedöm först efter oktober, november och december
   (tre månader). En månad räcker inte. Samma kriterier-före-körning-princip gäller för varje ny omanpassning.
 - **Gissningarna syns inte på Spotpris-sidan än.** De ligger som filer i `data/forutsagelse_*` och `data/utfall_*`
   (json och md). Om Kent vill visa dem på sidan (t.ex. en tabell "Gissning mot facit, per månad") är det ett separat uppdrag.
