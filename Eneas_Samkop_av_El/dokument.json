@@ -1,0 +1,8 @@
+{
+  "titel": "Elhandel: Kraftringen och Eneas",
+  "dokument": [
+    {"fil": "enea_jamforelse.html", "namn": "Jämförelse bakåt, jan–jun 2026", "roll": "huvud"},
+    {"fil": "sammanfattning.html", "namn": "Sammanfattning av alternativen", "roll": "sida"},
+    {"fil": "alternativ.html", "namn": "Alternativen utförligt", "roll": "sida"}
+  ]
+}

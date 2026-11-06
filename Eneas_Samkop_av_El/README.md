@@ -45,6 +45,11 @@ kostnader + 1,70 öre/kWh fast påslag).
 | `enea_jamforelse.css` | Utseende och utskriftsformat. |
 | `enea_jamforelse.js` | Kraftringens utfall, beräkning, sparande i webbläsaren och kopiering. Juli–september (`MANADER_JUL_SEP`, sedan v2.3) visas under tabell 1 men ingår inte i jämförelsen med Eneas. |
 | `enea_hjalp.js` | Gemensamma hjälpfunktioner (tolkning av tal, talformat). |
+| `sammanfattning.html` | Kort sammanfattning av alternativen (Kraftringen eller Eneas): det viktigaste på en skärm. Länkar till `alternativ.html`. |
+| `alternativ.html` | Alternativen utförligt: prismodell (tabell 1), villkor (tabell 2), utträde (tabell 3), 17 öppna frågor (tabell 4) och källor. Har växlare mot sammanfattningen. |
+| `alternativ.css`, `alternativ.js` | Utseende och logik för `alternativ.html` och `sammanfattning.html` (delas av båda). |
+| `dokument.json`, `brodsmulor.css` | Brödsmulor och "Fler dokument i samma mapp" för jämförelsen, sammanfattningen och den utförliga sidan (genereras av `brodsmulor.py`). |
+| `avtal/` | Eneas avtal (`…_261106.pdf`, version 20260609), publikt enligt Kents beslut 2026-11-06. |
 | `intern_debitering.html` | Intern sida: mall för debiteringsunderlag (som dagens underlag), januari–september 2026. Tabellen med restaurangens andel med Eneas priser togs bort 2026-10-08. |
 | `intern_underlag.js` | Debiteringsunderlaget: månadsval, mätarställningar, beräkning, kontroller, kopiering och utskrift. |
 | `intern_debitering.js` | Liten startfil: version och teknikruta. |
