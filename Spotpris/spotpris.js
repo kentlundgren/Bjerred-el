@@ -197,7 +197,7 @@
     if (!F) { sek.style.display = 'none'; return; }
     var h = '';
     MAN.forEach(function (m) {
-      h += '<tr id="t3-' + m + '">' + td(esc(lang(m))) + '<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>';
+      h += '<tr id="t3-' + m + '">' + td(esc(lang(m))) + '<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>';
     });
     Object.keys(F.manader).sort().forEach(function (m) {
       h += '<tr id="t3-' + m + '">' + td(esc(lang(m)) + ' <span class="metod uppskattning">blindprov</span>') + td(fmt(F.manader[m].m4b_ore)) +
@@ -206,6 +206,7 @@
            '<td id="t3-fel-' + m + '">–</td>' +
            td(fmt(F.rorliga.snitt_ore) + ' <span class="liten">(' + fmt(F.rorliga.min_ore) + '–' + fmt(F.rorliga.max_ore) + ')</span>') +
            '<td><input type="text" inputmode="decimal" autocomplete="off" class="gul" data-f="rorliga" data-m="' + m + '" aria-label="Fakturans rörliga kostnader öre/kWh, ' + esc(lang(m)) + '"></td>' +
+           '<td id="t3-pas-' + m + '">–</td>' +
            td(fmt(F.manader[m].m4b_ore + F.rorliga.snitt_ore + FAST)) +
            '<td id="t3-allt-' + m + '">–</td><td id="t3-feliallt-' + m + '">–</td></tr>';
     });
@@ -221,6 +222,7 @@
              '<td id="t3-fel-' + m + '">–</td>' +
              td(fmt(g.rorliga.snitt_ore) + ' <span class="liten">(' + fmt(g.rorliga.min_ore) + '–' + fmt(g.rorliga.max_ore) + ')</span>') +
              '<td><input type="text" inputmode="decimal" autocomplete="off" class="gul" data-f="rorliga" data-m="' + m + '" aria-label="Fakturans rörliga kostnader öre/kWh, ' + esc(lang(m)) + '"></td>' +
+             '<td id="t3-pas-' + m + '">–</td>' +
              td(fmt(g.ver1.allt_elpris_ore)) +
              '<td id="t3-allt-' + m + '">–</td><td id="t3-feliallt-' + m + '">–</td></tr>';
       });
@@ -243,10 +245,21 @@
         return { snitt: s / w, min: mn, max: mx, enkel: l.reduce(function (t, x) { return t + x.r; }, 0) / l.length };
       }
       var a = stat(jj);
-      var tx = 'Raden "Rörliga kostnader" på Kraftringens faktura, öre/kWh utan moms. Fakturan anger inte vad posten innehåller.\n' +
+      var tx = 'Raden "Rörliga kostnader" på Kraftringens faktura, öre/kWh utan moms. Den ligger ovanpå spotpriset, som också är rörligt. Fakturan anger inte vad posten innehåller.\n' +
         'Januari–juni 2026: ' + fmt(a.min) + '–' + fmt(a.max) + '. Snittet är ' + fmt(a.snitt) + ' öre/kWh när varje månad väger efter sin förbrukning (enkelt medel av de sex värdena: ' + fmt(a.enkel) + ').\n' +
         'Lägger man till det fasta påslaget på ' + fmt(FAST) + ' blir det totala påslaget över spotpriset ' + fmt(a.snitt + FAST) + ' öre/kWh i snitt. Det är alltså summan av de två och inte de rörliga kostnaderna ensamma.';
-      th.innerHTML = 'Fakturans<br><abbr class="ord" tabindex="0" data-forklaring="' + esc(tx) + '">rörliga kostnader</abbr>';
+      th.innerHTML = 'Fakturans<br><abbr class="ord" tabindex="0" data-forklaring="' + esc(tx) + '">rörliga kostnader</abbr><br>över spot';
+      // Kolumnen intill: totalt påslag över spotpris (rörliga + fast), med januari–juni-snittet i en summarad (UPPDATERING 2026-11-06)
+      var th7 = document.querySelectorAll('#tab-3 thead th')[7];
+      if (th7) {
+        var tx7 = 'Totalt påslag över spotpriset: fakturans rörliga kostnader plus det fasta påslaget på ' + fmt(FAST) + ' öre/kWh. Det är allt som Kraftringen tar betalt per kWh utöver spotpriset, utan moms.\n' +
+          'Januari–juni 2026: i snitt ' + fmt(a.snitt + FAST) + ' öre/kWh (viktat med förbrukningen), se summaraden.';
+        th7.innerHTML = 'Fakturans <abbr class="ord" tabindex="0" data-forklaring="' + esc(tx7) + '">totala påslag</abbr><br>över spot';
+      }
+      var tfoot = document.querySelector('#tab-3 tfoot');
+      if (tfoot) {
+        tfoot.innerHTML = '<tr>' + td('Snitt januari–juni, viktat med kWh') + td('') + td('') + td('') + td('') + td('') + td(fmt(a.snitt)) + td(fmt(a.snitt + FAST)) + td('') + td('') + td('') + '</tr>';
+      }
     })();
     // Januari-juni: värdena finns redan (modellen anpassades på dem), inga inmatningsfält
     MAN.forEach(function (m) {
@@ -257,10 +270,11 @@
       c[4].textContent = fmtT(v.m4b.fel_ore); c[4].className = klass(v.m4b.fel_ore);
       c[5].textContent = '–';
       c[6].textContent = fmt(f.rorliga_ore);
-      c[7].textContent = fmt(v.m4b.varde_ore + f.rorliga_ore + FAST);
-      c[8].textContent = fmt(f.allt_elpris_ore);
+      c[7].textContent = fmt(f.rorliga_ore + FAST);          // UPPDATERING 2026-11-06: totalt påslag över spotpris (rörliga + fast)
+      c[8].textContent = fmt(v.m4b.varde_ore + f.rorliga_ore + FAST);
+      c[9].textContent = fmt(f.allt_elpris_ore);
       var fa = v.m4b.varde_ore + f.rorliga_ore + FAST - f.allt_elpris_ore;
-      c[9].textContent = fmtT(fa); c[9].className = klass(fa);
+      c[10].textContent = fmtT(fa); c[10].className = klass(fa);
     });
     Object.keys(F.manader).forEach(function (m) {
       var f = facit[m] || {}, ff = (F.facit || {})[m] || {};
@@ -280,6 +294,7 @@
     Object.keys(F.manader).forEach(function (m) {
       var spot = tolka(document.querySelector('#t3-' + m + ' input[data-f="spot"]').value), rl = tolka(document.querySelector('#t3-' + m + ' input[data-f="rorliga"]').value), p = F.manader[m].m4b_ore;
       var cf = el('t3-fel-' + m), ca = el('t3-allt-' + m), cfa = el('t3-feliallt-' + m);
+      el('t3-pas-' + m).textContent = rl === null ? '–' : fmt(rl + FAST);      // UPPDATERING 2026-11-06
       cf.textContent = spot === null ? '–' : fmtT(p - spot); cf.className = spot === null ? '' : klass(p - spot);
       if (spot !== null) { kompletta += 1; stor = Math.max(stor, Math.abs(p - spot)); }
       if (spot !== null && rl !== null) {
@@ -308,6 +323,7 @@
       var g = G.manader[m], p = g.ver1.spot_ore;
       var spot = tolka(document.querySelector('#t3-' + m + ' input[data-f="spot"]').value), rl = tolka(document.querySelector('#t3-' + m + ' input[data-f="rorliga"]').value);
       var cf = el('t3-fel-' + m), ca = el('t3-allt-' + m), cfa = el('t3-feliallt-' + m);
+      el('t3-pas-' + m).textContent = rl === null ? '–' : fmt(rl + FAST);      // UPPDATERING 2026-11-06
       cf.textContent = spot === null ? '–' : fmtT(p - spot); cf.className = spot === null ? '' : klass(p - spot);
       if (spot !== null && rl !== null) {
         var allt = spot + rl + FAST, fa = g.ver1.allt_elpris_ore - allt;
