@@ -1,0 +1,22 @@
+/* Brödsmulor och korsreferenser mellan dokument i en mapp. Mall för brodsmulor.py (kent-bygg-sidor, regel 17).
+   Kopieras till mappen som brodsmulor.css och länkas från varje dokument. Gult (#FFF9C4) används inte. */
+
+.brodsmulor {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 24px;
+  padding: 8px 16px;
+  background: #ffffff;
+  border-bottom: 1px solid #d3e0ec;
+  font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 14px; line-height: 1.5; color: #17283b;
+}
+.brodsmulor ol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0 8px; }
+.brodsmulor li + li::before { content: "\203A"; margin-right: 8px; color: #5a738c; }
+.brodsmulor a { color: #185fa5; }
+.brodsmulor a:focus-visible { outline: 3px solid #185fa5; outline-offset: 2px; }
+.brodsmulor [aria-current="page"] { font-weight: 600; color: #1a3a5c; }
+.brodsmulor .syskon { margin: 0; color: #5a738c; }
+.brodsmulor .syskon .sep { margin: 0 6px; }
+
+@media print {
+  .brodsmulor { display: none; }
+}

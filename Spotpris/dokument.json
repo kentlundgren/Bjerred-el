@@ -1,0 +1,8 @@
+{
+  "titel": "Spotpris månad för månad",
+  "start": {"namn": "Elöversikt", "href": "../index.html"},
+  "dokument": [
+    {"fil": "spotpris.html", "namn": "Spotpris månad för månad", "roll": "huvud"},
+    {"fil": "omanpassning.html", "namn": "Omanpassningen av M4b", "roll": "sida"}
+  ]
+}

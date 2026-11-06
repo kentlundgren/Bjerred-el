@@ -31,7 +31,7 @@ body {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; line-height: 1.5;
 }
 
-.sida { max-width: 1100px; margin: 0 auto; padding: 52px var(--marginal) 80px; }
+.sida { max-width: 1100px; margin: 0 auto; padding: 24px var(--marginal) 80px; }
 
 h1 { font-size: 1.6rem; margin: 0 0 6px; line-height: 1.25; }
 h2 { font-size: 1.25rem; margin: 34px 0 10px; }
@@ -129,12 +129,7 @@ svg .ord { cursor: help; }
 .kallor li { margin-bottom: 8px; }
 .fot { margin-top: 28px; font-size: .85rem; color: var(--text-dampad); }
 
-/* Knapp-länk uppe till vänster: tillbaka till elöversikten */
-.topplank {
-  position: fixed; top: 8px; left: 10px; z-index: 20; font-size: .85rem; text-decoration: none; color: var(--accent);
-  background: rgba(255,255,255,.92); border: 1px solid var(--kant); border-radius: 6px; padding: 4px 10px;
-}
-.topplank:hover, .topplank:focus { border-color: var(--accent); }
+/* UPPDATERING 2026-11-06: knappen uppe till vänster är borttagen, brödsmulorna (brodsmulor.css) ersätter den. */
 
 /* Hörn: GitHub och teknik */
 .corner {
@@ -161,7 +156,7 @@ svg .ord { cursor: help; }
 /* Utskrift */
 @page { size: A4 landscape; margin: 12mm; }
 @media print {
-  .corner, .topplank, .knappar, .meddelande, .modal-overlay, .ankare, .val { display: none !important; }
+  .corner, .knappar, .meddelande, .modal-overlay, .ankare, .val { display: none !important; }
   .sida { max-width: none; padding: 0; }
   input.gul { border: none; background: var(--gul); }
   .tabell-wrap { overflow: visible; }
