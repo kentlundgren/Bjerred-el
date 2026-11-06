@@ -232,6 +232,22 @@
         Array.prototype.forEach.call(document.querySelectorAll('#t3-' + m + ' input'), function (i) { i.value = f[i.getAttribute('data-f')] || ''; });
       });
     }
+    // UPPDATERING 2026-11-06: förklaring vid pekning på "Fakturans rörliga kostnader" (vad posten brukar vara, ur fakturorna).
+    (function () {
+      var th = document.querySelectorAll('#tab-3 thead th')[6];
+      if (!th) { return; }
+      var jj = MAN.map(function (m) { return { r: D.kraftringen[m].rorliga_ore, k: D.kraftringen[m].kwh_huvud }; });
+      function stat(l) {
+        var s = 0, w = 0, mn = Infinity, mx = -Infinity;
+        l.forEach(function (x) { s += x.r * x.k; w += x.k; mn = Math.min(mn, x.r); mx = Math.max(mx, x.r); });
+        return { snitt: s / w, min: mn, max: mx };
+      }
+      var a = stat(jj);
+      var tx = 'Raden "Rörliga kostnader" på Kraftringens faktura, öre/kWh utan moms. Fakturan anger inte vad posten innehåller.\n' +
+        'Januari–juni 2026: ' + fmt(a.min) + '–' + fmt(a.max) + ', i snitt ' + fmt(a.snitt) + ' (viktat med förbrukningen).\n' +
+        'Med det fasta påslaget på ' + fmt(FAST) + ' blir påslaget över spotpriset i snitt ' + fmt(a.snitt + FAST) + ' öre/kWh under januari–juni.';
+      th.innerHTML = 'Fakturans<br><abbr class="ord" tabindex="0" data-forklaring="' + esc(tx) + '">rörliga kostnader</abbr>';
+    })();
     // Januari-juni: värdena finns redan (modellen anpassades på dem), inga inmatningsfält
     MAN.forEach(function (m) {
       var v = D.manadsnitt[m], c = el('t3-' + m).children, f = v.faktura;
