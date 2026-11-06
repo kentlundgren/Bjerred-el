@@ -1,0 +1,132 @@
+/*
+  alternativ.css
+  Styling för alternativ.html (sammanställning av alternativen Kraftringen eller Eneas).
+
+  UPPDATERING 2026-11-06: Första versionen (1.0). Bygger på färger och hörnmönster i enea_jamforelse.css.
+*/
+
+/* ---------- Färger och mått som variabler ---------- */
+:root {
+  color-scheme: light;
+  --bg: #ffffff;
+  --text: #1c2a2a;
+  --text-dampad: #5a6868;
+  --accent: #1f5f5b;
+  --kant: #c9d3d1;
+  --ruta: #f4f8f7;
+  --varning-bg: #fdeede;      /* orange: varning (gult är reserverat för inmatning) */
+  --varning-kant: #d9822b;
+  --varning-text: #6b3a07;
+  --marginal: 16px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; line-height: 1.5;
+}
+
+.sida { max-width: 1000px; margin: 0 auto; padding: 52px var(--marginal) 80px; }
+
+h1 { font-size: 1.6rem; margin: 0 0 6px; line-height: 1.25; }
+h2 { font-size: 1.2rem; margin: 30px 0 10px; }
+h3 { font-size: 1.05rem; margin: 18px 0 8px; }
+.undertitel { margin: 0 0 6px; color: var(--text-dampad); }
+.status { margin: 0 0 8px; padding: 8px 12px; border-left: 4px solid var(--accent); background: var(--ruta); font-size: .92rem; }
+a { color: var(--accent); }
+.liten { font-size: .85rem; color: var(--text-dampad); margin: 6px 0; }
+
+/* ---------- Djuplänksankare (#) vid rubriker ---------- */
+.ankare { margin-left: 6px; text-decoration: none; opacity: 0; font-weight: 400; }
+h2:hover .ankare, h2:focus-within .ankare, h3:hover .ankare, h3:focus-within .ankare, .ankare:focus { opacity: .7; }
+
+/* ---------- Rutor ---------- */
+.notis { background: #e3f0fb; border-left: 4px solid #2a7fc4; color: #0b3d66; border-radius: 4px; padding: 2px 14px; margin: 12px 0; }
+.varning { background: var(--varning-bg); border-left: 4px solid var(--varning-kant); color: var(--varning-text); border-radius: 4px; padding: 2px 14px; margin: 12px 0; }
+
+/* ---------- De två alternativen: två kort bredvid varandra ---------- */
+.alternativ { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 12px 0; }
+@media (max-width: 720px) { .alternativ { grid-template-columns: 1fr; } }
+.kort { background: var(--ruta); border: 1px solid var(--kant); border-radius: 8px; padding: 4px 16px 12px; }
+.kort h3 { margin-top: 12px; }
+.kort ul { padding-left: 20px; margin: 6px 0; }
+
+/* ---------- Tabeller ---------- */
+caption { text-align: left; font-weight: 400; padding: 0 0 8px; caption-side: top; }
+@media (max-width: 720px) { table.rt caption { display: block; width: auto; } }
+table.rt { border-collapse: collapse; width: 100%; font-size: .92rem; }
+table.rt th, table.rt td { padding: 8px 10px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--kant); }
+table.rt thead th { background: var(--ruta); border-bottom: 2px solid var(--text); font-size: .9rem; }
+table.rt tbody th { font-weight: 700; width: 17%; }
+table.rt td.stor { min-width: 14em; }
+.status-oppen { color: var(--varning-text); font-weight: 700; }
+
+/* Smal skärm: varje rad blir ett kort, kolumnrubriken står ovanför varje värde (data-label sätts i alternativ.js) */
+@media (max-width: 720px) {
+  table.rt, table.rt thead, table.rt tbody, table.rt tr, table.rt th, table.rt td { display: block; width: auto; }
+  table.rt thead { position: absolute; left: -9999px; }
+  table.rt tr { border: 1px solid var(--kant); border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
+  table.rt tbody th { width: auto; background: var(--ruta); border-bottom: 1px solid var(--kant); }
+  table.rt td { border-bottom: 0; padding: 4px 10px 8px; }
+  table.rt td::before { content: attr(data-label); display: block; font-size: .78rem; font-weight: 700; color: var(--text-dampad); }
+}
+
+/* ---------- Förklaring vid hovring, fokus och tryck ---------- */
+.term { border-bottom: 1px dotted var(--accent); cursor: help; }
+.term:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.term-text {
+  display: none; position: fixed; z-index: 40;
+  width: min(320px, calc(100vw - 16px)); padding: 9px 12px;
+  background: #fff; color: var(--text); border: 1px solid var(--accent); border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.15);
+  font-weight: 400; font-size: .85rem; line-height: 1.45; text-align: left; font-style: normal;
+}
+
+/* ---------- Källor och sidfot ---------- */
+.kallor { padding-left: 20px; font-size: .88rem; }
+.kallor li { margin-bottom: 8px; }
+.fot { margin-top: 28px; font-size: .85rem; color: var(--text-dampad); }
+
+/* ---------- Knapp-länk uppe i vänstra hörnet ---------- */
+.topplank {
+  position: fixed; top: 8px; left: 10px; z-index: 20;
+  font-size: .85rem; text-decoration: none; color: var(--accent);
+  background: rgba(255,255,255,.92); border: 1px solid var(--kant); border-radius: 6px; padding: 4px 10px;
+}
+.topplank:hover, .topplank:focus { border-color: var(--accent); }
+
+/* ---------- Hörn: GitHub och teknik ---------- */
+.corner {
+  position: fixed; bottom: 14px; z-index: 20;
+  font: inherit; font-size: .8rem; color: var(--text); text-decoration: none;
+  background: rgba(255,255,255,.85); border: 1px solid var(--kant); border-radius: 6px;
+  padding: 4px 9px; opacity: .55; cursor: pointer;
+}
+.corner:hover, .corner:focus { opacity: 1; }
+.corner-left { left: 14px; }
+.corner-right { right: 14px; }
+
+/* ---------- Modal ---------- */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 50;
+  background: rgba(0,0,0,.5); align-items: center; justify-content: center; padding: var(--marginal);
+}
+.modal-overlay.show { display: flex; }
+.modal { position: relative; background: #fff; border-radius: 10px; max-width: 640px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 20px 22px; }
+.modal h2 { margin-top: 0; }
+.modal-stang { position: absolute; top: 8px; right: 12px; border: 0; background: none; font-size: 1.6rem; line-height: 1; cursor: pointer; color: var(--text-dampad); }
+.tech-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 560px) { .tech-grid { grid-template-columns: 1fr; } }
+.tech-card { background: var(--ruta); border: 1px solid var(--kant); border-radius: 8px; padding: 10px 12px; }
+.tech-card h4 { margin: 0 0 4px; font-size: .95rem; }
+.tech-card p { margin: 0; font-size: .85rem; }
+
+/* ---------- Utskrift: A4 liggande ---------- */
+@page { size: A4 landscape; margin: 12mm; }
+@media print {
+  .corner, .topplank, .modal-overlay, .ankare, .term-text { display: none !important; }
+  .sida { max-width: none; padding: 0; }
+  table.rt { font-size: 9.5pt; }
+  table.rt tr { break-inside: avoid; }
+}
