@@ -52,6 +52,11 @@ h2:hover .ankare, h2:focus-within .ankare, h3:hover .ankare, h3:focus-within .an
 .kort h3 { margin-top: 12px; }
 .kort ul { padding-left: 20px; margin: 6px 0; }
 
+/* ---------- Figur (diagram som bild) ---------- */
+.figur { margin: 8px 0; }
+.figur img { display: block; width: 100%; height: auto; border: 1px solid var(--kant); border-radius: 8px; }
+.figur figcaption { font-size: .85rem; color: var(--text-dampad); margin-top: 6px; }
+
 /* ---------- Tabeller ---------- */
 caption { text-align: left; font-weight: 400; padding: 0 0 8px; caption-side: top; }
 @media (max-width: 720px) { table.rt caption { display: block; width: auto; } }
