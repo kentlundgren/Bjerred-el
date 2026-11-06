@@ -117,7 +117,7 @@
     <p class="liten">Öre/kWh, utan moms. Januari–juni är de månader som antagandena anpassades på. Juli–september är ett <strong>blindprov</strong>:
       de förutsades med samma antaganden innan fakturornas spotpris lästes in. Fyll i fakturans spotpris och rörliga kostnader i de
       <span style="background:var(--gul);padding:0 4px;border-radius:3px">gula fälten</span> när fakturorna finns, så räknas felen ut.
-      Det du fyller i sparas bara i den här webbläsaren.</p>
+      Det du fyller i sparas bara i den här webbläsaren. <strong>Oktober</strong> är en gissning som gjordes före fakturan med samma rutin. Den är ingen del av blindprovets analys nedan.</p>
     <div class="tabell-wrap">
       <table id="tab-3">
         <thead>
@@ -138,6 +138,8 @@
       </table>
     </div>
     <p class="liten" id="tab-3-not"></p>
+    <!-- UPPDATERING 2026-11-06: oktober 2026 är en gissning före fakturan (inte en del av blindprovet jul–sep) -->
+    <p class="liten" id="tab-3-gissning-not"></p>
   </section>
 
   <!-- UPPDATERING 2026-10-07: Analys av blindprovet: finns det systematik i avvikelserna? -->
@@ -402,6 +404,7 @@ kontrolleras som "inte kontrollerat".</pre>
 
 <script src="data/spotpris_data.js"></script>
 <script src="data/forutsagelse_data.js"></script>
+<script src="data/gissningar_data.js"></script>
 <script src="data/startpuls_data.js"></script>
 <script src="data/avlasning_data.js"></script>
 <script src="spotpris.js"></script>

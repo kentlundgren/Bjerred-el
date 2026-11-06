@@ -49,6 +49,7 @@ utfallet var känt och är ett skydd mot försämring, inte ett bevis. Se [PRD.m
 | `test_spotpris.py` | Tester T1–T17 (skriver "OK" när alla passerar) |
 | `forutsag_spotpris.py` | Blindprov: förutsäger spotpriset för juli–september med antagandena från januari–juni. Skriver `data/forutsagelse_jul_sep.json` och `data/forutsagelse_data.js` |
 | `forutsag_manad.py` | Månadsrutinen, varje månad. Del A: gissar fakturans spotpris, allt elpris, elöverföring och fakturabelopp med M4b ver. 1 och ver. 2 före fakturan (`data/forutsagelse_ÅÅÅÅ-MM.json` och `.md`). Del B (`--facit`): stämmer av mot fakturan (`data/utfall_ÅÅÅÅ-MM.json` och `.md`) |
+| [`bygg_gissningar_data.py`](https://github.com/kentlundgren/Bjerred-el/blob/main/Spotpris/bygg_gissningar_data.py) | Samlar de frusna gissningarna från oktober 2026 och framåt (`data/forutsagelse_ÅÅÅÅ-MM.json`) till `data/gissningar_data.js`, som visar en rad per månad i Tabell 3 på [`spotpris.html`](https://kentlundgren.github.io/Bjerred-el/Spotpris/spotpris.html#Tabell3). Rör inte blindprovet juli–september. Körs efter Del A (`forutsag_manad.py`) |
 | `omanpassning.html`, `.css`, `.js` | Extrasida: hur M4b anpassades om på januari–september (ver. 2), teori, kriterier och resultat. Länkas från `spotpris.html` |
 | `omanpassa_m4b.py` | Omanpassningen. Skriver bara `data/omanpassning_resultat.json` och `data/omanpassning_data.js`, rör inte de frusna filerna |
 | `test_omanpassning.py` | Tester för omanpassningen (skriver inga filer) |

@@ -361,6 +361,8 @@ och hanteras i `kraftringen.json` (Spotpris) och `STANDARD` (intern debitering).
   Antar oförändrat påslag, skatt och fast nätavgift trots att elhandelsavtalet gällde till och med 2026-09-30.
 - **Fel rättat i `hamta_spotpris.py`:** dygnet då sommartiden slutar (2026-10-25, 100 kvartar) avvisades som osorterat eftersom tidpunkterna
   jämfördes som text (`+01:00` sorteras före `+02:00`). Jämförelsen görs nu på verkliga tidpunkter. `test_spotpris.py` skriver OK.
+- **Spotpris-sidan:** oktober visas som egen rad i Tabell 3 (`spotpris.html`, `spotpris.js`, `data/gissningar_data.js`, byggd av `bygg_gissningar_data.py`).
+  Testad lokalt: raden visas, felen räknas när fakturans värden fylls i, och blindprovets tre rader och analys är oförändrade.
 - **Kvar för oktober:** läs fakturan extra noga (avtalsraderna, alla priser mot septemberfakturan), kostnaden i de fyra filerna (steg 2b),
   Del B (`forutsag_manad.py 2026-10 --facit ...`), spot tabell 3 om Kent vill, intern debitering, mail till ekonomiansvarig, månadens flash.
 
@@ -393,8 +395,12 @@ Stryk eller flytta upp till rutinen när det är avgjort.
   resultat som versioner, och skriv kriterierna först.
 - **Spotpris, tabell 1 och 2** bygger på `data/kraftringen.json` (januari–juni) och modellen ver. 1.
   Juli–september ligger bara i `facit_jul_sep.json` (tabell 3, 4 och 6).
-- **Oktober och senare på Spotpris:** blindprovet gällde juli–september. Det är inte bestämt om nya
-  månader ska in i samma tabell 3, i en ny tabell, eller vänta på omanpassningen. Fråga Kent.
+- **Oktober och senare på Spotpris:** blindprovet gällde juli–september. Oktober 2026 och senare månader visas som en egen rad
+  i Tabell 3 ("gissning före faktura", ver. 1 i raden, ver. 2 i texten under tabellen), beslutat av Kent 2026-11-06. Raderna läses ur
+  `data/gissningar_data.js`, som `python bygg_gissningar_data.py` skriver ur de frusna `data/forutsagelse_ÅÅÅÅ-MM.json`. Kör skriptet efter
+  Del A för varje ny månad. Raderna ingår inte i blindprovets analys (tabell 4, 5, 6 och 11). Fakturans spot och rörliga kostnader fylls i
+  de gula fälten i raden, och felen räknas ut. Det som återstår är att lägga fakturans värden i en datafil (som `facit_jul_sep.json`) så att de
+  visas utan inmatning.
 - **Känslighetsanalyserna (`kanslighet_avlasning.py`, `kanslighet_startpuls.py`) är hårdkodade på månader.**
   September lades in 2026-10-08 (tabell 9 och 10, avläsningsanalysen, baslastanalysen; Spotpris v1.2).
   Körs inte om automatiskt när tabell 3 får en ny månad. För oktober: lägg månadens mätardifferenser

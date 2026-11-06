@@ -209,7 +209,29 @@
            td(fmt(F.manader[m].m4b_ore + F.rorliga.snitt_ore + FAST)) +
            '<td id="t3-allt-' + m + '">–</td><td id="t3-feliallt-' + m + '">–</td></tr>';
     });
+    // UPPDATERING 2026-11-06: gissningar för månader efter blindprovet (oktober 2026 och senare), ur data/gissningar_data.js.
+    // De får egna rader men ingår inte i blindprovets analys (tabell 4, 5, 6 och 11), som gäller juli–september.
+    var G = window.GISSNINGAR;
+    if (G) {
+      Object.keys(G.manader).sort().forEach(function (m) {
+        var g = G.manader[m];
+        h += '<tr id="t3-' + m + '">' + td(esc(lang(m)) + ' <span class="metod uppskattning">gissning före faktura</span>') + td(fmt(g.ver1.spot_ore)) +
+             td(fmt(g.ver1.spann_min_ore) + '–' + fmt(g.ver1.spann_max_ore)) +
+             '<td><input type="text" inputmode="decimal" autocomplete="off" class="gul" data-f="spot" data-m="' + m + '" aria-label="Fakturans spotpris öre/kWh, ' + esc(lang(m)) + '"></td>' +
+             '<td id="t3-fel-' + m + '">–</td>' +
+             td(fmt(g.rorliga.snitt_ore) + ' <span class="liten">(' + fmt(g.rorliga.min_ore) + '–' + fmt(g.rorliga.max_ore) + ')</span>') +
+             '<td><input type="text" inputmode="decimal" autocomplete="off" class="gul" data-f="rorliga" data-m="' + m + '" aria-label="Fakturans rörliga kostnader öre/kWh, ' + esc(lang(m)) + '"></td>' +
+             td(fmt(g.ver1.allt_elpris_ore)) +
+             '<td id="t3-allt-' + m + '">–</td><td id="t3-feliallt-' + m + '">–</td></tr>';
+      });
+    }
     document.querySelector('#tab-3 tbody').innerHTML = h;
+    if (G) {
+      Object.keys(G.manader).forEach(function (m) {
+        var f = facit[m] || {};
+        Array.prototype.forEach.call(document.querySelectorAll('#t3-' + m + ' input'), function (i) { i.value = f[i.getAttribute('data-f')] || ''; });
+      });
+    }
     // Januari-juni: värdena finns redan (modellen anpassades på dem), inga inmatningsfält
     MAN.forEach(function (m) {
       var v = D.manadsnitt[m], c = el('t3-' + m).children, f = v.faktura;
@@ -256,8 +278,33 @@
       'Sommarens öppettider är antagna lika som januari–juni och är inte kontrollerade. ' +
       (kompletta === 0 ? 'Fyll i fakturans spotpris för att se felen. Gräns att jämföra med: ' + fmt(grans, 1) + ' öre/kWh (leave-one-out).' :
         'Största fel i spotpriset hittills: ' + fmt(stor) + ' öre/kWh (gräns ' + fmt(grans, 1) + ').');
+    uppdateraGissningar();     // UPPDATERING 2026-11-06: rader för oktober 2026 och senare i tabell 3
     renderBlindprov();
     renderTabell11();          // UPPDATERING 2026-10-08: tabell 11 visar blindprovets fel för juli–september
+  }
+
+  // UPPDATERING 2026-11-06: felen för gissningarna efter blindprovet (ver. 1 i tabellen, ver. 2 i texten under tabellen).
+  function uppdateraGissningar() {
+    var G = window.GISSNINGAR, notis = el('tab-3-gissning-not');
+    if (!G) { return; }
+    var text = [];
+    Object.keys(G.manader).sort().forEach(function (m) {
+      var g = G.manader[m], p = g.ver1.spot_ore;
+      var spot = tolka(document.querySelector('#t3-' + m + ' input[data-f="spot"]').value), rl = tolka(document.querySelector('#t3-' + m + ' input[data-f="rorliga"]').value);
+      var cf = el('t3-fel-' + m), ca = el('t3-allt-' + m), cfa = el('t3-feliallt-' + m);
+      cf.textContent = spot === null ? '–' : fmtT(p - spot); cf.className = spot === null ? '' : klass(p - spot);
+      if (spot !== null && rl !== null) {
+        var allt = spot + rl + FAST, fa = g.ver1.allt_elpris_ore - allt;
+        ca.textContent = fmt(allt); cfa.textContent = fmtT(fa); cfa.className = klass(fa);
+      } else { ca.textContent = '–'; cfa.textContent = '–'; cfa.className = ''; }
+      Array.prototype.forEach.call(document.querySelectorAll('#t3-' + m + ' input'), function (i) { i.classList.toggle('ogiltig', i.value.trim() !== '' && tolka(i.value) === null); });
+      var gjord = g.gjord.replace('T', ' kl ');
+      text.push(esc(lang(m)) + ': gissningen gjordes ' + gjord + ', innan fakturan lästes, och är frusen. Raden visar M4b ver. 1 (referensen). M4b ver. 2 gissade spotpriset till ' +
+        fmt(g.ver2.spot_ore) + ' (' + fmt(g.ver2.spann_min_ore) + '–' + fmt(g.ver2.spann_max_ore) + ') och fakturan till ' + Math.round(g.ver2.faktura_kr).toLocaleString('sv-SE') +
+        ' kr inklusive moms, ver. 1 till ' + Math.round(g.ver1.faktura_kr).toLocaleString('sv-SE') + ' kr. Det enkla medlet av alla kvartar (M1) är ' + fmt(g.m1_ore) + ' och medlet för kl. 06–22 (M2) ' + fmt(g.m2_ore) +
+        '. Påslag, skatt och fast nätavgift är antagna oförändrade, men elhandelsavtalet gällde bara till och med 2026-09-30: ett fel kan därför bero på nya villkor och inte på modellen.');
+    });
+    if (notis) { notis.innerHTML = text.join('<br>'); }
   }
 
   // ---------------------------------------------------------------------------------------------------------
