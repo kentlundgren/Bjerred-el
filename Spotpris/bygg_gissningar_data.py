@@ -10,6 +10,9 @@
 # Bara standardbiblioteket.
 #
 # UPPDATERING 2026-11-06: Första versionen (1.0). Oktober 2026.
+# UPPDATERING 2026-11-09: Versionen 1.1 läser också data/utfall_ÅÅÅÅ-MM.json (skrivs av forutsag_manad.py --facit, Del B) och lägger fakturans
+#   värden (spot, rörliga kostnader, påslag, kWh) som "facit" på månaden, så att de gula fälten i Tabell 3 fylls i utan inmatning.
+#   Kör skriptet igen varje gång en ny faktura har lagts in med forutsag_manad.py --facit.
 
 import glob
 import json
@@ -49,6 +52,12 @@ def main():
             "m1_ore": r["enkla_jamforelser"]["m1_ore"],
             "m2_ore": r["enkla_jamforelser"]["m2_ore"],
         }
+        # UPPDATERING 2026-11-09: fakturans värden, om utfallsfilen finns (Del B är gjord)
+        utf = os.path.join(DATAMAPP, "utfall_" + m + ".json")
+        if os.path.exists(utf):
+            fa = las(utf)["facit"]
+            manader[m]["facit"] = {"spot_ore": fa["spot_ore"], "rorliga_ore": fa["rorliga_ore"], "paslag_ore": fa["paslag_ore"],
+                                   "kwh_faktura": fa.get("kwh_faktura"), "faktura_kr": fa.get("faktura_kr")}
     ut = os.path.join(DATAMAPP, "gissningar_data.js")
     with open(ut, "w", encoding="utf-8") as f:
         f.write("// Skapad av bygg_gissningar_data.py ur data/forutsagelse_*.json. Frusna gissningar gjorda innan fakturorna lästes.\n")

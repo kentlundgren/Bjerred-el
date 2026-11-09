@@ -263,7 +263,12 @@ Målet är en kort, ärlig beskrivning av hur gissningen från steg 1b stämde m
 2. Jämför mot den **nedskrivna** gissningen, inte mot en ny körning: tecknet på felet, om fakturan låg inom spannet,
    och hur det står sig mot M1 och M2. Skilj på fel som beror på M4b (spotpriset) och fel som beror på antaganden om
    avtal och nätavgift (allt elpris, elöverföring, fakturabelopp).
-3. Spotpris-sidans tabell 3 (steg 2c) fylls i som förut med fakturans värden, om månaden ska visas där.
+3. **Spotpris-sidans Tabell 3, raden för månaden (görs varje månad när fakturan kommit):** kör `python bygg_gissningar_data.py` från `Spotpris/`.
+   Skriptet läser `data/utfall_ÅÅÅÅ-MM.json` (från punkt 1) och lägger fakturans spot, rörliga kostnader, fasta påslag och kWh som `facit` i
+   `data/gissningar_data.js`. De gula fälten i raden fylls då i av sig själva, felen räknas ut och "allt elpris" räknas med månadens verkliga påslag
+   (oktober 2,50 öre/kWh). Gissningen i filen är frusen och oförändrad (kontrollera med `git diff`: bara `facit`-blocket ska tillkomma). Verifiera på
+   lokal server att raden visar fakturans värden och att felen stämmer med `utfall_ÅÅÅÅ-MM.md`. Höj `VERSION` i `spotpris.js` om sidans text eller beräkning ändrats.
+   Spotpris-sidan visar bara månader som har en gissning (`forutsagelse_ÅÅÅÅ-MM.json`), så Del A (steg 1b) måste ha gjorts före fakturan.
 4. Uppdatera "Blindprovet: hur gick det" på `spotpris.html` (numera räknas mycket ur datan) och de statiska texter som
    räknar månader (se "Ännu inte gjort": känslighetsanalyserna, steg 2h).
 5. **Bedöm inte efter en enda månad.** Kriterierna i `data/omanpassning_kriterier.json` säger att ver. 1 och ver. 2 först
@@ -381,7 +386,8 @@ och hanteras i `kraftringen.json` (Spotpris) och `STANDARD` (intern debitering).
 - **Steg 2j:** mail till ekonomiansvarig skickat 2026-11-09, längre variant (loggat i `bjerred-ekonommail`).
 - **Steg 2k:** flashen för oktober inlagd först i `manadens_flash_data.js` (id `2026-10`), godkänd av Kent 2026-11-09 och testad lokalt med `?flash=1` och `#flash` (september i arkivet, inga konsolfel).
 - **Känslighetsanalyserna (2h) görs en gång efter december 2026** (beslut Kent 2026-11-09), när oktober, november och december finns, inte varje månad. Då läggs fakturans värden i `facit_jul_sep.json` och mätardifferenserna i båda skripten.
-- **Kvar:** känslighetsanalyserna enligt ovan, Spotpris tabell 3 som datafil om Kent vill, och en körning av `bygg_gissningar_data.py` om det behövs.
+- **Spotpris Tabell 3, oktober (2026-11-09):** raden har fakturans värden inlagda via `bygg_gissningar_data.py` (facit ur `utfall_2026-10.json`): spot 167,41, rörliga 4,91, fel −4,83 respektive −6,37 öre/kWh i allt elpris. Sidan räknar nu med månadens påslag (2,50). Spotpris v2.0.
+- **Kvar:** känslighetsanalyserna enligt ovan.
 
 ### Det som gjordes den 2026-11-09, hörnval på `index.html`
 - Knapparna nere till vänster (förmodade värden, detaljerad tabell) och nere till höger (Prompt, Teknik) är ersatta av tre diskreta hörnval enligt mönstret i `AI-teknik/Presentationer/Nr1`:
@@ -403,7 +409,7 @@ Stryk eller flytta upp till rutinen när det är avgjort.
 - **Oktober: gissning med både ver. 1 och ver. 2, före fakturan.** Bestämt i `data/omanpassning_kriterier.json`
   (beslutsregeln) och **byggt 2026-10-08**: `Spotpris/forutsag_manad.py` (steg 1b och 2i). Provkört bakåt på september
   (värdena för M4b stämde med `omanpassning_resultat.json`: ver. 1 124,34 och ver. 2 125,48 öre/kWh, kontrollräkningen av fakturan −0,34 kr).
-  Körd på oktober 2026-11-06 kl 14:13 (Del A, se "Det som gjordes den 2026-11-06"); facit (Del B) återstår tills fakturan kommit. Bedöm först efter oktober, november och december
+  Körd på oktober 2026-11-06 kl 14:13 (Del A, se "Det som gjordes den 2026-11-06"); facit (Del B) kördes 2026-11-09. Bedöm först efter oktober, november och december
   (tre månader). En månad räcker inte. Samma kriterier-före-körning-princip gäller för varje ny omanpassning.
 - **Gissningarna syns inte på Spotpris-sidan än.** De ligger som filer i `data/forutsagelse_*` och `data/utfall_*`
   (json och md). Om Kent vill visa dem på sidan (t.ex. en tabell "Gissning mot facit, per månad") är det ett separat uppdrag.
@@ -421,8 +427,8 @@ Stryk eller flytta upp till rutinen när det är avgjort.
   i Tabell 3 ("gissning före faktura", ver. 1 i raden, ver. 2 i texten under tabellen), beslutat av Kent 2026-11-06. Raderna läses ur
   `data/gissningar_data.js`, som `python bygg_gissningar_data.py` skriver ur de frusna `data/forutsagelse_ÅÅÅÅ-MM.json`. Kör skriptet efter
   Del A för varje ny månad. Raderna ingår inte i blindprovets analys (tabell 4, 5, 6 och 11). Fakturans spot och rörliga kostnader fylls i
-  de gula fälten i raden, och felen räknas ut. Det som återstår är att lägga fakturans värden i en datafil (som `facit_jul_sep.json`) så att de
-  visas utan inmatning.
+  de gula fälten i raden, och felen räknas ut. Fakturans värden fylls i av sig själva sedan 2026-11-09: efter Del B (`forutsag_manad.py --facit`) körs `python bygg_gissningar_data.py`,
+  som läser `data/utfall_ÅÅÅÅ-MM.json` (steg 2i, punkt 3).
 - **Känslighetsanalyserna (`kanslighet_avlasning.py`, `kanslighet_startpuls.py`) är hårdkodade på månader.**
   September lades in 2026-10-08 (tabell 9 och 10, avläsningsanalysen, baslastanalysen; Spotpris v1.2).
   Körs inte om automatiskt när tabell 3 får en ny månad. För oktober: lägg månadens mätardifferenser

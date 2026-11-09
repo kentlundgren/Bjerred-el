@@ -23,11 +23,12 @@
   UPPDATERING 2026-11-06: korsreferenser ("Se också") till Eneas-sidorna i brödsmulorna (dokument.json, nyckeln se_ocksa). Version 1.7.
   UPPDATERING 2026-11-09: länk till oktoberfakturan i källistan (spotpris.html). Version 1.8.
   UPPDATERING 2026-11-09: rubriken januari–oktober 2026. Blänkaren "Oktober i korthet" (renderBlanka) ersatt av en länk till Månadens flash på elöversikten. Version 1.9.
+  UPPDATERING 2026-11-09: oktobers faktura (spot 167,41, rörliga 4,91, påslag 2,50) fylls i Tabell 3 ur data/gissningar_data.js (facit), och "allt elpris" räknas med månadens påslag. Version 2.0.
 */
 (function () {
   'use strict';
 
-  var VERSION = '1.9';
+  var VERSION = '2.0';
   var VERSIONSDATUM = '2026-11-09';
   var LAGRING = 'spotpris_v1';                    // egen lagringsnyckel för Eneas pris (bara i den här webbläsaren)
   var LAGRING_JAMFORELSE = 'enea_jamforelse_v1';  // jämförelsesidans nyckel; läses (aldrig skrivs) om fältet här är tomt
@@ -237,8 +238,13 @@
     document.querySelector('#tab-3 tbody').innerHTML = h;
     if (G) {
       Object.keys(G.manader).forEach(function (m) {
-        var f = facit[m] || {};
-        Array.prototype.forEach.call(document.querySelectorAll('#t3-' + m + ' input'), function (i) { i.value = f[i.getAttribute('data-f')] || ''; });
+        var f = facit[m] || {}, gf = G.manader[m].facit || {};
+        // UPPDATERING 2026-11-09: inmatat värde går före; annars fakturans värde ur data/gissningar_data.js (facit, från data/utfall_ÅÅÅÅ-MM.json)
+        var std = { spot: gf.spot_ore, rorliga: gf.rorliga_ore };
+        Array.prototype.forEach.call(document.querySelectorAll('#t3-' + m + ' input'), function (i) {
+          var k = i.getAttribute('data-f');
+          i.value = f[k] || (std[k] !== undefined ? String(std[k]).replace('.', ',') : '');
+        });
       });
     }
     // UPPDATERING 2026-11-06: förklaring vid pekning på "Fakturans rörliga kostnader" (vad posten brukar vara, ur fakturorna).
@@ -328,12 +334,13 @@
     var text = [];
     Object.keys(G.manader).sort().forEach(function (m) {
       var g = G.manader[m], p = g.ver1.spot_ore;
+      var pas = (g.facit && g.facit.paslag_ore !== undefined) ? g.facit.paslag_ore : FAST;      // UPPDATERING 2026-11-09: månadens fasta påslag ur fakturan (oktober 2,50), annars 1,70
       var spot = tolka(document.querySelector('#t3-' + m + ' input[data-f="spot"]').value), rl = tolka(document.querySelector('#t3-' + m + ' input[data-f="rorliga"]').value);
       var cf = el('t3-fel-' + m), ca = el('t3-allt-' + m), cfa = el('t3-feliallt-' + m);
-      el('t3-pas-' + m).textContent = rl === null ? '–' : fmt(rl + FAST);      // UPPDATERING 2026-11-06
+      el('t3-pas-' + m).textContent = rl === null ? '–' : fmt(rl + pas);      // UPPDATERING 2026-11-06 (påslaget per månad från 2026-11-09)
       cf.textContent = spot === null ? '–' : fmtT(p - spot); cf.className = spot === null ? '' : klass(p - spot);
       if (spot !== null && rl !== null) {
-        var allt = spot + rl + FAST, fa = g.ver1.allt_elpris_ore - allt;
+        var allt = spot + rl + pas, fa = g.ver1.allt_elpris_ore - allt;
         ca.textContent = fmt(allt); cfa.textContent = fmtT(fa); cfa.className = klass(fa);
       } else { ca.textContent = '–'; cfa.textContent = '–'; cfa.className = ''; }
       Array.prototype.forEach.call(document.querySelectorAll('#t3-' + m + ' input'), function (i) { i.classList.toggle('ogiltig', i.value.trim() !== '' && tolka(i.value) === null); });
@@ -341,7 +348,8 @@
       text.push(esc(lang(m)) + ': gissningen gjordes ' + gjord + ', innan fakturan lästes, och är frusen. Raden visar M4b ver. 1 (referensen). M4b ver. 2 gissade spotpriset till ' +
         fmt(g.ver2.spot_ore) + ' (' + fmt(g.ver2.spann_min_ore) + '–' + fmt(g.ver2.spann_max_ore) + ') och fakturan till ' + Math.round(g.ver2.faktura_kr).toLocaleString('sv-SE') +
         ' kr inklusive moms, ver. 1 till ' + Math.round(g.ver1.faktura_kr).toLocaleString('sv-SE') + ' kr. Det enkla medlet av alla kvartar (M1) är ' + fmt(g.m1_ore) + ' och medlet för kl. 06–22 (M2) ' + fmt(g.m2_ore) +
-        '. Påslag, skatt och fast nätavgift är antagna oförändrade, men elhandelsavtalet gällde bara till och med 2026-09-30: ett fel kan därför bero på nya villkor och inte på modellen.');
+        '. Påslag, skatt och fast nätavgift antogs oförändrade, men elhandelsavtalet gällde bara till och med 2026-09-30: ett fel kan därför bero på nya villkor och inte på modellen.' +
+        ((g.facit && g.facit.paslag_ore !== undefined && g.facit.paslag_ore !== FAST) ? ' Fakturans fasta påslag blev ' + fmt(g.facit.paslag_ore) + ' öre/kWh (antaget ' + fmt(FAST) + '), och en ny månadsavgift tillkom på fakturan.' : ''));
     });
     if (notis) { notis.innerHTML = text.join('<br>'); }
   }

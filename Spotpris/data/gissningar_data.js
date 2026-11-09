@@ -33,7 +33,14 @@ window.GISSNINGAR = {
     "max_ore": 5.11
    },
    "m1_ore": 156.7176624161074,
-   "m2_ore": 171.1884828629031
+   "m2_ore": 171.1884828629031,
+   "facit": {
+    "spot_ore": 167.41,
+    "rorliga_ore": 4.91,
+    "paslag_ore": 2.5,
+    "kwh_faktura": 21810.3,
+    "faktura_kr": 74150.0
+   }
   }
  }
 };
