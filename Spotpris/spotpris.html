@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
   spotpris.html
-  Spotpris månad för månad (elområde SE4), januari–juni 2026, och jämförelse med Kraftringens och Eneas priser.
+  Spotpris månad för månad (elområde SE4), januari–oktober 2026, och jämförelse med Kraftringens och Eneas priser.
   Byggd enligt Spotpris/PRD.md (utkast 5) och Spotpris/SPEC.md (utkast 1). Siffrorna kommer från data/spotpris_data.js,
   som skapas av berakna_spotpris.py. Rena HTML/CSS/JS-filer, ingen server, inga bibliotek, fungerar öppnad från fil.
 
@@ -9,13 +9,14 @@
   UPPDATERING 2026-10-08: Länk till omanpassning.html tillagd (avsnittet om noggrannhet och källavsnittet). Inget annat ändrat.
   UPPDATERING 2026-11-06: Oktober som egen rad i tabell 3 (data/gissningar_data.js), kolumnen "Fakturans totala påslag över spot" med summarad,
                           förklaring vid rubriken "rörliga kostnader över spot" och blänkaren "Oktober i korthet" överst.
+  UPPDATERING 2026-11-09: rubriken januari–oktober 2026, och blänkaren ersatt av en länk till Månadens flash (index.html#flash). Version 1.9.
 -->
 <html lang="sv">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Spotpris månad för månad</title>
-  <meta name="description" content="Spotpris för elområde SE4 månad för månad, januari–juni 2026, jämfört med Kraftringens och Eneas priser.">
+  <meta name="description" content="Spotpris för elområde SE4 månad för månad, januari–oktober 2026, jämfört med Kraftringens och Eneas priser.">
   <!-- Delningsbild och förhandsvisning (Open Graph och Twitter Card). Bilden byggs av bygg_og_bild_spotpris.py ur samma data som blänkaren. -->
   <meta property="og:type" content="website">
   <meta property="og:locale" content="sv_SE">
@@ -45,17 +46,17 @@
 <main class="sida">
 
   <header>
-    <h1 id="Start">Spotpris månad för månad, januari–juni 2026</h1>
+    <h1 id="Start">Spotpris månad för månad, januari–oktober 2026</h1>
     <p class="undertitel">Elområde SE4. Bjerreds Saltsjöbad. Sammanställd av Kent Lundgren.</p>
     <p class="status">Spotpriserna är hämtade från elprisetjustnu.se (utan moms, tillägg och skatter) och Kraftringens priser ur fakturorna. Siffrorna är inte granskade
       i en tvåstegsgranskning. Månadens spotpris för vår förbrukning är en <strong>uppskattning</strong>, inte en mätning. Kontrollera mot källan innan något återges
       (<a href="#Kallor">se källor</a>).</p>
   </header>
 
-  <!-- UPPDATERING 2026-11-06: blänkare överst: förutsägelsen för oktober jämförd med september (fylls av renderBlanka() i spotpris.js) -->
+  <!-- UPPDATERING 2026-11-09: blänkaren med förutsägelse och faktura ersatt av en länk till Månadens flash på elöversikten (renderBlanka() borttagen ur spotpris.js) -->
   <section aria-labelledby="Oktober" id="sektion-blanka">
     <h2 id="Oktober">Oktober i korthet <a class="ankare" href="#Oktober" aria-label="Länk till avsnittet">#</a></h2>
-    <div id="blanka"></div>
+    <p>Sammanfattningen av oktober finns i <a href="../index.html#flash">Månadens flash på elöversikten</a>. Gissningen före fakturan jämförs med fakturan i <a href="#Tabell3">Tabell 3</a>.</p>
     <p class="liten">Se också: <a href="../Eneas_Samkop_av_El/sammanfattning.html">sammanfattningen av elavtalet, Kraftringen eller Eneas</a> (och <a href="../Eneas_Samkop_av_El/enea_jamforelse.html">jämförelsen januari–juni</a>).</p>
   </section>
 

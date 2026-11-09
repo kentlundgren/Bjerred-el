@@ -94,19 +94,6 @@ svg.diagram { width: 100%; height: auto; display: block; background: #fff; borde
 .val label { cursor: pointer; }
 
 /* Blänkare överst: oktober förutsagd mot september (UPPDATERING 2026-11-06). Inget gult. */
-.blanka-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 10px 0; }
-@media (max-width: 640px) { .blanka-grid { grid-template-columns: 1fr; } }
-.blanka-kort { background: var(--ruta); border: 1px solid var(--kant); border-radius: 8px; padding: 10px 16px 12px; }
-.blanka-kort h3 { margin: 4px 0 0; font-size: .95rem; color: var(--text-dampad); font-weight: 600; }
-.blanka-tal { font-size: 2rem; font-weight: 700; line-height: 1.2; margin: 2px 0; }
-.blanka-tal small { font-size: .9rem; font-weight: 400; color: var(--text-dampad); }
-.blanka-delar { font-size: .92rem; margin: 2px 0 8px; }
-.stapel { display: flex; height: 22px; border-radius: 4px; overflow: hidden; background: #e7eceb; }
-.stapel .s-spot { background: #1f5f5b; }
-.stapel .s-pas { background: #2a7fc4; }
-.blanka-tf { font-size: .8rem; color: var(--text-dampad); margin: 4px 0 0; }
-.blanka-tf i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin: 0 4px 0 10px; vertical-align: baseline; }
-.blanka-tf i:first-child { margin-left: 0; }
 
 /* Ordförklaringar: prickad understrykning och en ruta vid pekning, fokus eller tryck */
 abbr.ord { text-decoration: underline dotted; text-underline-offset: 3px; cursor: help; }

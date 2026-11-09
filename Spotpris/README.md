@@ -1,4 +1,4 @@
-# Spotpris månad för månad, januari–juni 2026
+# Spotpris månad för månad, januari–oktober 2026
 
 - **Live:** [https://kentlundgren.github.io/Bjerred-el/Spotpris/spotpris.html](https://kentlundgren.github.io/Bjerred-el/Spotpris/spotpris.html)
 
