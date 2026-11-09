@@ -366,6 +366,15 @@ och hanteras i `kraftringen.json` (Spotpris) och `STANDARD` (intern debitering).
 - **Kvar för oktober:** läs fakturan extra noga (avtalsraderna, alla priser mot septemberfakturan), kostnaden i de fyra filerna (steg 2b),
   Del B (`forutsag_manad.py 2026-10 --facit ...`), spot tabell 3 om Kent vill, intern debitering, mail till ekonomiansvarig, månadens flash.
 
+### Det som gjordes den 2026-11-09, kort (oktober 2026, faktura 3219468000)
+- **Steg 2a och 2b:** fakturan läst med kod och kontrollräknad (summa exkl moms 59 320,11 + moms 14 830,05 = 74 150 kr, öresutjämning −0,16). kWh enligt faktura 21 810,3
+  (408 737,96 → 430 548,26), så oktober i de fyra filerna är 21 810 kWh (restaurang 9 722), kostnad 74 150 kr, 3,40 kr/kWh.
+- **Nya villkor från oktober:** elhandel "Rörligt kvartspris", gäller tillsvidare (ingen bindningstid); fast påslag 2,50 öre/kWh (sep 1,70); månadsavgift 47,20 kr (sep 0 kr);
+  rörliga kostnader 4,91 (sep 4,80); spot 167,41; elöverföring 24,36 (sep 22,39); energiskatt 36,00 och fast nätavgift 7 980 kr oförändrade. Mottagare som i september.
+- **Steg 2i:** `forutsag_manad.py 2026-10 --facit …` körd: fakturan 74 150 kr mot gissning 72 317 (ver. 1, −1 833) och 72 785 (ver. 2, −1 365); spot −4,83 respektive −3,20 öre/kWh.
+  Kontrollräkningen ger −58 kr, vilket är månadsavgiften (47,20 × 1,25) som skriptet inte räknar med.
+- **Kvar:** intern debitering (2d, 2e), Eneas tabell 1 forts. (2f), källänkar (2g), Spotpris tabell 3, mail (2j), flash (2k), känslighetsanalyser (2h).
+
 ## Ännu inte gjort / öppna beslut
 
 Här samlas sådant som Kent har sagt ska göras men som inte är gjort, eller som inte är avgjort.

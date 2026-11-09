@@ -3,8 +3,8 @@
 Denna fil är en **backup och referens** för all månadsdata kring elförbrukning och elkostnad.
 Filen ska uppdateras varje gång ny månadsdata läggs till i `index.html`.
 
-Senast uppdaterad: **2026-11-06**  
-Dataperiod: **Augusti 2024 – Oktober 2026** (27 månader, alla med kWh. Kostnad saknas ännu för oktober 2026)
+Senast uppdaterad: **2026-11-09**  
+Dataperiod: **Augusti 2024 – Oktober 2026** (27 månader, alla med kWh och kostnad)
 
 ---
 
@@ -38,7 +38,7 @@ Dataperiod: **Augusti 2024 – Oktober 2026** (27 månader, alla med kWh. Kostna
 | Jul 2026 | Bad + restaurang | 10 424 | 11 161 | 21 585 | 696 | 48 277 | 2,24 |
 | Aug 2026 | Bad + restaurang | 10 526 | 11 310 | 21 836 | 704 | 49 876 | 2,28 |
 | Sep 2026 | Bad + restaurang | 11 388 | 10 301 | 21 689 | 723 | 62 294 | 2,87 |
-| Okt 2026 | Bad + restaurang | 12 088 | 9 730 | 21 818 | 704 | – | – |
+| Okt 2026 | Bad + restaurang | 12 088 | 9 722 | 21 810 | 704 | 74 150 | 3,40 |
 
 ---
 
@@ -64,7 +64,7 @@ faktiska kWh-värden när mätarställningen är klar. Full uppföljning i `prog
 - **Kostnad (kr):** Avser total fakturerad elkostnad för månaden (bad + restaurang gemensamt). Elfakturan kommer kring den **10:e i månaden efter** (t.ex. augusti ~10 september). kWh kan läggas in tidigare; tills fakturan finns skrivs kostnaden som `null` i koden (visas som –), inte som 0.
 - **Aug 2026:** kWh-facit 2026-09-01, kostnad (49 876 kr, 2,28 kr/kWh) tillagd 2026-10-04. Prognosavvikelse: se `prognoser.md`.
 - **Sep 2026:** kWh från elmätaren, inlagd 2026-10-04. Kostnad (62 294 kr, 2,87 kr/kWh) tillagd 2026-10-08 ur Kraftringens faktura 3199122106.
-- **Okt 2026:** kWh från elmätarna, inlagd 2026-11-06 (huvudmätare 408 739 → 430 557 kWh, bastu 10 716 plus varmvatten 1 372 = bad 12 088, restaurang 21 818 − 12 088 = 9 730). Kostnaden är `null` tills fakturan kommit (cirka 10 november 2026). Elhandelsavtalet med Kraftringen gällde till och med 2026-09-30, så fakturan granskas extra noga.
+- **Okt 2026:** kWh inlagd 2026-11-06, justerad 2026-11-09 till fakturans värde (huvudmätare 408 737,96 → 430 548,26 = 21 810,3 kWh; bastu 10 716 plus varmvatten 1 372 = bad 12 088, restaurang 21 810 − 12 088 = 9 722). Kostnad (74 150 kr, 3,40 kr/kWh) tillagd 2026-11-09 ur Kraftringens faktura 3219468000. Från oktober gäller elhandelsavtalet "Rörligt kvartspris" tillsvidare utan bindningstid, med fast påslag 2,50 öre/kWh (tidigare 1,70) och månadsavgift 47,20 kr (tidigare 0 kr).
 - **Bad kWh:** Elförbrukning för bastudelen (uppvärmning, ventilation m.m.).
 - **Rest. kWh:** Elförbrukning för restaurangdelen.
 - **Bad + Rest. = Totalt** för månader med bad öppet. Under stängningstiden = enbart restaurang.

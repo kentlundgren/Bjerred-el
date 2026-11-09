@@ -1,0 +1,102 @@
+{
+  "metadata": {
+    "manad": "2026-10",
+    "gjord": "2026-11-09T15:29",
+    "skript_version": "1.0",
+    "gissning_gjord": "2026-11-06T14:13",
+    "retrospektiv": false,
+    "text": "Gissning (frusen) mot facit. Fel = modell minus faktura. En månad säger lite: ver. 1 och ver. 2 jämförs först efter oktober–december."
+  },
+  "indata": {
+    "kwh_huvud": 21818.0,
+    "kwh_bastu": 10716.0,
+    "kwh_varm": 1372.0,
+    "kwh_bad": null,
+    "uppdelning": "uppmatt"
+  },
+  "facit": {
+    "spot_ore": 167.41,
+    "rorliga_ore": 4.91,
+    "paslag_ore": 2.5,
+    "allt_elpris_ore": 174.82,
+    "eloverforing_ore": 24.36,
+    "skatt_ore": 36.0,
+    "fast_nat_kr": 7980.0,
+    "faktura_kr": 74150.0,
+    "kwh_faktura": 21810.3,
+    "kontrollrakning_kr": 74091.829425,
+    "kontrollrakning_avvikelse_kr": -58.17057499999646
+  },
+  "ver1": {
+    "spot_ore": {
+      "gissat": 162.57698583424695,
+      "min": 162.57698583424695,
+      "max": 164.21806835480226,
+      "facit": 167.41,
+      "fel": -4.833014165753042,
+      "inom_spannet": false
+    },
+    "allt_elpris_ore": {
+      "gissat": 168.45178275265198,
+      "min": 167.43698583424694,
+      "max": 171.02806835480226,
+      "facit": 174.82,
+      "fel": -6.368217247348014,
+      "inom_spannet": false
+    },
+    "eloverforing_ore": {
+      "gissat": 24.137110739926293,
+      "min": 24.08604530707767,
+      "max": 24.266751594199146,
+      "facit": 24.36,
+      "fel": -0.2228892600737069,
+      "inom_spannet": false
+    },
+    "faktura_kr": {
+      "gissat": 72316.90597776341,
+      "min": 72026.21866801775,
+      "max": 73054.87977059142,
+      "facit": 74150.0,
+      "fel": -1833.0940222365898,
+      "inom_spannet": false
+    }
+  },
+  "ver2": {
+    "spot_ore": {
+      "gissat": 164.20977119381925,
+      "min": 164.20977119381925,
+      "max": 165.09587471404475,
+      "facit": 167.41,
+      "fel": -3.2002288061807462,
+      "inom_spannet": false
+    },
+    "allt_elpris_ore": {
+      "gissat": 170.08456811222428,
+      "min": 169.06977119381924,
+      "max": 171.90587471404476,
+      "facit": 174.82,
+      "fel": -4.735431887775718,
+      "inom_spannet": false
+    },
+    "eloverforing_ore": {
+      "gissat": 24.219273869931165,
+      "min": 24.16820843708254,
+      "max": 24.310923547108153,
+      "facit": 24.36,
+      "fel": -0.14072613006883472,
+      "inom_spannet": false
+    },
+    "faktura_kr": {
+      "gissat": 72784.61530458335,
+      "min": 72493.9279948377,
+      "max": 73306.32630577293,
+      "facit": 74150.0,
+      "fel": -1365.384695416651,
+      "inom_spannet": false
+    }
+  },
+  "enkla_jamforelser": {
+    "m1_spot_fel_ore": -10.692337583892595,
+    "m2_spot_fel_ore": 3.778482862903104
+  }
+}
