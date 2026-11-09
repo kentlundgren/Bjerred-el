@@ -373,7 +373,12 @@ och hanteras i `kraftringen.json` (Spotpris) och `STANDARD` (intern debitering).
   rörliga kostnader 4,91 (sep 4,80); spot 167,41; elöverföring 24,36 (sep 22,39); energiskatt 36,00 och fast nätavgift 7 980 kr oförändrade. Mottagare som i september.
 - **Steg 2i:** `forutsag_manad.py 2026-10 --facit …` körd: fakturan 74 150 kr mot gissning 72 317 (ver. 1, −1 833) och 72 785 (ver. 2, −1 365); spot −4,83 respektive −3,20 öre/kWh.
   Kontrollräkningen ger −58 kr, vilket är månadsavgiften (47,20 × 1,25) som skriptet inte räknar med.
-- **Kvar:** intern debitering (2d, 2e), Eneas tabell 1 forts. (2f), källänkar (2g), Spotpris tabell 3, mail (2j), flash (2k), känslighetsanalyser (2h).
+- **Steg 2d och 2e:** oktober inlagd i `STANDARD` (`intern_underlag.js`) med egen ingående huvudmätare `s: { huvud: '408738' }`, eftersom septembers utgående är 408 739 i Kents underlag
+  (fakturan 408 737,96). `startText()` använder nu en fast månads eget `s` före föregående månads utgående. Oktober visar 9 722 kWh och 28 580 kr mot Kents 28 582 (−2 kr, avrundade ställningar). Version 1.5.
+- **Steg 2f och 2g:** oktober i `MANADER_JUL_SEP` (Eneas-sidan v2.6) och fakturalänk på Eneas-sidan, intern debitering och Spotpris (v1.8).
+- **Kents regel för underlaget:** hyresgästen betalar ingen fast avgift (raden visas bara), och elhandelns månadsavgift (47,20 kr från oktober) redovisas inte under hyresgästens andel. Påslaget ingår i "El inkl elcert".
+- **Gissningen för oktober är frusen** med 21 818 kWh; fakturan har 21 810,3. Den ändras inte.
+- **Kvar:** mail (2j), flash (2k), känslighetsanalyser (2h), Spotpris tabell 3 som datafil om Kent vill, och en körning av `bygg_gissningar_data.py` om det behövs.
 
 ## Ännu inte gjort / öppna beslut
 

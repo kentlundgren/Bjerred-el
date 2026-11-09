@@ -20,10 +20,11 @@
 
   var H = window.EneaHjalp;
 
+  // UPPDATERING 2026-11-09: version 1.5 (oktober 2026 inlagd, egen ingående huvudmätare, förklaring av månadsavgiften).
   // UPPDATERING 2026-10-08: version 1.4 (källlänkar för juli–september, tydlig avgränsning av granskningen).
   // Höj versionen och datumet här varje gång en ny månad läggs in (se skillen bjerred-manadsrutin).
-  var VERSION = '1.4';
-  var VERSIONSDATUM = '2026-10-08';
+  var VERSION = '1.5';
+  var VERSIONSDATUM = '2026-11-09';
 
   function start() {
     document.getElementById('version').textContent = VERSION;

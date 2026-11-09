@@ -22,6 +22,7 @@
 
   UPPDATERING 2026-10-06: Första versionen (1.0).
   UPPDATERING 2026-10-08: Juli, augusti och september 2026 inlagda som fasta månader (se STANDARD).
+  UPPDATERING 2026-11-09: Oktober 2026 inlagd som fast månad, med egen ingående huvudmätare (se startText).
   UPPDATERING 2026-10-06: Raden "El inkl Elcert (1,7 öre/kWh)" heter nu "El (spot + rörliga + påslag)",
   eftersom fakturan inte säger att elcertifikat ingår (granskning 2, avsnitt 5a).
 */
@@ -86,7 +87,15 @@
     { key: '2026-09', faktura: '62294', nr: '3199122106', kwhFaktura: '21688,74', facit: 24849,
       s: {},
       e: { huvud: '408739', herr: '75815', dam: '66805', varm: '695247' },
-      p: { rorlig: '22,39', el: '134,59', skatt: '36,00' } }
+      p: { rorlig: '22,39', el: '134,59', skatt: '36,00' } },
+    // UPPDATERING 2026-11-09: oktober 2026. Ur Kraftringen/Intern_debitering/202610_Intern_debitering.jpg och fakturan 3219468000
+    //   (74 150 kr, 21 810,3 kWh, nätavgift 24,36, El inkl elcert 174,82 = spot 167,41 + rörliga 4,91 + påslag 2,50, skatt 36,00).
+    //   Egen ingående huvudmätare 408738 (se startText). Fakturans månadsavgift i elhandeln (47,20 kr exkl moms) och fast
+    //   nätavgift (7 980 kr) ingår inte i hyresgästens andel; hyresgästen betalar ingen fast avgift (Kent, 2026-11-09).
+    { key: '2026-10', faktura: '74150', nr: '3219468000', kwhFaktura: '21810,3', facit: 28582,
+      s: { huvud: '408738' },
+      e: { huvud: '430548', herr: '81670', dam: '71667', varm: '696618' },
+      p: { rorlig: '24,36', el: '174,82', skatt: '36,00' } }
   ];
 
   function kopia(o) { return JSON.parse(JSON.stringify(o)); }
@@ -95,7 +104,7 @@
   // 2. Tillstånd: data per månad (nyckel "ÅÅÅÅ-MM") och vald månad
   // ===================================================================
   var data = {};
-  var valt = '2026-09';   // UPPDATERING 2026-10-08: senaste fasta månad (var 2026-06)
+  var valt = '2026-10';   // UPPDATERING 2026-11-09: senaste fasta månad
 
   function laddaStandard() {
     data = {};
@@ -135,7 +144,13 @@
   function startText(key, f) {
     var k = nycklar();
     var i = k.indexOf(key);
-    if (i > 0) { return data[k[i - 1]].e[f] || ''; }
+    // UPPDATERING 2026-11-09: en fast månad kan ha en egen ingående ställning (s) som går före föregående månads
+    // utgående. Oktober 2026 har det för huvudmätaren: ingående 408 738 (fakturan: 408 737,96), medan septembers
+    // utgående i Kents underlag är 408 739. September lämnas oförändrat. Månader utan eget s hämtar som förut.
+    if (i > 0) {
+      if (data[key].s && data[key].s[f]) { return data[key].s[f]; }
+      return data[k[i - 1]].e[f] || '';
+    }
     return (data[key].s && data[key].s[f]) || '';
   }
 
@@ -228,7 +243,7 @@
     el('p-el').value = d.p.el || '';
     el('p-skatt').value = d.p.skatt || '';
     // "Ta bort månaden" visas bara för en tillagd månad och bara för den sista (annars skulle
-    // kedjan av ingående mätarställningar brytas). Januari–september 2026 kan aldrig tas bort.
+    // kedjan av ingående mätarställningar brytas). Januari–oktober 2026 kan aldrig tas bort.
     var k = nycklar();
     var arSista = k[k.length - 1] === valt;
     el('btn-u-ta-bort').hidden = !(d.extra && arSista);
@@ -242,7 +257,7 @@
     if (!d.extra) {
       h += '<li><b>Återställ månaden:</b> sätter tillbaka de fasta värdena för ' + htmlEscape(namn) +
            ' (hämtade ur fakturan och dagens underlag). Det du själv har ändrat för månaden försvinner.</li>';
-      h += '<li>Januari–september 2026 är fasta månader och <b>kan inte tas bort</b>.</li>';
+      h += '<li>Januari–oktober 2026 är fasta månader och <b>kan inte tas bort</b>.</li>';
     } else {
       h += '<li><b>Återställ månaden:</b> tömmer alla fält för ' + htmlEscape(namn) + ' (månaden finns kvar).</li>';
       h += arSista

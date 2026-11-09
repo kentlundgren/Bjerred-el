@@ -35,6 +35,7 @@
   UPPDATERING 2026-10-08: Under tabell 1 (januari–juni) visas juli–september 2026 i en egen tabell (konstanten MANADER_JUL_SEP).
   De tre månaderna ligger medvetet UTANFÖR MANADER, så jämförelsen med Eneas (tabell 2, summor, kopiering) gäller fortfarande bara
   januari–juni. Tabellen visas och döljs tillsammans med tabell 1. Version 2.3.
+  UPPDATERING 2026-11-09: Oktober 2026 tillagd i MANADER_JUL_SEP (nytt påslag och månadsavgift, se kommentaren vid posten). Version 2.6.
 */
 (function () {
   'use strict';
@@ -47,8 +48,8 @@
   // ===================================================================
   // 1. Version
   // ===================================================================
-  var VERSION = '2.5';              // UPPDATERING 2026-11-06: korsreferens "Se också" till Spotpris-sidan i brödsmulorna (2.4: länkar till avtalet och sammanställningen, brödsmulor i stället för knappen "← Elöversikt"; 2.3: juli–september under tabell 1)
-  var VERSIONSDATUM = '2026-11-06';
+  var VERSION = '2.6';              // UPPDATERING 2026-11-06: korsreferens "Se också" till Spotpris-sidan i brödsmulorna (2.4: länkar till avtalet och sammanställningen, brödsmulor i stället för knappen "← Elöversikt"; 2.3: juli–september under tabell 1)
+  var VERSIONSDATUM = '2026-11-09';
 
   // ===================================================================
   // Uppgifter ur Isak Cerwéns mejl (Eneas Services AB), "Sv: Elhandel Kraftringen och Eneas", mottaget av Kent Lundgren och införda 2026-10-07.
@@ -133,7 +134,10 @@
   var MANADER_JUL_SEP = [
     { key: '2026-07', namn: 'Jul', kwh: 21584.28, fakturaKr: 48277, krOre: 86.01,  natOre: 19.95, skattOre: 36.00, fastNatKr: 7980 },
     { key: '2026-08', namn: 'Aug', kwh: 21835.32, fakturaKr: 49876, krOre: 90.02,  natOre: 20.17, skattOre: 36.00, fastNatKr: 7980 },
-    { key: '2026-09', namn: 'Sep', kwh: 21688.74, fakturaKr: 62294, krOre: 134.59, natOre: 22.39, skattOre: 36.00, fastNatKr: 7980 }
+    { key: '2026-09', namn: 'Sep', kwh: 21688.74, fakturaKr: 62294, krOre: 134.59, natOre: 22.39, skattOre: 36.00, fastNatKr: 7980 },
+    // UPPDATERING 2026-11-09: oktober, faktura 3219468000 (21 810,30 kWh, 74 150 kr). krOre = spot 167,41 + rörliga 4,91 + påslag 2,50.
+    //   Nytt från oktober: påslag 2,50 (tidigare 1,70) och månadsavgift 47,20 kr exkl moms (har ingen kolumn, ingår i fakturabeloppet).
+    { key: '2026-10', namn: 'Okt', kwh: 21810.30, fakturaKr: 74150, krOre: 174.82, natOre: 24.36, skattOre: 36.00, fastNatKr: 7980 }
   ];
 
   // ===================================================================
