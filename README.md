@@ -23,7 +23,7 @@ Projektet visualiserar elenergiförbrukning för Bjerreds Saltsjöbad från augu
 
 - **Interaktiva diagram** – förbrukning, kostnad och pris per kWh över tid
 - **Löpande Årstal (LÅT)** – alltid de senaste 12 månadernas förbrukning och kostnad
-- **Jämförelsevärden** – beräknade förmodade värden baserade på säsongsmönster
+- **Diskreta hörnval** – `{ } GitHub` nere till vänster, `visa detaljerad tabell` nere i mitten och `</> teknik` (teknikmodal) nere till höger
 - **Fördelning bad/restaurang** – separat analys för respektive del
 - **Responsiv design** – fungerar på desktop, tablet och mobil
 - **Elanalys före & efter ombyggnad** – djupanalys med inpasseringsdata från Firebase

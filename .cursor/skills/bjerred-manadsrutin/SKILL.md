@@ -380,7 +380,13 @@ och hanteras i `kraftringen.json` (Spotpris) och `STANDARD` (intern debitering).
 - **Gissningen för oktober är frusen** med 21 818 kWh; fakturan har 21 810,3. Den ändras inte.
 - **Steg 2j:** mail till ekonomiansvarig skickat 2026-11-09, längre variant (loggat i `bjerred-ekonommail`).
 - **Steg 2k:** flashen för oktober inlagd först i `manadens_flash_data.js` (id `2026-10`), godkänd av Kent 2026-11-09 och testad lokalt med `?flash=1` och `#flash` (september i arkivet, inga konsolfel).
-- **Kvar:** känslighetsanalyser (2h), Spotpris tabell 3 som datafil om Kent vill, och en körning av `bygg_gissningar_data.py` om det behövs.
+- **Känslighetsanalyserna (2h) görs en gång efter december 2026** (beslut Kent 2026-11-09), när oktober, november och december finns, inte varje månad. Då läggs fakturans värden i `facit_jul_sep.json` och mätardifferenserna i båda skripten.
+- **Kvar:** känslighetsanalyserna enligt ovan, Spotpris tabell 3 som datafil om Kent vill, och en körning av `bygg_gissningar_data.py` om det behövs.
+
+### Det som gjordes den 2026-11-09, hörnval på `index.html`
+- Knapparna nere till vänster (förmodade värden, detaljerad tabell) och nere till höger (Prompt, Teknik) är ersatta av tre diskreta hörnval enligt mönstret i `AI-teknik/Presentationer/Nr1`:
+  `{ } GitHub` vänster, `visa detaljerad tabell` mitten (på smal skärm en rad högre) och `</> teknik` höger. Knappen och funktionen för förmodade värden är borttagna (`showExpectedValues` är alltid false).
+  Prompt-modalens text ligger som avsnitt "Projektinstruktioner (prompt)" i teknik-modalen. `index.html` har ingen versionsrad.
 
 ## Ännu inte gjort / öppna beslut
 

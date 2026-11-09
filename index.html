@@ -245,94 +245,30 @@
             text-align: right;
         }
 
-        /* Modalknappar fixerade i nedre högra hörnet */
-        .modal-buttons {
+        /* UPPDATERING 2026-11-09: tre diskreta hörnval längst ner (samma mönster som AI-teknik/Presentationer/Nr1):
+           { } GitHub nere till vänster, "visa detaljerad tabell" nere i mitten och </> teknik nere till höger.
+           Ersätter de gröna toggle-knapparna och de blå modalknapparna. */
+        .corner {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            display: flex;
-            gap: 10px;
-            z-index: 1000;
-        }
-
-        /* Toggle-knappar fixerade i nedre vänstra hörnet */
-        .toggle-buttons {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 1000;
-        }
-
-        /* Styling för toggle-knappar */
-        .toggle-btn {
-            background-color: #27ae60;
-            color: white;
-            border: none;
-            padding: 15px 20px;
-            border-radius: 50px;
+            bottom: 14px;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 0.78rem;
+            color: var(--text-color);
+            background: var(--card-background);
+            border: 1px solid var(--border-color);
+            border-radius: 999px;
+            padding: 0.3rem 0.7rem;
+            text-decoration: none;
             cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            position: relative;
+            opacity: 0.55;
+            transition: opacity 0.2s ease, color 0.2s ease;
+            z-index: 1000;
         }
 
-        .toggle-btn:hover {
-            background-color: #229954;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 10px rgba(0,0,0,0.3);
-        }
-
-        .toggle-btn.active {
-            background-color: #e74c3c;
-        }
-
-        .toggle-btn.active:hover {
-            background-color: #c0392b;
-        }
-
-        /* Tooltip för knappar */
-        .tooltip {
-            visibility: hidden;
-            width: 300px;
-            background-color: #2c3e50;
-            color: #fff;
-            text-align: left;
-            border-radius: 8px;
-            padding: 15px;
-            position: absolute;
-            z-index: 1001;
-            bottom: 110%;
-            left: 0;
-            margin-bottom: 10px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .tooltip::after {
-            content: "";
-            position: absolute;
-            top: 100%;
-            left: 30px;
-            border-width: 8px;
-            border-style: solid;
-            border-color: #2c3e50 transparent transparent transparent;
-        }
-
-        .toggle-btn:hover .tooltip {
-            visibility: visible;
-            opacity: 1;
-        }
+        .corner:hover, .corner:focus-visible { opacity: 1; color: var(--secondary-color); }
+        .corner-left { left: 14px; }
+        .corner-right { right: 14px; }
+        .corner-center { left: 50%; transform: translateX(-50%); white-space: nowrap; }
 
         /* Dold klass för element som ska kunna togglas */
         .hidden {
@@ -353,29 +289,6 @@
 
         .season-info div {
             text-align: center;
-        }
-
-        /* Styling för modalknappar med ikoner */
-        .modal-btn {
-            background-color: var(--secondary-color);
-            color: white;
-            border: none;
-            padding: 15px 20px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .modal-btn:hover {
-            background-color: #2980b9;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 10px rgba(0,0,0,0.3);
         }
 
         /* Modal overlay - täcker hela skärmen med semi-transparent bakgrund */
@@ -501,26 +414,13 @@
                 font-size: 1.8em;
             }
 
-            .modal-buttons, .toggle-buttons {
-                bottom: 10px;
-                flex-direction: column;
-            }
-
-            .modal-buttons {
-                right: 10px;
-            }
-
-            .toggle-buttons {
-                left: 10px;
-            }
+            .corner { bottom: 10px; }
+            .corner-left { left: 10px; }
+            .corner-right { right: 10px; }
+            .corner-center { bottom: 46px; }   /* på smal skärm: en rad ovanför GitHub och teknik, så att de tre inte överlappar */
 
             .summary-grid {
                 grid-template-columns: 1fr;
-            }
-
-            .tooltip {
-                width: 250px;
-                font-size: 12px;
             }
 
             /* UPPDATERING: Responsiv nav-bar för mobila enheter */
@@ -793,7 +693,7 @@
                 <strong>🎯 Preliminära månader:</strong> En månad som är märkt <em>(preliminär)</em> är Kents egen
                 prognos (mätaren avläst före månadsskiftet, framskriven till hela månaden). Den visas i
                 kWh-diagrammen med <strong>lila punkt och streckad linje</strong>, håller sig utanför
-                LÅT-summorna och «förmodad förbrukning»-modellen, och saknar kostnad tills fakturan kommit.
+                LÅT-summorna, och saknar kostnad tills fakturan kommit.
                 Uppföljning: <a href="prognoser.html" style="color:#856404;font-weight:600;">Träffar prognoserna?</a>
             </p>
         </div>
@@ -848,69 +748,10 @@
         </div>
     </div>
 
-    <!-- Toggle-knappar nere till vänster -->
-    <div class="toggle-buttons">
-        <button class="toggle-btn" id="toggleExpected" onclick="toggleExpectedValues()">
-            📊 Visa förmodade värden
-            <span class="tooltip">
-                <strong>Förmodade värden</strong><br><br>
-                Beräknas enbart från er <strong>monthlyData</strong> här på sidan (ingen SMHI-import). Olika baslinjer före och efter större bastu (från aug 2025), särskilda regler för stängnings- och öppningsmånad, samt säsongs­justering per driftläge. Se <strong>Teknik</strong>-modalen under «Förmodade värden — datakällor».
-            </span>
-        </button>
-        <button class="toggle-btn" id="toggleTable" onclick="toggleTable()">
-            📋 Visa detaljerad tabell
-        </button>
-    </div>
-
-    <!-- Modalknappar -->
-    <div class="modal-buttons">
-        <button class="modal-btn" onclick="openModal('promptModal')">
-            📝 Prompt
-        </button>
-        <button class="modal-btn" onclick="openModal('techModal')">
-            💻 Teknik
-        </button>
-    </div>
-
-    <!-- Modal 1: Prompt -->
-    <div id="promptModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('promptModal')">&times;</span>
-            <h2>📝 Projektinstruktioner (Prompt)</h2>
-            
-            <h3>Ursprunglig Förfrågan:</h3>
-            <p>Användaren begärde en interaktiv HTML-sida för att analysera elenergiförbrukning för Bjerreds Saltsjöbad mellan augusti 2024 och september 2025.</p>
-            
-            <h3>Krav och Specifikationer:</h3>
-            <ul>
-                <li><strong>Komplett HTML-sida:</strong> En självständig fil med all funktionalitet inkluderad</li>
-                <li><strong>Interaktiv tabell:</strong> Visar månadsdata med hover-effekter för detaljer</li>
-                <li><strong>Linjediagram:</strong> Visualiserar förbrukning, kostnad och pris per kWh över tid</li>
-                <li><strong>Jämförelsevärden:</strong> Beräknade förmodade värden baserat på säsongsmönster och faktisk användning</li>
-                <li><strong>Detaljvy:</strong> Vid hover över månad visas specifik information</li>
-                <li><strong>Två modalknappar:</strong>
-                    <ul>
-                        <li>En som visar projektinstruktionerna (denna modal)</li>
-                        <li>En som beskriver tekniken som används</li>
-                    </ul>
-                </li>
-                <li><strong>Data:</strong> Utgå från användarens tabell, exkludera månader utan data</li>
-                <li><strong>Kommentarer:</strong> Detaljerade kommentarer i kod på svenska enligt användarens preferenser</li>
-            </ul>
-
-            <h3>Dataanalys Fokus:</h3>
-            <ul>
-                <li>Elenergiförbrukning månad för månad</li>
-                <li>Total kostnad och kostnad per kWh</li>
-                <li>Variationer över årstider</li>
-                <li>Fördelning mellan bad och restaurang</li>
-                <li>Jämförelse mellan förmodat och faktiskt värde</li>
-            </ul>
-
-            <h3>Särskilda Noteringar:</h3>
-            <p>Bastun/badet var stängt från mitten av februari 2025 till mitten av juli 2025. Från mitten av juli 2025 har anläggningen större bastu­utrymmen efter ombyggnad. Förmodade värden i diagrammen tar hänsyn till driftläge, övergångsmånader och skilda baslinjer före/efter ombyggnaden; de använder inte importerade temperaturserier (se «Förmodade värden — datakällor» under Teknik).</p>
-        </div>
-    </div>
+    <!-- UPPDATERING 2026-11-09: diskreta hörnval. GitHub nere till vänster, detaljerad tabell nere i mitten, teknik nere till höger. -->
+    <a class="corner corner-left" href="https://github.com/kentlundgren/Bjerred-el" target="_blank" rel="noopener">{ } GitHub</a>
+    <button type="button" class="corner corner-center" id="toggleTable" aria-pressed="false" onclick="toggleTable()">visa detaljerad tabell</button>
+    <button type="button" class="corner corner-right" id="techBtn" aria-label="Tekniköversikt" onclick="openModal('techModal')">&lt;/&gt; teknik</button>
 
     <!-- Modal 2: Teknik -->
     <div id="techModal" class="modal">
@@ -958,23 +799,12 @@
                 <li><strong>Data-array:</strong> All månadsdata lagras i ett JavaScript-objekt</li>
                 <li><strong>Funktioner:</strong>
                     <ul>
-                        <li><code>calculateExpectedValues()</code> - Beräknar förmodade värden</li>
                         <li><code>createCharts()</code> - Initierar alla diagram</li>
                         <li><code>populateTable()</code> - Fyller tabellen med data</li>
                         <li><code>updateSummary()</code> - Uppdaterar sammanfattningskort</li>
                         <li><code>openModal()/closeModal()</code> - Hanterar modalfönster</li>
                     </ul>
                 </li>
-            </ul>
-
-            <h3>Förmodade värden — datakällor</h3>
-            <ul>
-                <li><strong>Primär källa:</strong> Månadsdata i <code>monthlyData</code> i det här dokumentet (faktisk kWh och kostnad).</li>
-                <li><strong>Temperatur / utomhusklimat:</strong> Ingen inläsning från SMHI eller annat väder-API. Sydvästra Skånes (Bjärreds) mildare vinter relativt norra Sverige återspeglas bara <em>indirekt</em> genom er egen historiska förbrukning. För allmän klimat­bakgrund, se SMHI:s beskrivning av Sveriges klimat, t.ex.
-                    <a href="https://www.smhi.se/kunskapsbanken/klimat/sveriges-klimat-de-langa-mätserierna-samt-aktuella-normal" target="_blank" rel="noopener noreferrer">SMHI — långa mätserier och normalperioder</a>.
-                </li>
-                <li><strong>Säsong och kalendermånad:</strong> Grova vinter/sommar/vår-höst‑klasser används som reserv. För «Restaurang och bad» och «Bara restaurang» räknas också en <strong>månadsprofil</strong> (t.ex. snitt för alla januari månader i serie jämfört med helårssnitt) så januari kan bli en tydligare topp i den streckade linjen.</li>
-                <li><strong>Tolkning:</strong> Linjen «förmodad» är ett internt jämförelse­stöd, inte en prognos eller energi­expertmodell.</li>
             </ul>
 
             <!-- UPPDATERING 2026-06-09: Avsnitt om hover-tooltipteknik tillagt -->
@@ -1013,6 +843,40 @@
 
             <h3>Browser-kompatibilitet:</h3>
             <p>Koden fungerar i alla moderna webbläsare (Chrome, Firefox, Safari, Edge) som stöder ES6+ och Canvas API.</p>
+
+            <!-- UPPDATERING 2026-11-09: Prompt-modalen (projektinstruktionerna) ligger nu som ett avsnitt här, eftersom sidan bara har en teknik-knapp. -->
+            <h3 id="Prompt">Projektinstruktioner (prompt)</h3>
+            <h4>Ursprunglig Förfrågan:</h4>
+            <p>Användaren begärde en interaktiv HTML-sida för att analysera elenergiförbrukning för Bjerreds Saltsjöbad mellan augusti 2024 och september 2025.</p>
+            
+            <h4>Krav och Specifikationer:</h4>
+            <ul>
+                <li><strong>Komplett HTML-sida:</strong> En självständig fil med all funktionalitet inkluderad</li>
+                <li><strong>Interaktiv tabell:</strong> Visar månadsdata med hover-effekter för detaljer</li>
+                <li><strong>Linjediagram:</strong> Visualiserar förbrukning, kostnad och pris per kWh över tid</li>
+                <li><strong>Jämförelsevärden:</strong> Beräknade förmodade värden baserat på säsongsmönster och faktisk användning</li>
+                <li><strong>Detaljvy:</strong> Vid hover över månad visas specifik information</li>
+                <li><strong>Två modalknappar:</strong>
+                    <ul>
+                        <li>En som visar projektinstruktionerna (denna modal)</li>
+                        <li>En som beskriver tekniken som används</li>
+                    </ul>
+                </li>
+                <li><strong>Data:</strong> Utgå från användarens tabell, exkludera månader utan data</li>
+                <li><strong>Kommentarer:</strong> Detaljerade kommentarer i kod på svenska enligt användarens preferenser</li>
+            </ul>
+
+            <h4>Dataanalys Fokus:</h4>
+            <ul>
+                <li>Elenergiförbrukning månad för månad</li>
+                <li>Total kostnad och kostnad per kWh</li>
+                <li>Variationer över årstider</li>
+                <li>Fördelning mellan bad och restaurang</li>
+                <li>Jämförelse mellan förmodat och faktiskt värde</li>
+            </ul>
+
+            <h4>Särskilda Noteringar:</h4>
+            <p>Bastun/badet var stängt från mitten av februari 2025 till mitten av juli 2025. Från mitten av juli 2025 har anläggningen större bastu­utrymmen efter ombyggnad.</p>
         </div>
     </div>
 
@@ -1809,31 +1673,8 @@
         // ====================================
         // TOGGLE-FUNKTIONER
         // ====================================
-        // Funktion för att visa/dölja förmodade värden
-        function toggleExpectedValues() {
-            showExpectedValues = !showExpectedValues;
-            const btn = document.getElementById('toggleExpected');
-            
-            if (showExpectedValues) {
-                btn.classList.add('active');
-                btn.innerHTML = '📊 Dölj förmodade värden<span class="tooltip"><strong>Förmodade värden</strong><br><br>Beräknas från er <strong>monthlyData</strong> (ingen SMHI-import). Baslinjer före/efter större bastu (från aug 2025), särskilda regler för feb–jul 2025, säsongsfaktor per driftläge. Detaljer under <strong>Teknik</strong> → «Förmodade värden — datakällor».</span>';
-            } else {
-                btn.classList.remove('active');
-                btn.innerHTML = '📊 Visa förmodade värden<span class="tooltip"><strong>Förmodade värden</strong><br><br>Beräknas från er <strong>monthlyData</strong> (ingen SMHI-import). Baslinjer före/efter större bastu (från aug 2025), särskilda regler för feb–jul 2025, säsongsfaktor per driftläge. Detaljer under <strong>Teknik</strong> → «Förmodade värden — datakällor».</span>';
-            }
-            
-            // Återskapa diagram med uppdaterade inställningar
-            chart1.destroy();
-            chart2.destroy();
-            chart3.destroy();
-            chart4.destroy();
-            createCharts();
-            
-            // Uppdatera tabell om den visas
-            if (showTable) {
-                populateTable();
-            }
-        }
+        // UPPDATERING 2026-11-09: knappen "Visa förmodade värden" och funktionen toggleExpectedValues() är borttagna (Kent).
+        // showExpectedValues är alltid false, så koden som beräknar och ritar förmodade värden används inte längre.
 
         // Funktion för att visa/dölja tabellen
         function toggleTable() {
@@ -1843,13 +1684,13 @@
             
             if (showTable) {
                 tableContainer.classList.remove('hidden');
-                btn.classList.add('active');
-                btn.textContent = '📋 Dölj detaljerad tabell';
+                btn.setAttribute('aria-pressed', 'true');
+                btn.textContent = 'dölj detaljerad tabell';
                 populateTable();
             } else {
                 tableContainer.classList.add('hidden');
-                btn.classList.remove('active');
-                btn.textContent = '📋 Visa detaljerad tabell';
+                btn.setAttribute('aria-pressed', 'false');
+                btn.textContent = 'visa detaljerad tabell';
             }
         }
 
