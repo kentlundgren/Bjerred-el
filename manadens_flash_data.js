@@ -24,6 +24,25 @@
 */
 window.MANADENS_FLASH = [
   {
+    id: '2026-10',
+    manad: 'Oktober 2026',
+    publicerad: '2026-11-09',
+    rubrik: 'Oktober: 19 % dyrare el, nästan samma förbrukning',
+    nyckelrad: 'Elbörsens pris steg från 128,09 till 167,41 öre/kWh.',
+    text: [
+      'Fakturan för oktober blev 74 150 kr mot 62 294 kr i september, alltså 11 856 kr (cirka 19 %) mer.',
+      'Förbrukningen var i stort sett oförändrad (21 810 kWh mot 21 689 kWh i september, +0,6 %), så ökningen beror mest på priset: ' +
+        'spotpriset på fakturan var 167,41 öre/kWh i oktober mot 128,09 öre/kWh i september.',
+      'Från oktober gäller elhandelsavtalet "Rörligt kvartspris" tillsvidare, utan bindningstid. Det fasta påslaget är 2,50 öre/kWh ' +
+        '(tidigare 1,70) och en månadsavgift på 47,20 kr exkl. moms har tillkommit (tidigare 0 kr). Tillsammans motsvarar det ' +
+        'cirka 300 kr av ökningen, inklusive moms.'
+    ],
+    lar: 'Ett fast påslag är elhandlarens ersättning per kWh och växer med förbrukningen. En månadsavgift är en fast summa per månad, ' +
+         'oavsett hur mycket el som används.',
+    lank: { text: 'Spotpris månad för månad', href: 'Spotpris/spotpris.html' },
+    kalla: 'Kraftringens fakturor för september och oktober 2026.'
+  },
+  {
     id: '2026-09',
     manad: 'September 2026',
     publicerad: '2026-10-09',

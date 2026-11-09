@@ -378,7 +378,9 @@ och hanteras i `kraftringen.json` (Spotpris) och `STANDARD` (intern debitering).
 - **Steg 2f och 2g:** oktober i `MANADER_JUL_SEP` (Eneas-sidan v2.6) och fakturalänk på Eneas-sidan, intern debitering och Spotpris (v1.8).
 - **Kents regel för underlaget:** hyresgästen betalar ingen fast avgift (raden visas bara), och elhandelns månadsavgift (47,20 kr från oktober) redovisas inte under hyresgästens andel. Påslaget ingår i "El inkl elcert".
 - **Gissningen för oktober är frusen** med 21 818 kWh; fakturan har 21 810,3. Den ändras inte.
-- **Kvar:** mail (2j), flash (2k), känslighetsanalyser (2h), Spotpris tabell 3 som datafil om Kent vill, och en körning av `bygg_gissningar_data.py` om det behövs.
+- **Steg 2j:** mail till ekonomiansvarig skickat 2026-11-09, längre variant (loggat i `bjerred-ekonommail`).
+- **Steg 2k:** flashen för oktober inlagd först i `manadens_flash_data.js` (id `2026-10`), godkänd av Kent 2026-11-09 och testad lokalt med `?flash=1` och `#flash` (september i arkivet, inga konsolfel).
+- **Kvar:** känslighetsanalyser (2h), Spotpris tabell 3 som datafil om Kent vill, och en körning av `bygg_gissningar_data.py` om det behövs.
 
 ## Ännu inte gjort / öppna beslut
 
