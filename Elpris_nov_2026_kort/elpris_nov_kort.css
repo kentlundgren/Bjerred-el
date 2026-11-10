@@ -1,0 +1,114 @@
+/*
+  elpris_nov_kort.css
+  Styling för Elpris_nov_2026_kort/index.html (kort, animerad version). Egen, fristående stilmall.
+  Gult används inte (inga inmatningsfält). Rött markerar november/rekord, blått övriga månader.
+
+  UPPDATERING 2026-11-10: Första versionen (1.0).
+*/
+
+:root {
+  color-scheme: light;
+  --bg: #ffffff;
+  --text: #1c2a2a;
+  --dampad: #5a6868;
+  --kant: #c9d3d1;
+  --ruta: #f4f8f7;
+  --bla: #2a7fc4;
+  --bla-mork: #14507f;
+  --rod: #d9392b;
+  --notis-bg: #e3f0fb;
+  --notis-kant: #2a7fc4;
+  --notis-text: #0b3d66;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif; line-height: 1.5; }
+main { max-width: 960px; margin: 0 auto; padding: 16px 16px 80px; }
+h1 { font-size: 1.8rem; line-height: 1.2; margin: 6px 0 4px; }
+.under { margin: 0 0 10px; color: var(--dampad); }
+.liten { font-size: .82rem; color: var(--dampad); }
+.dold { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+a { color: #0b5a9a; }
+.notis { background: var(--notis-bg); border-left: 4px solid var(--notis-kant); color: var(--notis-text); padding: 10px 14px; border-radius: 4px; }
+
+/* Scenen */
+.scen-ram { position: relative; border: 1px solid var(--kant); border-radius: 10px; background: var(--ruta); overflow: hidden; padding: 6px 4px 0; }
+.diagram svg { width: 100%; height: auto; display: block; }
+.diagram text { font-family: inherit; }
+
+.flash { position: absolute; inset: 0; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle at 92% 45%, rgba(217, 57, 43, .65), rgba(217, 57, 43, .18) 45%, transparent 70%); }
+.flash.kor { animation: blixt 1100ms ease-out; }
+@keyframes blixt { 0% { opacity: 0; } 12% { opacity: 1; } 100% { opacity: 0; } }
+
+.scen-ram.skakar { animation: skak 520ms linear; }
+@keyframes skak {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-7px, 3px); } 20% { transform: translate(6px, -4px); } 30% { transform: translate(-6px, 2px); }
+  40% { transform: translate(5px, 3px); } 50% { transform: translate(-4px, -2px); } 60% { transform: translate(3px, 2px); }
+  75% { transform: translate(-2px, 1px); } 90% { transform: translate(1px, 0); }
+}
+
+/* Stapeldelar */
+.stapel { transform-box: fill-box; transform-origin: 50% 100%; transform: scaleY(0); transition: transform 460ms cubic-bezier(.2, .8, .3, 1); }
+.stapel.visas { transform: scaleY(1); }
+.stapel.aktiv { fill: var(--bla-mork) !important; }
+.stapel.nov { fill: var(--rod); }
+.stapel.nov.visas { transition: transform 760ms cubic-bezier(.15, 1.45, .3, 1); filter: drop-shadow(0 0 10px rgba(217, 57, 43, .85)); }
+.varde { opacity: 0; transition: opacity 260ms ease; }
+.varde.visas { opacity: 1; }
+.manad-namn { fill: var(--text); }
+.pekare { transition: transform 360ms cubic-bezier(.3, .7, .3, 1), opacity 240ms ease; opacity: 0; }
+.pekare.visas { opacity: 1; }
+.rekordlinje { opacity: 0; transition: opacity 500ms ease; }
+.rekordlinje.visas { opacity: 1; }
+.rekordlinje line { stroke-dasharray: 7 5; }
+.nov-ledtext { opacity: 0; transition: opacity 300ms ease; }
+.nov-ledtext.visas { opacity: 1; }
+.pulsar.visas { animation: pulsera 560ms ease-in-out 3; }
+@keyframes pulsera { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
+
+/* Stort tal */
+.stortal { position: absolute; left: 6%; top: 8%; opacity: 0; transform: scale(.6); transform-origin: left top; transition: opacity 300ms ease, transform 500ms cubic-bezier(.2, 1.4, .4, 1); pointer-events: none; }
+.stortal.visas { opacity: 1; transform: scale(1); }
+.stortal-tal { display: block; font-size: clamp(2.6rem, 11vw, 6rem); font-weight: 800; line-height: 1; color: var(--rod); text-shadow: 0 2px 0 rgba(255, 255, 255, .9); }
+.stortal-enhet { display: block; font-size: clamp(.9rem, 2.6vw, 1.3rem); color: var(--text); font-weight: 600; }
+
+.rubrik-dyn { min-height: 2.6em; font-size: 1.2rem; font-weight: 600; text-align: center; margin: 10px 0 6px; }
+.rubrik-dyn.stor { color: var(--rod); font-size: 1.45rem; }
+
+.knappar { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; margin: 8px 0 14px; }
+button { font: inherit; cursor: pointer; border: 1px solid var(--kant); background: #fff; color: var(--text); padding: .5rem .9rem; border-radius: 8px; }
+button:hover, button:focus-visible { border-color: var(--bla); color: var(--bla-mork); }
+.lank-stor { display: inline-block; background: var(--bla-mork); color: #fff; padding: .55rem 1.1rem; border-radius: 8px; text-decoration: none; font-weight: 600; }
+.lank-stor:hover, .lank-stor:focus-visible { background: #0d3b60; }
+
+/* Förklaring vid hovring, fokus och tryck */
+abbr.ord { text-decoration: underline dotted; cursor: help; position: relative; }
+abbr.ord::after { content: attr(data-forklaring); position: absolute; left: 0; top: 125%; width: 270px; max-width: 80vw; background: #1f2d3c; color: #fff; padding: 9px 12px; border-radius: 6px; font-size: .84rem; line-height: 1.4; font-weight: 400;
+  opacity: 0; visibility: hidden; z-index: 50; text-align: left; white-space: normal; pointer-events: none; }
+abbr.ord:hover::after, abbr.ord:focus::after { opacity: 1; visibility: visible; }
+
+/* Hörnparet */
+.corner { position: fixed; bottom: 14px; font-family: "Courier New", Courier, monospace; font-size: .78rem; color: var(--dampad); background: var(--bg); border: 1px solid var(--kant); border-radius: 999px; padding: .3rem .7rem; text-decoration: none; cursor: pointer; opacity: .55; transition: opacity .2s ease, color .2s ease; z-index: 10; }
+.corner:hover, .corner:focus-visible { opacity: 1; color: #0b5a9a; }
+.corner-left { left: 14px; }
+.corner-right { right: 14px; }
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(22, 25, 43, .55); align-items: center; justify-content: center; z-index: 20; padding: 1rem; }
+.modal-overlay.show { display: flex; }
+.modal { position: relative; background: var(--bg); border-radius: 16px; max-width: 640px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 2rem; }
+.modal h2 { margin: 0 0 .5rem; font-size: 1.4rem; }
+.modal > p { color: var(--dampad); font-size: .92rem; margin: 0 0 1.2rem; }
+.modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: 0; font-size: 1.6rem; line-height: 1; cursor: pointer; color: var(--dampad); padding: 0; }
+.tech-section-title { font-size: 1rem; margin: 1.2rem 0 .5rem; color: var(--notis-text); }
+.tech-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 560px) { .tech-grid { grid-template-columns: 1fr; } .modal { padding: 1.4rem; } }
+.tech-card { background: var(--ruta); border: 1px solid var(--kant); border-radius: 8px; padding: 10px 12px; }
+.tech-card h3 { margin: 0 0 4px; font-size: .95rem; }
+.tech-card p { margin: 0; font-size: .86rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .stapel, .stapel.nov.visas, .varde, .pekare, .rekordlinje, .stortal, .nov-ledtext { transition: none; }
+  .flash.kor, .scen-ram.skakar, .pulsar.visas { animation: none; }
+}
+@media print { .corner, .modal-overlay, .knappar { display: none !important; } }

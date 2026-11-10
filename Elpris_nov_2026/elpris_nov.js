@@ -7,11 +7,12 @@
 
   UPPDATERING 2026-11-10: Första versionen (1.0).
   UPPDATERING 2026-11-10: Rekordavsnittet (Tabell 0): jämförelse med augusti 2022 (304,99 öre/kWh i SE4, Elbruk 2022) ersätter notisrutan överst. Version 1.1.
+  UPPDATERING 2026-11-10: länk till den korta, animerade versionen (Elpris_nov_2026_kort/) överst i sidan. Version 1.2.
 */
 (function () {
   'use strict';
 
-  var VERSION = '1.1';
+  var VERSION = '1.2';
   var VERSIONSDATUM = '2026-11-10';
 
   // ===================================================================

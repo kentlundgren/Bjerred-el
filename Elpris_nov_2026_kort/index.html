@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<!--
+  Elpris_nov_2026_kort/index.html
+  KORT, animerad version av Elpris_nov_2026/: ett diagram som pekar ut januari–oktober en månad i taget, ritar in rekordet från
+  augusti 2022 och låter novemberstapeln (dag 1–10) slå igenom. Länkar vidare till den längre analysen.
+  TILLFÄLLIG, skapad 2026-11-10. Rena HTML/CSS/JS-filer (elpris_nov_kort.css, elpris_nov_kort.js), inga bibliotek, ingen server.
+
+  UPPDATERING 2026-11-10: Första versionen (1.0).
+-->
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elpriset i november, kort</title>
+  <meta name="description" content="Spotpriset i SE4 månad för månad 2026, och sedan november: 328,89 öre/kWh redan efter tio dagar, över rekordet från augusti 2022.">
+  <!-- Delningsinformation (Open Graph och Twitter Cards). Bilden är slutläget av diagrammet och byggs av bygg_og_bild_nov_kort.py. -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="sv_SE">
+  <meta property="og:site_name" content="Bjerreds Saltsjöbad">
+  <meta property="og:title" content="Elpriset i november: rekordhögt efter tio dagar">
+  <meta property="og:description" content="Se hur spotpriset i SE4 stiger månad för månad, och sedan november: 328,89 öre/kWh redan efter tio dagar, mot 157,30 i oktober.">
+  <meta property="og:url" content="https://kentlundgren.github.io/Bjerred-el/Elpris_nov_2026_kort/">
+  <meta property="og:image" content="https://kentlundgren.github.io/Bjerred-el/Elpris_nov_2026_kort/og-elpris-nov-kort.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Stapeldiagram över spotpriset i SE4 januari till november 2026. November, dag 1–10, är 328,89 öre/kWh och ligger över rekordlinjen för augusti 2022 på 304,99. Texten Rekordhögt, redan efter tio dagar">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Elpriset i november: rekordhögt efter tio dagar">
+  <meta name="twitter:description" content="Spotpriset i SE4 månad för månad, och sedan november: 328,89 öre/kWh redan efter tio dagar.">
+  <meta name="twitter:image" content="https://kentlundgren.github.io/Bjerred-el/Elpris_nov_2026_kort/og-elpris-nov-kort.jpg">
+  <link rel="stylesheet" href="elpris_nov_kort.css">
+</head>
+<body>
+<main>
+  <header>
+    <h1 id="Start">Elpriset i SE4, månad för månad</h1>
+    <p class="under">Spotpris, öre/kWh, 2026. Bjerreds Saltsjöbad ligger i elområde <abbr class="ord" tabindex="0" data-forklaring="SE4 är elområdet som Skåne ligger i. Sverige är indelat i fyra elområden (SE1–SE4) med egna elpriser.">SE4</abbr>.</p>
+  </header>
+
+  <section aria-labelledby="Diagram">
+    <h2 id="Diagram" class="dold">Diagram. Spotpriset i SE4 månad för månad</h2>
+    <div id="scen" class="scen-ram">
+      <div id="flash" class="flash" aria-hidden="true"></div>
+      <div id="diagram" class="diagram" role="img" aria-label="Animerat stapeldiagram: spotpriset i SE4 per månad januari till oktober 2026 ligger mellan 66,55 och 157,30 öre/kWh. November, dag 1–10, är 328,89 öre/kWh, högre än rekordmånaden augusti 2022 med 304,99."></div>
+      <div id="stortal" class="stortal" aria-hidden="true"><span class="stortal-tal" id="stortal-tal">0</span><span class="stortal-enhet">öre/kWh</span></div>
+    </div>
+    <p id="rubrik-dyn" class="rubrik-dyn" aria-live="polite">&nbsp;</p>
+    <div class="knappar">
+      <button type="button" id="spela-igen">↻ Spela igen</button>
+      <button type="button" id="hoppa">Hoppa över</button>
+      <a class="lank-stor" href="../Elpris_nov_2026/">Läs hela analysen →</a>
+    </div>
+    <noscript><p class="notis">Diagrammet kräver JavaScript. Hela analysen finns på <a href="../Elpris_nov_2026/">den längre sidan</a>: spotpriset i november (dag 1–10) är 328,89 öre/kWh mot 157,30 i oktober.</p></noscript>
+  </section>
+
+  <footer>
+    <p class="liten">Spotpris SE4, månadsmedel, öre/kWh, utan moms, tillägg och skatter. November omfattar bara dag 1–10. Källor:
+      <a href="https://www.elbruk.se/elpris-historik-2026" target="_blank" rel="noopener">Elbruk (2026)</a> och
+      <a href="https://www.elbruk.se/elpris-historik-2022" target="_blank" rel="noopener">Elbruk (2022)</a>, avlästa 2026-11-10. Siffrorna är hämtade ur källorna och är inte kvalitetssäkrade. Kontrollera mot källan innan något återges.</p>
+    <p class="liten">Version <span id="version">–</span> · <span id="versionsdatum">–</span> · Kent Lundgren. Tillfällig sida.</p>
+  </footer>
+</main>
+
+<a class="corner corner-left" href="https://github.com/kentlundgren/Bjerred-el/tree/main/Elpris_nov_2026_kort" target="_blank" rel="noopener">{ } GitHub</a>
+<button type="button" class="corner corner-right" id="techBtn" aria-label="Tekniköversikt">&lt;/&gt; teknik</button>
+
+<div class="modal-overlay" id="techModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="techTitel">
+    <button type="button" class="modal-close" id="techClose" aria-label="Stäng">&times;</button>
+    <h2 id="techTitel">Hur den här sidan är byggd</h2>
+    <p>Två delar: tekniken i animationen och metoden bakom siffrorna.</p>
+    <h3 class="tech-section-title">Tekniken</h3>
+    <div class="tech-grid">
+      <div class="tech-card"><h3>Vanlig HTML, CSS och JavaScript</h3><p>Tre filer, <code>index.html</code>, <code>elpris_nov_kort.css</code> och <code>elpris_nov_kort.js</code>. Inga bibliotek och inget byggsteg.</p></div>
+      <div class="tech-card"><h3>Diagrammet är SVG</h3><p>Staplarna ritas av koden och växer med CSS-övergångar (<code>transform: scaleY</code>). Novemberstapeln har en egen övergång som slår över toppen.</p></div>
+      <div class="tech-card"><h3>Tidslinje i JavaScript</h3><p>En async-funktion kör stegen i ordning: en månad i taget, rekordlinjen, sedan november. "Spela igen" avbryter och startar om, och "Hoppa över" visar slutläget direkt.</p></div>
+      <div class="tech-card"><h3>Hänsyn till rörelsekänslighet</h3><p>Om webbläsaren är inställd på minskad rörelse (<code>prefers-reduced-motion</code>) visas slutläget direkt, utan animation.</p></div>
+      <div class="tech-card"><h3>Ingen data skickas</h3><p>Sidan pratar inte med någon server och sparar ingenting hos besökaren.</p></div>
+      <div class="tech-card"><h3>Delningsbilden</h3><p>Bilden <code>og-elpris-nov-kort.jpg</code> (1200×630) är diagrammets slutläge. Den byggs av <code>bygg_og_bild_nov_kort.py</code> med Pillow.</p></div>
+    </div>
+    <h3 class="tech-section-title">Metoden</h3>
+    <div class="tech-grid">
+      <div class="tech-card"><h3>Kort version av en längre analys</h3><p>Siffrorna är desamma som på <a href="../Elpris_nov_2026/">den längre sidan</a>: månadsmedel för SE4 från Elbruk. Där finns kostnad per kWh, per badare och räkneexempel.</p></div>
+      <div class="tech-card"><h3>Tillfällig och ofullständig</h3><p>November omfattar bara tio dagar (2026-11-10). Rekordlinjen är augusti 2022 (304,99 öre/kWh), dyrast i Elbruks tabeller för 2021–2026.</p></div>
+      <div class="tech-card"><h3>Inte kontrollerat</h3><p>Spotpriserna kommer från en enda källa och har inte jämförts med en andra.</p></div>
+    </div>
+  </div>
+</div>
+
+<script src="elpris_nov_kort.js"></script>
+</body>
+</html>
