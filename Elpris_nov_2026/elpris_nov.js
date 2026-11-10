@@ -6,11 +6,12 @@
   TILLFÄLLIG analys skapad 2026-11-10 efter tio dagar av november. Uppdateras inte.
 
   UPPDATERING 2026-11-10: Första versionen (1.0).
+  UPPDATERING 2026-11-10: Rekordavsnittet (Tabell 0): jämförelse med augusti 2022 (304,99 öre/kWh i SE4, Elbruk 2022) ersätter notisrutan överst. Version 1.1.
 */
 (function () {
   'use strict';
 
-  var VERSION = '1.0';
+  var VERSION = '1.1';
   var VERSIONSDATUM = '2026-11-10';
 
   // ===================================================================
@@ -26,6 +27,8 @@
     SE3: [108.45, 110.23, 58.66, 56.08, 77.06, 77.98, 53.62, 66.66, 87.33, 82.35, 204.16],
     SE4: [112.99, 113.28, 84.58, 66.55, 94.66, 103.72, 86.44, 80.47, 120.20, 157.30, 328.89]
   };
+  // Rekordmånaden augusti 2022 och tvåan december 2022, SE4, öre/kWh. Källa: Elbruk (2022). Ingen annan månad 2021–2026 i elbruks tabeller (SE4) ligger över 190 före november 2026, utom de två.
+  var AUG_2022 = 304.99, DEC_2022 = 271.45;
   var NOV_DAGAR_HITTILLS = 10, NOV_DAGAR = 30, OKT_DAGAR = 31;
 
   // Priser i oktober ur Kraftringens faktura 3219468000 (öre/kWh, utan moms) och moms
@@ -106,6 +109,14 @@
   // Hur lågt måste resten av november ligga för att månadsmedlet ska hamna på oktobers nivå?
   var krav = (spotOkt * NOV_DAGAR - spotNov * NOV_DAGAR_HITTILLS) / (NOV_DAGAR - NOV_DAGAR_HITTILLS);
 
+  // Rekordjämförelsen: samma elpris med dagens övriga poster (oktober 2026) och oktobers kWh per badare
+  function perPris(spot) {
+    var rk = komponenter({ spot: spot, rorliga: OKT.rorliga, paslag: OKT.paslag, nat: OKT.nat, skatt: OKT.skatt }).inkl;
+    return { rk: rk, perBadare: oktR.kwhPerBadare * rk / 100 };
+  }
+  var kravRekord = (AUG_2022 * NOV_DAGAR - spotNov * NOV_DAGAR_HITTILLS) / (NOV_DAGAR - NOV_DAGAR_HITTILLS);
+  var snittOmOkt = (spotNov * NOV_DAGAR_HITTILLS + spotOkt * (NOV_DAGAR - NOV_DAGAR_HITTILLS)) / NOV_DAGAR;
+
   // ===================================================================
   // 4. Diagram (SVG)
   // ===================================================================
@@ -149,6 +160,22 @@
   // 5. Tabeller och texter
   // ===================================================================
   function procent(a, b) { return (b / a - 1) * 100; }
+
+  function tabell0() {
+    var rader = [
+      ['Augusti 2022 (rekordmånaden)', AUG_2022, perPris(AUG_2022), false],
+      ['Oktober 2026', spotOkt, { rk: kOkt.inkl, perBadare: oktR.perBadare }, false],
+      ['November 2026, dag 1–10', spotNov, perPris(spotNov), true]
+    ];
+    document.querySelector('#tab0 thead').innerHTML = '<tr><th>Månad</th><th>Spotpris SE4<br>(öre/kWh)</th><th>Skillnad mot<br>aug 2022 (öre/kWh)</th><th>Hela elpriset med dagens<br>avgifter, inkl. moms (öre/kWh)</th><th>Badets el per<br>badare (kr)</th></tr>';
+    document.querySelector('#tab0 tbody').innerHTML = rader.map(function (r) {
+      var d = r[1] - AUG_2022;
+      return '<tr' + (r[3] ? ' class="scenario"' : '') + '><td>' + esc(r[0]) + '</td><td>' + fmt(r[1]) + '</td><td' + (d > 0.005 ? ' class="upp"' : '') + '>' + (Math.abs(d) < 0.005 ? '–' : tecken(d)) + '</td><td>' + fmt(r[2].rk, 1) + '</td><td>' + fmt(r[2].perBadare) + '</td></tr>';
+    }).join('');
+    satt('rek-aug', fmt(AUG_2022)); satt('rek-aug2', fmt(AUG_2022)); satt('rek-dec', fmt(DEC_2022)); satt('rek-nov', fmt(spotNov));
+    satt('rek-diff', fmt(spotNov - AUG_2022)); satt('rek-pct', tecken(procent(AUG_2022, spotNov), 0));
+    satt('rek-okt', fmt(spotOkt)); satt('rek-snitt', fmt(snittOmOkt) + ' öre/kWh'); satt('rek-krav', fmt(kravRekord, 0));
+  }
 
   function tabell1() {
     var rader = [
@@ -251,7 +278,7 @@
   function start() {
     satt('version', VERSION);
     satt('versionsdatum', VERSIONSDATUM);
-    diagram1(); diagram2(); tabell1(); tabell2(); tabell3(); tabell4(); nyckeltal(); modal();
+    diagram1(); diagram2(); tabell0(); tabell1(); tabell2(); tabell3(); tabell4(); nyckeltal(); modal();
   }
 
   start();
