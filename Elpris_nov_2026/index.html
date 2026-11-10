@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<!--
+  Elpris_nov_2026/index.html
+  TILLFÄLLIG analys: spotpriset i SE4 de tio första dagarna i november 2026 (328,89 öre/kWh enligt elbruk.se) mot oktober (157,30),
+  och vad det betyder i kronor, bland annat per badare. Skapad 2026-11-10 inför ett möte med badvärdarna. Uppdateras inte
+  automatiskt: när november är slut ersätts den av den vanliga analysen (elöversikten och Spotpris-sidan).
+  Rena HTML/CSS/JS-filer (elpris_nov.css, elpris_nov.js), inga bibliotek, ingen server.
+
+  UPPDATERING 2026-11-10: Första versionen (1.0).
+-->
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elpriset i november</title>
+  <meta name="description" content="Spotpriset i SE4 de tio första dagarna i november är drygt dubbelt så högt som i oktober. Vad det betyder i kronor, bland annat per badare. Tillfällig analys.">
+  <!-- Delningsinformation (Open Graph och Twitter Cards). Bilden byggs av bygg_og_bild_nov.py. Adresserna måste vara fullständiga. -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="sv_SE">
+  <meta property="og:site_name" content="Bjerreds Saltsjöbad">
+  <meta property="og:title" content="Elpriset i november: drygt dubbelt så högt som i oktober">
+  <meta property="og:description" content="Tio dagar har räckt för att dra upp novembers spotpris i SE4 till 328,89 öre/kWh, mot 157,30 i oktober. Tillfällig analys, bland annat med kostnad per badare.">
+  <meta property="og:url" content="https://kentlundgren.github.io/Bjerred-el/Elpris_nov_2026/">
+  <meta property="og:image" content="https://kentlundgren.github.io/Bjerred-el/Elpris_nov_2026/og-elpris-nov.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Två staplar: spotpriset i SE4 var 157,30 öre/kWh i oktober och 328,89 öre/kWh hittills i november, drygt dubbelt så högt">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Elpriset i november: drygt dubbelt så högt som i oktober">
+  <meta name="twitter:description" content="Tio dagar har räckt för att dra upp novembers spotpris i SE4 till 328,89 öre/kWh, mot 157,30 i oktober.">
+  <meta name="twitter:image" content="https://kentlundgren.github.io/Bjerred-el/Elpris_nov_2026/og-elpris-nov.jpg">
+  <link rel="stylesheet" href="elpris_nov.css">
+</head>
+<body>
+<main>
+
+  <header>
+    <p class="liten"><a href="../index.html">← Elöversikten</a> · <a href="../Spotpris/spotpris.html">Spotpris månad för månad</a></p>
+    <h1 id="Start">Elpriset i november: drygt dubbelt så högt som i oktober</h1>
+    <p class="under">Bjerreds Saltsjöbad, elområde <abbr class="ord" tabindex="0" data-forklaring="SE4 är elområdet som Skåne ligger i. Sverige är indelat i fyra elområden (SE1–SE4) med egna elpriser, eftersom överföringen mellan dem är begränsad.">SE4</abbr>. Sammanställd av Kent Lundgren, 2026-11-10.</p>
+    <div class="notis" role="note">
+      <p><strong>Tillfällig analys, bara tio dagar.</strong> Den här sidan bygger på de tio första dagarna i november. Den ersätts av den vanliga analysen
+      när månaden är slut och fakturan har kommit. Siffrorna är hämtade ur källorna längst ned och är inte kvalitetssäkrade. Kontrollera mot källan innan något återges.</p>
+    </div>
+  </header>
+
+  <section aria-labelledby="Poangen">
+    <h2 id="Poangen">Poängen i korthet <a class="ankare" href="#Poangen" aria-label="Länk till avsnittet">#</a></h2>
+    <div class="kort-rad">
+      <div class="kort"><p class="kort-rubrik">November, dag 1–10</p><p class="stortal rod">328,89</p><p class="enhet">öre/kWh, spotpris SE4</p></div>
+      <div class="kort"><p class="kort-rubrik">Oktober, hela månaden</p><p class="stortal bla">157,30</p><p class="enhet">öre/kWh, spotpris SE4</p></div>
+      <div class="kort"><p class="kort-rubrik">Skillnad</p><p class="stortal" id="kvot">–</p><p class="enhet" id="kvot-text">–</p></div>
+    </div>
+    <ul class="punkter">
+      <li><strong>Tio dagar har räckt.</strong> Spotpriset i november är <a href="#Diagram1">det högsta månadssnittet i år</a>, och oktober var ändå dyr.</li>
+      <li><strong>Det är svårt att vända.</strong> För att novembers snitt ska landa på oktobers nivå måste de återstående 20 dagarna i snitt ligga på <span id="krav">–</span> öre/kWh. Bara april har legat lägre i år.</li>
+      <li><strong>Per kWh blir det dyrare för oss:</strong> hela elpriset inklusive nät, skatt och moms går <a href="#Tabell1">upp med cirka två tredjedelar</a>, från <span id="rk-okt">–</span> till <span id="rk-nov">–</span> öre/kWh.</li>
+      <li><strong>Per badare:</strong> elen för badet kostar <a href="#Tabell2">omkring <span id="pb-nov">–</span> kr per badare</a> om priset ligger kvar, mot <span id="pb-okt">–</span> kr i oktober och <span id="pb-snitt">–</span> kr i genomsnitt i år.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="Diagram1">
+    <h2 id="Diagram1">Diagram 1. Spotpriset i SE4 månad för månad <a class="ankare" href="#Diagram1" aria-label="Länk till avsnittet">#</a></h2>
+    <p class="liten">Öre/kWh, utan moms, tillägg och skatter. Månadsmedel enligt <a href="#ref-elbruk">Elbruk (2026)</a>. November omfattar bara de tio första dagarna.</p>
+    <div id="diagram1" class="diagram" role="img" aria-label="Stapeldiagram: spotpriset i SE4 per månad januari till november 2026. November är högst, 328,89 öre/kWh."></div>
+    <p>Fram till oktober låg månadssnitten i SE4 mellan 66,55 (april) och 157,30 öre/kWh. November ligger nu på 328,89. Siffrorna för alla fyra elområden finns i <a href="#Tabell4">Tabell 4</a>.</p>
+  </section>
+
+  <section aria-labelledby="Diagram2">
+    <h2 id="Diagram2">Diagram 2. Novemberpriset i de fyra elområdena <a class="ankare" href="#Diagram2" aria-label="Länk till avsnittet">#</a></h2>
+    <p class="liten">Öre/kWh, utan moms, dag 1–10 november. Källa: <a href="#ref-elbruk">Elbruk (2026)</a>.</p>
+    <div id="diagram2" class="diagram" role="img" aria-label="Stapeldiagram: novemberpris per elområde. SE1 32,71, SE2 31,32, SE3 204,16, SE4 328,89 öre/kWh."></div>
+    <p>Skillnaden mellan norr och söder är stor: i SE4 är priset ungefär <span id="x-norr">–</span> gånger så högt som i SE1. Det är SE4-priset vi betalar, eftersom Bjärred ligger i elområde 4.</p>
+  </section>
+
+  <section aria-labelledby="Tabell1">
+    <h2 id="Tabell1">Tabell 1. Vad en kWh kostar oss: oktober och november om priset ligger kvar <a class="ankare" href="#Tabell1" aria-label="Länk till avsnittet">#</a></h2>
+    <p class="liten">Öre/kWh. Oktober enligt <a href="#ref-faktura">Kraftringens faktura</a>. Novemberkolumnen är ett scenario: spotpriset är elbruks 328,89, övriga poster antas lika som i oktober.</p>
+    <div class="tabell-wrap"><table id="tab1"><thead></thead><tbody></tbody></table></div>
+    <p>Spotpriset blir cirka <span id="t1-spotx">–</span> gånger så högt som i oktoberfakturan, men det vi betalar per kWh i sin helhet ökar bara <span id="t1-totx">–</span> gånger. Skälet är att
+    <abbr class="ord" tabindex="0" data-forklaring="Rörlig nätavgift: avgiften till Kraftringen Nät för transporten av elen, per kWh. Den beror på hur mycket el som används, inte på elpriset.">nätavgiften</abbr> och
+    <abbr class="ord" tabindex="0" data-forklaring="Energiskatten är en skatt på el, 36,00 öre/kWh utan moms. Den är lika oavsett elpris.">energiskatten</abbr>
+    är lika per kWh oavsett elpris. Ju högre spotpris, desto mindre del utgör de. Till spotpriset kommer
+    <abbr class="ord" tabindex="0" data-forklaring="Rörliga kostnader och fast påslag är elhandlarens ersättning per kWh ovanpå spotpriset. Påslaget är 2,50 öre/kWh i oktober (1,70 före). Rörliga kostnader var 4,91 öre/kWh.">elhandlarens ersättning</abbr>, som antas oförändrad.</p>
+  </section>
+
+  <section aria-labelledby="Tabell2">
+    <h2 id="Tabell2">Tabell 2. Elkostnad för badet per badare, månad för månad <a class="ankare" href="#Tabell2" aria-label="Länk till avsnittet">#</a></h2>
+    <p class="liten">Kostnaden är badets el (bastu och varmvatten) multiplicerad med månadens rörliga kostnad per kWh inklusive moms (spot, elhandlarens ersättning, nätavgift, skatt), delad på antalet inpasseringar.
+    Fasta avgifter ingår inte (se <a href="#Tabell3">Tabell 3</a>). Källor: <a href="#ref-elöversikt">elöversikten</a>, <a href="#ref-faktura">Kraftringens fakturor</a> och <a href="#ref-inpass">inpasseringarna</a>.
+    <abbr class="ord" tabindex="0" data-forklaring="Inpassering: en registrerad passage in i badet. Summan av medlemmarnas armband och Wonder-kort, engångsbadare och Swish-biljetter, samt restaurangens badbiljetter där de är inlagda.">Inpasseringar</abbr> används som antal badare.</p>
+    <div class="tabell-wrap"><table id="tab2"><thead></thead><tbody></tbody><tfoot></tfoot></table></div>
+    <p id="pb-text"></p>
+  </section>
+
+  <section aria-labelledby="Tabell3">
+    <h2 id="Tabell3">Tabell 3. Om priset håller i sig hela november: ett räkneexempel <a class="ankare" href="#Tabell3" aria-label="Länk till avsnittet">#</a></h2>
+    <p class="liten">Scenario, inte en prognos. Samma förbrukning per dag som i oktober, spotpriset kvar på 328,89 öre/kWh i hela november (30 dagar) och övriga poster som i oktober.</p>
+    <div class="tabell-wrap"><table id="tab3"><thead></thead><tbody></tbody></table></div>
+    <p id="t3-text"></p>
+  </section>
+
+  <section aria-labelledby="Okant">
+    <h2 id="Okant">Det vi inte vet <a class="ankare" href="#Okant" aria-label="Länk till avsnittet">#</a></h2>
+    <ul class="punkter">
+      <li><strong>Det är bara tio dagar.</strong> Priset kan falla tillbaka eller stiga ytterligare. Scenariot visar vad som händer om det ligger kvar, inte vad som kommer att hända.</li>
+      <li><strong>Vi vet inte varför priset är så högt.</strong> Sidan påstår ingen orsak. Den visar bara att priset i SE4 och SE3 är mycket högre än i SE1 och SE2.</li>
+      <li><strong>Elbruks siffra är ett enkelt marknadssnitt, inte vårt pris.</strong> Vi betalar ett pris som väger in när vi använder el. Så var oktobers spotpris på vår faktura 167,41 öre/kWh, medan marknadssnittet var 157,30. Novemberscenariot använder marknadssnittet.</li>
+      <li><strong>Oktober saknar restaurangens badbiljetter</strong> bland inpasseringarna (de är inte inlagda än). Det betyder att antalet badare i oktober är något för lågt och kostnaden per badare något för hög, uppskattningsvis med en tiondel. Siffran är därför preliminär.</li>
+      <li><strong>Förbrukningen i november är okänd.</strong> Scenariot antar samma förbrukning per dag som i oktober. En kallare eller varmare månad ändrar den.</li>
+      <li><strong>Spotpriserna är inte kontrollerade mot en andra källa.</strong> De kommer från Elbruk (2026).</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="Tabell4">
+    <h2 id="Tabell4">Tabell 4. Spotpris per elområde och månad, 2026 <a class="ankare" href="#Tabell4" aria-label="Länk till avsnittet">#</a></h2>
+    <p class="liten">Öre/kWh, månadsmedel. November: dag 1–10. Källa: <a href="#ref-elbruk">Elbruk (2026)</a>.</p>
+    <div class="tabell-wrap"><table id="tab4"><thead></thead><tbody></tbody></table></div>
+  </section>
+
+  <section aria-labelledby="Kallor">
+    <h2 id="Kallor">Källor <a class="ankare" href="#Kallor" aria-label="Länk till avsnittet">#</a></h2>
+    <ul class="kallor">
+      <li id="ref-elbruk"><a href="https://www.elbruk.se/elpris-historik-2026" target="_blank" rel="noopener">Elbruk (2026)</a> <em>Elpris historik 2026</em> [webbsida]. Elbruk.se. Månadsmedel av spotpriset per elområde (öre/kWh, utan moms). November, dag 1–10, avläst 2026-11-10.
+        <em>Underlag för alla spotpriser i Diagram 1 och 2 samt Tabell 4.</em></li>
+      <li id="ref-faktura">Kraftringen (2026) <em>E-faktura elnät och elhandel, oktober 2026</em> [faktura 3219468000, PDF]. Kraftringen Nät AB och Kraftringen Energi AB.
+        <a href="https://github.com/kentlundgren/Bjerred-el/blob/main/Kraftringen/Fakturor/202610_Kraftringen_Oktober_2026_3219468000.pdf" target="_blank" rel="noopener">Fakturan</a>.
+        <em>Underlag för oktoberns priser och för övriga månaders priser per kWh (jan–sep, i <a href="https://github.com/kentlundgren/Bjerred-el/tree/main/Kraftringen/Fakturor" target="_blank" rel="noopener">samma mapp</a>).</em></li>
+      <li id="ref-elöversikt">Bjerreds Saltsjöbad (2026) <em>Elenergiförbrukning, månadsdata</em> [webbsida]. <a href="../index.html">Elöversikten</a>, <a href="https://github.com/kentlundgren/Bjerred-el/blob/main/data.md" target="_blank" rel="noopener">data.md</a>.
+        <em>Underlag för badets kWh per månad.</em></li>
+      <li id="ref-inpass">Bjerreds Saltsjöbad (2026) <em>Inpasseringar</em> [webbsida]. <a href="https://kentlundgren.github.io/foreningar/BjerredsSaltsjobad/inpasseringar/" target="_blank" rel="noopener">Inpasseringsdata</a>,
+        summerade som på <a href="../fore_och_efter_ombyggnad.html">analyssidan före och efter ombyggnad</a>. <em>Underlag för antalet badare.</em></li>
+    </ul>
+  </section>
+
+  <footer>
+    <p class="liten">Version <span id="version">–</span> · <span id="versionsdatum">–</span> · Kent Lundgren. Tillfällig analys, uppdateras inte.</p>
+  </footer>
+</main>
+
+<!-- Hörnparet: GitHub nere till vänster och teknik nere till höger -->
+<a class="corner corner-left" href="https://github.com/kentlundgren/Bjerred-el/tree/main/Elpris_nov_2026" target="_blank" rel="noopener">{ } GitHub</a>
+<button type="button" class="corner corner-right" id="techBtn" aria-label="Tekniköversikt">&lt;/&gt; teknik</button>
+
+<div class="modal-overlay" id="techModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="techTitel">
+    <button type="button" class="modal-close" id="techClose" aria-label="Stäng">&times;</button>
+    <h2 id="techTitel">Hur den här sidan är byggd</h2>
+    <p>Två delar: tekniken i sidan och metoden bakom siffrorna.</p>
+
+    <h3 class="tech-section-title">Tekniken</h3>
+    <div class="tech-grid">
+      <div class="tech-card"><h3>Vanlig HTML, CSS och JavaScript</h3><p>Tre filer, <code>index.html</code>, <code>elpris_nov.css</code> och <code>elpris_nov.js</code>. Inga bibliotek och inget byggsteg.</p></div>
+      <div class="tech-card"><h3>Diagrammen ritas av koden</h3><p>Båda diagrammen är SVG som skapas i <code>elpris_nov.js</code> ur siffrorna i filen. Pekar man på en stapel visas värdet.</p></div>
+      <div class="tech-card"><h3>Tabellerna räknas i webbläsaren</h3><p>Tabell 1–3 beräknas ur indata (priser, kWh, inpasseringar) när sidan öppnas. Ändras en siffra i filen ändras tabellerna och texterna som visar dem.</p></div>
+      <div class="tech-card"><h3>Ingen data skickas</h3><p>Sidan pratar inte med någon server och sparar ingenting hos besökaren.</p></div>
+      <div class="tech-card"><h3>Delningsbilden</h3><p>Bilden <code>og-elpris-nov.jpg</code> (1200×630) byggs av <code>bygg_og_bild_nov.py</code> med Pillow. Den visar bara de två nyckeltalen, 157,30 och 328,89.</p></div>
+    </div>
+
+    <h3 class="tech-section-title">Metoden</h3>
+    <div class="tech-grid">
+      <div class="tech-card"><h3>Tillfällig på riktigt</h3><p>Sidan gjordes 2026-11-10, efter tio dagar av november, inför ett möte med badvärdarna. Den uppdateras inte. Den vanliga analysen kommer när fakturan för november finns.</p></div>
+      <div class="tech-card"><h3>Så räknas kostnaden per badare</h3><p>Badets kWh × månadens rörliga kostnad per kWh inklusive moms (spot, elhandlarens ersättning, nätavgift och energiskatt, alla ur Kraftringens faktura), delat på antalet inpasseringar. Fasta avgifter ingår inte.</p></div>
+      <div class="tech-card"><h3>Vad som är scenario</h3><p>Allt som gäller hela november är ett räkneexempel med oktobers förbrukning och elbruks tio-dagarspris. Det är inte en prognos.</p></div>
+      <div class="tech-card"><h3>Inte kontrollerat</h3><p>Spotpriserna kommer från en enda källa (Elbruk) och har inte jämförts med en andra. Oktobers antal badare saknar restaurangens badbiljetter.</p></div>
+    </div>
+  </div>
+</div>
+
+<script src="elpris_nov.js"></script>
+</body>
+</html>

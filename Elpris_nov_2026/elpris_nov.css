@@ -1,0 +1,112 @@
+/*
+  elpris_nov.css
+  Styling för Elpris_nov_2026/index.html. Egen, fristående stilmall.
+  Gult (#FFF9C4) används inte här: sidan har inga inmatningsfält. Blått används för noteringar, rött för november (högt pris).
+
+  UPPDATERING 2026-11-10: Första versionen (1.0).
+*/
+
+:root {
+  color-scheme: light;
+  --bg: #ffffff;
+  --text: #1c2a2a;
+  --dampad: #5a6868;
+  --kant: #c9d3d1;
+  --ruta: #f4f8f7;
+  --bla: #2a7fc4;
+  --rod: #d9392b;
+  --notis-bg: #e3f0fb;
+  --notis-kant: #2a7fc4;
+  --notis-text: #0b3d66;
+  --marginal: 16px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif; line-height: 1.55;
+}
+
+main { max-width: 900px; margin: 0 auto; padding: 18px var(--marginal) 90px; }
+
+a { color: #0b5a9a; }
+h1 { font-size: 2rem; line-height: 1.2; margin: 6px 0 6px; }
+h2 { font-size: 1.35rem; margin: 34px 0 8px; line-height: 1.3; }
+h3 { font-size: 1.1rem; }
+.under { margin: 0 0 14px; color: var(--dampad); }
+.liten { font-size: .86rem; color: var(--dampad); }
+
+.ankare { font-size: .8em; text-decoration: none; opacity: 0; margin-left: 6px; }
+h2:hover .ankare, h2:focus-within .ankare, .ankare:focus { opacity: .7; }
+
+.notis { background: var(--notis-bg); border-left: 4px solid var(--notis-kant); color: var(--notis-text); padding: 10px 14px; border-radius: 4px; margin: 10px 0 0; }
+.notis p { margin: 0; }
+
+/* Nyckeltal */
+.kort-rad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 12px 0 14px; }
+@media (max-width: 640px) { .kort-rad { grid-template-columns: 1fr; } }
+.kort { background: var(--ruta); border: 1px solid var(--kant); border-radius: 8px; padding: 10px 16px 12px; }
+.kort-rubrik { margin: 2px 0 0; font-size: .9rem; color: var(--dampad); font-weight: 600; }
+.stortal { margin: 0; font-size: 2.4rem; font-weight: 700; line-height: 1.15; }
+.stortal.rod { color: var(--rod); }
+.stortal.bla { color: var(--bla); }
+.enhet { margin: 0; font-size: .86rem; color: var(--dampad); }
+
+.punkter { padding-left: 20px; }
+.punkter li { margin: 8px 0; }
+
+/* Diagram */
+.diagram { margin: 10px 0; }
+.diagram svg { width: 100%; height: auto; display: block; }
+.diagram text { font-family: inherit; }
+.diagram .stapel { cursor: default; }
+.diagram .stapel:hover, .diagram .stapel:focus { opacity: .8; outline: none; }
+
+/* Tabeller */
+.tabell-wrap { overflow-x: auto; margin: 8px 0; }
+table { border-collapse: collapse; width: 100%; font-size: .92rem; }
+th, td { border-bottom: 1px solid var(--kant); padding: 6px 10px; text-align: right; white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; white-space: normal; }
+thead th { background: var(--ruta); font-weight: 600; vertical-align: bottom; }
+tfoot td { font-weight: 600; background: var(--ruta); }
+tr.summa td { font-weight: 600; background: var(--ruta); }
+tr.scenario td { background: #fdeceb; }
+td.upp { color: #a3261b; font-weight: 600; }
+
+/* Förklaringar vid hovring, fokus och tryck */
+abbr.ord { text-decoration: underline dotted; cursor: help; position: relative; }
+abbr.ord::after {
+  content: attr(data-forklaring);
+  position: absolute; left: 0; bottom: 125%; width: 290px; max-width: 80vw;
+  background: #1f2d3c; color: #fff; padding: 9px 12px; border-radius: 6px; font-size: .84rem; line-height: 1.4; font-weight: 400;
+  opacity: 0; visibility: hidden; z-index: 50; text-align: left; white-space: normal; pointer-events: none;
+}
+abbr.ord:hover::after, abbr.ord:focus::after { opacity: 1; visibility: visible; }
+
+.kallor li { margin: 10px 0; }
+
+/* Hörnparet */
+.corner {
+  position: fixed; bottom: 14px; font-family: "Courier New", Courier, monospace; font-size: .78rem; color: var(--dampad);
+  background: var(--bg); border: 1px solid var(--kant); border-radius: 999px; padding: .3rem .7rem; text-decoration: none; cursor: pointer;
+  opacity: .55; transition: opacity .2s ease, color .2s ease; z-index: 10;
+}
+.corner:hover, .corner:focus-visible { opacity: 1; color: #0b5a9a; }
+.corner-left { left: 14px; }
+.corner-right { right: 14px; }
+
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(22, 25, 43, .55); align-items: center; justify-content: center; z-index: 20; padding: 1rem; }
+.modal-overlay.show { display: flex; }
+.modal { position: relative; background: var(--bg); border-radius: 16px; max-width: 640px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 2rem; }
+.modal h2 { margin: 0 0 .5rem; font-size: 1.4rem; }
+.modal > p { color: var(--dampad); font-size: .92rem; margin: 0 0 1.2rem; }
+.modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: 0; font-size: 1.6rem; line-height: 1; cursor: pointer; color: var(--dampad); }
+.tech-section-title { font-size: 1rem; text-transform: none; margin: 1.2rem 0 .5rem; color: var(--notis-text); }
+.tech-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 560px) { .tech-grid { grid-template-columns: 1fr; } .modal { padding: 1.4rem; } }
+.tech-card { background: var(--ruta); border: 1px solid var(--kant); border-radius: 8px; padding: 10px 12px; }
+.tech-card h3 { margin: 0 0 4px; font-size: .95rem; }
+.tech-card p { margin: 0; font-size: .86rem; }
+
+@media print { .corner, .modal-overlay { display: none !important; } }
