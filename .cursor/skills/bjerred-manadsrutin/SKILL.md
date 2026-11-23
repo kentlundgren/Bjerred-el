@@ -21,26 +21,37 @@ Den **ersätter inte** de andra skillarna, den samlar dem:
 
 Projektfakta (dataformat, konstanter, länkar) finns i `CLAUDE.md`.
 
-## PÅMINNELSE: oktoberfakturan granskas extra noga (Kent, 2026-10-08)
+## Avtalsläge elhandel och kontroll av avtalsraderna på varje faktura (Kent, 2026-11-23)
 
-Kraftringens elhandelsavtal ("Rörligt kvartspris med bindningstid") gällde **t.o.m. 2026-09-30**. Kent vet inte vad som
-händer från 1 oktober och antar att leverantören fortfarande är Kraftringen, utan nytt avtal på plats. Oktoberfakturan
-(fakturadatum cirka 10 november 2026, avser oktober) ska därför läsas och kontrolleras **extra noga**, i två steg,
-innan något läggs in. **Säg detta till Kent så fort fakturan eller "ny månad" nämns, och stanna vid avvikelse.**
+**Läget:** elhandelsavtalet "Rörligt kvartspris med bindningstid" gällde **t.o.m. 2026-09-30** (samma slutdatum på varje faktura
+januari–september). Oktoberfakturan (3219468000, daterad 2026-11-09) visar **"Rörligt kvartspris", "Tillsvidare", inget "Gäller
+t.o.m."**: ett nytt avtal utan bindningstid, med fast påslag 2,50 öre/kWh och månadsavgift 47,20 kr. Elnätsavtalet
+(Kraftringen Nät AB) är "Tillsvidare" hela året. **Inte känt:** uppsägningstid och avgift vid byte. De står inte på fakturorna och
+är inte bekräftade av Kraftringen, och inget avtalsbrev för det nya avtalet är sett.
+
+**Eneas:** Kent skickade 2026-11-23 oktoberfakturan och en kort sammanfattning till Isak Cerwén på Eneas, med ordförande Hans
+Eyrich i kopia, så att Eneas kan säga upp rätt avtal vid rätt tidpunkt (Eneas avtal, bilaga D: tidigaste uppstart är den dag
+Kraftringen meddelar efter uppsägningen). Kent avser testa Eneas till 2027-09-30 när brytpunkten är utredd, och väntar på
+användarnamn och lösenord till Eneas webbsystem för att läsa av förbrukningen månad för månad. Avtalet är inte bekräftat
+undertecknat i den här filen. Frågorna till Kraftringen (avtalsnamn, startdatum, ingen bindningstid, uppsägningstid, avgift)
+är ställda via Isak, svaret är inte noterat.
+
+Läs avtalsraderna och alla priser på **varje ny faktura**, i ordning. **Säg till Kent direkt** om fakturan har ett slutdatum,
+ett annat avtalsnamn eller en ny leverantör (Eneas eller annan), och stanna vid avvikelse.
 
 Kontrollera i ordning:
-1. **Avtalsraderna** på sida 1–2: elnätsavtal, elhandelsavtal, "Gäller t.o.m." för elhandeln, avtalsform. Ny
-   bindningstid? Annat avtalsnamn? Ny leverantör (Eneas eller annan) på fakturan?
-2. **Alla prisrader mot septemberfakturan** (3199122106): spotpris, rörliga kostnader (sep 4,80 öre/kWh), fast påslag
-   (1,70), månadsavgift elhandel (0 kr), elöverföring (sep 22,39 öre/kWh), energiskatt (36,00 öre/kWh), fast nätavgift
+1. **Avtalsraderna** på sida 1–2: elnätsavtal, elhandelsavtal, "Gäller t.o.m." för elhandeln, avtalsform. Oktober: "Rörligt
+   kvartspris, Tillsvidare", inget slutdatum. Visas ett slutdatum, en bindningstid, ett annat avtalsnamn eller en ny leverantör?
+2. **Alla prisrader mot föregående faktura** (oktober, 3219468000): spotpris, rörliga kostnader (okt 4,91 öre/kWh), fast påslag
+   (2,50), månadsavgift elhandel (47,20 kr), elöverföring (okt 24,36 öre/kWh), energiskatt (36,00 öre/kWh), fast nätavgift
    (7 980 kr/mån). Avviker något ska det anges och förklaras, inte bara läggas in.
 3. **Räkna om fakturan med kod** (inte för hand): kWh × (öre) + fasta avgifter, moms 25 %, och att summa exkl. moms +
    moms = totalbeloppet (öresutjämning högst ±1 kr). Jämför med fakturans egna delsummor.
-4. **kWh och mätarställningar:** avläsning 2026-10-01 ska vara 408 737,96 (septemberfakturans slutställning) och
+4. **kWh och mätarställningar:** avläsning 2026-11-01 ska vara 430 548,26 (oktoberfakturans slutställning) och
    användningen ska stämma med elmätaren i `index.html` (±1 kWh). Mätarnummer och anläggnings-id ska vara samma
    (3838826777640425, 735 999 133 000 151 451).
-5. **Mottagare och uppgifter:** septemberfakturan hade ändrad mottagare ("Föreningen Bjerreds Saltsjöbad, Kerstin Gosse,
-   Apotekarevägen 50") mot juli och augusti ("Bjärreds Saltsjöbad, Box 22"). Notera om den ändras igen. Kontrollera även
+5. **Mottagare och uppgifter:** september och oktober har mottagaren "Föreningen Bjerreds Saltsjöbad, Kerstin Gosse,
+   Apotekarevägen 50". Notera om den ändras. Kontrollera även
    fakturadatum, förfallodatum och att beloppet inte är dubbelfakturerat.
 6. **Andra steget:** läs PDF:en en gång till som text (inte bara med kod) och jämför varje belopp med steg 3. Skriv
    det som inte kunde kontrolleras som "inte kontrollerat".
@@ -155,8 +166,8 @@ Det man behöver: fakturans **totalbelopp** (rubriken "Avser <månad> N kr"), **
 - **Fast nätavgift** (raden "Fast avgift (1.00 mån à N kr/mån)"). Den var 8 824 kr/mån januari–juni men
   7 980 kr/mån juli–september. Läs den varje månad, anta den inte (behövs i `enea_jamforelse.js`, steg 2f).
 - **Avtalsraderna** (rubriken "Avtal": elnät och "Elhandel Rörligt kvartspris med bindningstid, Gäller t.o.m. …").
-  Elhandelsavtalet gällde **t.o.m. 2026-09-30**, så oktoberfakturan (kommer cirka 10 november) kan ha nya villkor:
-  fast påslag (nu 1,70 öre/kWh), rörliga kostnader, månadsavgift (nu 0 kr), eller en annan leverantör. Jämför
+  Elhandelsavtalet är sedan oktober "Rörligt kvartspris, Tillsvidare" (se "Avtalsläge" överst), så en ny faktura kan ha nya villkor:
+  fast påslag (okt 2,50 öre/kWh), rörliga kostnader, månadsavgift (okt 47,20 kr), eller en annan leverantör. Jämför
   raderna med föregående månad. Avviker något: stanna och fråga Kent, eftersom Spotpris tabell 2, intern
   debitering och Eneas-jämförelsen bygger på dagens villkor.
 - *Allt elpris* (Kraftringens "El inkl elcert" / "El (spot + rörliga + påslag)") = spot + rörliga + påslag.
@@ -394,10 +405,23 @@ och hanteras i `kraftringen.json` (Spotpris) och `STANDARD` (intern debitering).
   `{ } GitHub` vänster, `visa detaljerad tabell` mitten (på smal skärm en rad högre) och `</> teknik` höger. Knappen och funktionen för förmodade värden är borttagna (`showExpectedValues` är alltid false).
   Prompt-modalens text ligger som avsnitt "Projektinstruktioner (prompt)" i teknik-modalen. `index.html` har ingen versionsrad.
 
+### Det som gjordes den 2026-11-23, avtalsläget hos Kraftringen och Eneas
+- Avtalsraderna på alla tio fakturor (januari–oktober 2026, `Kraftringen/Fakturor/`) lästa med `pdftotext`. Januari–september: "Rörligt kvartspris med bindningstid",
+  gäller t.o.m. 2026-09-30. Oktober: "Rörligt kvartspris", "Tillsvidare", inget slutdatum. Uppsägningstid och avgift vid byte står inte på fakturorna.
+- Kent skickade oktoberfakturan till Isak Cerwén på Eneas (kopia Hans Eyrich) med ett kort mejl om vad fakturan visar och en begäran att Eneas kontrollerar
+  uppsägningstid och avgift hos Kraftringen innan Eneas säger upp avtalet. Kent har också skrivit att han ser fram emot användarnamn och lösenord till Eneas
+  webbsystem för att läsa av förbrukningen månad för månad. Avsnittet "Avtalsläge" överst och `CLAUDE.md` beskriver läget.
+- De publika sidorna `Eneas_Samkop_av_El/sammanfattning.html` och `alternativ.html` säger fortfarande att oktoberfakturan väntas och att läget sedan 1 oktober är osäkert.
+  Inte ändrade (kräver version och datum enligt regel 19). Kent avgör om de ska uppdateras.
+
 ## Ännu inte gjort / öppna beslut
 
 Här samlas sådant som Kent har sagt ska göras men som inte är gjort, eller som inte är avgjort.
 Stryk eller flytta upp till rutinen när det är avgjort.
+
+- **Eneas test till 2027-09-30:** Kent avser testa Eneas när brytpunkten hos Kraftringen är utredd (uppsägningstid, avgift, startdatum för Eneas).
+  Svar från Kraftringen via Isak är inte noterat. När inloggning till Eneas webbsystem kommit: förbrukningen (kWh) kan läsas där månad för månad,
+  och Eneas månadspris läggs till jämförelsen. Fråga Kent om hur månadsrutinen ska ändras (steg 1 och 2) innan något byggs.
 
 - **Omanpassningen av M4b är gjord 2026-10-08** (se `Spotpris/omanpassning.html`, `omanpassa_m4b.py`,
   `Spotpris/PRD.md` avsnitt 4.7). Den gjordes **separat**: `kraftringen.json`, `m4b_resultat.json`,

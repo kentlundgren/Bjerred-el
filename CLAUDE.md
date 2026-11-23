@@ -69,10 +69,13 @@ version, samt en logg över vad som är gjort per månad och vad som återstår)
 säger "ny månad" eller bifogar en Kraftringen-faktura eller ett debiteringsunderlag. Den är en
 levande minnesfil: uppdatera dess logg när något läggs in.
 
-**PÅMINNELSE (Kent, 2026-10-08): oktoberfakturan granskas extra noga.** Elhandelsavtalet med Kraftringen
-gällde t.o.m. 2026-09-30 och Kent vet inte vad som gäller från 1 oktober. När oktoberfakturan kommer (cirka
-10 november 2026), eller när Kent säger "ny månad": påminn honom, läs avtalsraderna och alla priser mot
-septemberfakturan, och stanna vid avvikelser. Checklistan finns överst i skillen `bjerred-manadsrutin`.
+**Avtalsläge elhandel (Kent, 2026-11-23):** elhandelsavtalet med bindningstid gällde t.o.m. 2026-09-30. Oktoberfakturan
+(3219468000, daterad 2026-11-09) visar ett nytt avtal, "Rörligt kvartspris, Tillsvidare", utan slutdatum och alltså utan
+bindningstid. Uppsägningstid och avgift vid byte står inte på fakturorna och är inte bekräftade av Kraftringen. Kent skickade
+fakturan till Isak Cerwén på Eneas (kopia ordförande Hans) och avser testa Eneas till 2027-09-30 när brytpunkten är utredd;
+han väntar på inloggning till Eneas webbsystem för att läsa av förbrukningen månad för månad. Vid varje ny faktura:
+läs avtalsraderna och alla priser mot föregående faktura, och stanna vid avvikelser. Checklistan finns överst i skillen
+`bjerred-manadsrutin`.
 
 **Viktigt:** tills fakturan finns ska `cost` vara `null`, inte `0`. kWh-LÅT
 inkluderar månaden så fort förbrukningen är fastställd; kostnads-LÅT och
