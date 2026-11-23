@@ -9,12 +9,13 @@
   fråga F18, brödsmulor och delningsbild (og) på sammanfattningen.
   UPPDATERING 2026-11-06: länkar till Spotpris-sidan (sammanfattningen och "Vad jag vet om priset"). Version 1.2.
   UPPDATERING 2026-11-06: korsreferenser ("Se också") till Spotpris-sidan i brödsmulorna (dokument.json, nyckeln se_ocksa). Version 1.3.
+  UPPDATERING 2026-11-23: avtalsläget enligt oktoberfakturan (Kraftringen "Rörligt kvartspris, Tillsvidare" från oktober) i alternativ.html och sammanfattning.html. Version 1.4.
 */
 (function () {
   'use strict';
 
-  var VERSION = '1.3';
-  var VERSIONSDATUM = '2026-11-06';
+  var VERSION = '1.4';
+  var VERSIONSDATUM = '2026-11-23';
 
   // (1) Varje td får en data-label från tabellens kolumnrubrik (används av CSS på smal skärm).
   function sattEtiketter() {
